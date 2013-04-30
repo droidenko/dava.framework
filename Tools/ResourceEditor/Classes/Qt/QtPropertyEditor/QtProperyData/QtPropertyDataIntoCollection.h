@@ -2,7 +2,7 @@
 #define __QT_PROPERTY_DATA_INTRO_COLLECTION_H__
 
 #include "Base/Introspection.h"
-#include "QtPropertyEditor/QtPropertyData.h"
+#include "Qt/QtPropertyEditor/QtPropertyData.h"
 
 class QtPropertyDataIntroCollection : public QtPropertyData
 {

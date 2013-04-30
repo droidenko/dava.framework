@@ -4,7 +4,7 @@
 
 #include "ControlsFactory.h"
 
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 static const String textureNames[] = 
 {

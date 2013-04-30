@@ -1,5 +1,5 @@
 #include "LandscapeEditorPropertyControl.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 //*********************  LandscapeEditorSettings  **********************
 LandscapeEditorSettings::LandscapeEditorSettings()

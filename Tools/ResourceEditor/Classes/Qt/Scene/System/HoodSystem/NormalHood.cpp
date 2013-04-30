@@ -1,5 +1,5 @@
-#include "Scene/System/HoodSystem/NormalHood.h"
-#include "Scene/System/ModifSystem.h"
+#include "Qt/Scene/System/HoodSystem/NormalHood.h"
+#include "Qt/Scene/System/ModifSystem.h"
 
 // framework
 #include "Render/RenderManager.h"

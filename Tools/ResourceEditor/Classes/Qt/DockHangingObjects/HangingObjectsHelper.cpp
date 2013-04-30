@@ -1,5 +1,5 @@
 #include "HangingObjectsHelper.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 #include "LandscapeEditor/LandscapesController.h"
 
 #define HEIGHT_DENSITY 2.0f

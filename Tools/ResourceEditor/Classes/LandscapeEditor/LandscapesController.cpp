@@ -32,8 +32,8 @@
 #include "LandscapeRenderer.h"
 #include "RulerToolLandscape.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 using namespace DAVA;
 

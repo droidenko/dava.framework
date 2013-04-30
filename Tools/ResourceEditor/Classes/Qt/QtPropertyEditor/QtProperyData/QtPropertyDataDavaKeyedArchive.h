@@ -2,7 +2,7 @@
 #define __QT_PROPERTY_DATA_DAVA_KEYEDARCHIVE_H__
 
 #include "Base/Introspection.h"
-#include "QtPropertyEditor/QtPropertyData.h"
+#include "Qt/QtPropertyEditor/QtPropertyData.h"
 
 #include <QLineEdit>
 #include <QComboBox>

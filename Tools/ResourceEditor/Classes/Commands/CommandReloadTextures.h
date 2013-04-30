@@ -2,7 +2,7 @@
 #define __COMMAND_RELOAD_TEXTURES_H__
 
 #include "Command.h"
-#include "../Constants.h"
+#include "Constants.h"
 
 class CommandReloadTextures: public Command
 {

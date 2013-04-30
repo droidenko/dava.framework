@@ -9,7 +9,7 @@
 #include "EmitterLayerWidget.h"
 #include "Commands/ParticleEditorCommands.h"
 #include "Commands/CommandsManager.h"
-#include "TextureBrowser/TextureConvertor.h"
+#include "Qt/TextureBrowser/TextureConvertor.h"
 #include "SceneEditor/EditorSettings.h"
 
 #include <QHBoxLayout>
@@ -454,7 +454,7 @@ void EmitterLayerWidget::OnSpriteBtn()
 	
 	// Yuri Coder. Verify that the path of the file opened is correct (i.e. inside the Project Path),
 	// this is according to the DF-551 issue.
-    FilePath filePathToBeOpened(filePath.toStdString());
+    FilePath filePathToBeOpened(filePath.toAscii().constData());
 
 #ifdef __DAVAENGINE_WIN32__
     //TODO: fix this code on win32 on working FilePath
@@ -481,7 +481,7 @@ void EmitterLayerWidget::OnSpriteBtn()
 	}
 	
 	filePath.remove(filePath.size() - 4, 4);
-	Sprite* sprite = Sprite::Create(filePath.toStdString());
+	Sprite* sprite = Sprite::Create(filePath.toAscii().constData());
 	if (!sprite)
 		return;
 	

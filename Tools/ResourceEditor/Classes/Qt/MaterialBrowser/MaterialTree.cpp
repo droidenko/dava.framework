@@ -1,4 +1,4 @@
-#include "MaterialBrowser/MaterialTree.h"
+#include "Qt/MaterialBrowser/MaterialTree.h"
 
 
 MaterialTree::MaterialTree(QWidget *parent /*= 0*/)

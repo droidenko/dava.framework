@@ -30,8 +30,8 @@
 
 #include "ImageSplitterScreen.h"
 
-#include "../SceneEditor/CommandLineTool.h"
-#include "../Qt/Main/QtUtils.h"
+#include "SceneEditor/CommandLineTool.h"
+#include "Qt/Main/QtUtils.h"
 #include "ImageSplitter.h"
 
 

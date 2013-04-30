@@ -1,12 +1,12 @@
 #include "DAVAEngine.h"
-#include "Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 #include "Entity/Component.h"
-#include "Main/mainwindow.h"
+#include "Qt/Main/mainwindow.h"
 
-#include "DockProperties/PropertyEditor.h"
-#include "QtPropertyEditor/QtPropertyItem.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
+#include "Qt/DockProperties/PropertyEditor.h"
+#include "Qt/QtPropertyEditor/QtPropertyItem.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
 
 #include "PropertyEditorStateHelper.h"
 

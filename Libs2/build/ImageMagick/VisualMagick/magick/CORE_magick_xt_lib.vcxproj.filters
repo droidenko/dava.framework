@@ -1,0 +1,677 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{3870b504-5f12-439d-a98b-d3424c875a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{4e7313d3-ca0a-4072-bf6b-d9d26844d801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{34feed7c-cbd3-4296-b7b9-130b124b085a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\magick\accelerate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\animate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\annotate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\artifact.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\attribute.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\blob.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\cache-view.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\cache.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\cipher.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\client.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\coder.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\color.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\colormap.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\colorspace.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\compare.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\composite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\compress.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\configure.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\constitute.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\decorate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\delegate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\deprecate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\display.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\distort.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\draw.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\effect.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\enhance.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\exception.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\feature.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\fourier.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\fx.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\gem.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\geometry.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\hashmap.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\histogram.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\identify.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\image-view.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\image.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\layer.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\list.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\locale.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\log.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\mac.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\magic.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\magick.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\matrix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\memory.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\mime.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\module.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\monitor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\montage.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\morphology.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\nt-base.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\nt-feature.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\option.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\paint.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\pixel.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\policy.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\prepress.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\PreRvIcccm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\profile.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\property.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\quantize.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\quantum-export.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\quantum-import.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\quantum.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\random.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\registry.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\resample.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\resize.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\resource.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\segment.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\semaphore.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\shear.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\signature.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\splay-tree.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\static.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\statistic.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\stream.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\string.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\thread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\threshold.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\timer.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\token.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\transform.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\type.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\utility.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\version.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\vms.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\widget.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\xml-tree.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\magick\xwindow.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\magick\accelerate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\animate-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\animate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\annotate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\api.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\artifact.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\attribute.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\blob-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\blob.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\cache-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\cache-view.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\cache.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\cipher.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\client.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\coder.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\color-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\color.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\colormap-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\colormap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\colorspace-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\colorspace.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\compare.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\composite-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\composite.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\compress.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\configure.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\constitute.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\decorate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\delegate-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\delegate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\deprecate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\display-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\display.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\distort.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\draw-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\draw.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\effect.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\enhance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\exception-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\exception.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\feature.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\fourier.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\fx-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\fx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\gem.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\hashmap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\histogram.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\identify.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\image-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\image-view.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\image.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\ImageMagick.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\layer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\list.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\locale_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\log.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\mac.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\magic.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\magick-config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\magick-type.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\magick.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\MagickCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\matrix.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\memory_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\methods.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\mime-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\mime.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\module.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\monitor-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\monitor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\montage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\morphology-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\morphology.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\nt-base.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\nt-feature.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\option.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\paint.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\pixel-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\pixel.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\policy.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\prepress.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\PreRvIcccm.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\profile.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\quantize.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\quantum-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\quantum.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\random-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\random_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\registry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\resample-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\resample.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\resize-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\resize.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\resource_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\segment.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\semaphore-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\semaphore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\shear.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\signature-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\signature.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\splay-tree.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\static.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\statistic.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\stream-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\stream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\string-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\string_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\studio.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\thread-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\thread_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\threshold.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\timer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\token-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\token.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\transform.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\type.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\utility-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\utility.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\version.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\vms.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\widget.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\xml-tree.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\xwindow-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\magick\xwindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\magick\ImageMagick.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

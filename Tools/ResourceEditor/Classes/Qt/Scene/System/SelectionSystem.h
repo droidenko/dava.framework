@@ -1,7 +1,7 @@
 #ifndef __SCENE_SELECTION_SYSTEM_H__
 #define __SCENE_SELECTION_SYSTEM_H__
 
-#include "Scene/EntityGroup.h"
+#include "Qt/Scene/EntityGroup.h"
 
 // framework
 #include "Entity/SceneSystem.h"

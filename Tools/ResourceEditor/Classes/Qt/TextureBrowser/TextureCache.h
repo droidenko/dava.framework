@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QImage>
 
-#include "TextureBrowser/TextureConvertor.h"
+#include "Qt/TextureBrowser/TextureConvertor.h"
 
 class TextureCache : public QObject, public DAVA::StaticSingleton<TextureCache>
 {

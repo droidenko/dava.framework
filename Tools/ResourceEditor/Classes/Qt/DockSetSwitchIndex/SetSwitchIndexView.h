@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "Base/BaseTypes.h"
-#include "Classes/Commands/SetSwitchIndexCommands.h"
+#include "Commands/SetSwitchIndexCommands.h"
 
 namespace Ui
 {

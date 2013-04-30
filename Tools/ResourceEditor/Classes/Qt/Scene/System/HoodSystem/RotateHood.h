@@ -1,7 +1,7 @@
 #ifndef __ROTATE_HOOD_H__
 #define __ROTATE_HOOD_H__
 
-#include "Scene/System/HoodSystem/HoodObject.h"
+#include "Qt/Scene/System/HoodSystem/HoodObject.h"
 
 #define ROTATE_HOOD_CIRCLE_PARTS_COUNT 5
 

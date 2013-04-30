@@ -1,12 +1,13 @@
 #include "EditorBodyControlCommands.h"
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "CommandsManager.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 
-#include "Scene/SceneEditorProxy.h"
-#include "Scene/System/CollisionSystem.h"
+#include "CommandsManager.h"
+
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneEditorProxy.h"
+#include "Qt/Scene/System/CollisionSystem.h"
 
 CommandTransformObject::CommandTransformObject(DAVA::Entity* node, const DAVA::Matrix4& originalTransform, const DAVA::Matrix4& finalTransform)
 :	Command(COMMAND_UNDO_REDO)
@@ -50,7 +51,6 @@ void CommandTransformObject::UpdateCollision()
 		sep->collisionSystem->UpdateCollisionObject(node);
 	}
 }
-
 
 CommandCloneObject::CommandCloneObject(DAVA::Entity* node, EditorBodyControl* bodyControl, btCollisionWorld* collisionWorld)
 :	Command(COMMAND_UNDO_REDO)

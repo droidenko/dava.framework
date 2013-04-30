@@ -5,8 +5,8 @@
 #include <QStandardItemModel>
 #include "Base/Introspection.h"
 
-#include "QtPropertyEditor/QtPropertyItem.h"
-#include "QtPropertyEditor/QtPropertyData.h"
+#include "Qt/QtPropertyEditor/QtPropertyItem.h"
+#include "Qt/QtPropertyEditor/QtPropertyData.h"
 
 class QtPropertyModel : public QStandardItemModel
 {

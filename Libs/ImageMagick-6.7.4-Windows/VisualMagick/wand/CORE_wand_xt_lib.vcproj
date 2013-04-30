@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+  ProjectType="Visual C++"
+  Version="7.00"
+  Name="CORE_wand"
+  ProjectGUID="{6860EB49-9991-45AC-83CE-1462AD7E69F0}"
+  Keyword="Win32Proj">
+  <Platforms>
+    <Platform Name="Win32"/>
+  </Platforms>
+  <Configurations>
+    <Configuration
+      Name="Release|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Release\CORE_wand"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="0"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        DebugInformationFormat="3"
+        BasicRuntimeChecks="0"
+        OmitFramePointers="TRUE"
+        Optimization="3"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\wand"
+        PreprocessorDefinitions="NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="NDEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_RL_wand_.lib"
+        />
+    </Configuration>
+    <Configuration
+      Name="Debug|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Debug\CORE_wand"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="1"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        BasicRuntimeChecks="3"
+        OmitFramePointers="FALSE"
+        DebugInformationFormat="3"
+        Optimization="0"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\wand"
+        PreprocessorDefinitions="_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="_DEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_DB_wand_.lib"
+        />
+    </Configuration>
+  </Configurations>
+  <Files>
+    <Filter Name="src" Filter="">
+      <File RelativePath="..\..\wand\animate.c"/>
+      <File RelativePath="..\..\wand\compare.c"/>
+      <File RelativePath="..\..\wand\composite.c"/>
+      <File RelativePath="..\..\wand\conjure.c"/>
+      <File RelativePath="..\..\wand\convert.c"/>
+      <File RelativePath="..\..\wand\deprecate.c"/>
+      <File RelativePath="..\..\wand\display.c"/>
+      <File RelativePath="..\..\wand\drawing-wand.c"/>
+      <File RelativePath="..\..\wand\identify.c"/>
+      <File RelativePath="..\..\wand\import.c"/>
+      <File RelativePath="..\..\wand\magick-image.c"/>
+      <File RelativePath="..\..\wand\magick-property.c"/>
+      <File RelativePath="..\..\wand\magick-wand.c"/>
+      <File RelativePath="..\..\wand\mogrify.c"/>
+      <File RelativePath="..\..\wand\montage.c"/>
+      <File RelativePath="..\..\wand\pixel-iterator.c"/>
+      <File RelativePath="..\..\wand\pixel-wand.c"/>
+      <File RelativePath="..\..\wand\stream.c"/>
+      <File RelativePath="..\..\wand\wand-view.c"/>
+      <File RelativePath="..\..\wand\wand.c"/>
+      <File RelativePath="wand.rc"/>
+    </Filter>
+    <Filter Name="include" Filter="">
+      <File RelativePath="..\..\wand\animate.h"/>
+      <File RelativePath="..\..\wand\compare.h"/>
+      <File RelativePath="..\..\wand\composite.h"/>
+      <File RelativePath="..\..\wand\conjure.h"/>
+      <File RelativePath="..\..\wand\convert.h"/>
+      <File RelativePath="..\..\wand\deprecate.h"/>
+      <File RelativePath="..\..\wand\display.h"/>
+      <File RelativePath="..\..\wand\drawing-wand.h"/>
+      <File RelativePath="..\..\wand\identify.h"/>
+      <File RelativePath="..\..\wand\import.h"/>
+      <File RelativePath="..\..\wand\magick-image.h"/>
+      <File RelativePath="..\..\wand\magick-property.h"/>
+      <File RelativePath="..\..\wand\magick-wand-private.h"/>
+      <File RelativePath="..\..\wand\magick-wand.h"/>
+      <File RelativePath="..\..\wand\MagickWand.h"/>
+      <File RelativePath="..\..\wand\magick_wand.h"/>
+      <File RelativePath="..\..\wand\mogrify-private.h"/>
+      <File RelativePath="..\..\wand\mogrify.h"/>
+      <File RelativePath="..\..\wand\montage.h"/>
+      <File RelativePath="..\..\wand\pixel-iterator.h"/>
+      <File RelativePath="..\..\wand\pixel-wand-private.h"/>
+      <File RelativePath="..\..\wand\pixel-wand.h"/>
+      <File RelativePath="..\..\wand\stream.h"/>
+      <File RelativePath="..\..\wand\studio.h"/>
+      <File RelativePath="..\..\wand\wand-config.h"/>
+      <File RelativePath="..\..\wand\wand-view.h"/>
+      <File RelativePath="..\..\wand\wand.h"/>
+    </Filter>
+    <Filter Name="resource" Filter="">
+    </Filter>
+  </Files>
+  <Globals>
+  </Globals>
+</VisualStudioProject>

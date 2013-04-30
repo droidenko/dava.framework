@@ -1,11 +1,11 @@
-#include "Scene/System/ModifSystem.h"
-#include "Scene/System/HoodSystem.h"
-#include "Scene/System/CameraSystem.h"
-#include "Scene/System/CollisionSystem.h"
-#include "Scene/System/SelectionSystem.h"
+#include "Qt/Scene/System/ModifSystem.h"
+#include "Qt/Scene/System/HoodSystem.h"
+#include "Qt/Scene/System/CameraSystem.h"
+#include "Qt/Scene/System/CollisionSystem.h"
+#include "Qt/Scene/System/SelectionSystem.h"
 
-#include "Scene/EntityGroup.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Qt/Scene/EntityGroup.h"
+#include "Qt/Scene/SceneEditorProxy.h"
 
 #include "Commands/CommandsManager.h"
 #include "Commands/EditorBodyControlCommands.h"

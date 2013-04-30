@@ -3,7 +3,7 @@
 
 #include "Command.h"
 #include "DAVAEngine.h"
-#include "../SceneEditor/LandscapeEditorVisibilityCheckTool.h"
+#include "SceneEditor/LandscapeEditorVisibilityCheckTool.h"
 
 using namespace DAVA;
 

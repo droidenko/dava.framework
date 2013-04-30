@@ -1,7 +1,7 @@
 #include "TextureOptionsCommands.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "../SceneEditor/SceneValidator.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorSettings.h"
+#include "SceneEditor/SceneValidator.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 using namespace DAVA;
 

@@ -4,13 +4,13 @@
 #include "Render/LibPVRHelper.h"
 #include "Render/TextureDescriptor.h"
 
-#include "../Qt/Main/QtUtils.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../EditorScene.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "EditorScene.h"
 
-#include "../LandscapeEditor/EditorLandscape.h"
-#include "../ParticlesEditorQT/Helpers/ParticlesEditorSceneDataHelper.h"
+#include "LandscapeEditor/EditorLandscape.h"
+#include "ParticlesEditorQT/Helpers/ParticlesEditorSceneDataHelper.h"
 
 #include "Scene3D/Components/ComponentHelpers.h"
 

@@ -4,9 +4,9 @@
 #include "DAVAEngine.h"
 #include "CameraController.h"
 #include "EditMatrixControl.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 
-#include "../Constants.h"
+#include "Constants.h"
 #include "NodesPropertyControl.h"
 
 #include "ModificationsPanel.h"

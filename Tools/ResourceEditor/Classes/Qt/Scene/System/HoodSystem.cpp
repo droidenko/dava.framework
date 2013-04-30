@@ -1,9 +1,9 @@
-#include "Scene/System/HoodSystem.h"
-#include "Scene/System/ModifSystem.h"
-#include "Scene/System/CollisionSystem.h"
-#include "Scene/System/CameraSystem.h"
-#include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Qt/Scene/System/HoodSystem.h"
+#include "Qt/Scene/System/ModifSystem.h"
+#include "Qt/Scene/System/CollisionSystem.h"
+#include "Qt/Scene/System/CameraSystem.h"
+#include "Qt/Scene/System/SelectionSystem.h"
+#include "Qt/Scene/SceneEditorProxy.h"
 
 HoodSystem::HoodSystem(DAVA::Scene * scene, SceneCameraSystem *camSys)
 	: DAVA::SceneSystem(scene)

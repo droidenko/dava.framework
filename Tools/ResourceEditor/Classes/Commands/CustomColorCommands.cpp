@@ -1,9 +1,9 @@
 #include "CustomColorCommands.h"
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../Qt/Main/QtUtils.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Main/QtUtils.h"
 #include <QFileDialog>
-#include "../SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/EditorBodyControl.h"
 
 CommandSaveTextureCustomColors::CommandSaveTextureCustomColors()
 :   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT)

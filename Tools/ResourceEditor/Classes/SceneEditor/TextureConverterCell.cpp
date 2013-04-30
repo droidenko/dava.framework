@@ -2,7 +2,7 @@
 #include "ControlsFactory.h"
 
 #include "Render/LibPVRHelper.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 TextureConverterCell::TextureConverterCell(const Rect &rect, const String &cellIdentifier)
 :   UIListCell(Rect(rect.x, rect.y, rect.dx, (float32)GetCellHeight()), cellIdentifier)

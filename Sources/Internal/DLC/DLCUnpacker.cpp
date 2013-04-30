@@ -1,5 +1,5 @@
 #include "DLCUnpacker.h"
-#include "libpng/zlib.h"
+#include "zlib/zlib.h"
 #include "FileSystem/FileSystem.h"
 #include "FileSystem/File.h"
 #include "FileSystem/KeyedArchive.h"

@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{3256449a-db82-437a-a1b0-4a6bfed86043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{f7e3c059-63a5-4ced-a8aa-5a24de67d717}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{2b04a569-3575-47d4-a60d-bd5c5771c82b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Magick++\lib\Blob.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\BlobRef.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\CoderInfo.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Color.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Drawable.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Exception.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Functions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Geometry.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\ImageRef.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Montage.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Options.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Pixels.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\STL.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\Thread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Magick++\lib\TypeMetric.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Blob.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\BlobRef.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\CoderInfo.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Color.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Drawable.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Exception.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Functions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Image.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\ImageRef.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Include.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Montage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Options.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Pixels.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\STL.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\Thread.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++\TypeMetric.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Magick++\lib\Magick++.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

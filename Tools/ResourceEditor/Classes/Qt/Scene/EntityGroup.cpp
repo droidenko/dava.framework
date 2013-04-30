@@ -1,4 +1,4 @@
-#include "Scene/EntityGroup.h"
+#include "Qt/Scene/EntityGroup.h"
 
 
 EntityGroup::EntityGroup()

@@ -1,5 +1,5 @@
 #include "SetSwitchIndexHelper.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 namespace DAVA
 {

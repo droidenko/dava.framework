@@ -1,28 +1,28 @@
-#include "Scene/SceneData.h"
-#include "DockSceneGraph/SceneGraphModel.h"
-#include "DockSceneGraph/PointerHolder.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/DockSceneGraph/SceneGraphModel.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
 
-#include "../EditorScene.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "../SceneEditor/SceneValidator.h"
+#include "EditorScene.h"
+#include "SceneEditor/EditorSettings.h"
+#include "SceneEditor/SceneValidator.h"
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 
-#include "../Commands/SceneGraphCommands.h"
-#include "../Commands/LibraryCommands.h"
-#include "../Commands/CommandsManager.h"
+#include "Commands/SceneGraphCommands.h"
+#include "Commands/LibraryCommands.h"
+#include "Commands/CommandsManager.h"
 
-#include "../LandscapeEditor/LandscapesController.h"
+#include "LandscapeEditor/LandscapesController.h"
 
 #include "Scene3D/Components/CameraComponent.h"
 
-#include "Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtMainWindowHandler.h"
 
 
-#include "Main/QtUtils.h"
-#include "DockSceneGraph/PointerHolder.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
 
-#include "DockLibrary/LibraryModel.h"
+#include "Qt/DockLibrary/LibraryModel.h"
 
 #include <QTreeView>
 #include <QFileSystemModel>

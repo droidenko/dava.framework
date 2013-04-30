@@ -1,4 +1,4 @@
-#include "MaterialBrowser/MaterialTreeItem.h"
+#include "Qt/MaterialBrowser/MaterialTreeItem.h"
 
 MaterialTreeItem::MaterialTreeItem(DAVA::Material *material, MaterialTreeItem *parent /* = NULL */)
 	: parentItem(parent)

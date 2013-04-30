@@ -1,6 +1,6 @@
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataIntoCollection.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataIntoCollection.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
 
 QtPropertyDataIntroCollection::QtPropertyDataIntroCollection(void *_object, const DAVA::IntrospectionCollection *_collection, int hasAnyFlags, int hasNotAnyFlags)
 	: object(_object)

@@ -1,5 +1,5 @@
-#include "Scene/System/HoodSystem/RotateHood.h"
-#include "Scene/System/ModifSystem.h"
+#include "Qt/Scene/System/HoodSystem/RotateHood.h"
+#include "Qt/Scene/System/ModifSystem.h"
 
 // framework
 #include "Render/RenderManager.h"

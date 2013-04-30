@@ -1,4 +1,4 @@
-#include "QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
+#include "Qt/QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
 
 #include <QHBoxLayout>
 #include <QEvent>
@@ -34,7 +34,7 @@ QColor QtColorLineEdit::GetColor() const
 void QtColorLineEdit::EditFinished()
 {
 	int r = 0, g = 0, b = 0, a = 255;
-	if(4 == sscanf(text().toStdString().c_str(), "#%02x%02x%02x%02x", &r, &g, &b, &a))
+	if(4 == sscanf(text().toAscii().constData(), "#%02x%02x%02x%02x", &r, &g, &b, &a))
 	{
 		curColor = QColor(r, g, b, a);
 	}

@@ -1,4 +1,4 @@
-#include "Scene/System/CameraSystem.h"
+#include "Qt/Scene/System/CameraSystem.h"
 
 // framework
 #include "Scene3D/Components/CameraComponent.h"

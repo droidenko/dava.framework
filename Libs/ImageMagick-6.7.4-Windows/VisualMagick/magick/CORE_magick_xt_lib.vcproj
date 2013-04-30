@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+  ProjectType="Visual C++"
+  Version="7.00"
+  Name="CORE_magick"
+  ProjectGUID="{D5D57B4B-3748-456C-9979-C4621C09C9DA}"
+  Keyword="Win32Proj">
+  <Platforms>
+    <Platform Name="Win32"/>
+  </Platforms>
+  <Configurations>
+    <Configuration
+      Name="Release|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Release\CORE_magick"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="0"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        DebugInformationFormat="3"
+        BasicRuntimeChecks="0"
+        OmitFramePointers="TRUE"
+        Optimization="3"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\magick"
+        PreprocessorDefinitions="NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="NDEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_RL_magick_.lib"
+        />
+    </Configuration>
+    <Configuration
+      Name="Debug|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Debug\CORE_magick"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="1"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        BasicRuntimeChecks="3"
+        OmitFramePointers="FALSE"
+        DebugInformationFormat="3"
+        Optimization="0"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\magick"
+        PreprocessorDefinitions="_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="_DEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_DB_magick_.lib"
+        />
+    </Configuration>
+  </Configurations>
+  <Files>
+    <Filter Name="src" Filter="">
+      <File RelativePath="..\..\magick\accelerate.c"/>
+      <File RelativePath="..\..\magick\animate.c"/>
+      <File RelativePath="..\..\magick\annotate.c"/>
+      <File RelativePath="..\..\magick\artifact.c"/>
+      <File RelativePath="..\..\magick\attribute.c"/>
+      <File RelativePath="..\..\magick\blob.c"/>
+      <File RelativePath="..\..\magick\cache-view.c"/>
+      <File RelativePath="..\..\magick\cache.c"/>
+      <File RelativePath="..\..\magick\cipher.c"/>
+      <File RelativePath="..\..\magick\client.c"/>
+      <File RelativePath="..\..\magick\coder.c"/>
+      <File RelativePath="..\..\magick\color.c"/>
+      <File RelativePath="..\..\magick\colormap.c"/>
+      <File RelativePath="..\..\magick\colorspace.c"/>
+      <File RelativePath="..\..\magick\compare.c"/>
+      <File RelativePath="..\..\magick\composite.c"/>
+      <File RelativePath="..\..\magick\compress.c"/>
+      <File RelativePath="..\..\magick\configure.c"/>
+      <File RelativePath="..\..\magick\constitute.c"/>
+      <File RelativePath="..\..\magick\decorate.c"/>
+      <File RelativePath="..\..\magick\delegate.c"/>
+      <File RelativePath="..\..\magick\deprecate.c"/>
+      <File RelativePath="..\..\magick\display.c"/>
+      <File RelativePath="..\..\magick\distort.c"/>
+      <File RelativePath="..\..\magick\draw.c"/>
+      <File RelativePath="..\..\magick\effect.c"/>
+      <File RelativePath="..\..\magick\enhance.c"/>
+      <File RelativePath="..\..\magick\exception.c"/>
+      <File RelativePath="..\..\magick\feature.c"/>
+      <File RelativePath="..\..\magick\fourier.c"/>
+      <File RelativePath="..\..\magick\fx.c"/>
+      <File RelativePath="..\..\magick\gem.c"/>
+      <File RelativePath="..\..\magick\geometry.c"/>
+      <File RelativePath="..\..\magick\hashmap.c"/>
+      <File RelativePath="..\..\magick\histogram.c"/>
+      <File RelativePath="..\..\magick\identify.c"/>
+      <File RelativePath="..\..\magick\image-view.c"/>
+      <File RelativePath="..\..\magick\image.c"/>
+      <File RelativePath="..\..\magick\layer.c"/>
+      <File RelativePath="..\..\magick\list.c"/>
+      <File RelativePath="..\..\magick\locale.c"/>
+      <File RelativePath="..\..\magick\log.c"/>
+      <File RelativePath="..\..\magick\mac.c"/>
+      <File RelativePath="..\..\magick\magic.c"/>
+      <File RelativePath="..\..\magick\magick.c"/>
+      <File RelativePath="..\..\magick\matrix.c"/>
+      <File RelativePath="..\..\magick\memory.c"/>
+      <File RelativePath="..\..\magick\mime.c"/>
+      <File RelativePath="..\..\magick\module.c"/>
+      <File RelativePath="..\..\magick\monitor.c"/>
+      <File RelativePath="..\..\magick\montage.c"/>
+      <File RelativePath="..\..\magick\morphology.c"/>
+      <File RelativePath="..\..\magick\nt-base.c"/>
+      <File RelativePath="..\..\magick\nt-feature.c"/>
+      <File RelativePath="..\..\magick\option.c"/>
+      <File RelativePath="..\..\magick\paint.c"/>
+      <File RelativePath="..\..\magick\pixel.c"/>
+      <File RelativePath="..\..\magick\policy.c"/>
+      <File RelativePath="..\..\magick\prepress.c"/>
+      <File RelativePath="..\..\magick\PreRvIcccm.c"/>
+      <File RelativePath="..\..\magick\profile.c"/>
+      <File RelativePath="..\..\magick\property.c"/>
+      <File RelativePath="..\..\magick\quantize.c"/>
+      <File RelativePath="..\..\magick\quantum-export.c"/>
+      <File RelativePath="..\..\magick\quantum-import.c"/>
+      <File RelativePath="..\..\magick\quantum.c"/>
+      <File RelativePath="..\..\magick\random.c"/>
+      <File RelativePath="..\..\magick\registry.c"/>
+      <File RelativePath="..\..\magick\resample.c"/>
+      <File RelativePath="..\..\magick\resize.c"/>
+      <File RelativePath="..\..\magick\resource.c"/>
+      <File RelativePath="..\..\magick\segment.c"/>
+      <File RelativePath="..\..\magick\semaphore.c"/>
+      <File RelativePath="..\..\magick\shear.c"/>
+      <File RelativePath="..\..\magick\signature.c"/>
+      <File RelativePath="..\..\magick\splay-tree.c"/>
+      <File RelativePath="..\..\magick\static.c"/>
+      <File RelativePath="..\..\magick\statistic.c"/>
+      <File RelativePath="..\..\magick\stream.c"/>
+      <File RelativePath="..\..\magick\string.c"/>
+      <File RelativePath="..\..\magick\thread.c"/>
+      <File RelativePath="..\..\magick\threshold.c"/>
+      <File RelativePath="..\..\magick\timer.c"/>
+      <File RelativePath="..\..\magick\token.c"/>
+      <File RelativePath="..\..\magick\transform.c"/>
+      <File RelativePath="..\..\magick\type.c"/>
+      <File RelativePath="..\..\magick\utility.c"/>
+      <File RelativePath="..\..\magick\version.c"/>
+      <File RelativePath="..\..\magick\vms.c"/>
+      <File RelativePath="..\..\magick\widget.c"/>
+      <File RelativePath="..\..\magick\xml-tree.c"/>
+      <File RelativePath="..\..\magick\xwindow.c"/>
+    </Filter>
+    <Filter Name="include" Filter="">
+      <File RelativePath="..\..\magick\accelerate.h"/>
+      <File RelativePath="..\..\magick\animate-private.h"/>
+      <File RelativePath="..\..\magick\animate.h"/>
+      <File RelativePath="..\..\magick\annotate.h"/>
+      <File RelativePath="..\..\magick\api.h"/>
+      <File RelativePath="..\..\magick\artifact.h"/>
+      <File RelativePath="..\..\magick\attribute.h"/>
+      <File RelativePath="..\..\magick\blob-private.h"/>
+      <File RelativePath="..\..\magick\blob.h"/>
+      <File RelativePath="..\..\magick\cache-private.h"/>
+      <File RelativePath="..\..\magick\cache-view.h"/>
+      <File RelativePath="..\..\magick\cache.h"/>
+      <File RelativePath="..\..\magick\cipher.h"/>
+      <File RelativePath="..\..\magick\client.h"/>
+      <File RelativePath="..\..\magick\coder.h"/>
+      <File RelativePath="..\..\magick\color-private.h"/>
+      <File RelativePath="..\..\magick\color.h"/>
+      <File RelativePath="..\..\magick\colormap-private.h"/>
+      <File RelativePath="..\..\magick\colormap.h"/>
+      <File RelativePath="..\..\magick\colorspace-private.h"/>
+      <File RelativePath="..\..\magick\colorspace.h"/>
+      <File RelativePath="..\..\magick\compare.h"/>
+      <File RelativePath="..\..\magick\composite-private.h"/>
+      <File RelativePath="..\..\magick\composite.h"/>
+      <File RelativePath="..\..\magick\compress.h"/>
+      <File RelativePath="..\..\magick\configure.h"/>
+      <File RelativePath="..\..\magick\constitute.h"/>
+      <File RelativePath="..\..\magick\decorate.h"/>
+      <File RelativePath="..\..\magick\delegate-private.h"/>
+      <File RelativePath="..\..\magick\delegate.h"/>
+      <File RelativePath="..\..\magick\deprecate.h"/>
+      <File RelativePath="..\..\magick\display-private.h"/>
+      <File RelativePath="..\..\magick\display.h"/>
+      <File RelativePath="..\..\magick\distort.h"/>
+      <File RelativePath="..\..\magick\draw-private.h"/>
+      <File RelativePath="..\..\magick\draw.h"/>
+      <File RelativePath="..\..\magick\effect.h"/>
+      <File RelativePath="..\..\magick\enhance.h"/>
+      <File RelativePath="..\..\magick\exception-private.h"/>
+      <File RelativePath="..\..\magick\exception.h"/>
+      <File RelativePath="..\..\magick\feature.h"/>
+      <File RelativePath="..\..\magick\fourier.h"/>
+      <File RelativePath="..\..\magick\fx-private.h"/>
+      <File RelativePath="..\..\magick\fx.h"/>
+      <File RelativePath="..\..\magick\gem.h"/>
+      <File RelativePath="..\..\magick\geometry.h"/>
+      <File RelativePath="..\..\magick\hashmap.h"/>
+      <File RelativePath="..\..\magick\histogram.h"/>
+      <File RelativePath="..\..\magick\identify.h"/>
+      <File RelativePath="..\..\magick\image-private.h"/>
+      <File RelativePath="..\..\magick\image-view.h"/>
+      <File RelativePath="..\..\magick\image.h"/>
+      <File RelativePath="..\..\magick\ImageMagick.h"/>
+      <File RelativePath="..\..\magick\layer.h"/>
+      <File RelativePath="..\..\magick\list.h"/>
+      <File RelativePath="..\..\magick\locale_.h"/>
+      <File RelativePath="..\..\magick\log.h"/>
+      <File RelativePath="..\..\magick\mac.h"/>
+      <File RelativePath="..\..\magick\magic.h"/>
+      <File RelativePath="..\..\magick\magick-config.h"/>
+      <File RelativePath="..\..\magick\magick-type.h"/>
+      <File RelativePath="..\..\magick\magick.h"/>
+      <File RelativePath="..\..\magick\MagickCore.h"/>
+      <File RelativePath="..\..\magick\matrix.h"/>
+      <File RelativePath="..\..\magick\memory_.h"/>
+      <File RelativePath="..\..\magick\methods.h"/>
+      <File RelativePath="..\..\magick\mime-private.h"/>
+      <File RelativePath="..\..\magick\mime.h"/>
+      <File RelativePath="..\..\magick\module.h"/>
+      <File RelativePath="..\..\magick\monitor-private.h"/>
+      <File RelativePath="..\..\magick\monitor.h"/>
+      <File RelativePath="..\..\magick\montage.h"/>
+      <File RelativePath="..\..\magick\morphology-private.h"/>
+      <File RelativePath="..\..\magick\morphology.h"/>
+      <File RelativePath="..\..\magick\nt-base.h"/>
+      <File RelativePath="..\..\magick\nt-feature.h"/>
+      <File RelativePath="..\..\magick\option.h"/>
+      <File RelativePath="..\..\magick\paint.h"/>
+      <File RelativePath="..\..\magick\pixel-private.h"/>
+      <File RelativePath="..\..\magick\pixel.h"/>
+      <File RelativePath="..\..\magick\policy.h"/>
+      <File RelativePath="..\..\magick\prepress.h"/>
+      <File RelativePath="..\..\magick\PreRvIcccm.h"/>
+      <File RelativePath="..\..\magick\profile.h"/>
+      <File RelativePath="..\..\magick\property.h"/>
+      <File RelativePath="..\..\magick\quantize.h"/>
+      <File RelativePath="..\..\magick\quantum-private.h"/>
+      <File RelativePath="..\..\magick\quantum.h"/>
+      <File RelativePath="..\..\magick\random-private.h"/>
+      <File RelativePath="..\..\magick\random_.h"/>
+      <File RelativePath="..\..\magick\registry.h"/>
+      <File RelativePath="..\..\magick\resample-private.h"/>
+      <File RelativePath="..\..\magick\resample.h"/>
+      <File RelativePath="..\..\magick\resize-private.h"/>
+      <File RelativePath="..\..\magick\resize.h"/>
+      <File RelativePath="..\..\magick\resource_.h"/>
+      <File RelativePath="..\..\magick\segment.h"/>
+      <File RelativePath="..\..\magick\semaphore-private.h"/>
+      <File RelativePath="..\..\magick\semaphore.h"/>
+      <File RelativePath="..\..\magick\shear.h"/>
+      <File RelativePath="..\..\magick\signature-private.h"/>
+      <File RelativePath="..\..\magick\signature.h"/>
+      <File RelativePath="..\..\magick\splay-tree.h"/>
+      <File RelativePath="..\..\magick\static.h"/>
+      <File RelativePath="..\..\magick\statistic.h"/>
+      <File RelativePath="..\..\magick\stream-private.h"/>
+      <File RelativePath="..\..\magick\stream.h"/>
+      <File RelativePath="..\..\magick\string-private.h"/>
+      <File RelativePath="..\..\magick\string_.h"/>
+      <File RelativePath="..\..\magick\studio.h"/>
+      <File RelativePath="..\..\magick\thread-private.h"/>
+      <File RelativePath="..\..\magick\thread_.h"/>
+      <File RelativePath="..\..\magick\threshold.h"/>
+      <File RelativePath="..\..\magick\timer.h"/>
+      <File RelativePath="..\..\magick\token-private.h"/>
+      <File RelativePath="..\..\magick\token.h"/>
+      <File RelativePath="..\..\magick\transform.h"/>
+      <File RelativePath="..\..\magick\type.h"/>
+      <File RelativePath="..\..\magick\utility-private.h"/>
+      <File RelativePath="..\..\magick\utility.h"/>
+      <File RelativePath="..\..\magick\version.h"/>
+      <File RelativePath="..\..\magick\vms.h"/>
+      <File RelativePath="..\..\magick\widget.h"/>
+      <File RelativePath="..\..\magick\xml-tree.h"/>
+      <File RelativePath="..\..\magick\xwindow-private.h"/>
+      <File RelativePath="..\..\magick\xwindow.h"/>
+    </Filter>
+    <Filter Name="resource" Filter="">
+      <File RelativePath="..\..\magick\ImageMagick.rc"/>
+    </Filter>
+  </Files>
+  <Globals>
+  </Globals>
+</VisualStudioProject>

@@ -1,8 +1,8 @@
 #include <QFileDialog>
 #include "VisibilityCheckToolCommands.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../Qt/Main/QtUtils.h"
-#include "../SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Main/QtUtils.h"
+#include "SceneEditor/EditorBodyControl.h"
 
 CommandSaveTextureVisibilityTool::CommandSaveTextureVisibilityTool()
 :	Command(COMMAND_WITHOUT_UNDO_EFFECT)

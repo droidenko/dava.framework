@@ -9,8 +9,8 @@
 #ifndef __PROPERTY_EDITOR_STATE_HELPER__H__
 #define __PROPERTY_EDITOR_STATE_HELPER__H__
 
-#include "../Main/QTreeViewStateHelper.h"
-#include "../QtPropertyEditor/QtPropertyModel.h"
+#include "Qt/Main/QTreeViewStateHelper.h"
+#include "Qt/QtPropertyEditor/QtPropertyModel.h"
 
 class PropertyEditorStateHelper : public DAVA::QTreeViewStateHelper<QString>
 {

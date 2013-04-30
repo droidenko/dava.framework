@@ -31,7 +31,7 @@
 #include "CameraController.h"
 
 #include "EditorSettings.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 
 namespace DAVA 

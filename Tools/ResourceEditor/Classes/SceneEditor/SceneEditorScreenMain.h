@@ -7,7 +7,7 @@
 
 #include "SettingsDialog.h"
 
-#include "../Constants.h"
+#include "Constants.h"
 
 
 

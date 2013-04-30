@@ -8,12 +8,12 @@
 #include <QRadioButton.h>
 
 #include "DAVAEngine.h"
-#include "../Constants.h"
-#include "Classes/SceneEditor/EditorSettings.h"
+#include "Constants.h"
+#include "SceneEditor/EditorSettings.h"
 
-#include "TextureBrowser/TextureBrowser.h"
-#include "MaterialBrowser/MaterialBrowser.h"
-#include "Classes/Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
+#include "Qt/TextureBrowser/TextureBrowser.h"
+#include "Qt/MaterialBrowser/MaterialBrowser.h"
+#include "Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
 
 class Command;
 class QMenu;

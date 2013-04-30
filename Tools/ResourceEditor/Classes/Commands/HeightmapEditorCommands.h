@@ -3,7 +3,7 @@
 
 #include "DAVAEngine.h"
 #include "Command.h"
-#include "../SceneEditor/LandscapeEditorHeightmap.h"
+#include "SceneEditor/LandscapeEditorHeightmap.h"
 
 class HeightmapModificationCommand: public Command
 {

@@ -2,7 +2,7 @@
 #define __TEXTURE_OPTIONS_COMMANDS_H__
 
 #include "Command.h"
-#include "../Constants.h"
+#include "Constants.h"
 #include "DAVAEngine.h"
 
 class ReloadTexturesAsCommand: public Command

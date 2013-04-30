@@ -2,8 +2,8 @@
 #define __TEXTURE_PROPERTIES_H__
 
 #include "DAVAEngine.h"
-#include "QtPropertyBrowser/qttreepropertybrowser.h"
-#include "QtPropertyBrowser/qtgroupboxpropertybrowser.h"
+#include "Qt/QtPropertyBrowser/qttreepropertybrowser.h"
+#include "Qt/QtPropertyBrowser/qtgroupboxpropertybrowser.h"
 
 #include <QMap>
 #include <QSize>

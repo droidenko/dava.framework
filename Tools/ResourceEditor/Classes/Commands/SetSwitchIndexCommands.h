@@ -3,8 +3,8 @@
 
 #include "Command.h"
 #include "DAVAEngine.h"
-#include "../Constants.h"
-#include "../Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
+#include "Constants.h"
+#include "Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
 
 namespace DAVA
 {

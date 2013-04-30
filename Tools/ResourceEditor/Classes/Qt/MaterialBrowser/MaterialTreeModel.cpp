@@ -1,5 +1,5 @@
 #include <QtGui>
-#include "MaterialBrowser/MaterialTreeModel.h"
+#include "Qt/MaterialBrowser/MaterialTreeModel.h"
 
 MaterialTreeModel::MaterialTreeModel(QObject *parent)
 	: QAbstractItemModel(parent)

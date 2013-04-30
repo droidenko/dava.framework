@@ -5,12 +5,8 @@
 #include <QString>
 #include <QColor>
 
-#define QSTRING_TO_DAVASTRING(str)   (str).toStdString().data()
-
 DAVA::FilePath PathnameToDAVAStyle(const QString &convertedPathname);
-
 DAVA::FilePath GetOpenFileName(const DAVA::String &title, const DAVA::FilePath &pathname, const DAVA::String &filter);
-
 
 DAVA::WideString SizeInBytesToWideString(DAVA::float32 size);
 DAVA::String SizeInBytesToString(DAVA::float32 size);

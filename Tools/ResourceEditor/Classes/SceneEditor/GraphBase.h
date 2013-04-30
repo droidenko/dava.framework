@@ -14,7 +14,7 @@ public:
 };
 
 //class EditorScene;
-#include "../EditorScene.h"
+#include "EditorScene.h"
 
 class GraphBase: 
         public BaseObject, 

@@ -1,11 +1,11 @@
 #include "TilemapEditorCommands.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../LandscapeEditor/EditorLandscape.h"
-#include "../LandscapeEditor/LandscapesController.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "LandscapeEditor/EditorLandscape.h"
+#include "LandscapeEditor/LandscapesController.h"
 
 CommandDrawTilemap::CommandDrawTilemap(Image* originalImage, Image* newImage, const FilePath & pathname, Landscape* landscape)
 :	Command(COMMAND_UNDO_REDO)

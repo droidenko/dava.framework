@@ -1,8 +1,8 @@
 #include "DAVAEngine.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaKeyedArchive.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataIntoCollection.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataIntrospection.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaKeyedArchive.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataIntoCollection.h"
 
 QtPropertyDataIntrospection::QtPropertyDataIntrospection(void *_object, const DAVA::IntrospectionInfo *_info, int hasAnyFlags, int hasNotAnyFlags)
 	: object(_object)

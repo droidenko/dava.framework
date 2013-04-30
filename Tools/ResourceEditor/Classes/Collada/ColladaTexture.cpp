@@ -6,7 +6,7 @@
 #include "Render/Image.h"
 #include "FileSystem/FileSystem.h"
 #include "Utils/Utils.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 ///*
 // INCLUDE DevIL

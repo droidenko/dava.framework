@@ -2,10 +2,10 @@
 
 #include "HeightmapNode.h"
 #include "EditorSettings.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "EditorBodyControl.h"
 
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 #include "Scene3D/Components/DebugRenderComponent.h"
 
 

@@ -1,6 +1,6 @@
 #include <QImage>
 #include <QPainter>
-#include "MaterialBrowser/MaterialViewModel.h"
+#include "Qt/MaterialBrowser/MaterialViewModel.h"
 
 MaterialViewModel::MaterialViewModel(QObject *parent /* = 0 */)
 	: treeItem(NULL)

@@ -1,9 +1,9 @@
 #include "SpritePackerHelper.h"
-#include "DockParticleEditor/ParticlesEditorController.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
 
-#include "../SpritesPacker.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "./Scene/SceneDataManager.h"
+#include "SpritesPacker.h"
+#include "SceneEditor/EditorSettings.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 #include <QtConcurrentRun>
 

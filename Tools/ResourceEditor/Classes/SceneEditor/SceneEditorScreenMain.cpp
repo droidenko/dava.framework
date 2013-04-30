@@ -3,7 +3,7 @@
 #include "EditorBodyControl.h"
 
 #include "ControlsFactory.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "MaterialEditor.h"
 
 #include "EditorSettings.h"
@@ -18,14 +18,14 @@
 #include "SceneExporter.h"
 #include "SceneSaver.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Main/ScenePreviewDialog.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Main/ScenePreviewDialog.h"
+#include "Qt/Main/QtUtils.h"
 #include "FileSystem/FileSystem.h"
 
-#include "../Commands/SceneEditorScreenMainCommands.h"
-#include "../Commands/CommandsManager.h"
+#include "Commands/SceneEditorScreenMainCommands.h"
+#include "Commands/CommandsManager.h"
 
 SceneEditorScreenMain::SceneEditorScreenMain()
 	:	UIScreen()

@@ -8,16 +8,16 @@
 
 #include "HeightmapNode.h"
 
-#include "../LandscapeEditor/EditorHeightmap.h"
-#include "../LandscapeEditor/EditorLandscape.h"
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Main/QtUtils.h"
+#include "LandscapeEditor/EditorHeightmap.h"
+#include "LandscapeEditor/EditorLandscape.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtUtils.h"
 
 #include "EditorBodyControl.h"
 #include "cmath"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/VisibilityCheckToolCommands.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/VisibilityCheckToolCommands.h"
 
 #define VISIBILITY_POINT_CURSOR_SCALE 0.2f
 

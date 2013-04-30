@@ -2,7 +2,7 @@
 #define __SCENE_COLLISION_SYSTEM_H__
 
 #include <QMap>
-#include "Scene/EntityGroup.h"
+#include "Qt/Scene/EntityGroup.h"
 
 // bullet
 #include "bullet/btBulletCollisionCommon.h"

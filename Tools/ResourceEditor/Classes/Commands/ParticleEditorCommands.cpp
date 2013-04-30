@@ -1,20 +1,20 @@
 #include "ParticleEditorCommands.h"
 #include "DAVAEngine.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../SceneEditor/SceneGraph.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/SceneGraph.h"
+#include "SceneEditor/EditorSettings.h"
 
-#include "DockParticleEditor/ParticlesEditorController.h"
 #include "ParticlesEditorQT/Nodes/BaseParticleEditorNode.h"
 #include "ParticlesEditorQT/Nodes/EmitterParticleEditorNode.h"
 #include "ParticlesEditorQT/Nodes/LayerParticleEditorNode.h"
 
-#include "../Qt/Main/QtUtils.h"
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
+
 #include <QFileDialog>
 #include <QString>
 
@@ -154,7 +154,7 @@ void CommandUpdateParticleLayer::Init(const QString& layerName,
 
 void CommandUpdateParticleLayer::Execute()
 {
-	layer->layerName = layerName.toStdString();
+	layer->layerName = layerName.toAscii().constData();
 	layer->isDisabled = isDisabled;
 	layer->SetAdditive(additive);
 	layer->SetLong(isLong);
@@ -502,7 +502,7 @@ void CommandLoadParticleEmitterFromYaml::Execute()
     }
     
     QString projectPath = QString(EditorSettings::Instance()->GetParticlesConfigsPath().GetAbsolutePathname().c_str());
-	Logger::Debug("Project path: %s", projectPath.toStdString().c_str());
+	Logger::Debug("Project path: %s", projectPath.toAscii().constData());
 	QString filePath = QFileDialog::getOpenFileName(NULL, QString("Open Particle Emitter Yaml file"),
                                                     projectPath, QString("YAML File (*.yaml)"));
 	if (filePath.isEmpty())
@@ -519,7 +519,7 @@ void CommandLoadParticleEmitterFromYaml::Execute()
     	return;
     }
 
-    emitter->LoadFromYaml(filePath.toStdString());
+    emitter->LoadFromYaml(filePath.toAscii().constData());
 
 	// Perform the validation of the Yaml file loaded.
 	String validationMessage;
@@ -564,7 +564,7 @@ void CommandSaveParticleEmitterToYaml::Execute()
             return;
         }
         
-        yamlPath = FilePath(filePath.toStdString());
+        yamlPath = FilePath(filePath.toAscii().constData());
     }
 
     emitter->SaveToYaml(yamlPath);

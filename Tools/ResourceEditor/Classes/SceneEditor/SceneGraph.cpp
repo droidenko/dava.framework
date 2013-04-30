@@ -1,19 +1,19 @@
 #include "SceneGraph.h"
 #include "ControlsFactory.h"
 
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "EditorSettings.h"
 #include "PropertyControlCreator.h"
 
 #include "SceneValidator.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Main/QtUtils.h"
 #include "Scene3D/Components/DebugRenderComponent.h"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/SceneGraphCommands.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/SceneGraphCommands.h"
 
 SceneGraph::SceneGraph(GraphBaseDelegate *newDelegate, const Rect &rect)
     :   GraphBase(newDelegate, rect)

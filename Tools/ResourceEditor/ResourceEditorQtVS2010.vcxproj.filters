@@ -88,12 +88,6 @@
     <Filter Include="Sources\Qt">
       <UniqueIdentifier>{b7306c70-2f2b-4ffc-8fe2-acb1e3bb6717}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Qt\QtPropertyBrowser">
-      <UniqueIdentifier>{d1d39e29-1b06-4a84-a2fe-17cfb8b61690}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Qt\QtPropertyBrowser\Dava">
-      <UniqueIdentifier>{ca344db2-f6c0-4a5c-9159-1b80dd5300b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Qt\QtPosSaver">
       <UniqueIdentifier>{5139cbe9-d6b3-4aef-9d36-62293b1aad8a}</UniqueIdentifier>
     </Filter>
@@ -234,6 +228,9 @@
     </Filter>
     <Filter Include="QtGenerated\DockSceneInfo">
       <UniqueIdentifier>{eb98cf11-941e-4f68-9493-8c0e36af005e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Qt\QtPropertyBrowser">
+      <UniqueIdentifier>{73bd8793-9bbd-4b91-938b-d1a4b23454c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -915,30 +912,6 @@
     <ClCompile Include="Classes\RulerTool\RulerTool.cpp">
       <Filter>Sources\RulerTool</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtbuttonpropertybrowser.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qteditorfactory.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtgroupboxpropertybrowser.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowser.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowserutils.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertymanager.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qttreepropertybrowser.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtvariantproperty.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Qt\main.cpp">
       <Filter>Sources\Qt</Filter>
     </ClCompile>
@@ -1124,9 +1097,6 @@
     </ClCompile>
     <ClCompile Include="_GeneratedQt\DockCustomColors\CustomColorsView_moc.cpp">
       <Filter>QtGenerated\DockCustomColors</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\QtPropertyBrowser\Dava\qtDavaVectorPropertyManager.cpp">
-      <Filter>Sources\Qt\QtPropertyBrowser\Dava</Filter>
     </ClCompile>
     <ClCompile Include="_GeneratedQt\QtPropertyBrowser\Dava\qtDavaVectorPropertyManager_moc.cpp">
       <Filter>QtGenerated\QtPropertyBrowser\Dava</Filter>
@@ -1640,6 +1610,33 @@
     </ClCompile>
     <ClCompile Include="Classes\Qt\Scene\SceneManager.cpp">
       <Filter>Sources\Qt\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\Dava\qtDavaVectorPropertyManager.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtbuttonpropertybrowser.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qteditorfactory.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtgroupboxpropertybrowser.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowser.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowserutils.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtpropertymanager.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qttreepropertybrowser.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\QtPropertyBrowser\qtvariantproperty.cpp">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2375,30 +2372,6 @@
     <ClInclude Include="Classes\RulerTool\RulerTool.h">
       <Filter>Sources\RulerTool</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtbuttonpropertybrowser.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qteditorfactory.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtgroupboxpropertybrowser.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowser.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowserutils_p.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertymanager.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qttreepropertybrowser.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtvariantproperty.h">
-      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\Qt\QtPosSaver\QtPosSaver.h">
       <Filter>Sources\Qt\QtPosSaver</Filter>
     </ClInclude>
@@ -2503,9 +2476,6 @@
     </ClInclude>
     <ClInclude Include="Classes\Qt\DockCustomColors\CustomColorsView.h">
       <Filter>Sources\Qt\DockCustomColors</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\QtPropertyBrowser\Dava\qtDavaVectorPropertyManager.h">
-      <Filter>Sources\Qt\QtPropertyBrowser\Dava</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Qt\QtPropertyEditor\QtPropertyItem.h">
       <Filter>Sources\Qt\QtPropertyEditor</Filter>
@@ -2881,6 +2851,33 @@
     </ClInclude>
     <ClInclude Include="Classes\Qt\Scene\SceneManager.h">
       <Filter>Sources\Qt\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\Dava\qtDavaVectorPropertyManager.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtbuttonpropertybrowser.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qteditorfactory.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtgroupboxpropertybrowser.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowser.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertybrowserutils_p.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtpropertymanager.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qttreepropertybrowser.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\QtPropertyBrowser\qtvariantproperty.h">
+      <Filter>Sources\Qt\QtPropertyBrowser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

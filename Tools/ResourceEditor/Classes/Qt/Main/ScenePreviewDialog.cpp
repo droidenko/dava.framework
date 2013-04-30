@@ -1,7 +1,7 @@
 #include "ScenePreviewDialog.h"
 
-#include "../SceneEditor/ControlsFactory.h"
-#include "../SceneEditor/ScenePreviewControl.h"
+#include "SceneEditor/ControlsFactory.h"
+#include "SceneEditor/ScenePreviewControl.h"
 
 ScenePreviewDialog::ScenePreviewDialog()
     :   ExtendedDialog()

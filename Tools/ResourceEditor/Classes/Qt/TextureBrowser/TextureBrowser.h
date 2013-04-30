@@ -4,8 +4,8 @@
 #include <QDialog>
 #include <QMap>
 #include "DAVAEngine.h"
-#include "QtPosSaver/QtPosSaver.h"
-#include "Scene/SceneDataManager.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 class QModelIndex;
 class TextureListDelegate;

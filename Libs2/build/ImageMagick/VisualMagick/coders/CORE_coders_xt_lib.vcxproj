@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>CORE_coders</ProjectName>
+    <ProjectGuid>{A9BDE908-F824-4C98-8A67-A908F00333C2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Release\CORE_coders\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Debug\CORE_coders\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\coders;..\..\wmf;..\..\wmf\include;..\..\tiff;..\..\tiff\libtiff;..\..\png;..\..\fpx;..\..\fpx\basics;..\..\fpx\fpx;..\..\fpx\jpeg;..\..\fpx\ole;..\..\fpx\ri_image;..\..\jbig;..\..\jbig\libjbig;..\..\jp2;..\..\jp2\src;..\..\jp2\src\libjasper;..\..\jp2\src\libjasper\base;..\..\jp2\src\libjasper\include;..\..\jp2\src\libjasper\include\jasper;..\..\jp2\src\libjasper\jp2;..\..\jp2\src\libjasper\jpc;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_RL_coders_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <OmitFramePointers>false</OmitFramePointers>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\coders;..\..\wmf;..\..\wmf\include;..\..\tiff;..\..\tiff\libtiff;..\..\png;..\..\fpx;..\..\fpx\basics;..\..\fpx\fpx;..\..\fpx\jpeg;..\..\fpx\ole;..\..\fpx\ri_image;..\..\jbig;..\..\jbig\libjbig;..\..\jp2;..\..\jp2\src;..\..\jp2\src\libjasper;..\..\jp2\src\libjasper\base;..\..\jp2\src\libjasper\include;..\..\jp2\src\libjasper\include\jasper;..\..\jp2\src\libjasper\jp2;..\..\jp2\src\libjasper\jpc;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_DB_coders_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\coders\aai.c" />
+    <ClCompile Include="..\..\coders\art.c" />
+    <ClCompile Include="..\..\coders\avs.c" />
+    <ClCompile Include="..\..\coders\bgr.c" />
+    <ClCompile Include="..\..\coders\bmp.c" />
+    <ClCompile Include="..\..\coders\braille.c" />
+    <ClCompile Include="..\..\coders\cals.c" />
+    <ClCompile Include="..\..\coders\caption.c" />
+    <ClCompile Include="..\..\coders\cin.c" />
+    <ClCompile Include="..\..\coders\cip.c" />
+    <ClCompile Include="..\..\coders\clip.c" />
+    <ClCompile Include="..\..\coders\clipboard.c" />
+    <ClCompile Include="..\..\coders\cmyk.c" />
+    <ClCompile Include="..\..\coders\cut.c" />
+    <ClCompile Include="..\..\coders\dcm.c" />
+    <ClCompile Include="..\..\coders\dds.c" />
+    <ClCompile Include="..\..\coders\debug.c" />
+    <ClCompile Include="..\..\coders\dib.c" />
+    <ClCompile Include="..\..\coders\djvu.c" />
+    <ClCompile Include="..\..\coders\dng.c" />
+    <ClCompile Include="..\..\coders\dot.c" />
+    <ClCompile Include="..\..\coders\dps.c" />
+    <ClCompile Include="..\..\coders\dpx.c" />
+    <ClCompile Include="..\..\coders\emf.c" />
+    <ClCompile Include="..\..\coders\ept.c" />
+    <ClCompile Include="..\..\coders\exr.c" />
+    <ClCompile Include="..\..\coders\fax.c" />
+    <ClCompile Include="..\..\coders\fits.c" />
+    <ClCompile Include="..\..\coders\fpx.c" />
+    <ClCompile Include="..\..\coders\gif.c" />
+    <ClCompile Include="..\..\coders\gradient.c" />
+    <ClCompile Include="..\..\coders\gray.c" />
+    <ClCompile Include="..\..\coders\hald.c" />
+    <ClCompile Include="..\..\coders\hdr.c" />
+    <ClCompile Include="..\..\coders\histogram.c" />
+    <ClCompile Include="..\..\coders\hrz.c" />
+    <ClCompile Include="..\..\coders\html.c" />
+    <ClCompile Include="..\..\coders\icon.c" />
+    <ClCompile Include="..\..\coders\info.c" />
+    <ClCompile Include="..\..\coders\inline.c" />
+    <ClCompile Include="..\..\coders\ipl.c" />
+    <ClCompile Include="..\..\coders\jbig.c" />
+    <ClCompile Include="..\..\coders\jp2.c" />
+    <ClCompile Include="..\..\coders\jpeg.c" />
+    <ClCompile Include="..\..\coders\label.c" />
+    <ClCompile Include="..\..\coders\mac.c" />
+    <ClCompile Include="..\..\coders\magick.c" />
+    <ClCompile Include="..\..\coders\map.c" />
+    <ClCompile Include="..\..\coders\mat.c" />
+    <ClCompile Include="..\..\coders\matte.c" />
+    <ClCompile Include="..\..\coders\meta.c" />
+    <ClCompile Include="..\..\coders\miff.c" />
+    <ClCompile Include="..\..\coders\mono.c" />
+    <ClCompile Include="..\..\coders\mpc.c" />
+    <ClCompile Include="..\..\coders\mpeg.c" />
+    <ClCompile Include="..\..\coders\mpr.c" />
+    <ClCompile Include="..\..\coders\msl.c" />
+    <ClCompile Include="..\..\coders\mtv.c" />
+    <ClCompile Include="..\..\coders\mvg.c" />
+    <ClCompile Include="..\..\coders\null.c" />
+    <ClCompile Include="..\..\coders\otb.c" />
+    <ClCompile Include="..\..\coders\palm.c" />
+    <ClCompile Include="..\..\coders\pattern.c" />
+    <ClCompile Include="..\..\coders\pcd.c" />
+    <ClCompile Include="..\..\coders\pcl.c" />
+    <ClCompile Include="..\..\coders\pcx.c" />
+    <ClCompile Include="..\..\coders\pdb.c" />
+    <ClCompile Include="..\..\coders\pdf.c" />
+    <ClCompile Include="..\..\coders\pes.c" />
+    <ClCompile Include="..\..\coders\pict.c" />
+    <ClCompile Include="..\..\coders\pix.c" />
+    <ClCompile Include="..\..\coders\plasma.c" />
+    <ClCompile Include="..\..\coders\png.c" />
+    <ClCompile Include="..\..\coders\pnm.c" />
+    <ClCompile Include="..\..\coders\preview.c" />
+    <ClCompile Include="..\..\coders\ps.c" />
+    <ClCompile Include="..\..\coders\ps2.c" />
+    <ClCompile Include="..\..\coders\ps3.c" />
+    <ClCompile Include="..\..\coders\psd.c" />
+    <ClCompile Include="..\..\coders\pwp.c" />
+    <ClCompile Include="..\..\coders\raw.c" />
+    <ClCompile Include="..\..\coders\rgb.c" />
+    <ClCompile Include="..\..\coders\rla.c" />
+    <ClCompile Include="..\..\coders\rle.c" />
+    <ClCompile Include="..\..\coders\scr.c" />
+    <ClCompile Include="..\..\coders\sct.c" />
+    <ClCompile Include="..\..\coders\sfw.c" />
+    <ClCompile Include="..\..\coders\sgi.c" />
+    <ClCompile Include="..\..\coders\stegano.c" />
+    <ClCompile Include="..\..\coders\sun.c" />
+    <ClCompile Include="..\..\coders\svg.c" />
+    <ClCompile Include="..\..\coders\tga.c" />
+    <ClCompile Include="..\..\coders\thumbnail.c" />
+    <ClCompile Include="..\..\coders\tiff.c" />
+    <ClCompile Include="..\..\coders\tile.c" />
+    <ClCompile Include="..\..\coders\tim.c" />
+    <ClCompile Include="..\..\coders\ttf.c" />
+    <ClCompile Include="..\..\coders\txt.c" />
+    <ClCompile Include="..\..\coders\uil.c" />
+    <ClCompile Include="..\..\coders\url.c" />
+    <ClCompile Include="..\..\coders\uyvy.c" />
+    <ClCompile Include="..\..\coders\vicar.c" />
+    <ClCompile Include="..\..\coders\vid.c" />
+    <ClCompile Include="..\..\coders\viff.c" />
+    <ClCompile Include="..\..\coders\wbmp.c" />
+    <ClCompile Include="..\..\coders\webp.c" />
+    <ClCompile Include="..\..\coders\wmf.c" />
+    <ClCompile Include="..\..\coders\wpg.c" />
+    <ClCompile Include="..\..\coders\x.c" />
+    <ClCompile Include="..\..\coders\xbm.c" />
+    <ClCompile Include="..\..\coders\xc.c" />
+    <ClCompile Include="..\..\coders\xcf.c" />
+    <ClCompile Include="..\..\coders\xpm.c" />
+    <ClCompile Include="..\..\coders\xps.c" />
+    <ClCompile Include="..\..\coders\xtrn.c" />
+    <ClCompile Include="..\..\coders\xwd.c" />
+    <ClCompile Include="..\..\coders\ycbcr.c" />
+    <ClCompile Include="..\..\coders\yuv.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

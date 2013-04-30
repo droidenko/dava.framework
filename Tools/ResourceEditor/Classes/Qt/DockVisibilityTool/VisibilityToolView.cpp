@@ -1,7 +1,7 @@
 #include "VisibilityToolView.h"
 #include "ui_VisibilityToolView.h"
 
-#include "Classes/Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtMainWindowHandler.h"
 
 VisibilityToolView::VisibilityToolView(QWidget* parent)
 :	QWidget(parent),

@@ -1,7 +1,7 @@
 #include <QTreeView>
-#include "../SceneEditor/EditorSettings.h"
-#include "Main/QtUtils.h"
-#include "DockLibrary/LibraryModel.h"
+#include "SceneEditor/EditorSettings.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/DockLibrary/LibraryModel.h"
 #include "DAVAEngine.h"
 
 using namespace DAVA;

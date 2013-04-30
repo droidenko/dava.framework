@@ -1,4 +1,4 @@
-#include "QtPosSaver/QtPosSaver.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
 #include <QHeaderView>
 
 bool QtPosSaver::settingsArchiveIsLoaded = false;
@@ -127,7 +127,7 @@ void QtPosSaver::SaveValue(const QString &key, const DAVA::VariantType &value)
 	if(settingsArchiveIsLoaded && !key.isEmpty())
 	{
 		QString k = attachedWidgetName + "-" + key;
-		settingsArchive.SetVariant(k.toStdString(), value);
+		settingsArchive.SetVariant(k.toAscii().constData(), value);
 	}
 }
 
@@ -138,7 +138,7 @@ DAVA::VariantType QtPosSaver::LoadValue(const QString &key)
 	if(settingsArchiveIsLoaded && !key.isEmpty())
 	{
 		QString k = attachedWidgetName + "-" + key;
-		DAVA::VariantType *val = settingsArchive.GetVariant(k.toStdString());
+		DAVA::VariantType *val = settingsArchive.GetVariant(k.toAscii().constData());
 		if(NULL != val)
 		{
 			v = *val;
@@ -152,7 +152,7 @@ void QtPosSaver::Save(const QString &key, const QByteArray &data)
 {
 	if(settingsArchiveIsLoaded && !key.isEmpty() && !data.isEmpty())
 	{
-		settingsArchive.SetByteArray(key.toStdString(), (const DAVA::uint8 *) data.constData(), data.size());
+		settingsArchive.SetByteArray(key.toAscii().constData(), (const DAVA::uint8 *) data.constData(), data.size());
 	}
 }
 
@@ -162,8 +162,8 @@ QByteArray QtPosSaver::Load(const QString &key)
 
 	if(settingsArchiveIsLoaded && !key.isEmpty())
 	{
-		int sz = settingsArchive.GetByteArraySize(key.toStdString());
-		const DAVA::uint8 *dt = settingsArchive.GetByteArray(key.toStdString());
+		int sz = settingsArchive.GetByteArraySize(key.toAscii().constData());
+		const DAVA::uint8 *dt = settingsArchive.GetByteArray(key.toAscii().constData());
 
 		if(NULL != dt)
 		{

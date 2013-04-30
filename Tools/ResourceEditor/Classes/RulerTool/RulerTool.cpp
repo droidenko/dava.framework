@@ -27,18 +27,18 @@
 
 #include "RulerTool.h"
 
-#include "../EditorScene.h"
-#include "../SceneEditor/EditorBodyControl.h"
+#include "EditorScene.h"
+#include "SceneEditor/EditorBodyControl.h"
 
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Main/QtUtils.h"
-#include "../SceneEditor/HeightmapNode.h"
-#include "../LandscapeEditor/RulerToolLandscape.h"
-#include "../LandscapeEditor/LandscapesController.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtUtils.h"
+#include "SceneEditor/HeightmapNode.h"
+#include "LandscapeEditor/RulerToolLandscape.h"
+#include "LandscapeEditor/LandscapesController.h"
 
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 using namespace DAVA;
 

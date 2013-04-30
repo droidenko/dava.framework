@@ -2,7 +2,7 @@
 #define __SCENE_GRAPH_ITEM_H__
 
 #include "GraphItem.h"
-#include "DockSceneGraph/ExtraUserData.h"
+#include "Qt/DockSceneGraph/ExtraUserData.h"
 
 class SceneGraphItem: public GraphItem
 {

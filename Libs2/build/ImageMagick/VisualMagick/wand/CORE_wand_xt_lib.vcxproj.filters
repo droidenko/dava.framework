@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{05c66a5b-6667-4bec-8dcb-2c739bde8499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{976d0a53-ee05-4512-9639-49f28f5585ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{8ce26db0-3cce-452f-9189-2845342ff357}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\wand\animate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\compare.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\composite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\conjure.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\convert.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\deprecate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\display.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\drawing-wand.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\identify.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\import.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\magick-image.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\magick-property.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\magick-wand.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\mogrify.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\montage.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\pixel-iterator.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\pixel-wand.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\stream.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\wand-view.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wand\wand.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wand.rc">
+      <Filter>src</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\wand\animate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\compare.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\composite.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\conjure.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\convert.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\deprecate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\display.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\drawing-wand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\identify.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\import.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\magick-image.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\magick-property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\magick-wand-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\magick-wand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\MagickWand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\magick_wand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\mogrify-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\mogrify.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\montage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\pixel-iterator.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\pixel-wand-private.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\pixel-wand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\stream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\studio.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\wand-config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\wand-view.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wand\wand.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,13 +1,13 @@
 #include "DAVAEngine.h"
-#include "DockSceneInfo/SceneInfo.h"
-#include "Scene/SceneDataManager.h"
-#include "../../SceneEditor/EditorSettings.h"
-#include "../../EditorScene.h"
+#include "Qt/DockSceneInfo/SceneInfo.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorSettings.h"
+#include "EditorScene.h"
 
-#include "../../SceneEditor/CommandLineTool.h"
+#include "SceneEditor/CommandLineTool.h"
 
 
-#include "Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 #include "Render/LibPVRHelper.h"
 #include "Render/LibDxtHelper.h"

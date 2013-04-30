@@ -1,8 +1,8 @@
 #include "DAVAEngine.h"
 #include "Debug/DVAssert.h"
-#include "Main/QtUtils.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaKeyedArchive.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaKeyedArchive.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
 
 #include <QSet>
 #include <QMenu>
@@ -65,7 +65,7 @@ void QtPropertyDataDavaKeyedArcive::ChildChanged(const QString &key, QtPropertyD
 		QtPropertyDataDavaVariant *variantData = dynamic_cast<QtPropertyDataDavaVariant *>(data);
 		if(NULL != variantData)
 		{
-			curArchive->SetVariant(key.toStdString(), variantData->GetVariantValue());
+			curArchive->SetVariant(key.toAscii().constData(), variantData->GetVariantValue());
 		}
 	}
 }
@@ -180,7 +180,7 @@ void QtPropertyDataDavaKeyedArcive::RemKeyedArchiveField()
 					const QtPropertyOW *ow = childData->GetOW(j);
 					if(NULL != ow && ow->widget == btn)
 					{
-						curArchive->DeleteKey(child.first.toStdString());
+						curArchive->DeleteKey(child.first.toAscii().constData());
 						ChildsSync();
 						break;
 					}
@@ -298,7 +298,7 @@ void KeyedArchiveItemWidget::OkKeyPressed()
 {
 	if(NULL != arch)
 	{
-		DAVA::String key = keyWidget->text().toStdString();
+		DAVA::String key = keyWidget->text().toAscii().constData();
 
 		if(key.empty())
 		{

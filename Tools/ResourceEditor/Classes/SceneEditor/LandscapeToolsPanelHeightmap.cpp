@@ -1,7 +1,7 @@
 #include "LandscapeToolsPanelHeightmap.h"
 #include "ControlsFactory.h"
 #include "LandscapeTool.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 LandscapeToolsPanelHeightmap::LandscapeToolsPanelHeightmap(LandscapeToolsPanelDelegate *newDelegate, const Rect & rect)
     :   LandscapeToolsPanel(newDelegate, rect)

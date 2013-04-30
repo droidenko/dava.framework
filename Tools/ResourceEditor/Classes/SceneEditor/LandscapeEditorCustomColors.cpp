@@ -8,16 +8,16 @@
 
 #include "HeightmapNode.h"
 
-#include "../LandscapeEditor/EditorHeightmap.h"
-#include "../LandscapeEditor/EditorLandscape.h"
+#include "LandscapeEditor/EditorHeightmap.h"
+#include "LandscapeEditor/EditorLandscape.h"
 #include "EditorBodyControl.h"
 #include "SceneGraph.h"
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Main/QtUtils.h"
-#include "../Commands/CustomColorCommands.h"
-#include "../Commands/CommandsManager.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Main/QtUtils.h"
+#include "Commands/CustomColorCommands.h"
+#include "Commands/CommandsManager.h"
 
 #define CUSTOM_COLOR_TEXTURE_PROP "customColorTexture"
 

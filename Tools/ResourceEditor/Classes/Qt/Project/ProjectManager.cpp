@@ -1,10 +1,10 @@
 #include <QFileDialog>
-#include "Project/ProjectManager.h"
-#include "Main/QtUtils.h"
-#include "Classes/SceneEditor/EditorSettings.h"
-#include "Classes/SceneEditor/SceneValidator.h"
-#include "Classes/SceneEditor/EditorConfig.h"
-#include "Classes/SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Project/ProjectManager.h"
+#include "Qt/Main/QtUtils.h"
+#include "SceneEditor/EditorSettings.h"
+#include "SceneEditor/SceneValidator.h"
+#include "SceneEditor/EditorConfig.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 
 ProjectManager::ProjectManager()
 	: curProjectPath("")

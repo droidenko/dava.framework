@@ -34,7 +34,7 @@
 #include "SceneExporter.h"
 #include "SceneSaver.h"
 
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 void SceneUtilsScreen::LoadResources()
 {

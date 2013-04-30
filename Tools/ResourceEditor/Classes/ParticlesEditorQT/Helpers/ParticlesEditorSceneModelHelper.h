@@ -20,8 +20,8 @@
 #include "ParticlesEditorQT/Nodes/LayerParticleEditorNode.h"
 #include "ParticlesEditorQT/Nodes/ForceParticleEditorNode.h"
 
-#include "Scene/SceneData.h"
-#include "DockSceneGraph/SceneGraphItem.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/DockSceneGraph/SceneGraphItem.h"
 
 #include "Commands/Command.h"
 

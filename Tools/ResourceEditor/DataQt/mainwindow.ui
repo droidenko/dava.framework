@@ -1314,66 +1314,66 @@
   <customwidget>
    <class>QSceneGraphTreeView</class>
    <extends>QTreeView</extends>
-   <header>DockSceneGraph/QSceneGraphTreeView.h</header>
+   <header>Qt/DockSceneGraph/QSceneGraphTreeView.h</header>
   </customwidget>
   <customwidget>
    <class>LibraryView</class>
    <extends>QTreeView</extends>
-   <header>DockLibrary/libraryview.h</header>
+   <header>Qt/DockLibrary/libraryview.h</header>
   </customwidget>
   <customwidget>
    <class>CustomColorsView</class>
    <extends>QWidget</extends>
-   <header>DockCustomColors/CustomColorsView.h</header>
+   <header>Qt/DockCustomColors/CustomColorsView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>VisibilityToolView</class>
    <extends>QWidget</extends>
-   <header>DockVisibilityTool/VisibilityToolView.h</header>
+   <header>Qt/DockVisibilityTool/VisibilityToolView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PropertyEditor</class>
    <extends>QTreeView</extends>
-   <header>DockProperties/PropertyEditor.h</header>
+   <header>Qt/DockProperties/PropertyEditor.h</header>
   </customwidget>
   <customwidget>
    <class>ParticleEditorWidget</class>
    <extends>QWidget</extends>
-   <header>DockParticleEditor/particleeditorwidget.h</header>
+   <header>Qt/DockParticleEditor/particleeditorwidget.h</header>
   </customwidget>
   <customwidget>
    <class>ParticleTimeLineWidget</class>
    <extends>QWidget</extends>
-   <header>DockParticleEditor/particletimelinewidget.h</header>
+   <header>Qt/DockParticleEditor/particletimelinewidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SetSwitchIndexView</class>
    <extends>QWidget</extends>
-   <header>DockSetSwitchIndex/SetSwitchIndexView.h</header>
+   <header>Qt/DockSetSwitchIndex/SetSwitchIndexView.h</header>
   </customwidget>
   <customwidget>
    <class>HangingObjectsView</class>
    <extends>QWidget</extends>
-   <header>DockHangingObjects/HangingObjectsView.h</header>
+   <header>Qt/DockHangingObjects/HangingObjectsView.h</header>
   </customwidget>
   <customwidget>
    <class>MaterialViewOptions</class>
    <extends>QWidget</extends>
-   <header>DockMaterialViewOptions/materialviewoptions.h</header>
+   <header>Qt/DockMaterialViewOptions/materialviewoptions.h</header>
   </customwidget>
   <customwidget>
    <class>SceneTabWidget</class>
    <extends>QWidget</extends>
-   <header>Scene/scenetabwidget.h</header>
+   <header>Qt/Scene/SceneTabWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SceneInfo</class>
    <extends>QTreeView</extends>
-   <header>DockSceneInfo/SceneInfo.h</header>
+   <header>Qt/DockSceneInfo/SceneInfo.h</header>
   </customwidget>
  </customwidgets>
  <resources>

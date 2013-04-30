@@ -1,9 +1,9 @@
 #ifndef __SCENE_INFO_H__
 #define __SCENE_INFO_H__
 
-#include "QtPosSaver/QtPosSaver.h"
-#include "QtPropertyEditor/QtPropertyEditor.h"
-#include "../DockProperties/PropertyEditorStateHelper.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
+#include "Qt/QtPropertyEditor/QtPropertyEditor.h"
+#include "Qt/DockProperties/PropertyEditorStateHelper.h"
 
 #include <QShowEvent>
 

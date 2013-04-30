@@ -1,7 +1,7 @@
 #ifndef __SCENE_COLLISION_RENDER_OBJECT_H__
 #define __SCENE_COLLISION_RENDER_OBJECT_H__
 
-#include "Scene/System/CollisionSystem/CollisionBaseObject.h"
+#include "Qt/Scene/System/CollisionSystem/CollisionBaseObject.h"
 #include "Render/Highlevel/RenderObject.h"
 
 class CollisionRenderObject : public CollisionBaseObject

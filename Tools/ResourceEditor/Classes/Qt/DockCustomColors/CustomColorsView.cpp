@@ -1,9 +1,9 @@
 #include "CustomColorsView.h"
 #include "ui_CustomColorsView.h"
 
-#include "Project/ProjectManager.h"
-#include "Classes/Qt/Main/QtMainWindowHandler.h"
-#include "../SceneEditor/EditorConfig.h"
+#include "Qt/Project/ProjectManager.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "SceneEditor/EditorConfig.h"
 
 CustomColorsView::CustomColorsView(QWidget* parent)
 :	QWidget(parent),

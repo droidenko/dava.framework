@@ -1,24 +1,24 @@
 #include "mainwindow.h"
 
 #include "DAVAEngine.h"
-#include "Classes/Qt/Main/QtMainWindowHandler.h"
-#include "Classes/Qt/Scene/SceneDataManager.h"
-#include "Classes/SceneEditor/EditorSettings.h"
-#include "Classes/SceneEditor/CommandLineTool.h"
-#include "Classes/Qt/TextureBrowser/TextureConvertor.h"
-#include "Classes/Qt/DockSceneGraph/PointerHolder.h"
-#include "Classes/Qt/Project/ProjectManager.h"
-#include "DockLibrary/LibraryModel.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorSettings.h"
+#include "SceneEditor/CommandLineTool.h"
+#include "Qt/TextureBrowser/TextureConvertor.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
+#include "Qt/Project/ProjectManager.h"
+#include "Qt/DockLibrary/LibraryModel.h"
 
 #include <QToolBar>
 #include <QToolButton>
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../SceneEditor/EditorConfig.h"
-#include "../SceneEditor/CommandLineTool.h"
-#include "Classes/QT/SpritesPacker/SpritePackerHelper.h"
-#include "Classes/QT/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/EditorConfig.h"
+#include "SceneEditor/CommandLineTool.h"
+#include "QT/SpritesPacker/SpritePackerHelper.h"
+#include "QT/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
 
 #include <QApplication>
 #include <QPixmap>
@@ -291,7 +291,7 @@ void QtMainWindow::OpenLastProject()
 
         if(projectPath.IsEmpty())
         {
-			projectPath = FilePath(ProjectManager::Instance()->ProjectOpenDialog().toStdString());
+			projectPath = FilePath(ProjectManager::Instance()->ProjectOpenDialog().toAscii().constData());
         }
 
         if(projectPath.IsEmpty())

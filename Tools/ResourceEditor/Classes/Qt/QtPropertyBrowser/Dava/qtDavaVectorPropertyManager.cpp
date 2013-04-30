@@ -1,4 +1,4 @@
-#include "QtPropertyBrowser/Dava/qtDavaVectorPropertyManager.h"
+#include "Qt/QtPropertyBrowser/Dava/qtDavaVectorPropertyManager.h"
 
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // Vector4

@@ -7,13 +7,13 @@
 
 #include "HeightmapNode.h"
 
-#include "../LandscapeEditor/EditorHeightmap.h"
-#include "../LandscapeEditor/EditorLandscape.h"
+#include "LandscapeEditor/EditorHeightmap.h"
+#include "LandscapeEditor/EditorLandscape.h"
 
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/TilemapEditorCommands.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/TilemapEditorCommands.h"
 
 LandscapeEditorColor::LandscapeEditorColor(LandscapeEditorDelegate *newDelegate, 
                                            EditorBodyControl *parentControl, const Rect &toolsRect)

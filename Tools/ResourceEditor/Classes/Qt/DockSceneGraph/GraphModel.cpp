@@ -5,8 +5,8 @@
 #include <QMimeData>
 #include <QApplication>
 
-#include "Main/QtUtils.h"
-#include "DockSceneGraph/PointerHolder.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
 
 #include "DAVAEngine.h"
 using namespace DAVA;

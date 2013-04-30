@@ -1,6 +1,6 @@
-#include "TextureBrowser/TextureProperties.h"
-#include "QtPropertyBrowser/qtpropertymanager.h"
-#include "QtPropertyBrowser/qteditorfactory.h"
+#include "Qt/TextureBrowser/TextureProperties.h"
+#include "Qt/QtPropertyBrowser/qtpropertymanager.h"
+#include "Qt/QtPropertyBrowser/qteditorfactory.h"
 
 #include "Render/TextureDescriptor.h"
 

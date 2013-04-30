@@ -4,23 +4,23 @@
 #include "LandscapeToolsPanelHeightmap.h"
 #include "PropertyControlCreator.h"
 
-#include "../EditorScene.h"
+#include "EditorScene.h"
 
 #include "HeightmapNode.h"
 
-#include "../LandscapeEditor/EditorHeightmap.h"
-#include "../LandscapeEditor/EditorLandscape.h"
-#include "../LandscapeEditor/LandscapeRenderer.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../LandscapeEditor/LandscapesController.h"
-#include "../Qt/Main/QtUtils.h"
+#include "LandscapeEditor/EditorHeightmap.h"
+#include "LandscapeEditor/EditorLandscape.h"
+#include "LandscapeEditor/LandscapeRenderer.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "LandscapeEditor/LandscapesController.h"
+#include "Qt/Main/QtUtils.h"
 
 #include "EditorSettings.h"
 #include "Scene3D/Components/DebugRenderComponent.h"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/HeightmapEditorCommands.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/HeightmapEditorCommands.h"
 
 
 LandscapeEditorHeightmap::LandscapeEditorHeightmap(LandscapeEditorDelegate *newDelegate, 

@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QMetaType>
 
-#include "Main/davaglwidget.h"
+#include "Qt/Main/davaglwidget.h"
 
 #include "UI/UIScreen.h"
 #include "UI/UI3DView.h"

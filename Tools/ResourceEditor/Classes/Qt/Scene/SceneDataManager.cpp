@@ -1,13 +1,13 @@
 #include "SceneDataManager.h"
 
-#include "DockSceneGraph/SceneGraphModel.h"
+#include "Qt/DockSceneGraph/SceneGraphModel.h"
 
-#include "../SceneEditor/SceneValidator.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/SceneValidator.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 #include "PVRConverter.h"
 
 #include "./Qt/SpritesPacker/SpritePackerHelper.h"
-#include "../Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 using namespace DAVA;
 

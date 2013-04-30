@@ -1,4 +1,4 @@
-#include "Scene/System/HoodSystem/HoodObject.h"
+#include "Qt/Scene/System/HoodSystem/HoodObject.h"
 
 HoodObject::HoodObject(DAVA::float32 bs)
 	: baseSize(bs)

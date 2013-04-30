@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-#include "Main/mainwindow.h"
+#include "Qt/Main/mainwindow.h"
 #include "DAVAEngine.h"
 
 #if defined (__DAVAENGINE_MACOS__)

@@ -1,19 +1,19 @@
 	#include "QSceneGraphTreeView.h"
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../Scene/SceneData.h"
-#include "../Scene/SceneDataManager.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/SceneGraphCommands.h"
-#include "../Commands/LibraryCommands.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/SceneGraphCommands.h"
+#include "Commands/LibraryCommands.h"
 
 #include "SceneGraphModel.h"
 
-#include "../../LandscapeEditor/LandscapesController.h"
-#include "../../SceneEditor/SceneEditorScreenMain.h"
-#include "../../SceneEditor/EditorBodyControl.h"
-#include "../../AppScreens.h"
+#include "LandscapeEditor/LandscapesController.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "AppScreens.h"
 
 
 #include <QKeyEvent>

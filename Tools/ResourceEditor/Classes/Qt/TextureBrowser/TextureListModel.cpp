@@ -1,5 +1,5 @@
 #include "TextureListModel.h"
-#include "Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 #include <QPainter>
 #include <QFileInfo>
 
@@ -207,7 +207,7 @@ void TextureListModel::applyFilterAndSort()
 
 	for(int i = 0; i < (int) textureDescriptorsAll.size(); ++i)
 	{
-		if( (curFilter.isEmpty() || DAVA::String::npos != textureDescriptorsAll[i]->pathname.GetAbsolutePathname().find(curFilter.toStdString())) &&	// text filter
+		if( (curFilter.isEmpty() || DAVA::String::npos != textureDescriptorsAll[i]->pathname.GetAbsolutePathname().find(curFilter.toAscii().constData())) &&	// text filter
 			(!curFilterBySelectedNode || textureDescriptorsHighlight.contains(textureDescriptorsAll[i])))						// cur selected node filter
 		{
 			textureDescriptorsFiltredSorted.push_back(textureDescriptorsAll[i]);

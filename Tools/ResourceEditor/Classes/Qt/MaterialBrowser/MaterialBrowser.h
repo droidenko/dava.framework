@@ -3,9 +3,9 @@
 
 #include <QDialog>
 #include <QItemSelection>
-#include "QtPosSaver/QtPosSaver.h"
-#include "MaterialBrowser/MaterialTreeModel.h"
-#include "MaterialBrowser/MaterialViewModel.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
+#include "Qt/MaterialBrowser/MaterialTreeModel.h"
+#include "Qt/MaterialBrowser/MaterialViewModel.h"
 
 namespace Ui {
 class MaterialBrowser;

@@ -3,9 +3,9 @@
 
 #include "NodesPropertyControl.h"
 #include "PropertyControlCreator.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "SceneEditorScreenMain.h"
-#include "../AppScreens.h"
+#include "AppScreens.h"
 #include "EditorBodyControl.h"
 #include "Scene3D/Components/UserComponent.h"
 #include "EditorSettings.h"

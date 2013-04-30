@@ -99,7 +99,7 @@
 #define MAGICKCORE_HAVE_LCMS2_H
 
 // Define to use the PNG library
-#define MAGICKCORE_PNG_DELEGATE
+//#define MAGICKCORE_PNG_DELEGATE
 
 // Define to use the TIFF library
 #define MAGICKCORE_TIFF_DELEGATE

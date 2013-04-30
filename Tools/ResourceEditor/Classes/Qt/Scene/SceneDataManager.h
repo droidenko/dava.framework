@@ -3,7 +3,7 @@
 
 #include "DAVAEngine.h"
 #include "EditorScene.h"
-#include "Scene/SceneData.h"
+#include "Qt/Scene/SceneData.h"
 
 class SceneDataManager: public QObject, public DAVA::Singleton<SceneDataManager>
 {

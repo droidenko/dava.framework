@@ -1,5 +1,5 @@
 #include "LandscapeTool.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 LandscapeTool::LandscapeTool(int32 _ID, eToolType _type, const FilePath & _imageName)
 {

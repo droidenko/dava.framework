@@ -1,7 +1,7 @@
 #ifndef __SCALE_HOOD_H__
 #define __SCALE_HOOD_H__
 
-#include "Scene/System/HoodSystem/HoodObject.h"
+#include "Qt/Scene/System/HoodSystem/HoodObject.h"
 
 struct ScaleHood : public HoodObject
 {

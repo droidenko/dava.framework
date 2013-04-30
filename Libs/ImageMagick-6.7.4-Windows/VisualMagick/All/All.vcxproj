@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName />
+    <SccLocalPath />
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectGuid>{BB5168FF-A07B-4856-8FAF-A4874D36DE59}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\bzlib\CORE_bzlib_xt_lib.vcxproj">
+      <Project>{06c5fea3-6ea3-4085-987a-7f8092f51a20}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\filters\CORE_filters_xt_lib.vcxproj">
+      <Project>{f26138ca-140d-4cb4-a5f2-bac0c90f4a1a}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\jbig\CORE_jbig_xt_lib.vcxproj">
+      <Project>{2ed67066-bf1f-43b6-9908-a3a136b5022c}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\jp2\CORE_jp2_xt_lib.vcxproj">
+      <Project>{83f467d0-0e54-4259-975d-4b6da61dfc00}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\jpeg\CORE_jpeg_xt_lib.vcxproj">
+      <Project>{d37fbd70-b51a-45a3-ab99-87390dd5dc13}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\lcms\CORE_lcms_xt_lib.vcxproj">
+      <Project>{42f8e7f8-2a4f-4cca-a539-29714326c74f}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\libxml\CORE_libxml_xt_lib.vcxproj">
+      <Project>{e4b13d47-c0d3-462c-be6c-9f7b0563f216}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Magick++\CORE_Magick++_xt_lib.vcxproj">
+      <Project>{01abb967-4958-46db-8eb5-d9fb799d8607}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\magick\CORE_magick_xt_lib.vcxproj">
+      <Project>{d5d57b4b-3748-456c-9979-c4621c09c9da}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\png\CORE_png_xt_lib.vcxproj">
+      <Project>{a7b76524-e453-4569-a728-5ecd93949893}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\tiff\CORE_tiff_xt_lib.vcxproj">
+      <Project>{55a8224a-7f48-42bd-b51b-0c640f365b7a}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\ttf\CORE_ttf_xt_lib.vcxproj">
+      <Project>{223c3be3-d8a4-4b38-a48a-d63c3211c7d3}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_animate_xt_exe.vcxproj">
+      <Project>{a128f4ec-4bf1-4cc4-ae28-bd3681d51c71}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_compare_xt_exe.vcxproj">
+      <Project>{099764ff-5e0f-465e-89ea-bc1c7b257c9c}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_composite_xt_exe.vcxproj">
+      <Project>{0d48cd90-4b24-4d87-b23a-93d67ce9c1c9}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_conjure_xt_exe.vcxproj">
+      <Project>{16907601-4559-4342-b144-575b738eaa76}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_convert_xt_exe.vcxproj">
+      <Project>{abc04303-0c46-45c7-8786-7366377fbe0c}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_display_xt_exe.vcxproj">
+      <Project>{66fc1207-fd3b-40e4-96dd-dbc96ae768f3}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_identify_xt_exe.vcxproj">
+      <Project>{d6c181af-ecda-45d2-ad7f-fcbf3add427a}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_import_xt_exe.vcxproj">
+      <Project>{e3a57654-a900-4736-9ffd-ed04930fc5e2}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_mogrify_xt_exe.vcxproj">
+      <Project>{77a8f157-4e37-4021-8d09-bcff04f0cac1}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_montage_xt_exe.vcxproj">
+      <Project>{d80fb8de-6df5-4666-b4a2-e9e4223a03ff}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\utilities\UTIL_stream_xt_exe.vcxproj">
+      <Project>{e3ac4151-ca69-4a45-88c0-08bbcbba44a0}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\wand\CORE_wand_xt_lib.vcxproj">
+      <Project>{6860eb49-9991-45ac-83ce-1462ad7e69f0}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\win2k\IMDisplay\UTIL_IMDisplay_xt_exe.vcxproj">
+      <Project>{2072863e-07bd-428d-bafa-c6f5cd02204e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\wmf\CORE_wmf_xt_lib.vcxproj">
+      <Project>{296eb50e-b452-4aee-bad8-dd9525458f58}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\xlib\CORE_xlib_xt_lib.vcxproj">
+      <Project>{4d4ce72b-25c2-4ad4-b914-4d6fe9b21fb9}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\zlib\CORE_zlib_xt_lib.vcxproj">
+      <Project>{30ed8593-6aef-49b4-bcdf-cc7824b07150}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

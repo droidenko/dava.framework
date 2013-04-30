@@ -1,8 +1,8 @@
 #include "SceneEditorScreenMainCommands.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
 
 CommandCreateNodeSceneEditor::CommandCreateNodeSceneEditor(DAVA::Entity* node)
 :	Command(COMMAND_UNDO_REDO)

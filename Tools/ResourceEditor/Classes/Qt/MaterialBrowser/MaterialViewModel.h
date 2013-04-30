@@ -5,7 +5,7 @@
 #include <QVector>
 
 #include "DAVAEngine.h"
-#include "MaterialBrowser/MaterialTreeItem.h"
+#include "Qt/MaterialBrowser/MaterialTreeItem.h"
 
 class MaterialViewModel : public QAbstractListModel
 {

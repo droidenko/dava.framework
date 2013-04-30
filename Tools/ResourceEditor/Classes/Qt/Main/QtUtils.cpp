@@ -1,6 +1,6 @@
 #include "QtUtils.h"
-#include "../../SceneEditor/SceneValidator.h"
-#include "../../SceneEditor/CommandLineTool.h"
+#include "SceneEditor/SceneValidator.h"
+#include "SceneEditor/CommandLineTool.h"
 
 
 #include <QFileDialog>
@@ -15,7 +15,7 @@ using namespace DAVA;
 
 DAVA::FilePath PathnameToDAVAStyle(const QString &convertedPathname)
 {
-    return FilePath((const String &)QSTRING_TO_DAVASTRING(convertedPathname));
+    return FilePath(convertedPathname.toAscii().constData());
 }
 
 

@@ -1,15 +1,15 @@
 #include "FileCommands.h"
 
 #include "DAVAEngine.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "../SceneEditor/EditorConfig.h"
-#include "../SceneEditor/SceneValidator.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorSettings.h"
+#include "SceneEditor/EditorConfig.h"
+#include "SceneEditor/SceneValidator.h"
 
-#include "../Qt/Main/QtUtils.h"
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 #include <QFileDialog>
 #include <QString>

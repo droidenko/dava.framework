@@ -3,8 +3,8 @@
 
 #include "Command.h"
 #include "DAVAEngine.h"
-#include "../Constants.h"
-#include "../SceneEditor/LandscapeEditorCustomColors.h"
+#include "Constants.h"
+#include "SceneEditor/LandscapeEditorCustomColors.h"
 
 using namespace DAVA;
 

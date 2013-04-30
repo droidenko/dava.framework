@@ -1,7 +1,7 @@
 #include "CommandsManager.h"
 #include "Command.h"
 
-#include "../Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtMainWindowHandler.h"
 
 using namespace DAVA;
 

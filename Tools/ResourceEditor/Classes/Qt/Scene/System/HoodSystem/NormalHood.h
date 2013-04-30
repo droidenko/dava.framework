@@ -1,7 +1,7 @@
 #ifndef __NORMAL_HOOD_H__
 #define __NORMAL_HOOD_H__
 
-#include "Scene/System/HoodSystem/HoodObject.h"
+#include "Qt/Scene/System/HoodSystem/HoodObject.h"
 
 struct NormalHood : public HoodObject
 {

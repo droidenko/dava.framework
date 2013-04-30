@@ -1,7 +1,7 @@
 #include "DataGraph.h"
 #include "ControlsFactory.h"
 
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "EditorSettings.h"
 #include "PropertyControlCreator.h"
 

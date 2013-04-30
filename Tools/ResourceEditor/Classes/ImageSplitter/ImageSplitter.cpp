@@ -1,5 +1,5 @@
 #include "ImageSplitter.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 using namespace DAVA;
 

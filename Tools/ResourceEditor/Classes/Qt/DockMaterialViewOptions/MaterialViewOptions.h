@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "Base/BaseTypes.h"
-#include "Classes/Commands/MaterialViewOptionsCommands.h"
+#include "Commands/MaterialViewOptionsCommands.h"
 
 namespace Ui
 {

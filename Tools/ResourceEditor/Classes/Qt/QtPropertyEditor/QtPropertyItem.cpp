@@ -1,5 +1,5 @@
-#include "QtPropertyEditor/QtPropertyItem.h"
-#include "QtPropertyEditor/QtPropertyData.h"
+#include "Qt/QtPropertyEditor/QtPropertyItem.h"
+#include "Qt/QtPropertyEditor/QtPropertyData.h"
 
 QtPropertyItem::QtPropertyItem()
 	: QStandardItem()

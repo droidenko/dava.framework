@@ -4,8 +4,8 @@
 #include "EditorSettings.h"
 #include "SceneNodePropertyNames.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 GraphBase::GraphBase(GraphBaseDelegate *newDelegate, const Rect &rect)
     :   delegate(newDelegate)

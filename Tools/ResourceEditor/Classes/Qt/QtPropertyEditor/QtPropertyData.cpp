@@ -1,5 +1,5 @@
 #include <QPushButton>
-#include "QtPropertyEditor/QtPropertyData.h"
+#include "Qt/QtPropertyEditor/QtPropertyData.h"
 
 QtPropertyData::QtPropertyData()
 	: curFlags(0)

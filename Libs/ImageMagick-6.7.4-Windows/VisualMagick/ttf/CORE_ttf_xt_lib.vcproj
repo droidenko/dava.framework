@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+  ProjectType="Visual C++"
+  Version="7.00"
+  Name="CORE_ttf"
+  ProjectGUID="{223C3BE3-D8A4-4B38-A48A-D63C3211C7D3}"
+  Keyword="Win32Proj">
+  <Platforms>
+    <Platform Name="Win32"/>
+  </Platforms>
+  <Configurations>
+    <Configuration
+      Name="Release|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Release\CORE_ttf"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="0"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        DebugInformationFormat="3"
+        BasicRuntimeChecks="0"
+        OmitFramePointers="TRUE"
+        Optimization="3"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\ttf,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\ttf\src,..\..\ttf\src\autohint,..\..\ttf\src\base,..\..\ttf\src\bdf,..\..\ttf\src\cache,..\..\ttf\src\cff,..\..\ttf\src\cid,..\..\ttf\src\gzip,..\..\ttf\src\pcf,..\..\ttf\src\pfr,..\..\ttf\src\psaux,..\..\ttf\src\pshinter,..\..\ttf\src\psnames,..\..\ttf\src\raster,..\..\ttf\src\sfnt,..\..\ttf\src\smooth,..\..\ttf\src\truetype,..\..\ttf\src\type1,..\..\ttf\src\type42,..\..\ttf\src\winfonts"
+        PreprocessorDefinitions="NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_TTFLIB_;HAVE_FREETYPE_FREETYPE_H;_CRT_SECURE_NO_WARNINGS;_MBCS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="NDEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_RL_ttf_.lib"
+        />
+    </Configuration>
+    <Configuration
+      Name="Debug|Win32"
+      OutputDirectory="..\lib\"
+      IntermediateDirectory="..\Debug\CORE_ttf"
+      ConfigurationType="4"
+      UseOfMFC="0"
+      ATLMinimizesCRunTimeLibraryUsage="FALSE"
+      CharacterSet="2">
+      <Tool
+        Name="VCCLCompilerTool"
+        RuntimeLibrary="1"
+        StringPooling="TRUE"
+        EnableFunctionLevelLinking="TRUE"
+        WarningLevel="3"
+        UsePrecompiledHeader="0"
+        SuppressStartupBanner="TRUE"
+        CompileAs="0"
+        InlineFunctionExpansion="2"
+        BasicRuntimeChecks="3"
+        OmitFramePointers="FALSE"
+        DebugInformationFormat="3"
+        Optimization="0"
+        AdditionalIncludeDirectories="..\..,..\..\xlib,..\..\Magick++\lib,..\..\zlib,..\..\bzlib,..\..\jpeg,..\..\lcms\src,..\..\lcms\include,..\..\tiff\libtiff,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\libxml\include,..\..\libxml\include\libxml,..\..\ttf,..\..\ttf\include,..\..\ttf\include\freetype,..\..\ttf\include\freetype\cache,..\..\ttf\include\freetype\config,..\..\ttf\include\freetype\internal,..\..\ttf\src,..\..\ttf\src\autohint,..\..\ttf\src\base,..\..\ttf\src\bdf,..\..\ttf\src\cache,..\..\ttf\src\cff,..\..\ttf\src\cid,..\..\ttf\src\gzip,..\..\ttf\src\pcf,..\..\ttf\src\pfr,..\..\ttf\src\psaux,..\..\ttf\src\pshinter,..\..\ttf\src\psnames,..\..\ttf\src\raster,..\..\ttf\src\sfnt,..\..\ttf\src\smooth,..\..\ttf\src\truetype,..\..\ttf\src\type1,..\..\ttf\src\type42,..\..\ttf\src\winfonts"
+        PreprocessorDefinitions="_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_TTFLIB_;HAVE_FREETYPE_FREETYPE_H;_CRT_SECURE_NO_WARNINGS;_MBCS"
+        />
+      <Tool
+        Name="VCMIDLTool"/>
+      <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="_DEBUG"
+        Culture="1033"/>
+      <Tool
+        Name="VCLibrarianTool"
+        AdditionalDependencies=" "
+        SuppressStartupBanner="TRUE"
+        LinkIncremental="1"
+        TargetMachine="1"
+        SubSystem="2"
+        OutputFile="..\lib\CORE_DB_ttf_.lib"
+        />
+    </Configuration>
+  </Configurations>
+  <Files>
+    <Filter Name="src" Filter="">
+      <File RelativePath="..\..\ttf\src\autohint\autohint.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftbase.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftbbox.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftbdf.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftdebug.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftglyph.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftinit.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftmm.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftstroke.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftsystem.c"/>
+      <File RelativePath="..\..\ttf\src\base\fttype1.c"/>
+      <File RelativePath="..\..\ttf\src\base\ftxf86.c"/>
+      <File RelativePath="..\..\ttf\src\bdf\bdf.c"/>
+      <File RelativePath="..\..\ttf\src\cache\ftcache.c"/>
+      <File RelativePath="..\..\ttf\src\cff\cff.c"/>
+      <File RelativePath="..\..\ttf\src\cid\type1cid.c"/>
+      <File RelativePath="..\..\ttf\src\gzip\ftgzip.c"/>
+      <File RelativePath="..\..\ttf\src\gzip\zutil.c"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcf.c"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfr.c"/>
+      <File RelativePath="..\..\ttf\src\psaux\psaux.c"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshinter.c"/>
+      <File RelativePath="..\..\ttf\src\psnames\psnames.c"/>
+      <File RelativePath="..\..\ttf\src\raster\raster.c"/>
+      <File RelativePath="..\..\ttf\src\sfnt\sfnt.c"/>
+      <File RelativePath="..\..\ttf\src\smooth\smooth.c"/>
+      <File RelativePath="..\..\ttf\src\truetype\truetype.c"/>
+      <File RelativePath="..\..\ttf\src\type1\type1.c"/>
+      <File RelativePath="..\..\ttf\src\type42\type42.c"/>
+      <File RelativePath="..\..\ttf\src\winfonts\winfnt.c"/>
+      <File RelativePath="ttf.rc"/>
+    </Filter>
+    <Filter Name="include" Filter="">
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftccache.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftccmap.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftcglyph.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftcimage.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftcmanag.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftcsbits.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\cache\ftlru.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\config\ftconfig.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\config\ftheader.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\config\ftmodule.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\config\ftoption.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\config\ftstdlib.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\autohint.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\bdftypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\cfftypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\fnttypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftcalc.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftcore.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftdebug.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftdriver.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftexcept.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftgloadr.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\fthash.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftmemory.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftobject.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftobjs.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\ftstream.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\fttrace.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\internal.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\pcftypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\pfr.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\psaux.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\pshints.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\psnames.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\sfnt.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\t1types.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\t42types.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\internal\tttypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\freetype.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftbbox.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftbdf.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftcache.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftchapters.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\fterrdef.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\fterrors.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftglyph.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftgzip.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftimage.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftincrem.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftlist.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftmm.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftmoderr.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftmodule.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftoutln.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftpfr.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftrender.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsizes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsnames.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftstroke.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsynth.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsysio.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsysmem.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftsystem.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\fttrigon.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\fttypes.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftwinfnt.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ftxf86.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\t1tables.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ttnameid.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\tttables.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\tttags.h"/>
+      <File RelativePath="..\..\ttf\include\freetype\ttunpat.h"/>
+      <File RelativePath="..\..\ttf\include\ft2build.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahangles.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\aherrors.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahglobal.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahglyph.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahhint.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahloader.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahmodule.h"/>
+      <File RelativePath="..\..\ttf\src\autohint\ahtypes.h"/>
+      <File RelativePath="..\..\ttf\src\bdf\bdf.h"/>
+      <File RelativePath="..\..\ttf\src\bdf\bdfdrivr.h"/>
+      <File RelativePath="..\..\ttf\src\bdf\bdferror.h"/>
+      <File RelativePath="..\..\ttf\src\cache\ftcerror.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffcmap.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffdrivr.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cfferrs.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffgload.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffload.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffobjs.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cffparse.h"/>
+      <File RelativePath="..\..\ttf\src\cff\cfftoken.h"/>
+      <File RelativePath="..\..\ttf\src\cid\ciderrs.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidgload.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidload.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidobjs.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidparse.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidriver.h"/>
+      <File RelativePath="..\..\ttf\src\cid\cidtoken.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\infblock.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\infcodes.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\inffixed.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\inftrees.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\infutil.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\zconf.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\zlib.h"/>
+      <File RelativePath="..\..\ttf\src\gzip\zutil.h"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcf.h"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcfdrivr.h"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcferror.h"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcfread.h"/>
+      <File RelativePath="..\..\ttf\src\pcf\pcfutil.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrcmap.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrdrivr.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrerror.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrgload.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrload.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrobjs.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrsbit.h"/>
+      <File RelativePath="..\..\ttf\src\pfr\pfrtypes.h"/>
+      <File RelativePath="..\..\ttf\src\psaux\psauxerr.h"/>
+      <File RelativePath="..\..\ttf\src\psaux\psauxmod.h"/>
+      <File RelativePath="..\..\ttf\src\psaux\psobjs.h"/>
+      <File RelativePath="..\..\ttf\src\psaux\t1cmap.h"/>
+      <File RelativePath="..\..\ttf\src\psaux\t1decode.h"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshalgo.h"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshglob.h"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshmod.h"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshnterr.h"/>
+      <File RelativePath="..\..\ttf\src\pshinter\pshrec.h"/>
+      <File RelativePath="..\..\ttf\src\psnames\psmodule.h"/>
+      <File RelativePath="..\..\ttf\src\psnames\psnamerr.h"/>
+      <File RelativePath="..\..\ttf\src\psnames\pstables.h"/>
+      <File RelativePath="..\..\ttf\src\raster\ftraster.h"/>
+      <File RelativePath="..\..\ttf\src\raster\ftrend1.h"/>
+      <File RelativePath="..\..\ttf\src\raster\rasterrs.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\sfdriver.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\sferrors.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\sfobjs.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\ttcmap.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\ttcmap0.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\ttload.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\ttpost.h"/>
+      <File RelativePath="..\..\ttf\src\sfnt\ttsbit.h"/>
+      <File RelativePath="..\..\ttf\src\smooth\ftgrays.h"/>
+      <File RelativePath="..\..\ttf\src\smooth\ftsmerrs.h"/>
+      <File RelativePath="..\..\ttf\src\smooth\ftsmooth.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\ttdriver.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\tterrors.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\ttgload.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\ttinterp.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\ttobjs.h"/>
+      <File RelativePath="..\..\ttf\src\truetype\ttpload.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1afm.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1driver.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1errors.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1gload.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1load.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1objs.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1parse.h"/>
+      <File RelativePath="..\..\ttf\src\type1\t1tokens.h"/>
+      <File RelativePath="..\..\ttf\src\type42\t42drivr.h"/>
+      <File RelativePath="..\..\ttf\src\type42\t42error.h"/>
+      <File RelativePath="..\..\ttf\src\type42\t42objs.h"/>
+      <File RelativePath="..\..\ttf\src\type42\t42parse.h"/>
+      <File RelativePath="..\..\ttf\src\winfonts\fnterrs.h"/>
+      <File RelativePath="..\..\ttf\src\winfonts\winfnt.h"/>
+    </Filter>
+    <Filter Name="resource" Filter="">
+    </Filter>
+  </Files>
+  <Globals>
+  </Globals>
+</VisualStudioProject>

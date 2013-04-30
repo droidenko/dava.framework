@@ -1,14 +1,14 @@
 #include "SceneGraphCommands.h"
 
 #include "DAVAEngine.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../EditorScene.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "EditorScene.h"
 #include "Scene3D/Components/DebugRenderComponent.h"
 #include "CommandsManager.h"
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/EditorBodyControl.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
 
 using namespace DAVA;
 

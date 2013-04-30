@@ -1,9 +1,9 @@
 #include "HeightmapEditorCommands.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../LandscapeEditor/LandscapesController.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "LandscapeEditor/LandscapesController.h"
 
 #include "Utils/Random.h"
 

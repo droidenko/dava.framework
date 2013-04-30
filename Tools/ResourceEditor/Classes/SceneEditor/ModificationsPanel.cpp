@@ -2,7 +2,7 @@
 #include "ControlsFactory.h"
 
 #include "ModificationPopUp.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 #include "EditorConfig.h"
 #include "Scene3D/Components/DebugRenderComponent.h"
 

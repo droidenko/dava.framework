@@ -3,7 +3,7 @@
 #include "ControlsFactory.h"
 #include "UICheckBox.h"
 
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 
 TextureFormatDialog::TextureFormatDialog(TextureFormatDialogDelegate *newDelegate)

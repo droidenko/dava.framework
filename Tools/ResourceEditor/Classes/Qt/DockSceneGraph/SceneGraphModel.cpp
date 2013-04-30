@@ -3,16 +3,16 @@
 
 #include "Qt/Scene/SceneData.h"
 #include "Qt/Scene/SceneDataManager.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 
 #include "GraphItem.h"
 #include "SceneGraphModelStateHelper.h"
 
-#include "DockSceneGraph/PointerHolder.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../SceneEditor/ArrowsNode.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/ArrowsNode.h"
 
-#include "DockParticleEditor/ParticlesEditorController.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
 
 #include <QTreeView>
 #include <QPainter>

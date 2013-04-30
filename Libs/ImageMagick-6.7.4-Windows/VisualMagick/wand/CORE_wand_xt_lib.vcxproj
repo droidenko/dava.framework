@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>CORE_wand</ProjectName>
+    <ProjectGuid>{6860EB49-9991-45AC-83CE-1462AD7E69F0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Release\CORE_wand\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Debug\CORE_wand\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\wand;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_RL_wand_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <OmitFramePointers>false</OmitFramePointers>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\wand;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_DB_wand_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\wand\animate.c" />
+    <ClCompile Include="..\..\wand\compare.c" />
+    <ClCompile Include="..\..\wand\composite.c" />
+    <ClCompile Include="..\..\wand\conjure.c" />
+    <ClCompile Include="..\..\wand\convert.c" />
+    <ClCompile Include="..\..\wand\deprecate.c" />
+    <ClCompile Include="..\..\wand\display.c" />
+    <ClCompile Include="..\..\wand\drawing-wand.c" />
+    <ClCompile Include="..\..\wand\identify.c" />
+    <ClCompile Include="..\..\wand\import.c" />
+    <ClCompile Include="..\..\wand\magick-image.c" />
+    <ClCompile Include="..\..\wand\magick-property.c" />
+    <ClCompile Include="..\..\wand\magick-wand.c" />
+    <ClCompile Include="..\..\wand\mogrify.c" />
+    <ClCompile Include="..\..\wand\montage.c" />
+    <ClCompile Include="..\..\wand\pixel-iterator.c" />
+    <ClCompile Include="..\..\wand\pixel-wand.c" />
+    <ClCompile Include="..\..\wand\stream.c" />
+    <ClCompile Include="..\..\wand\wand-view.c" />
+    <ClCompile Include="..\..\wand\wand.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wand.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\wand\animate.h" />
+    <ClInclude Include="..\..\wand\compare.h" />
+    <ClInclude Include="..\..\wand\composite.h" />
+    <ClInclude Include="..\..\wand\conjure.h" />
+    <ClInclude Include="..\..\wand\convert.h" />
+    <ClInclude Include="..\..\wand\deprecate.h" />
+    <ClInclude Include="..\..\wand\display.h" />
+    <ClInclude Include="..\..\wand\drawing-wand.h" />
+    <ClInclude Include="..\..\wand\identify.h" />
+    <ClInclude Include="..\..\wand\import.h" />
+    <ClInclude Include="..\..\wand\magick-image.h" />
+    <ClInclude Include="..\..\wand\magick-property.h" />
+    <ClInclude Include="..\..\wand\magick-wand-private.h" />
+    <ClInclude Include="..\..\wand\magick-wand.h" />
+    <ClInclude Include="..\..\wand\MagickWand.h" />
+    <ClInclude Include="..\..\wand\magick_wand.h" />
+    <ClInclude Include="..\..\wand\mogrify-private.h" />
+    <ClInclude Include="..\..\wand\mogrify.h" />
+    <ClInclude Include="..\..\wand\montage.h" />
+    <ClInclude Include="..\..\wand\pixel-iterator.h" />
+    <ClInclude Include="..\..\wand\pixel-wand-private.h" />
+    <ClInclude Include="..\..\wand\pixel-wand.h" />
+    <ClInclude Include="..\..\wand\stream.h" />
+    <ClInclude Include="..\..\wand\studio.h" />
+    <ClInclude Include="..\..\wand\wand-config.h" />
+    <ClInclude Include="..\..\wand\wand-view.h" />
+    <ClInclude Include="..\..\wand\wand.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

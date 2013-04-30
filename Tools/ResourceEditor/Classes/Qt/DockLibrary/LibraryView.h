@@ -3,10 +3,10 @@
 
 #include <QTreeView>
 #include <QAction>
-#include "Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 #include "Commands/LibraryCommands.h"
 #include "Commands/CommandsManager.h"
-#include "DockLibrary/LibraryModel.h"
+#include "Qt/DockLibrary/LibraryModel.h"
 
 class ContextMenuAction : public QAction
 {

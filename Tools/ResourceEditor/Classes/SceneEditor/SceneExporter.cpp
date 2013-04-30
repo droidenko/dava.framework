@@ -5,7 +5,7 @@
 #include "DXTConverter.h"
 
 #include "Render/TextureDescriptor.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 
 using namespace DAVA;

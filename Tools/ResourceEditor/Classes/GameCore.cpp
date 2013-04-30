@@ -25,8 +25,8 @@
 
 #include "ImageSplitter/ImageSplitterScreen.h"
 
-#include "TextureBrowser/TextureConvertor.h"
-#include "DockParticleEditor/ParticlesEditorController.h"
+#include "Qt/TextureBrowser/TextureConvertor.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
 
 using namespace DAVA;
 

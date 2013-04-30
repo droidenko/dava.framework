@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{7fd2c5f6-5e0d-40cf-a026-e1325c667cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{62244800-b4ac-4a03-99bf-a0ed43ef068b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{629e907b-24c9-4c7f-8e22-95b209469c19}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\jpeg\jaricom.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcapimin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcapistd.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcarith.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jccoefct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jccolor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcdctmgr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jchuff.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcinit.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcmainct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcmarker.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcmaster.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcomapi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcparam.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcprepct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jcsample.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jctrans.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdapimin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdapistd.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdarith.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdatadst.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdatasrc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdcoefct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdcolor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jddctmgr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdhuff.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdinput.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdmainct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdmarker.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdmaster.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdmerge.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdpostct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdsample.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jdtrans.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jerror.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jfdctflt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jfdctfst.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jfdctint.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jidctflt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jidctfst.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jidctint.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jmemmgr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jmemnobs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jquant1.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jquant2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\jutils.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jpeg\transupp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="jpeg.rc">
+      <Filter>src</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\jpeg\cderror.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\cdjpeg.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jconfig.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jdct.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jerror.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jinclude.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jmorecfg.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jpegint.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jpeglib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\jversion.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jpeg\transupp.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

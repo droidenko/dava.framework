@@ -1,10 +1,10 @@
-#include <QtConcurrentRun>
 #include <QPainter>
 #include <QProcess>
 #include <QTextOption>
-#include "TextureBrowser/TextureConvertor.h"
-#include "Main/mainwindow.h"
-#include "Scene/SceneDataManager.h"
+#include <QtConcurrentRun>
+#include "Qt/TextureBrowser/TextureConvertor.h"
+#include "Qt/Main/mainwindow.h"
+#include "Qt/Scene/SceneDataManager.h"
 #include "PVRConverter.h"
 #include "DXTConverter.h"
 #include "SceneEditor/SceneValidator.h"
@@ -202,7 +202,7 @@ QImage TextureConvertor::convertThreadPVR(JobItem *item)
 			if(item->forceConvert || !DAVA::FileSystem::Instance()->IsFile(outputPath))
 			{
 				QString command = PVRConverter::Instance()->GetCommandLinePVR(sourcePath, item->descriptorCopy).c_str();
-				DAVA::Logger::Info("%s", command.toStdString().c_str());
+				DAVA::Logger::Info("%s", command.toAscii().constData());
 
 				QProcess p;
 				p.start(command);
@@ -338,7 +338,7 @@ void TextureConvertor::convertAllThread(DAVA::Map<DAVA::String, DAVA::Texture *>
 							DAVA::FilePath sourcePath = descriptor->GetSourceTexturePathname();
 
 							QString command = PVRConverter::Instance()->GetCommandLinePVR(sourcePath, *descriptor).c_str();
-							DAVA::Logger::Info("%s", command.toStdString().c_str());
+							DAVA::Logger::Info("%s", command.toAscii().constData());
 
 							QProcess p;
 							p.start(command);

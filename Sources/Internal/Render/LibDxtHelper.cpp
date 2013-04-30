@@ -409,6 +409,7 @@ bool NvttHelper::DecompressDxt(const nvtt::Decompressor & dec, DDSInfo info, Vec
 
 bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, PixelFormat format, Vector<Image*> &imageSet)
 {
+#if defined(__ENABLE_ATC_COMPILE__)
 #if defined(__DAVAENGINE_MACOS__)
 	if (format == FORMAT_ATC_RGBA_INTERPOLATED_ALPHA)
 	{
@@ -426,7 +427,8 @@ bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, Pix
 		return false;
 	}
 
-	bool res = true;
+	bool res = false;
+
 	unsigned char* buffer = compressedImges;
 	for(uint32 i = 0; i < info.mipmapsCount; ++i)
 	{
@@ -450,7 +452,6 @@ bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, Pix
 			dstImg.nDataSize == 0)
 		{
 			Logger::Error("[NvttHelper::DecompressAtc] Reading decompress atc data.");
-			res = false;
 			break;
 		}
 
@@ -459,8 +460,6 @@ bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, Pix
 		{
 			Logger::Error("[NvttHelper::DecompressAtc] Reading decompress atc data.");
 			SafeDeleteArray(dstImg.pData);
-
-			res = false;
 			break;
 		}
 
@@ -474,10 +473,16 @@ bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, Pix
 		
 		info.height = Max((uint32)1, info.height / 2);
 		info.width = Max((uint32)1, info.width / 2);
+		res = true;
 	}
 	
 	SafeDeleteArray(compressedImges);
+
 	return res;
+
+#else
+	return 0;
+#endif 
 }
 
 bool LibDxtHelper::WriteDdsFile(const FilePath & fileNameOriginal, int32 width, int32 height, uint8 * data, PixelFormat compressionFormat, bool generateMipmaps)
@@ -559,6 +564,7 @@ bool LibDxtHelper::WriteDxtFile(const FilePath & fileNameOriginal, int32 width, 
 
 bool LibDxtHelper::WriteAtcFile(const FilePath & fileNameOriginal, int32 width, int32 height, uint8 * data, PixelFormat compressionFormat, bool generateMipmaps)
 {
+#if defined(__ENABLE_ATC_COMPILE__)
 	const int32 minSize = 0;
 	
 	if (compressionFormat != FORMAT_ATC_RGB &&
@@ -667,6 +673,9 @@ bool LibDxtHelper::WriteAtcFile(const FilePath & fileNameOriginal, int32 width, 
 
 	SafeDeleteArray(buffer);
 	return res;
+#else
+	return 0;
+#endif
 }
 	
 bool LibDxtHelper::IsDxtFile(const FilePath & filePathname)

@@ -1,18 +1,18 @@
 #include "LibraryCommands.h"
 
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Main/QtMainWindowHandler.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "Qt/Main/QtUtils.h"
 
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 
 
-#include "../Collada/ColladaConvert.h"
+#include "Collada/ColladaConvert.h"
 
-#include "../SceneEditor/SceneValidator.h"
-#include "../SceneEditor/EditorSettings.h"
+#include "SceneEditor/SceneValidator.h"
+#include "SceneEditor/EditorSettings.h"
 
 #include "DAVAEngine.h"
 

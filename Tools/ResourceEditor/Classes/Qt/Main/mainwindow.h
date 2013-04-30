@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 #include "Base/Singleton.h"
-#include "QtPosSaver/QtPosSaver.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
 #include "ui_mainwindow.h"
 
 class LibraryModel;

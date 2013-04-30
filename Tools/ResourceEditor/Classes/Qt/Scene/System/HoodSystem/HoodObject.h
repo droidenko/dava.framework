@@ -1,7 +1,7 @@
 #ifndef __HOOD_OBJECT_H__
 #define __HOOD_OBJECT_H__
 
-#include "Scene/System/HoodSystem/HoodCollObject.h"
+#include "Qt/Scene/System/HoodSystem/HoodCollObject.h"
 
 struct HoodObject 
 {

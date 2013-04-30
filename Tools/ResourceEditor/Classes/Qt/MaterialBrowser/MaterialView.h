@@ -2,8 +2,8 @@
 #define __MATERIAL_LIST_H__
 
 #include <QListView>
-#include "MaterialBrowser/MaterialTreeItem.h"
-#include "MaterialBrowser/MaterialViewModel.h"
+#include "Qt/MaterialBrowser/MaterialTreeItem.h"
+#include "Qt/MaterialBrowser/MaterialViewModel.h"
 
 class MaterialView : public QListView
 {

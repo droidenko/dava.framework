@@ -1,8 +1,8 @@
 #ifndef QTDAVAVECTORPROPERTYMANAGER_H
 #define QTDAVAVECTORPROPERTYMANAGER_H
 
-#include "QtPropertyBrowser/qtpropertybrowser.h"
-#include "QtPropertyBrowser/qtpropertymanager.h"
+#include "Qt/QtPropertyBrowser/qtpropertybrowser.h"
+#include "Qt/QtPropertyBrowser/qtpropertymanager.h"
 #include "Base/BaseMath.h"
 #include "Math/Vector.h"
 

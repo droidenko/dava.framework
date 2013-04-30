@@ -7,7 +7,7 @@
 //
 
 #include "ParticlesEditorSceneDataHelper.h"
-#include "DockParticleEditor/ParticlesEditorController.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
 
 using namespace DAVA;

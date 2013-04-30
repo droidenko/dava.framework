@@ -6,7 +6,7 @@
 #include <QVariant>
 
 #include "DAVAEngine.h"
-#include "MaterialBrowser/MaterialTreeItem.h"
+#include "Qt/MaterialBrowser/MaterialTreeItem.h"
 
 
 class MaterialTreeModel : public QAbstractItemModel

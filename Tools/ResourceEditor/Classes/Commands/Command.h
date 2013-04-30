@@ -61,7 +61,7 @@ protected:
 	eCommandState GetInternalCommandState(Command* command);
 };
 
-#include "../Qt/DockSceneGraph/PointerHolder.h"
+#include "Qt/DockSceneGraph/PointerHolder.h"
 DECLARE_POINTER_TYPE(Command *);
 
 

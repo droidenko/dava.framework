@@ -1,8 +1,8 @@
-#include "Scene/System/CollisionSystem.h"
-#include "Scene/System/CollisionSystem/CollisionRenderObject.h"
-#include "Scene/System/CameraSystem.h"
-#include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Qt/Scene/System/CollisionSystem.h"
+#include "Qt/Scene/System/CollisionSystem/CollisionRenderObject.h"
+#include "Qt/Scene/System/CameraSystem.h"
+#include "Qt/Scene/System/SelectionSystem.h"
+#include "Qt/Scene/SceneEditorProxy.h"
 
 // framework
 #include "Scene3D/Components/ComponentHelpers.h"

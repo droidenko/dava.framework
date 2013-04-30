@@ -1,7 +1,7 @@
 #include "SceneSaver.h"
 #include "SceneValidator.h"
 
-#include "../Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 using namespace DAVA;
 

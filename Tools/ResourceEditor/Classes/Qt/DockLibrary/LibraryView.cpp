@@ -1,15 +1,15 @@
-#include "DockLibrary/LibraryView.h"
-#include "Project/ProjectManager.h"
+#include "Qt/DockLibrary/LibraryView.h"
+#include "Qt/Project/ProjectManager.h"
 #include <QFileSystemModel>
 #include <QMenu>
 
-#include "../Scene/SceneDataManager.h"
-#include "../Scene/SceneData.h"
-#include "../../LandscapeEditor/LandscapesController.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "LandscapeEditor/LandscapesController.h"
 
-#include "../../SceneEditor/SceneEditorScreenMain.h"
-#include "../../SceneEditor/EditorBodyControl.h"
-#include "../../AppScreens.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "AppScreens.h"
 
 
 LibraryView::LibraryView(QWidget *parent /* = 0 */)
@@ -72,20 +72,20 @@ void LibraryView::ShowContextMenu(const QPoint &point)
 				bool canChangeScene = !landsacpesController->EditorLandscapeIsActive() && !c->LandscapeEditorActive();
 				if(canChangeScene)
 				{
-					contextMenu.addAction(new ContextMenuAction(QString("Add"), new CommandAddScene(fileInfo.filePath().toStdString())));
+					contextMenu.addAction(new ContextMenuAction(QString("Add"), new CommandAddScene(fileInfo.filePath().toAscii().constData())));
 				}
 
-				contextMenu.addAction(new ContextMenuAction(QString("Edit"), new CommandEditScene(fileInfo.filePath().toStdString())));
+				contextMenu.addAction(new ContextMenuAction(QString("Edit"), new CommandEditScene(fileInfo.filePath().toAscii().constData())));
 
 				if(canChangeScene)
 				{
-					contextMenu.addAction(new ContextMenuAction(QString("Reload"), new CommandReloadScene(fileInfo.filePath().toStdString())));
+					contextMenu.addAction(new ContextMenuAction(QString("Reload"), new CommandReloadScene(fileInfo.filePath().toAscii().constData())));
 				}
 
 			}
 			else if(0 == fileExtension.compare("dae", Qt::CaseInsensitive))
 			{
-				contextMenu.addAction(new ContextMenuAction(QString("Convert"), new CommandConvertScene(fileInfo.filePath().toStdString())));
+				contextMenu.addAction(new ContextMenuAction(QString("Convert"), new CommandConvertScene(fileInfo.filePath().toAscii().constData())));
 			}
 
 			ContextMenuAction* action = (ContextMenuAction *) contextMenu.exec(mapToGlobal(point));
@@ -112,7 +112,7 @@ void LibraryView::FileSelectionChanged(const QItemSelection & selected, const QI
 		QFileInfo fileInfo = libModel->fileInfo(index);
 		if(0 == fileInfo.suffix().compare("sc2", Qt::CaseInsensitive))
 		{
-			previewPath = fileInfo.filePath().toStdString();
+			previewPath = fileInfo.filePath().toAscii().constData();
 		}
 	}
 

@@ -1,9 +1,9 @@
 #include "SetSwitchIndexView.h"
 #include "ui_SetSwitchIndexView.h"
 #include <stdlib.h> 
-#include "Project/ProjectManager.h"
-#include "Classes/Qt/Main/QtMainWindowHandler.h"
-#include "../SceneEditor/EditorConfig.h"
+#include "Qt/Project/ProjectManager.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "SceneEditor/EditorConfig.h"
 
 SetSwitchIndexView::SetSwitchIndexView(QWidget* parent)
 :	QWidget(parent),

@@ -1,13 +1,13 @@
 #include "EditorBodyControl.h"
 #include "ControlsFactory.h"
-#include "../BeastProxy.h"
-#include "../SceneNodeUserData.h"
+#include "BeastProxy.h"
+#include "SceneNodeUserData.h"
 #include "PropertyControlCreator.h"
 #include "EditorSettings.h"
-#include "../config.h"
+#include "config.h"
 
 #include "SceneValidator.h"
-#include "../LightmapsPacker.h"
+#include "LightmapsPacker.h"
 
 #include "LandscapeEditorColor.h"
 #include "LandscapeEditorHeightmap.h"
@@ -21,16 +21,16 @@
 #include "DataGraph.h"
 //#include "EntitiesGraph.h"
 
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../Qt/Scene/SceneData.h"
-#include "../Qt/Main/QtUtils.h"
-#include "../RulerTool/RulerTool.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "Qt/Scene/SceneData.h"
+#include "Qt/Main/QtUtils.h"
+#include "RulerTool/RulerTool.h"
 
-#include "../SceneEditor/EditorConfig.h"
+#include "SceneEditor/EditorConfig.h"
 
-#include "../Commands/CommandsManager.h"
-#include "../Commands/EditorBodyControlCommands.h"
-#include "../Commands/CommandReloadTextures.h"
+#include "Commands/CommandsManager.h"
+#include "Commands/EditorBodyControlCommands.h"
+#include "Commands/CommandReloadTextures.h"
 
 #include "ArrowsNode.h"
 

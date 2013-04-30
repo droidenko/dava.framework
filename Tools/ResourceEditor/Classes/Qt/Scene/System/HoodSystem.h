@@ -1,10 +1,10 @@
 #ifndef __ENTITY_MODIFICATION_SYSTEM_HOOD_H__
 #define __ENTITY_MODIFICATION_SYSTEM_HOOD_H__
 
-#include "Scene/System/HoodSystem/NormalHood.h"
-#include "Scene/System/HoodSystem/MoveHood.h"
-#include "Scene/System/HoodSystem/ScaleHood.h"
-#include "Scene/System/HoodSystem/RotateHood.h"
+#include "Qt/Scene/System/HoodSystem/NormalHood.h"
+#include "Qt/Scene/System/HoodSystem/MoveHood.h"
+#include "Qt/Scene/System/HoodSystem/ScaleHood.h"
+#include "Qt/Scene/System/HoodSystem/RotateHood.h"
 
 // bullet
 #include "bullet/btBulletCollisionCommon.h"

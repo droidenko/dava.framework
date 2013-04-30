@@ -1,8 +1,8 @@
 #include "CommandReloadTextures.h"
 
 #include "DAVAEngine.h"
-#include "../Qt/Scene/SceneDataManager.h"
-#include "../SceneEditor/EditorSettings.h"
+#include "Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorSettings.h"
 
 using namespace DAVA;
 

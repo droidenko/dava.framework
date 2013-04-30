@@ -1,9 +1,9 @@
 #include "MaterialViewOptions.h"
 #include "ui_MaterialViewOptions.h"
 #include <stdlib.h> 
-#include "Project/ProjectManager.h"
-#include "Classes/Qt/Main/QtMainWindowHandler.h"
-#include "../SceneEditor/EditorConfig.h"
+#include "Qt/Project/ProjectManager.h"
+#include "Qt/Main/QtMainWindowHandler.h"
+#include "SceneEditor/EditorConfig.h"
 
 MaterialViewOptions::MaterialViewOptions(QWidget* parent)
 :	QWidget(parent),

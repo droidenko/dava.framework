@@ -2,7 +2,7 @@
 #define __FILE_COMMANDS_H__
 
 #include "Command.h"
-#include "../Constants.h"
+#include "Constants.h"
 #include "EditorScene.h"
 
 class CommandOpenScene: public Command

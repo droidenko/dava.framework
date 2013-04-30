@@ -2,8 +2,8 @@
 #define __SCENE_DATA_H__
 
 #include "DAVAEngine.h"
-#include "../SceneEditor/CameraController.h"
-#include "../../ParticlesEditorQT/Helpers/ParticlesEditorSceneDataHelper.h"
+#include "SceneEditor/CameraController.h"
+#include "ParticlesEditorQT/Helpers/ParticlesEditorSceneDataHelper.h"
 #include <QObject>
 
 class EditorScene;

@@ -2,7 +2,7 @@
 #define __COMMAND_CREATE_NODE_H__
 
 #include "Command.h"
-#include "../Constants.h"
+#include "Constants.h"
 
 class CommandCreateNode: public Command
 {

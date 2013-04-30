@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>CORE_magick</ProjectName>
+    <ProjectGuid>{D5D57B4B-3748-456C-9979-C4621C09C9DA}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Release\CORE_magick\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\lib\</OutDir>
+    <IntDir>..\Debug\CORE_magick\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\magick;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_RL_magick_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader />
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <OmitFramePointers>false</OmitFramePointers>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..;..\..\xlib;..\..\Magick++\lib;..\..\zlib;..\..\bzlib;..\..\jpeg;..\..\lcms\src;..\..\lcms\include;..\..\tiff\libtiff;..\..\ttf\include;..\..\ttf\include\freetype;..\..\ttf\include\freetype\cache;..\..\ttf\include\freetype\config;..\..\ttf\include\freetype\internal;..\..\libxml\include;..\..\libxml\include\libxml;..\..\magick;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_VISUALC_;NeedFunctionPrototypes;_LIB;_MAGICKLIB_;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\lib\CORE_DB_magick_.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\magick\accelerate.c" />
+    <ClCompile Include="..\..\magick\animate.c" />
+    <ClCompile Include="..\..\magick\annotate.c" />
+    <ClCompile Include="..\..\magick\artifact.c" />
+    <ClCompile Include="..\..\magick\attribute.c" />
+    <ClCompile Include="..\..\magick\blob.c" />
+    <ClCompile Include="..\..\magick\cache-view.c" />
+    <ClCompile Include="..\..\magick\cache.c" />
+    <ClCompile Include="..\..\magick\cipher.c" />
+    <ClCompile Include="..\..\magick\client.c" />
+    <ClCompile Include="..\..\magick\coder.c" />
+    <ClCompile Include="..\..\magick\color.c" />
+    <ClCompile Include="..\..\magick\colormap.c" />
+    <ClCompile Include="..\..\magick\colorspace.c" />
+    <ClCompile Include="..\..\magick\compare.c" />
+    <ClCompile Include="..\..\magick\composite.c" />
+    <ClCompile Include="..\..\magick\compress.c" />
+    <ClCompile Include="..\..\magick\configure.c" />
+    <ClCompile Include="..\..\magick\constitute.c" />
+    <ClCompile Include="..\..\magick\decorate.c" />
+    <ClCompile Include="..\..\magick\delegate.c" />
+    <ClCompile Include="..\..\magick\deprecate.c" />
+    <ClCompile Include="..\..\magick\display.c" />
+    <ClCompile Include="..\..\magick\distort.c" />
+    <ClCompile Include="..\..\magick\draw.c" />
+    <ClCompile Include="..\..\magick\effect.c" />
+    <ClCompile Include="..\..\magick\enhance.c" />
+    <ClCompile Include="..\..\magick\exception.c" />
+    <ClCompile Include="..\..\magick\feature.c" />
+    <ClCompile Include="..\..\magick\fourier.c" />
+    <ClCompile Include="..\..\magick\fx.c" />
+    <ClCompile Include="..\..\magick\gem.c" />
+    <ClCompile Include="..\..\magick\geometry.c" />
+    <ClCompile Include="..\..\magick\hashmap.c" />
+    <ClCompile Include="..\..\magick\histogram.c" />
+    <ClCompile Include="..\..\magick\identify.c" />
+    <ClCompile Include="..\..\magick\image-view.c" />
+    <ClCompile Include="..\..\magick\image.c" />
+    <ClCompile Include="..\..\magick\layer.c" />
+    <ClCompile Include="..\..\magick\list.c" />
+    <ClCompile Include="..\..\magick\locale.c" />
+    <ClCompile Include="..\..\magick\log.c" />
+    <ClCompile Include="..\..\magick\mac.c" />
+    <ClCompile Include="..\..\magick\magic.c" />
+    <ClCompile Include="..\..\magick\magick.c" />
+    <ClCompile Include="..\..\magick\matrix.c" />
+    <ClCompile Include="..\..\magick\memory.c" />
+    <ClCompile Include="..\..\magick\mime.c" />
+    <ClCompile Include="..\..\magick\module.c" />
+    <ClCompile Include="..\..\magick\monitor.c" />
+    <ClCompile Include="..\..\magick\montage.c" />
+    <ClCompile Include="..\..\magick\morphology.c" />
+    <ClCompile Include="..\..\magick\nt-base.c" />
+    <ClCompile Include="..\..\magick\nt-feature.c" />
+    <ClCompile Include="..\..\magick\option.c" />
+    <ClCompile Include="..\..\magick\paint.c" />
+    <ClCompile Include="..\..\magick\pixel.c" />
+    <ClCompile Include="..\..\magick\policy.c" />
+    <ClCompile Include="..\..\magick\prepress.c" />
+    <ClCompile Include="..\..\magick\PreRvIcccm.c" />
+    <ClCompile Include="..\..\magick\profile.c" />
+    <ClCompile Include="..\..\magick\property.c" />
+    <ClCompile Include="..\..\magick\quantize.c" />
+    <ClCompile Include="..\..\magick\quantum-export.c" />
+    <ClCompile Include="..\..\magick\quantum-import.c" />
+    <ClCompile Include="..\..\magick\quantum.c" />
+    <ClCompile Include="..\..\magick\random.c" />
+    <ClCompile Include="..\..\magick\registry.c" />
+    <ClCompile Include="..\..\magick\resample.c" />
+    <ClCompile Include="..\..\magick\resize.c" />
+    <ClCompile Include="..\..\magick\resource.c" />
+    <ClCompile Include="..\..\magick\segment.c" />
+    <ClCompile Include="..\..\magick\semaphore.c" />
+    <ClCompile Include="..\..\magick\shear.c" />
+    <ClCompile Include="..\..\magick\signature.c" />
+    <ClCompile Include="..\..\magick\splay-tree.c" />
+    <ClCompile Include="..\..\magick\static.c" />
+    <ClCompile Include="..\..\magick\statistic.c" />
+    <ClCompile Include="..\..\magick\stream.c" />
+    <ClCompile Include="..\..\magick\string.c" />
+    <ClCompile Include="..\..\magick\thread.c" />
+    <ClCompile Include="..\..\magick\threshold.c" />
+    <ClCompile Include="..\..\magick\timer.c" />
+    <ClCompile Include="..\..\magick\token.c" />
+    <ClCompile Include="..\..\magick\transform.c" />
+    <ClCompile Include="..\..\magick\type.c" />
+    <ClCompile Include="..\..\magick\utility.c" />
+    <ClCompile Include="..\..\magick\version.c" />
+    <ClCompile Include="..\..\magick\vms.c" />
+    <ClCompile Include="..\..\magick\widget.c" />
+    <ClCompile Include="..\..\magick\xml-tree.c" />
+    <ClCompile Include="..\..\magick\xwindow.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\magick\accelerate.h" />
+    <ClInclude Include="..\..\magick\animate-private.h" />
+    <ClInclude Include="..\..\magick\animate.h" />
+    <ClInclude Include="..\..\magick\annotate.h" />
+    <ClInclude Include="..\..\magick\api.h" />
+    <ClInclude Include="..\..\magick\artifact.h" />
+    <ClInclude Include="..\..\magick\attribute.h" />
+    <ClInclude Include="..\..\magick\blob-private.h" />
+    <ClInclude Include="..\..\magick\blob.h" />
+    <ClInclude Include="..\..\magick\cache-private.h" />
+    <ClInclude Include="..\..\magick\cache-view.h" />
+    <ClInclude Include="..\..\magick\cache.h" />
+    <ClInclude Include="..\..\magick\cipher.h" />
+    <ClInclude Include="..\..\magick\client.h" />
+    <ClInclude Include="..\..\magick\coder.h" />
+    <ClInclude Include="..\..\magick\color-private.h" />
+    <ClInclude Include="..\..\magick\color.h" />
+    <ClInclude Include="..\..\magick\colormap-private.h" />
+    <ClInclude Include="..\..\magick\colormap.h" />
+    <ClInclude Include="..\..\magick\colorspace-private.h" />
+    <ClInclude Include="..\..\magick\colorspace.h" />
+    <ClInclude Include="..\..\magick\compare.h" />
+    <ClInclude Include="..\..\magick\composite-private.h" />
+    <ClInclude Include="..\..\magick\composite.h" />
+    <ClInclude Include="..\..\magick\compress.h" />
+    <ClInclude Include="..\..\magick\configure.h" />
+    <ClInclude Include="..\..\magick\constitute.h" />
+    <ClInclude Include="..\..\magick\decorate.h" />
+    <ClInclude Include="..\..\magick\delegate-private.h" />
+    <ClInclude Include="..\..\magick\delegate.h" />
+    <ClInclude Include="..\..\magick\deprecate.h" />
+    <ClInclude Include="..\..\magick\display-private.h" />
+    <ClInclude Include="..\..\magick\display.h" />
+    <ClInclude Include="..\..\magick\distort.h" />
+    <ClInclude Include="..\..\magick\draw-private.h" />
+    <ClInclude Include="..\..\magick\draw.h" />
+    <ClInclude Include="..\..\magick\effect.h" />
+    <ClInclude Include="..\..\magick\enhance.h" />
+    <ClInclude Include="..\..\magick\exception-private.h" />
+    <ClInclude Include="..\..\magick\exception.h" />
+    <ClInclude Include="..\..\magick\feature.h" />
+    <ClInclude Include="..\..\magick\fourier.h" />
+    <ClInclude Include="..\..\magick\fx-private.h" />
+    <ClInclude Include="..\..\magick\fx.h" />
+    <ClInclude Include="..\..\magick\gem.h" />
+    <ClInclude Include="..\..\magick\geometry.h" />
+    <ClInclude Include="..\..\magick\hashmap.h" />
+    <ClInclude Include="..\..\magick\histogram.h" />
+    <ClInclude Include="..\..\magick\identify.h" />
+    <ClInclude Include="..\..\magick\image-private.h" />
+    <ClInclude Include="..\..\magick\image-view.h" />
+    <ClInclude Include="..\..\magick\image.h" />
+    <ClInclude Include="..\..\magick\ImageMagick.h" />
+    <ClInclude Include="..\..\magick\layer.h" />
+    <ClInclude Include="..\..\magick\list.h" />
+    <ClInclude Include="..\..\magick\locale_.h" />
+    <ClInclude Include="..\..\magick\log.h" />
+    <ClInclude Include="..\..\magick\mac.h" />
+    <ClInclude Include="..\..\magick\magic.h" />
+    <ClInclude Include="..\..\magick\magick-config.h" />
+    <ClInclude Include="..\..\magick\magick-type.h" />
+    <ClInclude Include="..\..\magick\magick.h" />
+    <ClInclude Include="..\..\magick\MagickCore.h" />
+    <ClInclude Include="..\..\magick\matrix.h" />
+    <ClInclude Include="..\..\magick\memory_.h" />
+    <ClInclude Include="..\..\magick\methods.h" />
+    <ClInclude Include="..\..\magick\mime-private.h" />
+    <ClInclude Include="..\..\magick\mime.h" />
+    <ClInclude Include="..\..\magick\module.h" />
+    <ClInclude Include="..\..\magick\monitor-private.h" />
+    <ClInclude Include="..\..\magick\monitor.h" />
+    <ClInclude Include="..\..\magick\montage.h" />
+    <ClInclude Include="..\..\magick\morphology-private.h" />
+    <ClInclude Include="..\..\magick\morphology.h" />
+    <ClInclude Include="..\..\magick\nt-base.h" />
+    <ClInclude Include="..\..\magick\nt-feature.h" />
+    <ClInclude Include="..\..\magick\option.h" />
+    <ClInclude Include="..\..\magick\paint.h" />
+    <ClInclude Include="..\..\magick\pixel-private.h" />
+    <ClInclude Include="..\..\magick\pixel.h" />
+    <ClInclude Include="..\..\magick\policy.h" />
+    <ClInclude Include="..\..\magick\prepress.h" />
+    <ClInclude Include="..\..\magick\PreRvIcccm.h" />
+    <ClInclude Include="..\..\magick\profile.h" />
+    <ClInclude Include="..\..\magick\property.h" />
+    <ClInclude Include="..\..\magick\quantize.h" />
+    <ClInclude Include="..\..\magick\quantum-private.h" />
+    <ClInclude Include="..\..\magick\quantum.h" />
+    <ClInclude Include="..\..\magick\random-private.h" />
+    <ClInclude Include="..\..\magick\random_.h" />
+    <ClInclude Include="..\..\magick\registry.h" />
+    <ClInclude Include="..\..\magick\resample-private.h" />
+    <ClInclude Include="..\..\magick\resample.h" />
+    <ClInclude Include="..\..\magick\resize-private.h" />
+    <ClInclude Include="..\..\magick\resize.h" />
+    <ClInclude Include="..\..\magick\resource_.h" />
+    <ClInclude Include="..\..\magick\segment.h" />
+    <ClInclude Include="..\..\magick\semaphore-private.h" />
+    <ClInclude Include="..\..\magick\semaphore.h" />
+    <ClInclude Include="..\..\magick\shear.h" />
+    <ClInclude Include="..\..\magick\signature-private.h" />
+    <ClInclude Include="..\..\magick\signature.h" />
+    <ClInclude Include="..\..\magick\splay-tree.h" />
+    <ClInclude Include="..\..\magick\static.h" />
+    <ClInclude Include="..\..\magick\statistic.h" />
+    <ClInclude Include="..\..\magick\stream-private.h" />
+    <ClInclude Include="..\..\magick\stream.h" />
+    <ClInclude Include="..\..\magick\string-private.h" />
+    <ClInclude Include="..\..\magick\string_.h" />
+    <ClInclude Include="..\..\magick\studio.h" />
+    <ClInclude Include="..\..\magick\thread-private.h" />
+    <ClInclude Include="..\..\magick\thread_.h" />
+    <ClInclude Include="..\..\magick\threshold.h" />
+    <ClInclude Include="..\..\magick\timer.h" />
+    <ClInclude Include="..\..\magick\token-private.h" />
+    <ClInclude Include="..\..\magick\token.h" />
+    <ClInclude Include="..\..\magick\transform.h" />
+    <ClInclude Include="..\..\magick\type.h" />
+    <ClInclude Include="..\..\magick\utility-private.h" />
+    <ClInclude Include="..\..\magick\utility.h" />
+    <ClInclude Include="..\..\magick\version.h" />
+    <ClInclude Include="..\..\magick\vms.h" />
+    <ClInclude Include="..\..\magick\widget.h" />
+    <ClInclude Include="..\..\magick\xml-tree.h" />
+    <ClInclude Include="..\..\magick\xwindow-private.h" />
+    <ClInclude Include="..\..\magick\xwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\magick\ImageMagick.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

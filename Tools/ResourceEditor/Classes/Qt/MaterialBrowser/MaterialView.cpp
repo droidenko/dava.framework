@@ -1,4 +1,4 @@
-#include "MaterialBrowser/MaterialView.h"
+#include "Qt/MaterialBrowser/MaterialView.h"
 
 MaterialView::MaterialView(QWidget *parent /* = 0 */)
 {

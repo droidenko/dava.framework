@@ -1,6 +1,6 @@
 #include "HeightmapNode.h"
-#include "../bullet/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
-#include "../EditorScene.h"
+#include "bullet/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+#include "EditorScene.h"
 #include "Render/Highlevel/Heightmap.h"
 
 #include "Render/Highlevel/LandscapeCursor.h"

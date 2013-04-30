@@ -1,8 +1,8 @@
 #include "DAVAEngine.h"
 #include "Debug/DVAssert.h"
-#include "Main/QtUtils.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
-#include "QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
+#include "Qt/Main/QtUtils.h"
+#include "Qt/QtPropertyEditor/QtProperyData/QtPropertyDataDavaVariant.h"
+#include "Qt/QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
 
 #include <QColorDialog>
 #include <QPushButton>
@@ -162,7 +162,7 @@ void QtPropertyDataDavaVariant::SetValueInternal(const QVariant &value)
 		ToKeyedArchive(value);
 		break;
 	case DAVA::VariantType::TYPE_STRING:
-		curVariantValue.SetString(value.toString().toStdString());
+		curVariantValue.SetString(value.toString().toAscii().constData());
 		break;
 	case DAVA::VariantType::TYPE_MATRIX2:
 		ToMatrix2(value);
@@ -186,13 +186,13 @@ void QtPropertyDataDavaVariant::SetValueInternal(const QVariant &value)
         ToColor(value);
         break;
     case DAVA::VariantType::TYPE_FASTNAME:
-        curVariantValue.SetFastName(DAVA::FastName(value.toString().toStdString().c_str()));
+        curVariantValue.SetFastName(DAVA::FastName(value.toString().toAscii().constData()));
         break;
 	case DAVA::VariantType::TYPE_AABBOX3:
 		ToAABBox3(value);
 		break;
 	case DAVA::VariantType::TYPE_FILEPATH:
-		curVariantValue.SetFilePath(DAVA::FilePath(DAVA::FilePath::GetProjectPathname(), value.toString().toStdString()));
+		curVariantValue.SetFilePath(DAVA::FilePath(DAVA::FilePath::GetProjectPathname(), value.toString().toAscii().constData()));
 		break;
 
 	case DAVA::VariantType::TYPE_BYTE_ARRAY:

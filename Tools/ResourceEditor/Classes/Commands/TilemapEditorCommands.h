@@ -3,7 +3,7 @@
 
 #include "DAVAEngine.h"
 #include "Command.h"
-#include "../SceneEditor/LandscapeEditorColor.h"
+#include "SceneEditor/LandscapeEditorColor.h"
 
 class CommandDrawTilemap: public Command
 {

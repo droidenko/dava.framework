@@ -3,7 +3,7 @@
 #include "QtPropertyItemDelegate.h"
 #include "QtPropertyModel.h"
 #include "QtPropertyItem.h"
-#include "QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
+#include "Qt/QtPropertyEditor/QtPropertyWidgets/QtColorLineEdit.h"
 
 QtPropertyItemDelegate::QtPropertyItemDelegate(QWidget *parent /* = 0 */)
 	: QStyledItemDelegate(parent)

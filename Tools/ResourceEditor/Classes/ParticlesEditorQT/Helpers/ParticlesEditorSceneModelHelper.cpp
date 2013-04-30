@@ -7,7 +7,7 @@
 //
 
 #include "ParticlesEditorSceneModelHelper.h"
-#include "DockParticleEditor/ParticlesEditorController.h"
+#include "Qt/DockParticleEditor/ParticlesEditorController.h"
 
 #include "Commands/CommandsManager.h"
 #include "Commands/SceneGraphCommands.h"

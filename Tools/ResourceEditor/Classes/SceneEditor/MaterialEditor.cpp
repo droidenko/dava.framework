@@ -13,7 +13,7 @@
 
 #include "MaterialPropertyControl.h"
 #include "EditorSettings.h"
-#include "../EditorScene.h"
+#include "EditorScene.h"
 
 static const float32 materialListPart = 0.33f;
 static const float32 previewHeightPart = 0.5f;

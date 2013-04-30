@@ -1,5 +1,5 @@
-#include "QtPropertyEditor/QtPropertyModel.h"
-#include "QtPropertyEditor/QtPropertyItem.h"
+#include "Qt/QtPropertyEditor/QtPropertyModel.h"
+#include "Qt/QtPropertyEditor/QtPropertyItem.h"
 
 QtPropertyModel::QtPropertyModel(QObject* parent /* = 0 */)
 	: QStandardItemModel(parent)

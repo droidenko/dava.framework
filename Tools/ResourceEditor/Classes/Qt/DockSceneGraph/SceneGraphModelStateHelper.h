@@ -12,7 +12,7 @@
 #include <QTreeView>
 
 #include "SceneGraphModel.h"
-#include "../Main/QTreeViewStateHelper.h"
+#include "Qt/Main/QTreeViewStateHelper.h"
 
 using namespace DAVA;
 

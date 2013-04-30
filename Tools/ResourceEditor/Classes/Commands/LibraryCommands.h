@@ -2,7 +2,7 @@
 #define __LIBRARY_COMMANDS_H__
 
 #include "Command.h"
-#include "../Constants.h"
+#include "Constants.h"
 
 class LibraryCommand: public Command
 {

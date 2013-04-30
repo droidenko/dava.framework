@@ -2,9 +2,9 @@
 #define __QT_PROPERTY_WIDGET_H__
 
 #include "PropertyEditorStateHelper.h"
-#include "QtPosSaver/QtPosSaver.h"
-#include "QtPropertyEditor/QtPropertyEditor.h"
-#include "Scene/SceneData.h"
+#include "Qt/QtPosSaver/QtPosSaver.h"
+#include "Qt/QtPropertyEditor/QtPropertyEditor.h"
+#include "Qt/Scene/SceneData.h"
 
 class DAVA::Entity;
 

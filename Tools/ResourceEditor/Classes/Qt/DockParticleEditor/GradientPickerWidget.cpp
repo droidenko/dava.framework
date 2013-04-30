@@ -2,7 +2,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QColorDialog>
-#include "Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 #define BACKGROUND_COLOR (Color(0x80, 0x80, 0x80, 0xff) / 255.f)
 #define BORDER_COLOR Color::Black()

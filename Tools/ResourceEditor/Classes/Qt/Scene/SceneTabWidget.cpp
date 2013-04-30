@@ -1,7 +1,7 @@
 #include "SceneEditor/SceneEditorScreenMain.h"
 
-#include "Scene/SceneTabWidget.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Qt/Scene/SceneTabWidget.h"
+#include "Qt/Scene/SceneEditorProxy.h"
 #include "AppScreens.h"
 
 #include <QVBoxLayout>

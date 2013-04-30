@@ -1,4 +1,4 @@
-#include "Scene/System/CollisionSystem/CollisionRenderObject.h"
+#include "Qt/Scene/System/CollisionSystem/CollisionRenderObject.h"
 
 
 CollisionRenderObject::CollisionRenderObject(DAVA::Entity *entity, btCollisionWorld *word, DAVA::RenderObject *renderObject)

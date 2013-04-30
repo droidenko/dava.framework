@@ -1,7 +1,7 @@
 #include "MeshInstancePropertyControl.h"
 
 #include "SceneEditorScreenMain.h"
-#include "../AppScreens.h"
+#include "AppScreens.h"
 #include "EditorBodyControl.h"
 #include "Qt/Scene/SceneDataManager.h"
 #include "Qt/Scene/SceneData.h"

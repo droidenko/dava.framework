@@ -1,7 +1,7 @@
 #include "CommandCreateNode.h"
 
 #include "DAVAEngine.h"
-#include "../SceneEditor/SceneEditorScreenMain.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
 
 using namespace DAVA;
 

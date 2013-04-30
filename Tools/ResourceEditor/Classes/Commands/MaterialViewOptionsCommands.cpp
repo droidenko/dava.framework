@@ -1,10 +1,10 @@
 #include "MaterialViewOptionsCommands.h"
 
-#include "../SceneEditor/SceneEditorScreenMain.h"
-#include "../Qt/Main/QtUtils.h"
+#include "SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Main/QtUtils.h"
 #include <QFileDialog>
-#include "../SceneEditor/EditorBodyControl.h"
-#include "../Qt/Scene/SceneDataManager.h"
+#include "SceneEditor/EditorBodyControl.h"
+#include "Qt/Scene/SceneDataManager.h"
 
 
 CommandChangeMaterialViewOption::CommandChangeMaterialViewOption(Material::eViewOptions value)

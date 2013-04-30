@@ -2,7 +2,7 @@
 #include "ControlsFactory.h"
 
 #include "EditorSettings.h"
-#include "../Qt/Main/QtUtils.h"
+#include "Qt/Main/QtUtils.h"
 
 SettingsDialog::SettingsDialog(const Rect & rect, SettingsDialogDelegate *newDelegate)
     :   UIControl(rect)

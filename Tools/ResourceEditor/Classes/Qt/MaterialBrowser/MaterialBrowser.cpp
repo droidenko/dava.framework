@@ -1,6 +1,6 @@
 #include <QFile>
 
-#include "MaterialBrowser/MaterialBrowser.h"
+#include "Qt/MaterialBrowser/MaterialBrowser.h"
 
 #include "ui_materialbrowser.h"
 
