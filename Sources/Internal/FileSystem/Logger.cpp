@@ -55,7 +55,7 @@ void Logger::Logv(eLogLevel ll, const char8* text, va_list li)
 	_vsnprintf(tmp, sizeof(tmp)-2, text, li);
 	strcat(tmp, "\n");
 	OutputDebugStringA(tmp);
-	if(!logFilename.IsEmpty() && FileSystem::Instance())
+	if(!logFilename.empty() && FileSystem::Instance())
 	{
 		FilePath filename = FileSystem::Instance()->GetCurrentDocumentsDirectory()+logFilename;
 		FILE * file = fopen(filename.GetAbsolutePathname().c_str(), "ab");
@@ -79,7 +79,7 @@ void Logger::Logv(eLogLevel ll, const char16* text, va_list li)
 	_vsnwprintf(tmp, sizeof(tmp)/sizeof(wchar_t)-2, text, li);
 	wcscat(tmp, L"\n");
 	OutputDebugStringW(tmp);
-	if(!logFilename.IsEmpty() && FileSystem::Instance())
+	if(!logFilename.empty() && FileSystem::Instance())
 	{
 		FilePath filename = FileSystem::Instance()->GetCurrentDocumentsDirectory()+logFilename;
 		FILE * file = fopen(filename.GetAbsolutePathname().c_str(), "ab");
@@ -104,7 +104,7 @@ static const char8 * logLevelString[4] =
 Logger::Logger()
 {
 	logLevel = LEVEL_DEBUG;
-	SetLogFilename(FilePath());
+	SetLogFilename(String());
 }
 
 Logger::~Logger()
@@ -220,7 +220,7 @@ void Logger::Error(const char16 * text, ...)
 	va_end(vl);
 }
 
-void Logger::SetLogFilename(const FilePath & filename)
+void Logger::SetLogFilename(const String & filename)
 {
 	logFilename = filename;
 }

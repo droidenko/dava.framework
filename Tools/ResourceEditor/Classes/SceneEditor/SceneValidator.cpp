@@ -129,30 +129,6 @@ void SceneValidator::ValidateSceneNode(Entity *sceneNode, Set<String> &errorsLog
         ValidateRenderComponent(node, errorsLog);
         ValidateLodComponent(node, errorsLog);
         ValidateParticleEmitterComponent(node, errorsLog);
-        
-        KeyedArchive *customProperties = node->GetCustomProperties();
-        if(customProperties->IsKeyExists("editor.referenceToOwner"))
-        {
-            FilePath dataSourcePath = EditorSettings::Instance()->GetDataSourcePath();
-            if(1 < dataSourcePath.GetAbsolutePathname().length())
-            {
-                if('/' == dataSourcePath.GetAbsolutePathname()[0])
-                {
-                    dataSourcePath = FilePath(dataSourcePath.GetAbsolutePathname().substr(1));
-                }
-                
-                String referencePath = customProperties->GetString("editor.referenceToOwner");
-                String::size_type pos = referencePath.rfind(dataSourcePath.GetAbsolutePathname());
-                if((String::npos != pos) && (1 != pos))
-                {
-                    referencePath.replace(pos, dataSourcePath.GetAbsolutePathname().length(), "");
-                    customProperties->SetString("editor.referenceToOwner", referencePath);
-                    
-                    errorsLog.insert(Format("Node %s: referenceToOwner isn't correct. Re-save level.", node->GetName().c_str()));
-                }
-            }
-        }
-        
         ValidateSceneNode(node, errorsLog);
     }
 }
@@ -246,6 +222,7 @@ void SceneValidator::ValidateRenderBatch(Entity *ownerNode, RenderBatch *renderB
     if(materialState)
     {
         ValidateInstanceMaterialState(materialState, errorsLog);
+		ConvertLightmapSizeFromProperty(ownerNode, materialState);
     }
     
     
@@ -349,8 +326,21 @@ void SceneValidator::ValidateLandscape(Landscape *landscape, Set<String> &errors
     }
 }
 
-
-
+void SceneValidator::ConvertLightmapSizeFromProperty(Entity *ownerNode, InstanceMaterialState *materialState)
+{
+	KeyedArchive * props = ownerNode->GetCustomProperties();
+	Map<String, VariantType*> map = props->GetArchieveData();
+	for(Map<String, VariantType*>::iterator it = map.begin(); it != map.end(); it++)
+	{
+		String key = it->first;
+		if(key.find("lightmap.size") != String::npos)
+		{
+			materialState->SetLightmapSize(props->GetInt32(key, 128));
+			props->DeleteKey(key);
+			break;
+		}
+	}
+}
 
 bool SceneValidator::NodeRemovingDisabled(Entity *node)
 {

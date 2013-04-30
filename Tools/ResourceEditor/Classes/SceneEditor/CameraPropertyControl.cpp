@@ -56,12 +56,11 @@ void CameraPropertyControl::OnFloatPropertyChanged(PropertyList *forList, const 
        ||   "property.camera.znear" == forKey 
        ||   "property.camera.zfar" == forKey)
     {
-        camera->Setup(
+        camera->SetupPerspective(
                       propertyList->GetFloatPropertyValue("property.camera.fov"),
                       camera->GetAspect(),
                       propertyList->GetFloatPropertyValue("property.camera.znear"),
-                      propertyList->GetFloatPropertyValue("property.camera.zfar"),
-                      propertyList->GetBoolPropertyValue("property.camera.isortho"));
+                      propertyList->GetFloatPropertyValue("property.camera.zfar"));
     }
     else if(    "property.camera.position.x" == forKey 
             ||  "property.camera.position.y" == forKey 
@@ -90,12 +89,11 @@ void CameraPropertyControl::OnBoolPropertyChanged(PropertyList *forList, const S
     if("property.camera.isortho" == forKey)
     {
         Camera *camera = GetCamera(currentSceneNode);
-        camera->Setup(
+        camera->SetupPerspective(
                       propertyList->GetFloatPropertyValue("property.camera.fov"),
                       320.0f / 480.0f,
                       propertyList->GetFloatPropertyValue("property.camera.znear"),
-                      propertyList->GetFloatPropertyValue("property.camera.zfar"),
-                      propertyList->GetBoolPropertyValue("property.camera.isortho"));
+                      propertyList->GetFloatPropertyValue("property.camera.zfar"));
     }
 
     NodesPropertyControl::OnBoolPropertyChanged(forList, forKey, newValue);

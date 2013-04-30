@@ -242,7 +242,7 @@ int32 ScenePreviewControl::OpenScene(const FilePath &pathToFile)
                 cam->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
                 cam->SetTarget(Vector3(0.0f, 1.0f, 0.0f));
                 
-                cam->Setup(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f); 
+                cam->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f); 
                 
 
                 

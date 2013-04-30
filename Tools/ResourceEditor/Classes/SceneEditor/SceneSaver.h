@@ -15,9 +15,9 @@ public:
     void SetInFolder(const FilePath &folderPathname);
     void SetOutFolder(const FilePath &folderPathname);
     
-    void SaveFile(const FilePath &fileName, Set<String> &errorLog);
-	void ResaveFile(const FilePath &fileName, Set<String> &errorLog);
-    void SaveScene(Scene *scene, const FilePath &fileName, Set<String> &errorLog);
+    void SaveFile(const String &fileName, Set<String> &errorLog);
+	void ResaveFile(const String &fileName, Set<String> &errorLog);
+    void SaveScene(Scene *scene, const String &fileName, Set<String> &errorLog);
     
 protected:
     

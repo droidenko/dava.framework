@@ -64,14 +64,12 @@ void ProcessRecourcePacker()
     FilePath commandLinePath(commandLine[1]);
     commandLinePath.MakeDirectoryPathname();
     
-    FilePath lastDir(commandLinePath.GetDirectory().GetLastDirectoryName());
-    lastDir.MakeDirectoryPathname();
-    
-    FilePath outputh = commandLinePath + FilePath("../../Data/") + lastDir;
+    String lastDir = commandLinePath.GetDirectory().GetLastDirectoryName();
+    FilePath outputh = commandLinePath + ("../../Data/" + lastDir + "/");
     
     resourcePacker->InitFolders(commandLinePath, outputh);
     
-    if(!resourcePacker->excludeDirectory.IsInitalized())
+    if(resourcePacker->excludeDirectory.IsEmpty())
     {
         printf("[FATAL ERROR: Packer has wrong input pathname]");
         return;
@@ -97,7 +95,7 @@ void ProcessRecourcePacker()
 #elif defined (__DAVAENGINE_WIN32__)
 	String toolName = String("/PVRTexToolCL.exe");
 #endif
-    PVRConverter::Instance()->SetPVRTexTool(resourcePacker->excludeDirectory + commandLine[2] + toolName);
+    PVRConverter::Instance()->SetPVRTexTool(resourcePacker->excludeDirectory + (commandLine[2] + toolName));
     
     uint64 elapsedTime = SystemTimer::Instance()->AbsoluteMS();
     printf("[Resource Packer Started]\n");

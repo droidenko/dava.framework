@@ -26,9 +26,9 @@ void SceneSaver::SetOutFolder(const FilePath &folderPathname)
 }
 
 
-void SceneSaver::SaveFile(const FilePath &fileName, Set<String> &errorLog)
+void SceneSaver::SaveFile(const String &fileName, Set<String> &errorLog)
 {
-    Logger::Info("[SceneSaver::SaveFile] %s", fileName.GetAbsolutePathname().c_str());
+    Logger::Info("[SceneSaver::SaveFile] %s", fileName.c_str());
     
     //Load scene with *.sc2
     Scene *scene = new Scene();
@@ -51,15 +51,17 @@ void SceneSaver::SaveFile(const FilePath &fileName, Set<String> &errorLog)
     }
 	else
 	{
-		errorLog.insert(Format("[SceneSaver::SaveFile] Can't open file %s", fileName.GetAbsolutePathname().c_str()));
+		errorLog.insert(Format("[SceneSaver::SaveFile] Can't open file %s", fileName.c_str()));
 	}
 
     SafeRelease(scene);
 }
 
-void SceneSaver::ResaveFile(const FilePath &fileName, Set<String> &errorLog)
+void SceneSaver::ResaveFile(const String &fileName, Set<String> &errorLog)
 {
-	Logger::Info("[SceneSaver::ResaveFile] %s", fileName.GetAbsolutePathname().c_str());
+    DVASSERT(0);    //TODO: check save
+
+	Logger::Info("[SceneSaver::ResaveFile] %s", fileName.c_str());
 
 	FilePath sc2Filename = sceneUtils.dataSourceFolder + fileName;
 
@@ -90,20 +92,18 @@ void SceneSaver::ResaveFile(const FilePath &fileName, Set<String> &errorLog)
 	}
 	else
 	{
-		errorLog.insert(Format("[SceneSaver::ResaveFile] Can't open file %s", fileName.GetAbsolutePathname().c_str()));
+		errorLog.insert(Format("[SceneSaver::ResaveFile] Can't open file %s", fileName.c_str()));
 	}
 
 	SafeRelease(scene);
 }
 
-void SceneSaver::SaveScene(Scene *scene, const FilePath &fileName, Set<String> &errorLog)
+void SceneSaver::SaveScene(Scene *scene, const String &fileName, Set<String> &errorLog)
 {
     DVASSERT(0 == texturesForSave.size())
     
-    //Create destination folder
-
-    sceneUtils.workingFolder = FilePath(fileName.GetDirectory());
-    FileSystem::Instance()->CreateDirectory(sceneUtils.dataFolder + sceneUtils.workingFolder, true); 
+//    sceneUtils.workingFolder = fileName.GetDirectory().GetRelativePathname(sceneUtils.dataSourceFolder);
+    FileSystem::Instance()->CreateDirectory(sceneUtils.dataFolder + sceneUtils.workingFolder, true);
 
     scene->Update(0.1f);
 
@@ -125,22 +125,20 @@ void SceneSaver::SaveScene(Scene *scene, const FilePath &fileName, Set<String> &
 	CopyReferencedObject(scene, errorLog);
 
     //save scene to new place
-    FilePath sceneName(fileName.GetFilename());
-    sceneName.ReplaceExtension(".saved.sc2");
-
-    FilePath tempSceneName = sceneUtils.workingFolder + sceneName;
+    FilePath tempSceneName = sceneUtils.dataSourceFolder + (sceneUtils.workingFolder + fileName);
+    tempSceneName.ReplaceExtension(".saved.sc2");
     
     SceneFileV2 * outFile = new SceneFileV2();
     outFile->EnableSaveForGame(true);
     outFile->EnableDebugLog(false);
     
-    outFile->SaveScene(sceneUtils.dataSourceFolder + tempSceneName, scene);
+    outFile->SaveScene(tempSceneName, scene);
     SafeRelease(outFile);
 
-    bool moved = FileSystem::Instance()->MoveFile(sceneUtils.dataSourceFolder + tempSceneName, sceneUtils.dataFolder + fileName, true);
+    bool moved = FileSystem::Instance()->MoveFile(tempSceneName, sceneUtils.dataFolder + fileName, true);
 	if(!moved)
 	{
-		errorLog.insert(Format("Can't move file %s", fileName.GetAbsolutePathname().c_str()));
+		errorLog.insert(Format("Can't move file %s", fileName.c_str()));
 	}
     
     SceneValidator::Instance()->SetPathForChecking(oldPath);

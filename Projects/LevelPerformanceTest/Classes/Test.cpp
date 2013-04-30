@@ -35,7 +35,7 @@ void Test::LoadResources()
 	Core* core = DAVA::Core::Instance();
 	float32 aspect = core->GetVirtualScreenHeight() / core->GetVirtualScreenWidth();
 
-	cam->Setup(70.f, aspect, 1.f, 5000.f);
+	cam->SetupPerspective(70.f, aspect, 1.f, 5000.f);
 	cam->SetLeft(Vector3(1, 0, 0));
 	cam->SetUp(Vector3(0, 0, 1));
     
@@ -48,7 +48,7 @@ void Test::LoadResources()
 	SafeRelease(sceneView);
 
 	Landscape* landscape = GetLandscape();
-	DVASSERT_MSG(scene, "There is no landscape in a scene");
+	DVASSERT_MSG(landscape, "There is no landscape in a scene");
 
 	uint32 textureMemory = TextureHelper::GetSceneTextureMemory(scene);
 	testData.SetTextureMemorySize(textureMemory);

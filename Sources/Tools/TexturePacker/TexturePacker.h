@@ -34,8 +34,8 @@ public:
 	void PackToMultipleTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & remainingList);
 
 	bool TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & defsList);
-	bool WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const FilePath & textureName, DefinitionFile * defFile);
-	bool WriteMultipleDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const FilePath & _textureName, DefinitionFile * defFile);
+	bool WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & textureName, DefinitionFile * defFile);
+	bool WriteMultipleDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & _textureName, DefinitionFile * defFile);
 
 	int TryToPackFromSortVector(ImagePacker * packer, Vector<SizeSortItem> & tempSortVector);
 	float TryToPackFromSortVectorWeight(ImagePacker * packer, Vector<SizeSortItem> & tempSortVector);

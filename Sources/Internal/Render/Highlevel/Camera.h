@@ -54,33 +54,51 @@ public:
 	virtual ~Camera();
 	
     /**
-        \brief Setup camera with basic camera params.
+        \brief Setup perspective camera with basic camera params.
         This function set all parameters for the camera. All these parameters will be applied in case if camera Set function will be called. 
      
-        \param[in] fovyInDegrees horizontal FOV of camera in degrees.
+        \param[in] fovxInDegrees horizontal FOV of camera in degrees.
         \param[in] aspectYdivX proportion between y and x. So if you want to setup camera manually pass y / x
         \param[in] zNear near clipping distance of camera
         \param[in] zFar far clipping distance of camera
-        \param[in] isOrtho is camera will be with orthographic projection or perspective. By default it's false so camera will be with perspective projection.
      */
-	void Setup(float32 fovyInDegrees, float32 aspectYdivX, float32 zNear, float32 zFar, bool isOrtho = false);
+	void SetupPerspective(float32 fovxInDegrees, float32 aspectYdivX, float32 zNear, float32 zFar);
+
+
+	  /**
+        \brief Setup ortho camera with basic camera params.
+        This function set all parameters for the camera. All these parameters will be applied in case if camera Set function will be called. 
+     
+        \param[in] width frustum width
+        \param[in] aspectYdivX proportion between y and x. So if you want to setup camera manually pass y / x
+        \param[in] zNear near clipping distance of camera
+        \param[in] zFar far clipping distance of camera
+     */
+	void SetupOrtho(float32 width, float32 aspectYdivX, float32 zNear, float32 zFar);
 
 	/**
-        \brief Setup camera with basic camera params.
+        \brief SetupPerspective camera with basic camera params.
 		This function set all parameters for the camera. All these parameters will be applied in case if camera Set function will be called.
 	*/
 	void Setup(float32 xmin, float32 xmax, float32 ymin, float32 ymax, float32 znear, float32 zfar);
 
     /**
-        \brief Function change fov in camera.
+        \brief Function change fov in perspective camera.
         You can use this function in many cases. For example you can use it when you want to change zoom of camera in your game. 
         
         \param[in] fovInDegrees new for in degrees for the camera
      */ 
-    
-	void SetFOV(const float32 &fovyInDegrees);
+	void SetFOV(const float32 &fovxInDegrees);
+
+	/**
+        \brief Function change width in ortho camera.
+        
+        \param[in] width new width for the camera
+     */ 
+	void SetWidth(const float32 &width);
+
     /**
-        \brief Set camera aspect ratio 
+        \brief Set camera aspect ratio
         \param[in] aspectYdivX Aspect ratio is viewport height / viewport width
      */
 	void SetAspect(const float32 &aspectYdivX);
@@ -335,7 +353,9 @@ public:
     
     
 //    virtual SceneNode* CopyDataTo(SceneNode *dstNode);
-	float32 xmin, xmax, ymin, ymax, znear, zfar, aspect, fovy;
+	float32 xmin, xmax, ymin, ymax, znear, zfar, aspect;
+	float32 fovX;
+	float32 orthoWidth;
 	bool ortho;
 		
 	
@@ -386,7 +406,7 @@ public:
         PROPERTY("znear", "znear", GetZNear, SetZNear, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
         PROPERTY("zfar", "zfar", GetZFar, SetZFar, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
         PROPERTY("aspect", "aspect", GetAspect, SetAspect, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-        PROPERTY("fovy", "fovy", GetFOV, SetFOV, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
+        PROPERTY("fovx", "fovx", GetFOV, SetFOV, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
         PROPERTY("ortho", "Is Ortho", GetIsOrtho, SetIsOrtho, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
                          
 //        PROPERTY(zoomFactor, "Zoom factor", GetFOV, SetFOV, INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)

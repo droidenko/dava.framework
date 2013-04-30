@@ -62,17 +62,19 @@ void Frustum::Build(const Matrix4 & viewProjection)
 
     // DirectX version
     
-	// near
+#ifdef __DAVAENGINE_DIRECTX9__
 	SETUP_PLANE(EFP_NEAR,
 					viewProjection._02,
 					viewProjection._12,
 					viewProjection._22,
 					viewProjection._32);
-//	SETUP_PLANE(EFP_NEAR,
-//                viewProjection._03 + viewProjection._02,
-//                viewProjection._13 + viewProjection._12,
-//                viewProjection._23 + viewProjection._22,
-//                viewProjection._33 + viewProjection._32);
+#else //opengl
+	SETUP_PLANE(EFP_NEAR,
+		            viewProjection._03 + viewProjection._02,
+			        viewProjection._13 + viewProjection._12,
+				    viewProjection._23 + viewProjection._22,
+					viewProjection._33 + viewProjection._32);
+#endif //__DAVAENGINE_DIRECTX9__
 
 	// far
 	SETUP_PLANE(EFP_FAR,	

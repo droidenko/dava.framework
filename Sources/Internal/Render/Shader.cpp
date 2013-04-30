@@ -327,12 +327,13 @@ bool Shader::LoadFromYaml(const FilePath & pathname)
         SafeRelease(parser);
         return false;
     }
-    vertexShaderPath = glslVertexNode->AsString();
-    fragmentShaderPath = glslFragmentNode->AsString();
-    SafeRelease(parser);
 
     FilePath pathOnly(pathname.GetDirectory());
-    Load(pathOnly + vertexShaderPath, pathOnly + fragmentShaderPath);
+    vertexShaderPath = pathOnly + glslVertexNode->AsString();
+    fragmentShaderPath = pathOnly + glslFragmentNode->AsString();
+    SafeRelease(parser);
+
+    Load(vertexShaderPath, fragmentShaderPath);
     
     shaderLoadTime = SystemTimer::Instance()->AbsoluteMS() - shaderLoadTime;
     

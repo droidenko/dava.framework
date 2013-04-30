@@ -22,7 +22,7 @@ public:
 	void SetViewportRect(const DAVA::Rect &rect);
 	const DAVA::Rect GetViewportRect();
 
-	DAVA::Vector2 GetSñreenPos(const DAVA::Vector3 &pos3);
+	DAVA::Vector2 GetScreenPos(const DAVA::Vector3 &pos3);
 
 protected:
 	void Update(DAVA::float32 timeElapsed);

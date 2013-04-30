@@ -90,12 +90,11 @@ Sprite* Sprite::PureCreate(const FilePath & spriteName, Sprite* forPointer)
 {
 //	Logger::Debug("pure create: %s", spriteName.c_str());
 //	Logger::Info("Sprite pure creation");
-	FilePath pathName(spriteName);
-    pathName.ReplaceExtension(".txt");
+	FilePath pathName = FilePath::CreateWithNewExtension(spriteName, ".txt");
+    
 	
 	FilePath scaledName = GetScaledName(spriteName);
-	FilePath scaledPath(scaledName);
-    scaledPath.ReplaceExtension(".txt");
+	FilePath scaledPath = FilePath::CreateWithNewExtension(scaledName, ".txt");
     
     Sprite *sprForScaledPath = GetSpriteFromMap(scaledPath);
     if(sprForScaledPath)
@@ -225,7 +224,7 @@ void Sprite::InitFromFile(File *file, const FilePath &pathName)
 		file->ReadLine(tempBuf, 1024);
 		sscanf(tempBuf, "%s", textureCharName);
         
-		FilePath tp = pathName.GetDirectory() + textureCharName;
+		FilePath tp = pathName.GetDirectory() + String(textureCharName);
 //		Logger::Debug("Opening texture: %s", tp.c_str());
 		textures[k] = Texture::CreateFromFile(tp);
 		textureNames[k] = tp;
@@ -507,7 +506,7 @@ void Sprite::InitFromTexture(Texture *fromTexture, int32 xOffset, int32 yOffset,
 	}
 	
 	
-	this->relativePathname = FilePath(Format("FBO sprite %d", fboCounter));
+	this->relativePathname = Format("FBO sprite %d", fboCounter);
 	spriteMap[this->relativePathname.GetAbsolutePathname()] = this;
 	fboCounter++;
 	this->Reset();

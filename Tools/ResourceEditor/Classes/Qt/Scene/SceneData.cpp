@@ -196,7 +196,7 @@ void SceneData::CreateScene(bool createEditorCameras)
         cam->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
         cam->SetTarget(Vector3(0.0f, 1.0f, 0.0f));
         
-        cam->Setup(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
+        cam->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
         
         ScopedPtr<Entity> node(new Entity());
         node->SetName("editor.main-camera");
@@ -212,7 +212,7 @@ void SceneData::CreateScene(bool createEditorCameras)
         cam2->SetPosition(Vector3(0.0f, 0.0f, 200.0f));
         cam2->SetTarget(Vector3(0.0f, 250.0f, 0.0f));
         
-        cam2->Setup(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
+        cam2->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
         
         ScopedPtr<Entity> node2(new Entity());
         node2->SetName("editor.debug-camera");

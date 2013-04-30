@@ -15,6 +15,7 @@
 		E822249F17100A0E00D1D955 /* PngImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E822249417100A0E00D1D955 /* PngImage.cpp */; };
 		E82224A017100A0E00D1D955 /* ResourcePacker2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E822249617100A0E00D1D955 /* ResourcePacker2D.cpp */; };
 		E82224A117100A0E00D1D955 /* TexturePacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E822249817100A0E00D1D955 /* TexturePacker.cpp */; };
+		E8C4C6AC1729BBAE004B0B3B /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3E2EF133A9A5A00442ADD /* libFramework.a */; };
 		E8C4C820165F66C1009DB9E1 /* FrameworkMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C4C81C165F66C1009DB9E1 /* FrameworkMain.cpp */; };
 		E8C4C821165F66C1009DB9E1 /* GameCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C4C81E165F66C1009DB9E1 /* GameCore.cpp */; };
 		E8C4C829165F66F9009DB9E1 /* CommandLineTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C4C827165F66F9009DB9E1 /* CommandLineTool.cpp */; };
@@ -23,7 +24,6 @@
 		FEC3E2CC133A946000442ADD /* UIFileTreeCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC3E2BC133A946000442ADD /* UIFileTreeCell.cpp */; };
 		FEC3E2CD133A946000442ADD /* UIScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC3E2BE133A946000442ADD /* UIScrollView.cpp */; };
 		FEC3E2CE133A946000442ADD /* UISpriteEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC3E2C0133A946000442ADD /* UISpriteEditor.cpp */; };
-		FEC3E2F2133A9A7200442ADD /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3E2EF133A9A5A00442ADD /* libFramework.a */; };
 		FEC3E467133A9AA500442ADD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3E461133A9AA500442ADD /* Cocoa.framework */; };
 		FEC3E468133A9AA500442ADD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3E462133A9AA500442ADD /* OpenGL.framework */; };
 		FEC3E469133A9AA500442ADD /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3E463133A9AA500442ADD /* AppKit.framework */; };
@@ -43,18 +43,18 @@
 			remoteGlobalIDString = E898A2C416BD265400732C04;
 			remoteInfo = FrameworkQt;
 		};
+		E8C4C6AA1729BB9F004B0B3B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEC3E2EA133A9A5A00442ADD /* Framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = Framework;
+		};
 		FEC3E2EE133A9A5A00442ADD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEC3E2EA133A9A5A00442ADD /* Framework.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = Framework;
-		};
-		FEC3E7221341171D00442ADD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEC3E2EA133A9A5A00442ADD /* Framework.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = Framework;
 		};
 /* End PBXContainerItemProxy section */
@@ -110,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FEC3E2F2133A9A7200442ADD /* libFramework.a in Frameworks */,
+				E8C4C6AC1729BBAE004B0B3B /* libFramework.a in Frameworks */,
 				FEC3E467133A9AA500442ADD /* Cocoa.framework in Frameworks */,
 				FEC3E468133A9AA500442ADD /* OpenGL.framework in Frameworks */,
 				FEC3E469133A9AA500442ADD /* AppKit.framework in Frameworks */,
@@ -265,7 +265,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				FEC3E7231341171D00442ADD /* PBXTargetDependency */,
+				E8C4C6AB1729BB9F004B0B3B /* PBXTargetDependency */,
 			);
 			name = ResourcePacker;
 			productInstallPath = "$(HOME)/bin";
@@ -363,10 +363,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FEC3E7231341171D00442ADD /* PBXTargetDependency */ = {
+		E8C4C6AB1729BB9F004B0B3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework;
-			targetProxy = FEC3E7221341171D00442ADD /* PBXContainerItemProxy */;
+			targetProxy = E8C4C6AA1729BB9F004B0B3B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

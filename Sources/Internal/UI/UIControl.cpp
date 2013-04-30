@@ -1915,7 +1915,8 @@ namespace DAVA
             FilePath path(sprite->GetRelativePathname());
             path.TruncateExtension();
 
-			node->Set("sprite", path.GetAbsolutePathname());
+            String pathname = path.GetFrameworkPath();
+			node->Set("sprite", pathname);
 		}
 		// Color
 		Color color =  this->GetBackground()->GetColor();

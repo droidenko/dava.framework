@@ -214,7 +214,7 @@ void ImposterNode::UpdateImposter()
 	AABBox3 bbox = child->GetWTMaximumBoundingBoxSlow();
 	Vector3 bboxCenter = bbox.GetCenter();
 
-	imposterCamera->Setup(camera->GetFOV(), camera->GetAspect(), camera->GetZNear(), camera->GetZFar());
+	imposterCamera->SetupPerspective(camera->GetFOV(), camera->GetAspect(), camera->GetZNear(), camera->GetZFar());
 	imposterCamera->SetTarget(bbox.GetCenter());
 	imposterCamera->SetPosition(cameraPos);
 	imposterCamera->SetUp(camera->GetUp());

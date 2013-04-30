@@ -218,9 +218,9 @@ Texture * Texture::CreateTextFromData(PixelFormat format, uint8 * data, uint32 w
 	RenderManager::Instance()->UnlockNonMain();
     
 	if (!addInfo)
-		tx->relativePathname = FilePath(Format("Text texture %d", textureFboCounter));
+		tx->relativePathname = Format("Text texture %d", textureFboCounter);
 	else 
-		tx->relativePathname = FilePath(Format("Text texture %d info:%s", textureFboCounter, addInfo));
+		tx->relativePathname = Format("Text texture %d info:%s", textureFboCounter, addInfo);
 
 	textureFboCounter++;
     textureMap[tx->relativePathname.GetAbsolutePathname()] = tx;
@@ -944,7 +944,7 @@ Texture * Texture::CreateFBO(uint32 w, uint32 h, PixelFormat format, DepthFormat
 
 
 	tx->isRenderTarget = true;
-	tx->relativePathname = FilePath(Format("FBO texture %d", textureFboCounter));
+	tx->relativePathname = Format("FBO texture %d", textureFboCounter);
     textureMap[tx->relativePathname.GetAbsolutePathname()] = tx;
 	
 	textureFboCounter++;

@@ -292,8 +292,8 @@ DAVA::Vector3 EntityModificationSystem::CamCursorPosToModifPos(const DAVA::Vecto
 
 DAVA::Vector2 EntityModificationSystem::Cam2dProjection(const DAVA::Vector3 &from, const DAVA::Vector3 &to)
 {
-	DAVA::Vector2 axisBegin = cameraSystem->GetSñreenPos(from);
-	DAVA::Vector2 axisEnd = cameraSystem->GetSñreenPos(to);
+	DAVA::Vector2 axisBegin = cameraSystem->GetScreenPos(from);
+	DAVA::Vector2 axisEnd = cameraSystem->GetScreenPos(to);
 	DAVA::Vector2 ret = axisEnd - axisBegin;
 	ret.Normalize();
 

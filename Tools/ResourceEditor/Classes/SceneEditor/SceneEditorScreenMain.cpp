@@ -521,19 +521,19 @@ void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
 	iBody->bodyControl->PushDebugCamera();
     
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
-    FilePath filePath = sceneData->GetScenePathname();
     FilePath dataSourcePath = EditorSettings::Instance()->GetDataSourcePath();
-    String::size_type pos = filePath.GetAbsolutePathname().find(dataSourcePath.GetAbsolutePathname());
-    if(String::npos != pos)
-    {
-        String path = filePath.GetAbsolutePathname();
-        path = path.replace(pos, dataSourcePath.GetAbsolutePathname().length(), "");
-        filePath = FilePath(path);
-    }
-    else
-    {
-        DVASSERT(0);
-    }
+    String filePath = sceneData->GetScenePathname().GetRelativePathname(dataSourcePath);
+//    String::size_type pos = filePath.GetAbsolutePathname().find(dataSourcePath.GetAbsolutePathname());
+//    if(String::npos != pos)
+//    {
+//        String path = filePath.GetAbsolutePathname();
+//        path = path.replace(pos, dataSourcePath.GetAbsolutePathname().length(), "");
+//        filePath = FilePath(path);
+//    }
+//    else
+//    {
+//        DVASSERT(0);
+//    }
     
 	// Get project path
     KeyedArchive *keyedArchieve = EditorSettings::Instance()->GetSettings();
@@ -580,20 +580,17 @@ void SceneEditorScreenMain::ExportAs(ImageFileFormat format)
 	iBody->bodyControl->PushDebugCamera();
     
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
-    FilePath filePath = sceneData->GetScenePathname();
-    FilePath dataSourcePath = EditorSettings::Instance()->GetDataSourcePath();
-    String::size_type pos = filePath.GetAbsolutePathname().find(dataSourcePath.GetAbsolutePathname());
-    if(String::npos != pos)
-    {
-        String path = filePath.GetAbsolutePathname();
-        path = path.replace(pos, dataSourcePath.GetAbsolutePathname().length(), "");
-        
-        filePath = FilePath(path);
-    }
-    else 
-    {
-        DVASSERT(0);
-    }
+//    FilePath filePath = sceneData->GetScenePathname();
+//    FilePath dataSourcePath = EditorSettings::Instance()->GetDataSourcePath();
+//    String::size_type pos = filePath.find(dataSourcePath.GetAbsolutePathname());
+//    if(String::npos != pos)
+//    {
+//        filePath = filePath.replace(pos, dataSourcePath.GetAbsolutePathname().length(), "");
+//    }
+//    else 
+//    {
+//        DVASSERT(0);
+//    }
     
     // Get project path
     KeyedArchive *keyedArchieve = EditorSettings::Instance()->GetSettings();
@@ -601,15 +598,14 @@ void SceneEditorScreenMain::ExportAs(ImageFileFormat format)
     
     if(!SceneExporter::Instance()) new SceneExporter();
     
-    FilePath inFolder = projectPath + "DataSource/3d/";
-    SceneExporter::Instance()->SetInFolder(inFolder);
+    SceneExporter::Instance()->SetInFolder(projectPath + String("DataSource/3d/"));
     SceneExporter::Instance()->SetOutFolder(projectPath + String("Data/3d/"));
     
     SceneExporter::Instance()->SetExportingFormat(formatStr);
     
     //TODO: how to be with removed nodes?
     Set<String> errorsLog;
-    SceneExporter::Instance()->ExportScene(iBody->bodyControl->GetScene(), filePath, errorsLog);
+    SceneExporter::Instance()->ExportScene(iBody->bodyControl->GetScene(), sceneData->GetScenePathname(), errorsLog);
     
 	iBody->bodyControl->PopDebugCamera();
     

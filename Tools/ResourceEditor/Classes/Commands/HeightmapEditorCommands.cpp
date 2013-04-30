@@ -27,7 +27,7 @@ String HeightmapModificationCommand::TimeString()
 
 FilePath HeightmapModificationCommand::SaveHeightmap(Heightmap* heightmap)
 {
-	FilePath documentsPath("~doc:");
+	FilePath documentsPath("~doc:/");
 
 	FilePath folderPathname("~doc:/History/");
 	FileSystem::Instance()->CreateDirectory(folderPathname);

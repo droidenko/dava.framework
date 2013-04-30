@@ -103,7 +103,9 @@ void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<Stri
     DVASSERT(0 == texturesForExport.size())
     
     //Create destination folder
-    sceneUtils.workingFolder = fileName.GetDirectory();
+    String relativeFilename = fileName.GetRelativePathname(sceneUtils.dataSourceFolder);
+    sceneUtils.workingFolder = fileName.GetDirectory().GetRelativePathname(sceneUtils.dataSourceFolder);
+    
     FileSystem::Instance()->CreateDirectory(sceneUtils.dataFolder + sceneUtils.workingFolder, true); 
     
     scene->Update(0.1f);
@@ -123,18 +125,16 @@ void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<Stri
     ReleaseTextures();
     
     //save scene to new place
-    FilePath sceneName(fileName.GetFilename());
-    sceneName.ReplaceExtension(".exported.sc2");
-    FilePath tempSceneName = FilePath(fileName.GetDirectory()) + sceneName;
+    FilePath tempSceneName = FilePath::CreateWithNewExtension(sceneUtils.dataSourceFolder + relativeFilename, ".exported.sc2");
     
     SceneFileV2 * outFile = new SceneFileV2();
     outFile->EnableSaveForGame(true);
     outFile->EnableDebugLog(false);
     
-    outFile->SaveScene(sceneUtils.dataSourceFolder + tempSceneName, scene);
+    outFile->SaveScene(tempSceneName, scene);
     SafeRelease(outFile);
 
-    bool moved = FileSystem::Instance()->MoveFile(sceneUtils.dataSourceFolder + tempSceneName, sceneUtils.dataFolder + fileName, true);
+    bool moved = FileSystem::Instance()->MoveFile(tempSceneName, sceneUtils.dataFolder + relativeFilename, true);
 	if(!moved)
 	{
 		errorLog.insert(Format("Can't move file %s", fileName.GetAbsolutePathname().c_str()));
@@ -266,7 +266,7 @@ void SceneExporter::ExportLandscapeFullTiledTexture(Landscape *landscape, Set<St
         fullTiledPathname.ReplaceExtension(".thumbnail_exported.png");
         
         String workingPathname = sceneUtils.RemoveFolderFromPath(fullTiledPathname, sceneUtils.dataSourceFolder);
-        sceneUtils.PrepareFolderForCopy(workingPathname, errorLog);
+        sceneUtils.PrepareFolderForCopyFile(workingPathname, errorLog);
 
         Texture *fullTiledTexture = Texture::GetPinkPlaceholder();
         Image *image = fullTiledTexture->CreateImageFromMemory();
@@ -343,7 +343,7 @@ bool SceneExporter::ExportTextureDescriptor(const FilePath &texturePathname, Set
     descriptor->textureFileFormat = exportFormat;
     
     String workingPathname = sceneUtils.RemoveFolderFromPath(descriptor->pathname, sceneUtils.dataSourceFolder);
-    sceneUtils.PrepareFolderForCopy(workingPathname, errorLog);
+    sceneUtils.PrepareFolderForCopyFile(workingPathname, errorLog);
 
 #if defined TEXTURE_SPLICING_ENABLED
     descriptor->ExportAndSlice(sceneUtils.dataFolder + workingPathname, GetExportedTextureName(texturePathname));

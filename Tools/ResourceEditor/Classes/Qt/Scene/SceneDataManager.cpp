@@ -238,7 +238,7 @@ void SceneDataManager::ReloadNode(EditorScene* scene, Entity *node, const FilePa
         {
             Entity *newNode = loadedNode->Clone();
             newNode->SetLocalTransform(node->GetLocalTransform());
-            newNode->GetCustomProperties()->SetString("editor.referenceToOwner", nodePathname.GetAbsolutePathname());
+            newNode->GetCustomProperties()->SetString("editor.referenceToOwner", fromPathname.GetAbsolutePathname());
             newNode->SetSolid(true);
             
             Entity *parent = node->GetParent();

@@ -395,6 +395,9 @@ FilePath TextureDescriptor::GetSourceTexturePathname() const
 
 FilePath TextureDescriptor::GetDescriptorPathname(const FilePath &texturePathname)
 {
+    if(texturePathname.IsEmpty())
+        return FilePath();
+    
     return FilePath::CreateWithNewExtension(texturePathname, GetDescriptorExtension());
 }
 

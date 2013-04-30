@@ -19,13 +19,13 @@ public:
     
     DAVA::String RemoveFolderFromPath(const DAVA::FilePath &pathname, const DAVA::FilePath &folderPathname);
 
-    void PrepareFolderForCopy(const DAVA::FilePath &filePathname, DAVA::Set<DAVA::String> &errorLog);
+    void PrepareFolderForCopyFile(const DAVA::String &filename, DAVA::Set<DAVA::String> &errorLog);
 
 public:
 
     DAVA::FilePath dataFolder;
     DAVA::FilePath dataSourceFolder;
-    DAVA::FilePath workingFolder;
+    DAVA::String workingFolder;
 };
 
 

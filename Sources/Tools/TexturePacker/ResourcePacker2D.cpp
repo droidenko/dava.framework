@@ -22,7 +22,7 @@ ResourcePacker2D::ResourcePacker2D()
 	clearProcessDirectory = false;
 }
 
-FilePath ResourcePacker2D::GetProcessFolderName()
+String ResourcePacker2D::GetProcessFolderName()
 {
 	return "$process/";
 }
@@ -81,13 +81,13 @@ void ResourcePacker2D::PackResources()
 }
 
 
-bool ResourcePacker2D::IsMD5ChangedDir(const FilePath & processDirectoryPath, const FilePath & pathname, const FilePath & name, bool isRecursive)
+bool ResourcePacker2D::IsMD5ChangedDir(const FilePath & processDirectoryPath, const FilePath & pathname, const String & name, bool isRecursive)
 {
     DVASSERT(processDirectoryPath.IsDirectoryPathname());
 
-	FilePath filename = FilePath::CreateWithNewExtension(name, ".md5");
-	FilePath md5FileName = processDirectoryPath + filename;
+	FilePath md5FileName = FilePath::CreateWithNewExtension(processDirectoryPath + name, ".md5");
 
+    
 	uint8 oldMD5Digest[16];
 	uint8 newMD5Digest[16];
 	bool isChanged = false;
@@ -118,28 +118,16 @@ bool ResourcePacker2D::IsMD5ChangedDir(const FilePath & processDirectoryPath, co
 	for (int32 k = 0; k < 16; ++k)
 		if (oldMD5Digest[k] != newMD5Digest[k])
 			isChanged = true;
-	
-// 	if (isChanged == true)
-// 	{
-// 		printf("md5 old:");
-// 		for (int32 k = 0; k < 16; ++k)
-// 			printf("%x", oldMD5Digest[k]);
-// 		printf(" md5 new:");
-// 		for (int32 k = 0; k < 16; ++k)
-// 			printf("%x", newMD5Digest[k]);
-// 		printf("\n");
-// 	}
-	
+
 	return isChanged;
 }
 
 
-bool ResourcePacker2D::IsMD5ChangedFile(const FilePath & processDirectoryPath, const FilePath & pathname, const FilePath & psdName)
+bool ResourcePacker2D::IsMD5ChangedFile(const FilePath & processDirectoryPath, const FilePath & pathname, const String & psdName)
 {
     DVASSERT(processDirectoryPath.IsDirectoryPathname());
 
-    FilePath filename = FilePath::CreateWithNewExtension(psdName, ".md5");
-	FilePath md5FileName = processDirectoryPath + filename;
+	FilePath md5FileName = FilePath::CreateWithNewExtension(processDirectoryPath + psdName, ".md5");
 
 	uint8 oldMD5Digest[16];
 	uint8 newMD5Digest[16];
@@ -172,7 +160,7 @@ bool ResourcePacker2D::IsMD5ChangedFile(const FilePath & processDirectoryPath, c
 	return isChanged;
 }
 
-DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryPath, const FilePath & psdPathname, const FilePath & psdName)
+DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryPath, const FilePath & psdPathname, const String & psdName)
 {
     DVASSERT(processDirectoryPath.IsDirectoryPathname());
     
@@ -185,7 +173,7 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 	// TODO: Check CRC32
 	Vector<Magick::Image> layers;
 	
-    FilePath psdNameWithoutExtension(psdName);
+    FilePath psdNameWithoutExtension(processDirectoryPath + psdName);
     psdNameWithoutExtension.TruncateExtension();
 	
 	try 
@@ -212,42 +200,15 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 		{
 			Magick::Image & currentLayer = layers[k];
 			
-			
-			/* 
-			MagickCore::ResetImagePropertyIterator(currentLayer.image());
-			const char * property = MagickCore::GetNextImageProperty(currentLayer.image());
-			if (property != (const char *) NULL)
-			{
-				printf("  Properties:\n");
-				while (property != (const char *) NULL)
-				{
-					printf("    %c",*property);
-					if (strlen(property) > 1)
-						printf("%s: ",property+1);
-					if (strlen(property) > 80)
-						printf("\n");
-
-					const char * value = MagickCore::GetImageProperty(currentLayer.image(), property);
-					if (value != (const char *) NULL)
-						printf("%s\n",value);
-					property = MagickCore::GetNextImageProperty(currentLayer.image());
-				}
-			} */
-			
-			
-			
 			currentLayer.crop(Magick::Geometry(width,height, 0, 0));
 			currentLayer.magick("PNG");
-			FilePath outputFile = processDirectoryPath + psdNameWithoutExtension;
-			outputFile.ReplaceExtension(String(Format("%d.png", k - 1)));
+			FilePath outputFile = FilePath::CreateWithNewExtension(psdNameWithoutExtension, String(Format("%d.png", k - 1)));
 			currentLayer.write(outputFile.GetAbsolutePathname());
 		}
 		
 		
 		DefinitionFile * defFile = new DefinitionFile;
-		defFile->filename = processDirectoryPath + psdNameWithoutExtension;
-        defFile->filename.ReplaceExtension(".txt");
-
+		defFile->filename = FilePath::CreateWithNewExtension(psdNameWithoutExtension, ".txt");
 		defFile->spriteWidth = width;
 		defFile->spriteHeight = height;
 		defFile->frameCount = (int)layers.size() -1;
@@ -271,7 +232,7 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 			if ((defFile->frameRects[k - 1].dx >= maxTextureSize) || (defFile->frameRects[k - 1].dy >= maxTextureSize))
 			{
 				
-				printf("* WARNING * - frame of %s layer %d is bigger than maxTextureSize(%d) layer exportSize (%d x %d) FORCE REDUCE TO (%d x %d). Bewarned!!! Results not guaranteed!!!\n", psdName.GetAbsolutePathname().c_str(), k - 1, maxTextureSize
+				printf("* WARNING * - frame of %s layer %d is bigger than maxTextureSize(%d) layer exportSize (%d x %d) FORCE REDUCE TO (%d x %d). Bewarned!!! Results not guaranteed!!!\n", psdName.c_str(), k - 1, maxTextureSize
 					   , defFile->frameRects[k - 1].dx, defFile->frameRects[k - 1].dy, width, height);
 				defFile->frameRects[k - 1].dx = width;
 				defFile->frameRects[k - 1].dy = height;
@@ -385,13 +346,13 @@ void ResourcePacker2D::ProcessFlags(const FilePath & flagsPathname)
 
 void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FilePath & outputPath)
 {
+    DVASSERT(inputPath.IsDirectoryPathname() && outputPath.IsDirectoryPathname());
+    
 	uint64 packTime = SystemTimer::Instance()->AbsoluteMS();
 
 	/* New $process folder structure */
 	
-	FilePath dataSourceRelativePath(inputPath);
-    dataSourceRelativePath.ReplacePath(excludeDirectory);
-
+	String dataSourceRelativePath = inputPath.GetRelativePathname(excludeDirectory);
 	FilePath processDirectoryPath = excludeDirectory  + GetProcessFolderName() + dataSourceRelativePath;
 	if (FileSystem::Instance()->CreateDirectory(processDirectoryPath, true) == FileSystem::DIRECTORY_CANT_CREATE)
 	{
@@ -476,9 +437,6 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 		if (definitionFileList.size() > 0 && modified)
 		{
 			TexturePacker packer;
-			FilePath outputPathWithSlash(outputPath);
-            outputPathWithSlash.MakeDirectoryPathname();
-				
 			if(isLightmapsPacking)
 			{
 				packer.UseOnlySquareTextures();
@@ -487,11 +445,11 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 
 			if (CommandLineParser::Instance()->IsFlagSet("--split"))
 			{
-				packer.PackToTexturesSeparate(excludeDirectory, outputPathWithSlash, definitionFileList);
+				packer.PackToTexturesSeparate(excludeDirectory, outputPath, definitionFileList);
 			}
 			else
 			{
-				packer.PackToTextures(excludeDirectory, outputPathWithSlash, definitionFileList);
+				packer.PackToTextures(excludeDirectory, outputPath, definitionFileList);
 			}
 		}
 	}	

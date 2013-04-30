@@ -41,8 +41,9 @@ REGISTER_CLASS(Camera);
 
 
 Camera::Camera()
+:	orthoWidth(35.f)
 {
-	Setup(35.0f, 1.0f, 1.0f, 2500.f, false);
+	SetupPerspective(35.0f, 1.0f, 1.0f, 2500.f);
 	up = Vector3(0.0f, 1.0f, 0.0f);
 	left = Vector3(1.0f, 0.0f, 0.0f);
 	flags = REQUIRE_REBUILD | REQUIRE_REBUILD_MODEL | REQUIRE_REBUILD_PROJECTION;
@@ -54,69 +55,57 @@ Camera::Camera()
 Camera::~Camera()
 {
 	SafeRelease(currentFrustum);
-}
-	
-/*  Code to restore camera information from HIERARCHY of transformations
-void Camera::RestoreOriginalSceneTransform()
-{
-	cameraTransform = GetLocalTransform();
-	SceneNode * node = GetParent();
-	while(node)
-	{
-		cameraTransform = node->GetLocalTransform() * cameraTransform;
-		node = node->GetParent();
-	}
-	worldTransform = cameraTransform;
-	cameraTransform.Inverse();
-	ExtractCameraToValues();
-}
- */
-    
+} 
 
-void Camera::SetFOV(const float32 &fovyInDegrees)
+void Camera::SetFOV(const float32 &fovxInDegrees)
 {
-    Setup(fovyInDegrees, aspect, znear, zfar, ortho);
+	fovX = fovxInDegrees;
+	Recalc();
 }
     
 void Camera::SetAspect(const float32 &_aspect)
 {
-    Setup(fovy, _aspect, znear, zfar, ortho);
+	aspect = _aspect;
+	Recalc();
 }
     
 void Camera::SetZNear(const float32 &_zNear)
 {
-    Setup(fovy, aspect, _zNear, zfar, ortho);
+	znear = _zNear;
+	Recalc();
 }
     
 void Camera::SetZFar(const float32 &_zFar)
 {
-    Setup(fovy, aspect, znear, _zFar, ortho);
+	zfar = _zFar;
+	Recalc();
 }
 
 void Camera::SetIsOrtho(const bool &_ortho)
 {
-    Setup(fovy, aspect, znear, zfar, _ortho);
+	ortho = _ortho;
+	Recalc();
 }
     
     
 void Camera::SetXMin(const float32 &_xmin)
 {
-    Setup(_xmin, xmax, ymin, ymax, znear, zfar);
+	xmin = _xmin;
 }
 
 void Camera::SetXMax(const float32 &_xmax)
 {
-    Setup(xmin, _xmax, ymin, ymax, znear, zfar);
+	xmax = _xmax;
 }
 
 void Camera::SetYMin(const float32 &_ymin)
 {
-    Setup(xmin, xmax, _ymin, ymax, znear, zfar);
+	ymin = _ymin;
 }
 
 void Camera::SetYMax(const float32 &_ymax)
 {
-    Setup(xmin, xmax, ymin, _ymax, znear, zfar);
+	ymax = _ymax;
 }
     
 float32 Camera::GetXMin() const
@@ -142,7 +131,7 @@ float32 Camera::GetYMax() const
     
 float32 Camera::GetFOV() const
 {
-    return fovy;
+    return fovX;
 }
 
 float32 Camera::GetAspect() const
@@ -166,24 +155,32 @@ bool Camera::GetIsOrtho() const
 }
 
 
-void Camera::Setup(float32 fovyInDegrees, float32 aspectYdivX, float32 zNear, float32 zFar, bool isOrtho)
+void Camera::SetupPerspective(float32 fovxInDegrees, float32 aspectYdivX, float32 zNear, float32 zFar)
 {
-    flags |= REQUIRE_REBUILD_PROJECTION;
-
     this->aspect = aspectYdivX;
     
-    this->fovy = fovyInDegrees;
+    this->fovX = fovxInDegrees;
 	this->znear = zNear;
 	this->zfar = zFar;
-	this->ortho = isOrtho;
+	this->ortho = false;
 	
+	Recalc();
+}
+
+void Camera::SetupOrtho(float32 width, float32 aspectYdivX, float32 zNear, float32 zFar)
+{
+	this->aspect = aspectYdivX;
+
+	this->orthoWidth = width;
+	this->znear = zNear;
+	this->zfar = zFar;
+	this->ortho = true;
+
 	Recalc();
 }
 
 void Camera::Setup(float32 _xmin, float32 _xmax, float32 _ymin, float32 _ymax, float32 _znear, float32 _zfar)
 {
-	flags |= REQUIRE_REBUILD_PROJECTION;
-
 	xmin = _xmin;
 	xmax = _xmax;
 	ymin = _ymin;
@@ -194,17 +191,31 @@ void Camera::Setup(float32 _xmin, float32 _xmax, float32 _ymin, float32 _ymax, f
 
 void Camera::Recalc()
 {
-	ymax = znear * tanf(fovy * PI / 360.0f);
-	ymin = -ymax;
-	
-    float32 realAspect = aspect;
-    if ((RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_PORTRAIT) || (RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_PORTRAIT_UPSIDE_DOWN) || (RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_TEXTURE))
-    {
-        realAspect = 1.0f / realAspect;
+	flags |= REQUIRE_REBUILD_PROJECTION;
+
+	float32 realAspect = aspect;
+	if ((RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_PORTRAIT) || (RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_PORTRAIT_UPSIDE_DOWN) || (RenderManager::Instance()->GetRenderOrientation() == Core::SCREEN_ORIENTATION_TEXTURE))
+	{
+		realAspect = 1.0f / realAspect;
 	}
-    
-	xmin = ymin * realAspect;
-	xmax = ymax * realAspect;
+
+	if(ortho)
+	{
+		xmax = orthoWidth/2.f;
+		xmin = -xmax;
+
+		ymax = xmax * realAspect;
+		ymin = xmin * realAspect;
+	}
+	else
+	{
+		xmax = znear * tanf(fovX * PI / 360.0f);
+		xmin = -xmax;
+
+		ymax = xmax * realAspect;
+		ymin = xmin * realAspect;
+	}
+
     CalculateZoomFactor();
 }
 
@@ -511,7 +522,7 @@ BaseObject * Camera::Clone(BaseObject * dstNode)
     cnd->znear = znear;
     cnd->zfar = zfar;
     cnd->aspect = aspect;
-    cnd->fovy = fovy;
+    cnd->fovX = fovX;
     cnd->ortho = ortho;
     
     cnd->position = position;
@@ -533,7 +544,7 @@ Frustum * Camera::GetFrustum() const
     
 void Camera::CalculateZoomFactor()
 {
-    zoomFactor = tanf(DegToRad(fovy * 0.5f));
+    zoomFactor = tanf(DegToRad(fovX * 0.5f));
 }
 
 float32 Camera::GetZoomFactor() const
@@ -599,7 +610,7 @@ Vector3 Camera::UnProject(float32 winx, float32 winy, float32 winz, const Rect &
 }
     
 /*
-     float32 xmin, xmax, ymin, ymax, znear, zfar, aspect, fovy;
+     float32 xmin, xmax, ymin, ymax, znear, zfar, aspect, fovx;
      bool ortho;
      
      
@@ -631,7 +642,7 @@ void Camera::Save(KeyedArchive * archive)
     archive->SetFloat("cam.znear", znear);
     archive->SetFloat("cam.zfar", zfar);
     archive->SetFloat("cam.aspect", aspect);
-    archive->SetFloat("cam.fov", fovy);
+    archive->SetFloat("cam.fov", fovX);
     archive->SetBool("cam.isOrtho", ortho);
     archive->SetInt32("cam.flags", flags);
     
@@ -659,7 +670,7 @@ void Camera::Load(KeyedArchive * archive)
     znear = archive->GetFloat("cam.znear");
     zfar = archive->GetFloat("cam.zfar");
     aspect = archive->GetFloat("cam.aspect");
-    fovy = archive->GetFloat("cam.fov");
+    fovX = archive->GetFloat("cam.fov");
     ortho = archive->GetBool("cam.isOrtho");
     flags = archive->GetInt32("cam.flags");
     
@@ -690,7 +701,7 @@ void Camera::Load(KeyedArchive * archive)
 //    dstNode->znear = znear;
 //    dstNode->zfar = zfar;
 //    dstNode->aspect = aspect;
-//    dstNode->fovy = fovy;
+//    dstNode->fovx = fovx;
 //	dstNode->ortho = ortho;
 //    
 //	dstNode->position = position;
@@ -715,7 +726,7 @@ void Camera::CopyMathOnly(const Camera & c)
     znear = c.znear;
     zfar = c.zfar;
     aspect = c.aspect;
-    fovy = c.fovy;
+    fovX = c.fovX;
     ortho = c.ortho;
 
     position = c.position;

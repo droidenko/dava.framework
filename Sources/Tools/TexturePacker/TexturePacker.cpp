@@ -177,7 +177,7 @@ void TexturePacker::PackToTexturesSeparate(const FilePath & excludeFolder, const
 				finalImage.DrawImage(destRect->x, destRect->y, &image);
 			}
 			
-			if (!WriteDefinition(excludeFolder, outputPath, FilePath(textureNameWithIndex), defFile))
+			if (!WriteDefinition(excludeFolder, outputPath, textureNameWithIndex, defFile))
 			{
 				Logger::Error("* ERROR: failed to write definition\n");
 			}
@@ -448,7 +448,7 @@ Rect2i TexturePacker::ReduceRectToOriginalSize(const Rect2i & _input)
 	return r;
 }
 
-bool TexturePacker::WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const FilePath & _textureName, DefinitionFile * defFile)
+bool TexturePacker::WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & _textureName, DefinitionFile * defFile)
 {
 	String fileName = defFile->filename.GetFilename();
 	if (CommandLineParser::Instance()->GetVerbose())
@@ -461,7 +461,7 @@ bool TexturePacker::WriteDefinition(const FilePath & excludeFolder, const FilePa
 	fprintf(fp, "%d\n", 1);
 	
 	String textureExtension = TextureDescriptor::GetDescriptorExtension();
-	fprintf(fp, "%s%s\n", _textureName.GetAbsolutePathname().c_str(), textureExtension.c_str());
+	fprintf(fp, "%s%s\n", _textureName.c_str(), textureExtension.c_str());
 	
 	fprintf(fp, "%d %d\n", defFile->spriteWidth, defFile->spriteHeight);
 	fprintf(fp, "%d\n", defFile->frameCount); 
@@ -483,7 +483,7 @@ bool TexturePacker::WriteDefinition(const FilePath & excludeFolder, const FilePa
 	return true;
 }
 
-bool TexturePacker::WriteMultipleDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const FilePath & _textureName, DefinitionFile * defFile)
+bool TexturePacker::WriteMultipleDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & _textureName, DefinitionFile * defFile)
 {
 	String fileName = defFile->filename.GetFilename();
 	if (CommandLineParser::Instance()->GetVerbose())
@@ -527,7 +527,7 @@ bool TexturePacker::WriteMultipleDefinition(const FilePath & excludeFolder, cons
 		if (isUsed != packerIndexToFileIndex.end())
 		{
 			// here we write filename for i-th texture and write to map real index in file for this texture
-			fprintf(fp, "%s%d%s\n", _textureName.GetAbsolutePathname().c_str(), i, textureExtension.c_str());
+			fprintf(fp, "%s%d%s\n", _textureName.c_str(), i, textureExtension.c_str());
 			packerIndexToFileIndex[i] = realIndex++;
 		}
 	}

@@ -60,10 +60,10 @@ protected:
 	void CreateUndoPoint();
 
 	FilePath GetScenePath();
-	FilePath GetRelativePathToScenePath(const FilePath& absolutePath);
-	FilePath GetAbsolutePathFromScenePath(const FilePath& relativePath);
-	FilePath GetRelativePathToProjectPath(const FilePath& absolutePath);
-	FilePath GetAbsolutePathFromProjectPath(const FilePath& relativePath);
+	String GetRelativePathToScenePath(const FilePath& absolutePath);
+	FilePath GetAbsolutePathFromScenePath(const String& relativePath);
+	String GetRelativePathToProjectPath(const FilePath& absolutePath);
+	FilePath GetAbsolutePathFromProjectPath(const String& relativePath);
 	void StoreSaveFileName(const FilePath& fileName);
 
 	void LoadTextureAction(const FilePath& pathToFile);

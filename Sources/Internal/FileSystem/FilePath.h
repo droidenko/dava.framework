@@ -43,13 +43,6 @@ class FilePath
 {
 public:
 
-	enum eType
-	{
-		PATH_IN_FILESYSTEM = 0,		//	rootdir/...
-		PATH_IN_DOCUMENTS,			//~doc:/....
-		PATH_IN_RESOURCES			//~res:/....
-	};
-
 	FilePath();
     FilePath(const FilePath & path);
     FilePath(const String & sourcePath);
@@ -82,19 +75,19 @@ public:
         \brief Function to check is filepath empty or no
         \returns true if absolutePathname is not empty
 	 */
-    const bool IsEmpty() const;
+    inline bool IsEmpty() const;
 
 	/*
         \brief Function to check is filepath represent folder path
         \returns true if absolutePathname has '/' as last character
 	 */
-    const bool IsDirectoryPathname() const;
+    bool IsDirectoryPathname() const;
 
 	/**
         \brief Function to retrieve pathname
         \returns pathname value
 	 */
-    const String & GetAbsolutePathname() const;
+    inline const String & GetAbsolutePathname() const;
     
 	/**
         \brief Function to retrieve filename from pathname. Filename for path "/Users/Folder/image.png" is "image.png".
@@ -193,13 +186,6 @@ public:
     
     
 	/**
-        \brief Function for replacement of pathname from absolute path
-        \param[in] pathname is pathname for replacement
-	 */
-    void ReplacePath(const FilePath &pathname);
-    
-    
-	/**
         \brief Function for comparison with extension of filepath object
         \param[in] extension is extension for comparison
 	 */
@@ -211,10 +197,12 @@ public:
         \param[in] type of FilePath representation
 		\returns pathname value for requested type
 	 */
-	String GetFrameworkPathForType(eType pathType);
+	String GetFrameworkPath();
 
 protected:
     
+    void Initialize(const String &pathname);
+
 	String GetFrameworkPathForPrefix(const String &typePrefix);
 
     static String NormalizePathname(const FilePath &pathname);
@@ -232,6 +220,7 @@ protected:
     static bool IsAbsolutePathname(const String &pathname);
     
 public:
+    static String AddPath(const FilePath &folder, const String & addition);
     static String AddPath(const FilePath &folder, const FilePath & addition);
     
 protected:
@@ -247,6 +236,18 @@ public:
 //     );
     
 };
+    
+    
+inline const String & FilePath::GetAbsolutePathname() const
+{
+    return absolutePathname;
+}
+
+inline bool FilePath::IsEmpty() const
+{
+    return absolutePathname.empty();
+}
+
     
 };
 

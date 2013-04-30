@@ -1398,12 +1398,12 @@ void Landscape::Save(KeyedArchive * archive, SceneFileV2 * sceneFile)
     {
         if(TEXTURE_DETAIL == k) continue;
 
-        FilePath relPath  = textureNames[k].GetRelativePathname(sceneFile->GetScenePath());
+        String relPath  = textureNames[k].GetRelativePathname(sceneFile->GetScenePath());
         
         if(sceneFile->DebugLogEnabled())
-            Logger::Debug("landscape tex save: %s rel: %s", textureNames[k].GetAbsolutePathname().c_str(), relPath.GetAbsolutePathname().c_str());
+            Logger::Debug("landscape tex save: %s rel: %s", textureNames[k].GetAbsolutePathname().c_str(), relPath.c_str());
         
-        archive->SetString(Format("tex_%d", k), relPath.GetAbsolutePathname());
+        archive->SetString(Format("tex_%d", k), relPath);
         archive->SetByteArrayAsType(Format("tiling_%d", k), textureTiling[k]);
 		archive->SetByteArrayAsType(Format("tilecolor_%d", k), tileColor[k]);
     }

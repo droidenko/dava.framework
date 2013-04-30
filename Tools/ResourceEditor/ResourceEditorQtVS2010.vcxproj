@@ -441,7 +441,7 @@
     <ClCompile Include="Classes\Qt\Scene\SceneData.cpp" />
     <ClCompile Include="Classes\Qt\Scene\SceneDataManager.cpp" />
     <ClCompile Include="Classes\Qt\Scene\SceneEditorProxy.cpp" />
-    <ClCompile Include="Classes\Qt\Scene\SceneManager.cpp" />
+    <ClCompile Include="Classes\Qt\Scene\SceneSignals.cpp" />
     <ClCompile Include="Classes\Qt\Scene\SceneTabWidget.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\CameraSystem.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\CollisionSystem.cpp" />
@@ -595,7 +595,7 @@
     <ClCompile Include="_GeneratedQt\Scene\SceneDataManager_moc.cpp" />
     <ClCompile Include="_GeneratedQt\Scene\SceneData_moc.cpp" />
     <ClCompile Include="_GeneratedQt\Scene\SceneEditorProxy_moc.cpp" />
-    <ClCompile Include="_GeneratedQt\Scene\SceneManager_moc.cpp" />
+    <ClCompile Include="_GeneratedQt\Scene\SceneSignals_moc.cpp" />
     <ClCompile Include="_GeneratedQt\Scene\SceneTabWidget_moc.cpp" />
     <ClCompile Include="_GeneratedQt\SpritesPacker\SpritePackerHelper_moc.cpp" />
     <ClCompile Include="_GeneratedQt\TextureBrowser\TextureBrowser_moc.cpp" />
@@ -951,7 +951,7 @@
     <ClInclude Include="Classes\Qt\Scene\SceneData.h" />
     <ClInclude Include="Classes\Qt\Scene\SceneDataManager.h" />
     <ClInclude Include="Classes\Qt\Scene\SceneEditorProxy.h" />
-    <ClInclude Include="Classes\Qt\Scene\SceneManager.h" />
+    <ClInclude Include="Classes\Qt\Scene\SceneSignals.h" />
     <ClInclude Include="Classes\Qt\Scene\SceneTabWidget.h" />
     <ClInclude Include="Classes\Qt\Scene\System\CameraSystem.h" />
     <ClInclude Include="Classes\Qt\Scene\System\CollisionSystem.h" />
