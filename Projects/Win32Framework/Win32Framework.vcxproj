@@ -114,7 +114,7 @@
     </ClCompile>
     <Lib>
       <AdditionalOptions>/VERBOSE:LIB /ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;wldap32.lib;opengl32.lib;OpenAL32.lib;glew32.lib;freetype246MT_wind.lib;libogg_static_wind.lib;libvorbis_static_wind.lib;libvorbisfile_static_wind.lib;libyaml_wind.lib;libxml_wind.lib;libpng_wind.lib;libmongodb_wind.lib;libtheora_static_wind.lib;libdxt_wind.lib;libcurl_wind.lib;zlib_wind.lib;PVRTexLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;wldap32.lib;opengl32.lib;OpenAL32.lib;glew32.lib;freetype246MT_wind.lib;libogg_static_wind.lib;libvorbis_static_wind.lib;libvorbisfile_static_wind.lib;libyaml_wind.lib;libxml_wind.lib;libpng_wind.lib;libmongodb_wind.lib;libtheora_static_wind.lib;libdxt_wind.lib;libcurl_wind.lib;zlib_wind.lib;PVRTexLib.lib;TextureConverterD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\$(Configuration)\$(ProjectName).lib</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)/../../Libs2/libs;C:\Program Files\OpenAL 1.1 SDK\libs\Win32;C:\Program Files (x86)\OpenAL 1.1 SDK\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
@@ -135,7 +135,7 @@
     </ClCompile>
     <Lib>
       <AdditionalOptions>/VERBOSE:LIB /ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;wldap32.lib;opengl32.lib;OpenAL32.lib;glew32.lib;freetype246MT_wind.lib;libogg_static_wind.lib;libvorbis_static_wind.lib;libvorbisfile_static_wind.lib;libyaml_wind.lib;libxml_wind.lib;libpng_wind.lib;libmongodb_wind.lib;libtheora_static_wind.lib;libdxt_wind.lib;libcurl_wind.lib;zlib_wind.lib;PVRTexLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;wldap32.lib;opengl32.lib;OpenAL32.lib;glew32.lib;freetype246MT_wind.lib;libogg_static_wind.lib;libvorbis_static_wind.lib;libvorbisfile_static_wind.lib;libyaml_wind.lib;libxml_wind.lib;libpng_wind.lib;libmongodb_wind.lib;libtheora_static_wind.lib;libdxt_wind.lib;libcurl_wind.lib;zlib_wind.lib;PVRTexLib.lib;TextureConverterD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\$(Configuration)\$(ProjectName).lib</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)/../../Libs2/libs;C:\Program Files\OpenAL 1.1 SDK\libs\Win32;C:\Program Files (x86)\OpenAL 1.1 SDK\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>

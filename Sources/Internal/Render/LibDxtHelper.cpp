@@ -16,6 +16,8 @@
 
 using namespace nvtt;
 
+#define __ENABLE_ATC_COMPILE__
+
 namespace DAVA
 {
 
