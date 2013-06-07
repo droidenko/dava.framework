@@ -521,3 +521,185 @@ void CommandRestoreOriginalTransform::RestoreTransform(DAVA::Entity *node)
 		}
 	}
 }
+
+BaseBatchCommand::BaseBatchCommand(Command::eCommandType type, CommandList::eCommandId id) :
+	CommandEntityModification(type, id)
+{
+}
+
+int32 BaseBatchCommand::GetBatchIndex(DAVA::Entity *entity)
+{
+	if (!entity)
+	{
+		return BATCH_INDEX_DEFAULT_VALUE;
+	}
+	
+	return entity->GetCustomProperties()->GetInt32(BATCH_INDEX_PROPERTY_NAME, BATCH_INDEX_DEFAULT_VALUE);
+}
+
+void BaseBatchCommand::SetBatchIndex(Entity* entity, int32 value)
+{
+	if (entity)
+	{
+		entity->GetCustomProperties()->SetInt32(BATCH_INDEX_PROPERTY_NAME, value);
+	}
+}
+
+void BaseBatchCommand::RestoreBatchIndex(Entity* entity, int32 value)
+{
+	if (GetBatchIndex(entity) == BATCH_INDEX_DEFAULT_VALUE)
+	{
+		CleanupBatchIndex(entity);
+	}
+	else
+	{
+		SetBatchIndex(entity, value);
+	}
+}
+
+void BaseBatchCommand::CleanupBatchIndex(Entity* entity)
+{
+	entity->GetCustomProperties()->DeleteKey(BATCH_INDEX_PROPERTY_NAME);
+}
+
+int32 CommandBatchEntities::currentBatchIndex = 0;
+
+CommandBatchEntities::CommandBatchEntities(const EntityGroup* entities)
+:	BaseBatchCommand(COMMAND_UNDO_REDO, CommandList::ID_COMMAND_BATCH_ENTITIES)
+{
+	commandName = "Batch entities";
+	this->entitiesToBatch = (*entities);
+	currentBatchIndex ++;
+}
+
+void CommandBatchEntities::Execute()
+{
+	// At this point just mark all the entities to be batched with the same Batch ID.
+	for(size_t i = 0; i < entitiesToBatch.Size(); ++i)
+	{
+		Entity *entity = entitiesToBatch.GetEntity(i);
+		if (!entity)
+		{
+			continue;
+		}
+		
+		// This entity might already belong to the other batch.
+		int prevBatchIndex = GetBatchIndex(entity);
+		prevBatchIndexes[entity] = prevBatchIndex;
+		SetBatchIndex(entity, currentBatchIndex);
+	}
+}
+
+void CommandBatchEntities::Cancel()
+{
+	for(Map<Entity*, int32>::iterator iter = prevBatchIndexes.begin(); iter != prevBatchIndexes.end(); iter ++)
+	{
+		Entity* entity = iter->first;
+		if (!entity)
+		{
+			continue;
+		}
+
+		RestoreBatchIndex(entity, iter->second);
+	}
+	
+	prevBatchIndexes.clear();
+}
+
+CommandUnbatchEntities::CommandUnbatchEntities(const EntityGroup* entities)
+:	BaseBatchCommand(COMMAND_UNDO_REDO, CommandList::ID_COMMAND_UNBATCH_ENTITIES)
+{
+	commandName = "Unbatch entities";
+	this->entitiesToUnbatch = (*entities);
+}
+
+void CommandUnbatchEntities::Execute()
+{
+	if (entitiesToUnbatch.Size() == 0)
+	{
+		return;
+	}
+
+	// We have to look through the whole scene to lookup for the batches with the same
+	// Batch Index.
+	Entity* rootNode = entitiesToUnbatch.GetEntity(0);
+	Entity* prevParentNode = rootNode;
+
+	while (rootNode)
+	{
+		prevParentNode = rootNode;
+		rootNode = rootNode->GetParent();
+	}
+	
+	DVASSERT(prevParentNode);
+	rootNode = prevParentNode;
+
+	// At this point just mark all the entities to be batched with the same Batch ID.
+	for(size_t i = 0; i < entitiesToUnbatch.Size(); ++i)
+	{
+		Entity *entity = entitiesToUnbatch.GetEntity(i);
+		if (!entity)
+		{
+			continue;
+		}
+
+		// For each entity - build the list of the entities with the same Batch Index...
+		Set<Entity*> entitiesWithTheSameBatchIndex;
+		BuildListOfEntitiesToUnbatch(entitiesWithTheSameBatchIndex, rootNode, entity);
+
+		// ...and unbatch them.
+		for (Set<Entity*>::iterator iter = entitiesWithTheSameBatchIndex.begin();
+			 iter !=entitiesWithTheSameBatchIndex.end(); iter ++)
+		{
+			Entity* entityToUnbatch = (*iter);
+			prevBatchIndexes[entityToUnbatch] = GetBatchIndex(entityToUnbatch);
+			CleanupBatchIndex(entityToUnbatch);
+		}
+	}
+}
+
+void CommandUnbatchEntities::BuildListOfEntitiesToUnbatch(Set<Entity*>& resultSet, Entity* rootNode, Entity* entityToUnbatch)
+{
+	int32 childrenCount = rootNode->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		Entity* childNode = rootNode->GetChild(i);
+		if (IsSameBatchIndex(childNode, entityToUnbatch))
+		{
+			resultSet.insert(childNode);
+		}
+
+		BuildListOfEntitiesToUnbatch(resultSet, childNode, entityToUnbatch);
+	}
+}
+
+bool CommandUnbatchEntities::IsSameBatchIndex(Entity* entityA, Entity* entityB)
+{
+	int32 batchIndexA = GetBatchIndex(entityA);
+	int32 batchIndexB = GetBatchIndex(entityB);
+	
+	if (batchIndexA == batchIndexB && batchIndexA == BATCH_INDEX_DEFAULT_VALUE)
+	{
+		// Both entities are unbatched - treat this as "different batch indices"
+		return false;
+	}
+	
+	return (batchIndexA == batchIndexB);
+}
+
+void CommandUnbatchEntities::Cancel()
+{
+	// Re-batch the entities were unbatched during Execute().
+	for(Map<Entity*, int32>::iterator iter = prevBatchIndexes.begin(); iter != prevBatchIndexes.end(); iter ++)
+	{
+		Entity* entity = iter->first;
+		if (!entity)
+		{
+			continue;
+		}
+
+		RestoreBatchIndex(entity, iter->second);
+	}
+	
+	prevBatchIndexes.clear();
+}

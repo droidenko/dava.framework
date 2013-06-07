@@ -68,6 +68,8 @@ public:
 	int GetCollisionDrawMode() const;
 	void SetCollisionDrawMode(int mode);
 	
+	SceneEditorProxy* GetSceneEditorProxyForCurrentTab() const;
+
 public slots:
 	// this slot redirects any UIEvent to the active sceneProxy for processing
 	void ProcessDAVAUIEvent(DAVA::UIEvent *event);

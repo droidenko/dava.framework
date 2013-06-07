@@ -68,7 +68,7 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	/**/ SetTabScene(oldTabIndex, NULL);
 	// <--
 
-	OpenTab("/Projects/dava.wot.art/DataSource/3d/Tanks/USSR/T-44.sc2");
+	//OpenTab("/Users/yuricoder/Work/DAVA_Framework/work/dava.framework_scenesamples/dike_village/dike_village.sc2");
 	//OpenTab("/Projects/dava.wot.art/DataSource/3d/Maps/dike_village/dike_village.sc2");
 	//AddTab("/Projects/dava.wot.art/DataSource/3d/Maps/desert_train/desert_train.sc2");
 
@@ -440,4 +440,9 @@ void SceneTabWidget::SetCollisionDrawMode(int mode)
 			}
 		}
 	}
+}
+
+SceneEditorProxy* SceneTabWidget::GetSceneEditorProxyForCurrentTab() const
+{
+	return GetTabScene(GetCurrentTab());
 }

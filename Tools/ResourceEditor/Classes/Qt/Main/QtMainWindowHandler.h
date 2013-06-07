@@ -26,7 +26,7 @@
 #include "DAVAEngine.h"
 #include "../Constants.h"
 #include "Classes/SceneEditor/EditorSettings.h"
-
+#include "Classes/Qt/Scene/SceneTabWidget.h"
 #include "TextureBrowser/TextureBrowser.h"
 #include "MaterialBrowser/MaterialBrowser.h"
 #include "Classes/Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
@@ -70,7 +70,8 @@ public:
     
     void RegisterStatusBar(QStatusBar *registeredSatusBar);
     void ShowStatusBarMessage(const DAVA::String &message, DAVA::int32 displayTime = 0);
-    
+    void SetSceneTabWidget(SceneTabWidget* widget);
+
     void SetWaitingCursorEnabled(bool enabled);
     
 	//custom colors
@@ -171,6 +172,9 @@ public slots:
 	void ModificationMove();
 	void ModificationRotate();
 	void ModificationScale();
+	void ModificationSetBatchFlag();
+	void ModificationCleanupBatchFlag();
+
 	void ModificationPlaceOnLand();
 	void ModificationSnapToLand();
 	void OnApplyModification(double x, double y, double z);
@@ -199,6 +203,7 @@ private:
     void ClearActions(int32 count, QAction **actions);
 
 	void UpdateModificationActions();
+	void ExecuteModifyBatchStateCommand(bool isBatch);
 
 private:
 	//set switch index
@@ -239,6 +244,7 @@ private:
 
     QMenu *menuResentScenes;
 	QWidget *defaultFocusWidget;
+	SceneTabWidget *sceneTabWidget;
     
     QStatusBar *statusBar;
 };

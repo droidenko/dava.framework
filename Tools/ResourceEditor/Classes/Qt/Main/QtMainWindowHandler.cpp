@@ -56,6 +56,7 @@
 #include <QStatusBar>
 #include <QSpinBox.h>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "Render/LibDxtHelper.h"
 
@@ -66,6 +67,7 @@ QtMainWindowHandler::QtMainWindowHandler(QObject *parent)
 	,	menuResentScenes(NULL)
 	,	defaultFocusWidget(NULL)
     ,   statusBar(NULL)
+	,	sceneTabWidget(NULL)
 {
     new CommandsManager();
     
@@ -812,6 +814,48 @@ void QtMainWindowHandler::ModificationScale()
 	UpdateModificationActions();
 }
 
+void QtMainWindowHandler::ModificationSetBatchFlag()
+{
+	ExecuteModifyBatchStateCommand(true);
+}
+
+void QtMainWindowHandler::ModificationCleanupBatchFlag()
+{
+	ExecuteModifyBatchStateCommand(false);
+}
+
+void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
+{
+	// Get the list of selected entities.
+	if (!sceneTabWidget)
+	{
+		return;
+	}
+	
+	SceneEditorProxy* currentTabProxy = sceneTabWidget->GetSceneEditorProxyForCurrentTab();
+	if (!currentTabProxy || !currentTabProxy->selectionSystem)
+	{
+		return;
+	}
+	
+	const EntityGroup *selectedEntities = currentTabProxy->selectionSystem->GetSelection();
+	if (!selectedEntities || selectedEntities->Size() == 0)
+	{
+		QMessageBox msgBox(QMessageBox::Warning, "Warning", "No entities selected to group");
+		msgBox.exec();
+		return;
+	}
+	
+	if (isBatch)
+	{
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities));
+	}
+	else
+	{
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities));
+	}
+}
+
 void QtMainWindowHandler::SetModificationMode(ResourceEditor::eModificationActions mode)
 {
 	SceneEditorScreenMain* screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
@@ -979,8 +1023,12 @@ void QtMainWindowHandler::OnSceneReleased(SceneData *scene)
 	UpdateRecentScenesList();
 }
 
-
 void QtMainWindowHandler::ConvertToShadow()
 {
 	CommandsManager::Instance()->ExecuteAndRelease(new CommandConvertToShadow());
+}
+
+void QtMainWindowHandler::SetSceneTabWidget(SceneTabWidget* widget)
+{
+	this->sceneTabWidget = widget;
 }
