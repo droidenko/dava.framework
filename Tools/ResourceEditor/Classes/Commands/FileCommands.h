@@ -75,15 +75,17 @@ class CommandExport: public Command
 {
     
 public:	
-	DAVA_DEPRECATED(CommandExport(DAVA::eGPUFamily gpu)); // DEPRECATED: using of SceneEditorScreenMain, Cancel absent
-    
+	DAVA_DEPRECATED(CommandExport(Scene* scene, const FilePath& scenePath, eGPUFamily gpu)); // DEPRECATED: using of SceneEditorScreenMain, Cancel absent
+
 protected:	
     
     virtual void Execute();
     
 protected:
+	DAVA::Scene* activeScene;
+	DAVA::FilePath activeScenePath;
+
     DAVA::eGPUFamily gpuFamily;
-    
 };
 
 class CommandSaveToFolderWithChilds: public Command

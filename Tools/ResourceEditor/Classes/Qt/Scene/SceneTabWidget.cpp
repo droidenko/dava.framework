@@ -69,7 +69,7 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	/**/ SetTabScene(oldTabIndex, NULL);
 	// <--
 
-	//OpenTab("/Users/yuricoder/Work/DAVA_Framework/work/dava.framework_scenesamples/dike_village/dike_village.sc2");
+	OpenTab("/Users/yuricoder/Work/DAVA_Framework/work/dava.framework_scenesamples/dike_village/dike_village.sc2");
 	//OpenTab("/Projects/dava.wot.art/DataSource/3d/Maps/dike_village/dike_village.sc2");
 	//AddTab("/Projects/dava.wot.art/DataSource/3d/Maps/desert_train/desert_train.sc2");
 

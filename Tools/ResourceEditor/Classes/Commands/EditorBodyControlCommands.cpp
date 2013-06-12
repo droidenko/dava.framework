@@ -24,6 +24,8 @@
 #include "Scene/SceneEditorProxy.h"
 #include "Scene/System/CollisionSystem.h"
 
+#include "BatchEntitiesHelper.h"
+
 CommandEntityModification::CommandEntityModification(Command::eCommandType type, CommandList::eCommandId id)
 :	Command(type, id)
 {
@@ -529,37 +531,22 @@ BaseBatchCommand::BaseBatchCommand(Command::eCommandType type, CommandList::eCom
 
 int32 BaseBatchCommand::GetBatchIndex(DAVA::Entity *entity)
 {
-	if (!entity)
-	{
-		return BATCH_INDEX_DEFAULT_VALUE;
-	}
-	
-	return entity->GetCustomProperties()->GetInt32(BATCH_INDEX_PROPERTY_NAME, BATCH_INDEX_DEFAULT_VALUE);
+	return BatchEntitiesHelper::GetBatchIndex(entity);
 }
 
 void BaseBatchCommand::SetBatchIndex(Entity* entity, int32 value)
 {
-	if (entity)
-	{
-		entity->GetCustomProperties()->SetInt32(BATCH_INDEX_PROPERTY_NAME, value);
-	}
+	BatchEntitiesHelper::SetBatchIndex(entity, value);
 }
 
 void BaseBatchCommand::RestoreBatchIndex(Entity* entity, int32 value)
 {
-	if (GetBatchIndex(entity) == BATCH_INDEX_DEFAULT_VALUE)
-	{
-		CleanupBatchIndex(entity);
-	}
-	else
-	{
-		SetBatchIndex(entity, value);
-	}
+	BatchEntitiesHelper::RestoreBatchIndex(entity, value);
 }
 
 void BaseBatchCommand::CleanupBatchIndex(Entity* entity)
 {
-	entity->GetCustomProperties()->DeleteKey(BATCH_INDEX_PROPERTY_NAME);
+	BatchEntitiesHelper::CleanupBatchIndex(entity);
 }
 
 int32 CommandBatchEntities::currentBatchIndex = 0;

@@ -26,6 +26,7 @@
 #include "Render/GPUFamilyDescriptor.h"
 
 #include "../StringConstants.h"
+#include "BatchEntitiesHelper.h"
 
 using namespace DAVA;
 
@@ -122,6 +123,8 @@ void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<Stri
     SceneValidator::Instance()->ValidateScene(scene, errorLog);
 	//SceneValidator::Instance()->ValidateScales(scene, errorLog);
 
+	BatchSceneNodes(scene, errorLog);
+	
     ExportDescriptors(scene, errorLog);
 
     ExportLandscape(scene, errorLog);
@@ -405,3 +408,326 @@ void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, 
     }
 }
 
+void SceneExporter::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
+{
+	// First pass - lookup for the batch IDs to be batched.
+	Set<int32> batchIDs = BuildBatchIndicesList(scene);
+	if (batchIDs.size() == 0)
+	{
+		// Nothing to batch.
+		return;
+	}
+
+	int batchIndex = 0;
+	for (Set<int32>::iterator iter = batchIDs.begin(); iter != batchIDs.end(); iter ++)
+	{
+		int32 batchID = *iter;
+		Set<Entity*> entitiesToBatch = GetEntitiesForBatchIndex(scene, batchID);
+		if (entitiesToBatch.size() == 0)
+		{
+			continue;
+		}
+		
+		batchIndex ++;
+		Entity* resultEntity = BatchEntities(scene, errorLog, entitiesToBatch, batchIndex);
+	
+		if (!resultEntity)
+		{
+			continue;
+		}
+		
+		Entity* parentEntity = (*entitiesToBatch.begin())->GetParent();
+		if (!parentEntity)
+		{
+			continue;
+		}
+		
+		parentEntity->AddNode(resultEntity);
+		DeleteEntities(entitiesToBatch);
+	}
+}
+
+Set<int32> SceneExporter::BuildBatchIndicesList(Scene* scene)
+{
+	Set<int32> resultSet;
+	if (scene)
+	{
+		BuildBatchIndicesListRecursive(scene, resultSet);
+	}
+
+	return resultSet;
+}
+
+void SceneExporter::BuildBatchIndicesListRecursive(Entity* rootEntity, Set<int32>& resultSet)
+{
+	if (!rootEntity)
+	{
+		return;
+	}
+
+	int32 batchIndex = BatchEntitiesHelper::GetBatchIndex(rootEntity);
+	if (batchIndex != BATCH_INDEX_DEFAULT_VALUE)
+	{
+		resultSet.insert(batchIndex);
+	}
+	
+	int32 childrenCount = rootEntity->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		BuildBatchIndicesListRecursive(rootEntity->GetChild(i), resultSet);
+	}
+}
+
+Set<Entity*> SceneExporter::GetEntitiesForBatchIndex(Scene* scene, int32 batchIndex)
+{
+	Set<Entity*> resultSet;
+
+	// Lookup through the whole scene.
+	if (scene)
+	{
+		GetEntitiesForBatchIndexRecursive(scene, batchIndex, resultSet);
+	}
+	
+	return resultSet;
+}
+
+void SceneExporter::GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet)
+{
+	if (!rootEntity)
+	{
+		return;
+	}
+
+	if (BatchEntitiesHelper::GetBatchIndex(rootEntity) == batchIndex)
+	{
+		resultSet.insert(rootEntity);
+	}
+	
+	int32 childrenCount = rootEntity->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		GetEntitiesForBatchIndexRecursive(rootEntity->GetChild(i), batchIndex, resultSet);
+	}
+}
+
+Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
+									 const Set<Entity*>& entitiesToBatch,
+									 int32 batchIndex)
+{
+	int childrenCount = entitiesToBatch.size();
+	if (childrenCount == 0)
+	{
+		// Nothing to batch.
+		return NULL;
+	}
+
+	Entity* firstEntity = (*entitiesToBatch.begin());
+	if (!firstEntity)
+	{
+		// TODO! add error to the log!
+		return NULL;
+	}
+
+	RenderComponent * firstEntityComponent = static_cast<RenderComponent*>(firstEntity->GetComponent(Component::RENDER_COMPONENT));
+	if (!firstEntityComponent || !firstEntityComponent->GetRenderObject() ||
+		!(firstEntityComponent->GetRenderObject()->GetRenderBatchCount() == 1))
+	{
+		// TODO! add error to the log!
+		return NULL;
+	}
+	
+	RenderBatch* firstEntityRenderBatch = firstEntityComponent->GetRenderObject()->GetRenderBatch(0);
+	
+	Entity* parentEntity = firstEntity->GetParent();
+	if (!parentEntity)
+	{
+		// TODO! add error to the log!
+		return NULL;
+	}
+
+	Entity* batchedEntity = new Entity();
+	batchedEntity->SetName(Format("BatchedEntity%i", batchIndex));
+
+	// Precalculate the sizes.
+	uint32 vertexCount = 0;
+	uint32 indexCount = 0;
+	uint32 meshFormat = firstEntityRenderBatch->GetPolygonGroup()->GetFormat();
+	CalculateBatchedEntityParameters(entitiesToBatch, vertexCount, indexCount);
+	
+	if (vertexCount == 0 || indexCount == 0)
+	{
+		// TODO! add error to the log!
+		return NULL;
+	}
+
+	// Create the mesh for the new entity.
+	Mesh* batchedMesh = new Mesh();
+	PolygonGroup* batchedPolygonGroup = new PolygonGroup();
+	batchedPolygonGroup->AllocateData(meshFormat, vertexCount, indexCount);
+
+	// Merge the streams themselves.
+	uint32 vertexesBatched = 0;
+	uint32 indicesBatched = 0;
+	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end(); iter ++)
+	{
+		// Batch the Vertices and Indices.
+		Entity* curEntity = (*iter);
+		RenderComponent * component = static_cast<RenderComponent*>(curEntity->GetComponent(Component::RENDER_COMPONENT));
+
+		if(!component || !component->GetRenderObject())
+		{
+			// TODO! error log!
+			continue;
+		}
+
+		if (component->GetRenderObject()->GetType() != RenderObject::TYPE_MESH)
+		{
+			// TODO! error log!
+			continue;
+		}
+
+		// Yuri Coder, 2013/06/11. Currently can merge only render objects with one render batch.
+		Mesh* curMesh = static_cast<Mesh*>(component->GetRenderObject());
+		uint32 curRenderBatchesCount = curMesh->GetRenderBatchCount();
+		DVASSERT(curRenderBatchesCount == 1);
+
+		// Batch the polygon groups.
+		PolygonGroup* curPolygonGroup = curMesh->GetPolygonGroup(0);
+		
+		MergePolygonGroups(batchedPolygonGroup, curPolygonGroup, meshFormat, vertexesBatched);
+		MergeIndices(batchedPolygonGroup, curPolygonGroup, indicesBatched);
+	}
+	
+	// Done batching.
+	DVASSERT(vertexesBatched == vertexCount);
+	DVASSERT(indicesBatched == indexCount);
+	batchedPolygonGroup->BuildBuffers();
+	
+	batchedMesh->AddPolygonGroup(batchedPolygonGroup, firstEntityRenderBatch->GetMaterial());
+	
+	RenderComponent* batchedRenderComponent = new RenderComponent();
+	batchedRenderComponent->SetRenderObject(batchedMesh);
+	batchedEntity->AddComponent(batchedRenderComponent);
+	
+	return batchedEntity;
+}
+
+void SceneExporter::CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
+													 uint32& vertexCount, uint32& indexCount)
+{
+	for (Set<Entity*>::iterator iter = entitiesToBatch.begin();
+		 iter != entitiesToBatch.end(); iter ++)
+	{
+		Entity* curEntity = (*iter);
+		RenderComponent * component = static_cast<RenderComponent*>(curEntity->GetComponent(Component::RENDER_COMPONENT));
+		
+		if(!component || !component->GetRenderObject())
+		{
+			// TODO! error log!
+			continue;
+		}
+		
+		if (component->GetRenderObject()->GetType() != RenderObject::TYPE_MESH)
+		{
+			// TODO! error log!
+			continue;
+		}
+		
+		Mesh* curMesh = static_cast<Mesh*>(component->GetRenderObject());
+		uint32 curRenderBatchesCount = curMesh->GetRenderBatchCount();
+		DVASSERT(curRenderBatchesCount == 1);
+		
+		vertexCount += curMesh->GetRenderBatch(0)->GetPolygonGroup()->GetVertexCount();
+		indexCount += curMesh->GetRenderBatch(0)->GetPolygonGroup()->GetIndexCount();
+	}
+}
+
+void SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+									   uint32 meshFormat, uint32& verticesBatched)
+{
+	if (!batchedPolygonGroup || !curPolygonGroup)
+	{
+		DVASSERT(false);
+		return;
+	}
+	
+	uint32 verticesToBatch = curPolygonGroup->GetVertexCount();
+	Vector3 vector3Param;
+	Vector2 vector2Param;
+	for (uint32 i = 0; i < verticesToBatch; i ++)
+	{
+		uint32 positionInBatch = i + verticesBatched;
+		if (meshFormat & EVF_VERTEX)
+		{
+			curPolygonGroup->GetCoord(i, vector3Param);
+			batchedPolygonGroup->SetCoord(positionInBatch, vector3Param);
+		}
+
+		if (meshFormat & EVF_NORMAL)
+		{
+			curPolygonGroup->GetNormal(i, vector3Param);
+			batchedPolygonGroup->SetNormal(positionInBatch, vector3Param);
+		}
+
+		if (meshFormat & EVF_TANGENT)
+		{
+			curPolygonGroup->GetTangent(i, vector3Param);
+			batchedPolygonGroup->SetTangent(positionInBatch, vector3Param);
+		}
+
+		if (meshFormat & EVF_TEXCOORD0)
+		{
+			curPolygonGroup->GetTexcoord(0, i, vector2Param);
+			batchedPolygonGroup->SetTexcoord(0, positionInBatch, vector2Param);
+		}
+	
+		if (meshFormat & EVF_TEXCOORD1)
+		{
+			curPolygonGroup->GetTexcoord(1, i, vector2Param);
+			batchedPolygonGroup->SetTexcoord(1, positionInBatch, vector2Param);
+		}
+	}
+	
+	// Update the position in batched group.
+	verticesBatched += verticesToBatch;
+}
+
+void SceneExporter::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+								 uint32& indicesBatched)
+{
+	if (!batchedPolygonGroup || !curPolygonGroup)
+	{
+		DVASSERT(false);
+		return;
+	}
+	
+	int32 indicesToBatch = curPolygonGroup->GetIndexCount();
+	for (int32 i = 0; i < indicesToBatch; i ++)
+	{
+		int32 index = 0;
+		curPolygonGroup->GetIndex(i, index);
+		batchedPolygonGroup->SetIndex(i + indicesBatched, index /*+ indicesBatched*/);
+	}
+	
+	indicesBatched += indicesToBatch;
+}
+
+void SceneExporter::DeleteEntities(const Set<Entity*>& entitiesToDelete)
+{
+	for (Set<Entity*>::iterator iter = entitiesToDelete.begin(); iter != entitiesToDelete.end();
+		 iter ++)
+	{
+		Entity* entityToDelete = *iter;
+		if (!entityToDelete)
+		{
+			continue;
+		}
+		
+		Entity* parentNode = entityToDelete->GetParent();
+		DVASSERT(parentNode);
+		
+		parentNode->Retain();
+		parentNode->RemoveNode(entityToDelete);
+		parentNode->Release();
+	}
+}

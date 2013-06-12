@@ -163,8 +163,17 @@ void QtMainWindowHandler::SaveScene()
 void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 {
     eGPUFamily gpuFamily = (eGPUFamily)exportAsAction->data().toInt();
-    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(gpuFamily),
-												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+
+	// Yuri Coder, 2013/06/12. Current Tab Proxy might be NULL in case new QT
+	// scene editor isn't active.
+	FilePath pathToCurrentScene;
+	SceneEditorProxy* currentTabProxy = sceneTabWidget->GetSceneEditorProxyForCurrentTab();
+	if (currentTabProxy)
+	{
+		pathToCurrentScene = currentTabProxy->GetScenePath();
+	}
+	
+    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentTabProxy, pathToCurrentScene, gpuFamily));
 }
 
 

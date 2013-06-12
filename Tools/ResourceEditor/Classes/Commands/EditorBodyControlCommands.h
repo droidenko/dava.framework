@@ -146,10 +146,6 @@ protected:
 	void RestoreTransform(DAVA::Entity* node);
 };
 
-// Batch/Unbatch commands.
-#define BATCH_INDEX_PROPERTY_NAME "customProperties.batchIndex"
-#define BATCH_INDEX_DEFAULT_VALUE -1
-
 class BaseBatchCommand : public CommandEntityModification
 {
 public:

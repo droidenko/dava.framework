@@ -53,11 +53,35 @@ protected:
 
     void ExportLandscape(Scene *scene, Set<String> &errorLog);
     void ExportLandscapeFullTiledTexture(Landscape *landscape, Set<String> &errorLog);
+	void BatchSceneNodes(Scene *scene, Set<String> &errorLog);
+	
+	// Batch Entities functionality.
+	// Build the list of unique Batch Indices in the scene.
+	Set<int32> BuildBatchIndicesList(Scene* scene);
+	void BuildBatchIndicesListRecursive(Entity* rootEntity, Set<int32>& resultSet);
+	
+    // Get all the entities with the same Batch Index.
+	Set<Entity*> GetEntitiesForBatchIndex(Scene* scene, int32 batchIndex);
+	void GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet);
 
-    
-    
-    
-    
+	// Perform the actual batch (vertices, indexes, textures).
+	Entity* BatchEntities(Scene* scene, Set<String>& errorLog, const Set<Entity*>& entitiesToBatch, int32 batchIndex);
+
+	// Calculate the paremeters for the batched entity.
+	void CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
+										  uint32& vertexCount, uint32& indexCount);
+
+	// Merge the Polygon Groups.
+	void MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+							uint32 meshFormat, uint32& verticesBatched);
+
+	// Merge the Indices.
+	void MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+					  uint32& indicesBatched);
+
+	// Delete the entities.
+	void DeleteEntities(const Set<Entity*>& entitiesToDelete);
+	
 protected:
     
     SceneUtils sceneUtils;
