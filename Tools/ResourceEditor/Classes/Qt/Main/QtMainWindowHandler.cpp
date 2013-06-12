@@ -864,11 +864,13 @@ void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
 	
 	if (isBatch)
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities),
+													   currentTabProxy);
 	}
 	else
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities),
+													   currentTabProxy);
 	}
 }
 
