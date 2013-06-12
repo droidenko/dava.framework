@@ -39,7 +39,7 @@ const char8* Format(const char8 * text, ...)
 
 	va_start(ll, text);
 	int32 len = vsnprintf(&formatString8[formatString8Position],  FORMAT_STRING_MAX_LEN, text, ll);
-    DVASSERT(len < FORMAT_STRING_MAX_LEN);
+    DVASSERT(len <= FORMAT_STRING_MAX_LEN);
     
 	formatString8Position += (len + 1);
 
