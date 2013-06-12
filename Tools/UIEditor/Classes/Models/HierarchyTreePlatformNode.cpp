@@ -320,6 +320,10 @@ bool HierarchyTreePlatformNode::SaveLocalization(YamlNode* platform)
     }
 
 	// YuriCoder, 2013/04/23. Localization path must be absolute.
+	if(this->localizationPath.IsEmpty())
+	{
+		return false;
+	}
 	this->localizationPath.MakeDirectoryPathname();
 
 	//TODO VK: Fix FilePath::GetFrameworkPath()

@@ -46,7 +46,8 @@ public:
 	{
 		if(NULL != curCommand)
 		{
-			CommandsManager::Instance()->Execute(curCommand);
+			Scene* scene = SceneDataManager::Instance()->SceneGetActive()->GetScene();
+			CommandsManager::Instance()->Execute(curCommand, scene);
 		}
 	}
 

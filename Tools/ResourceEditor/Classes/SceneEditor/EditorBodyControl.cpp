@@ -47,10 +47,9 @@
 #include "../Commands/CommandsManager.h"
 #include "../Commands/EditorBodyControlCommands.h"
 #include "../Commands/CommandReloadTextures.h"
+#include "../StringConstants.h"
 
 #include "ArrowsNode.h"
-
-#define ARROWS_NODE_NAME "editor.arrows-node"
 
 EditorBodyControl::EditorBodyControl(const Rect & rect)
     :   UIControl(rect)
@@ -198,31 +197,31 @@ void RemoveDeepCamera(Entity * curr)
 {
 	Entity * cam;
 	
-	cam = curr->FindByName("editor.main-camera");
+	cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
 	while (cam)
 	{
 		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName("editor.main-camera");
+		cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
 	}
 	
-	cam = curr->FindByName("editor.debug-camera");
+	cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
 	while (cam)
 	{
 		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName("editor.debug-camera");
+		cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
 	}	
 }
 
 void EditorBodyControl::PushDebugCamera()
 {
-	mainCam = scene->FindByName("editor.main-camera");
+	mainCam = scene->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
 	if (mainCam)
 	{
 		SafeRetain(mainCam);
 		scene->RemoveNode(mainCam);
 	}
 	
-	debugCam = scene->FindByName("editor.debug-camera");
+	debugCam = scene->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
 	if (debugCam)
 	{
 		SafeRetain(debugCam);
@@ -277,7 +276,7 @@ void EditorBodyControl::PlaceOnLandscape(Entity *node)
 {
 	if (node)
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandPlaceOnLandscape(node, this));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandPlaceOnLandscape(node, this), node->GetScene());
 	}
 }
 
@@ -516,7 +515,7 @@ bool EditorBodyControl::ProcessMouse(UIEvent *event)
 																				 transform,
 																				 this,
 																				 scene->collisionWorld);
-					CommandsManager::Instance()->ExecuteAndRelease(cmd);
+					CommandsManager::Instance()->ExecuteAndRelease(cmd, scene);
 					originalNode = NULL;
 
 					// update selection to newly created node
@@ -526,7 +525,8 @@ bool EditorBodyControl::ProcessMouse(UIEvent *event)
 				{
 					CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifiedNode,
 																							  transformBeforeModification,
-																							  modifiedNode->GetLocalTransform()));
+																							  modifiedNode->GetLocalTransform()),
+																   scene);
 				}
 
 				if (selection)
@@ -758,7 +758,7 @@ void EditorBodyControl::Update(float32 timeElapsed)
 		PackLightmaps();
 		BeastProxy::Instance()->SafeDeleteManager(&beastManager);
 
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandReloadTextures());
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandReloadTextures(), scene);
 	}
 }
 
@@ -785,11 +785,11 @@ void EditorBodyControl::ReloadRootScene(const FilePath &pathToFile)
 void EditorBodyControl::ReloadNode(Entity *node, const FilePath &pathToFile)
 {//если в рут ноды сложить такие же рут ноды то на релоаде все накроет пиздой
     KeyedArchive *customProperties = node->GetCustomProperties();
-    if (customProperties->GetString("editor.referenceToOwner", "") == pathToFile.GetAbsolutePathname())
+    if (customProperties->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, "") == pathToFile.GetAbsolutePathname())
     {
         Entity *newNode = scene->GetRootNode(pathToFile)->Clone();
         newNode->SetLocalTransform(node->GetLocalTransform());
-        newNode->GetCustomProperties()->SetString("editor.referenceToOwner", pathToFile.GetAbsolutePathname());
+        newNode->GetCustomProperties()->SetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, pathToFile.GetAbsolutePathname());
         newNode->SetSolid(true);
         
         Entity *parent = node->GetParent();
@@ -1336,11 +1336,11 @@ ArrowsNode* EditorBodyControl::GetArrowsNode(bool createIfNotExist)
 {
 	DVASSERT(scene);
 
-	ArrowsNode* arrowsNode = dynamic_cast<ArrowsNode*>(scene->FindByName(ARROWS_NODE_NAME));
+	ArrowsNode* arrowsNode = dynamic_cast<ArrowsNode*>(scene->FindByName(ResourceEditor::EDITOR_ARROWS_NODE));
 	if (!arrowsNode && createIfNotExist)
 	{
 		arrowsNode = new ArrowsNode();
-		arrowsNode->SetName(ARROWS_NODE_NAME);
+		arrowsNode->SetName(ResourceEditor::EDITOR_ARROWS_NODE);
 		AddNode(arrowsNode);
 		arrowsNode->Release();
 	}
@@ -1405,7 +1405,7 @@ void EditorBodyControl::RestoreOriginalTransform()
 		return;
 
 	Entity* selection = scene->GetProxy();
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandRestoreOriginalTransform(selection));
+	CommandsManager::Instance()->ExecuteAndRelease(new CommandRestoreOriginalTransform(selection), scene);
 }
 
 void EditorBodyControl::ApplyTransform(float32 x, float32 y, float32 z)
@@ -1456,7 +1456,8 @@ void EditorBodyControl::ApplyTransform(float32 x, float32 y, float32 z)
 
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(selectedNode,
 																				  originalTransform,
-																				  modification));
+																				  modification),
+													   scene);
 	}
 }
 
@@ -1465,10 +1466,12 @@ Matrix4 EditorBodyControl::GetLandscapeOffset(const Matrix4& transform)
 	Matrix4 resTransform;
 	resTransform.Identity();
 
+	Landscape* landscape = scene->GetLandscape(scene);
+	if(!landscape) return resTransform;
+
 	Vector3 p = Vector3(0, 0, 0) * transform;
 
 	Vector3 result;
-	Landscape* landscape = scene->GetLandscape(scene);
 	bool res = landscape->PlacePoint(p, result);
 	if (res)
 	{

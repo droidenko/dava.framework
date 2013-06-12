@@ -685,12 +685,21 @@ namespace DAVA
 			{
 				YamlNode * spriteNode = stateSpriteNode->Get(0);
 				YamlNode * frameNode = stateSpriteNode->Get(1);
+				YamlNode * backgroundModificationNode = NULL;
+				if(stateSpriteNode->GetCount() > 2)
+				{
+					backgroundModificationNode = stateSpriteNode->Get(2);
+				}
 				
 				int32 frame = 0;
 				if (frameNode)frame = frameNode->AsInt();
 				if (spriteNode)
 				{
 					SetStateSprite(stateArray[k], spriteNode->AsString(), frame);
+				}
+				if (backgroundModificationNode)
+				{
+					stateBacks[k]->SetModification(backgroundModificationNode->AsInt());
 				}
 			}
             
@@ -837,6 +846,7 @@ namespace DAVA
 				spriteNode->AddValueToArray(pathname);
                 
 				spriteNode->AddValueToArray(stateFrame);
+				spriteNode->AddValueToArray(stateBacks[i]->GetModification());
 				node->AddNodeToMap(Format("stateSprite%s", statePostfix[i].c_str()), spriteNode);
 			}
 

@@ -23,7 +23,7 @@
 #include "processhelper.h"
 #include "settings.h"
 
-#define LAUNCER_VER "0.85"
+#define LAUNCER_VER "0.871"
 
 #define COLUMN_NAME 0
 #define COLUMN_CUR_VER 1
@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_pInstaller, SIGNAL(StartDownload()), this, SLOT(OnDownloadStarted()));
     connect(m_pInstaller, SIGNAL(DownloadFinished()), this, SLOT(OnDownloadFinished()));
     connect(m_pInstaller, SIGNAL(DownloadProgress(int)), this, SLOT(OnDownloadProgress(int)));
+    connect(m_pInstaller, SIGNAL(WebPageUpdated(QString)), this, SLOT(UpdateWebPage(QString)));
 
     m_pUpdateTimer = new QTimer(this);
     connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(on_btnRefresh_clicked()));
@@ -56,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->testTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->developmentTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->dependenciesTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->stableTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->testTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->developmentTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->dependenciesTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     connect(ui->stableTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
     connect(ui->testTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
@@ -238,7 +243,11 @@ void MainWindow::UpdateBtn() {
             ui->btnRun->setVisible(true);
         } break;
         case DEP_TAB: {
-            ui->btnReinstall->setVisible(true);
+            ui->btnRemove->setEnabled(false);
+            ui->btnInstall->setVisible(false);
+            ui->btnRun->setVisible(false);
+            ui->btnReinstall->setVisible(false);
+            ui->btnCancel->setVisible(false);
         }break;
         }
 
@@ -272,7 +281,7 @@ void MainWindow::on_btnRemove_clicked() {
     if (0 == QMessageBox::information(this,
                                      tr("Confirmation"),
                                      tr("Are you sure you want to remove %1.").arg(m_SelectedApp),
-                                     tr("ok"),
+                                     tr("OK"),
                                      tr("Cancel"))) {
         m_pInstaller->Delete(m_SelectedApp, m_SelectedAppType);
     }
@@ -308,4 +317,8 @@ void MainWindow::OnDownloadFinished() {
     m_bBusy = false;
     ui->downloadProgress->setVisible(false);
     UpdateBtn();
+}
+
+void MainWindow::UpdateWebPage(const QString& url) {
+    ui->webView->setUrl(url);
 }

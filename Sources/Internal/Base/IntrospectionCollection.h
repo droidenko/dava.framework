@@ -29,7 +29,7 @@ namespace DAVA
 	public:
 		typedef C<T> CollectionT;
 
-		InspCollImpl(const char *_name, const IspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0)
+		InspCollImpl(const char *_name, const InspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0)
 			: InspColl(_name, _desc, _offset, _type, _flags)
 		{ }
 
@@ -174,7 +174,7 @@ namespace DAVA
 
 	// Функция создает IntrospectionCollection, типы выводятся автоматически
 	template<template <typename> class Container, class T>
-	static InspColl* CreateInspColl(Container<T> *t, const char *_name, const IspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags)
+	static InspColl* CreateInspColl(Container<T> *t, const char *_name, const InspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags)
 	{
 		return new InspCollImpl<Container, T>(_name, _desc, _offset, _type, _flags);
 	}

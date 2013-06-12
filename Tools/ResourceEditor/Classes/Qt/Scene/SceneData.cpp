@@ -27,13 +27,15 @@
 #include "../Commands/SceneGraphCommands.h"
 #include "../Commands/LibraryCommands.h"
 #include "../Commands/CommandsManager.h"
+#include "../StringConstants.h"
 
 #include "../LandscapeEditor/LandscapesController.h"
 
 #include "Scene3D/Components/CameraComponent.h"
 
-#include "Main/QtMainWindowHandler.h"
+#include "ParticlesEditorQT/Helpers/ParticlesEditorNodeNameHelper.h"
 
+#include "Main/QtMainWindowHandler.h"
 
 #include "Main/QtUtils.h"
 #include "DockSceneGraph/PointerHolder.h"
@@ -85,6 +87,8 @@ void SceneData::AddSceneNode(DAVA::Entity *node)
     // Firstly ask Particle Editor to add this node.
     if (particlesEditorSceneDataHelper.AddSceneNode(node) == false)
     {
+		String newName = ParticlesEditorNodeNameHelper::GetNewNodeName(node->GetName(), scene);
+		node->SetName(newName);
         scene->AddNode(node);
     }
     
@@ -215,7 +219,7 @@ void SceneData::CreateScene(bool createEditorCameras)
         cam->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
         
         ScopedPtr<Entity> node(new Entity());
-        node->SetName("editor.main-camera");
+        node->SetName(ResourceEditor::EDITOR_MAIN_CAMERA);
         node->AddComponent(new CameraComponent(cam));
         createdScene->AddNode(node);
         createdScene->AddCamera(cam);
@@ -231,7 +235,7 @@ void SceneData::CreateScene(bool createEditorCameras)
         cam2->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
         
         ScopedPtr<Entity> node2(new Entity());
-        node2->SetName("editor.debug-camera");
+        node2->SetName(ResourceEditor::EDITOR_DEBUG_CAMERA);
         node2->AddComponent(new CameraComponent(cam2));
         createdScene->AddNode(node2);
         createdScene->AddCamera(cam2);

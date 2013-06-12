@@ -222,10 +222,6 @@ String CommandsManager::GetRedoCommandName(DAVA::Scene* forScene)
 
 CommandsManager::UndoQueue* CommandsManager::GetQueueForScene(DAVA::Scene *scene)
 {
-	if (!scene)
-	{
-		scene = SceneDataManager::Instance()->SceneGetActive()->GetScene();
-	}
 	DVASSERT(scene);
 
 	UndoQueue* res;
@@ -246,10 +242,6 @@ CommandsManager::UndoQueue* CommandsManager::GetQueueForScene(DAVA::Scene *scene
 
 void CommandsManager::EmitCommandExecutedSignal(Command* command, Scene* scene)
 {
-	if (!scene)
-	{
-		scene = SceneDataManager::Instance()->SceneGetActive()->GetScene();
-	}
 	DVASSERT(scene);
 
 	Set<Entity*> entities = command->GetAffectedEntities();

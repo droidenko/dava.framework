@@ -25,6 +25,10 @@
 #include "Entity/Component.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
 
+#include "../StringConstants.h"
+
+#include "../../Qt/Scene/SceneDataManager.h"
+
 using namespace DAVA;
 
 // Custom processing the Selection Changed in the Scene Graph model. Returns
@@ -151,7 +155,7 @@ Entity* ParticlesEditorSceneModelHelper::PreprocessSceneNode(Entity* rawNode)
 Entity* ParticlesEditorSceneModelHelper::CreateParticleEffectNode()
 {
 	Entity * newParentNodeParticleEffect = new Entity();
-	newParentNodeParticleEffect->SetName("Particle effect");
+	newParentNodeParticleEffect->SetName(ResourceEditor::PARTICLE_EFFECT_NODE_NAME);
 	ParticleEffectComponent * newEffectComponent = new ParticleEffectComponent();
 	newParentNodeParticleEffect->AddComponent(newEffectComponent);
 
@@ -171,7 +175,7 @@ bool ParticlesEditorSceneModelHelper::AddNodeToSceneGraph(SceneGraphItem *graphI
     if (!effectEditorNode)
     {
         // Possible while loading projects - register the node in this case.
-        effectEditorNode = ParticlesEditorController::Instance()->RegisterParticleEffectNode(node);
+        effectEditorNode = ParticlesEditorController::Instance()->RegisterParticleEffectNode(node, false);
     }
     
     if (graphItem->GetExtraUserData() == NULL)
@@ -749,7 +753,8 @@ void ParticlesEditorSceneModelHelper::SetCheckableStateForGraphItem(GraphItem* g
 	}
 	
 	// Execute the appropriate command.
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandUpdateParticleLayerEnabled(layerEditorNode->GetLayer(), value));
+	CommandsManager::Instance()->ExecuteAndRelease(new CommandUpdateParticleLayerEnabled(layerEditorNode->GetLayer(), value),
+												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 }
 
 LayerParticleEditorNode* ParticlesEditorSceneModelHelper::GetLayerEditorNodeByGraphItem(GraphItem* graphItem) const

@@ -76,6 +76,7 @@ signals:
     void StartDownload();
     void DownloadProgress(int);
     void DownloadFinished();
+    void WebPageUpdated(const QString&);
     
 public slots:
     void UpdateConfigFinished(const AppsConfig&);

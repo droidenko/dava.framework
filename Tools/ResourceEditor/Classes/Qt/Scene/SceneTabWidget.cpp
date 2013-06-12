@@ -28,7 +28,7 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	: QWidget(parent)
 	, davaUIScreenID(SCREEN_MAIN)
 	, oldScreenID(SCREEN_MAIN_OLD)
-	, dava3DViewMargin(10)
+	, dava3DViewMargin(3)
 	, newSceneCounter(0)
 	, curScene(NULL)
 	, curModifAxis(ST_AXIS_X)
@@ -56,7 +56,8 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->addWidget(tabBar);
 	layout->addWidget(davaWidget);
-	layout->setMargin(1);
+	layout->setMargin(0);
+	layout->setSpacing(1);
 	setLayout(layout);
 
 	// create DAVA UI
@@ -100,7 +101,7 @@ void SceneTabWidget::ReleaseOldUI()
 void SceneTabWidget::InitDAVAUI()
 {
 	dava3DView = new DAVAUI3DView(this, DAVA::Rect(dava3DViewMargin, dava3DViewMargin, 0, 0));
-	dava3DView->SetDebugDraw(true);
+	//dava3DView->SetDebugDraw(true);
 
 	davaUIScreen = new DAVA::UIScreen();
 	davaUIScreen->AddControl(dava3DView);

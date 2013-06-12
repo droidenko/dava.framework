@@ -82,6 +82,16 @@ void EditorScene::Update(float32 timeElapsed)
 	collisionWorld->updateAabbs();
 }
 
+void EditorScene::RemoveNode(Entity * node)
+{
+	if(NULL != node)
+	{
+		node->RemoveComponent(Component::BULLET_COMPONENT);
+	}
+
+	Scene::RemoveNode(node);
+}
+
 void EditorScene::UpdateBullet(Entity * curr)
 {
 	if(NULL != curr)

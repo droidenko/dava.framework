@@ -116,7 +116,7 @@ class CommandUpdateEffect: public Command
 {
 public:
 	CommandUpdateEffect(ParticleEffectComponent* particleEffect);
-	void Init(float32 playbackSpeed);
+	void Init(float32 playbackSpeed, bool stopOnLoad);
 	
 protected:
 	virtual void Execute();
@@ -125,6 +125,7 @@ private:
 	ParticleEffectComponent* particleEffect;
 
 	float32 playbackSpeed;
+	bool stopOnLoad;
 };
 
 class CommandUpdateEmitter: public Command

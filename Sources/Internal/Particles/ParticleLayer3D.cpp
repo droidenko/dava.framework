@@ -57,8 +57,10 @@ void ParticleLayer3D::Draw(Camera * camera)
 
 void ParticleLayer3D::DrawLayer(Camera* camera)
 {
-	if (!sprite)
+	// Yuri Coder, 2013/06/07. Don't draw SuperEmitter layers - see pls DF-1251 for details.
+	if (!sprite || type == TYPE_SUPEREMITTER_PARTICLES)
 	{
+		renderBatch->SetTotalCount(0);
 		return;
 	}
 

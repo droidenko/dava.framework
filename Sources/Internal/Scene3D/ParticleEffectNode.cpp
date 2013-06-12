@@ -29,7 +29,7 @@ ParticleEffectNode::ParticleEffectNode() : Entity()
     this->effectDuration = 0.0f;
     this->emittersCurrentlyStopped = 0;
     
-    SetName("Particle effect");
+    SetName("Particle Effect");
 }
 
 void ParticleEffectNode::AddNode(Entity* node)

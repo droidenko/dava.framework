@@ -14,85 +14,29 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __SCENE_PREVIEW_CONTROL_H__
-#define __SCENE_PREVIEW_CONTROL_H__
+#ifndef __PARTICLES_EDITOR_NODE_NAME_HELPER_H__
+#define __PARTICLES_EDITOR_NODE_NAME_HELPER_H__
 
 #include "DAVAEngine.h"
-#include "CameraController.h"
 
-using namespace DAVA;
+namespace DAVA {
 
-class PreviewCameraController: public CameraController
+// Scene Data Helper for new node and layers names
+class ParticlesEditorNodeNameHelper
 {
+
 public:
-    
-    PreviewCameraController();
-    
-    virtual void Input(UIEvent * event);
-    virtual void SetScene(Scene *scene);
-    void SetRadius(float32 _radius);
-    void UpdateCamera();
-    
-    void SetControlHeight(int32 height);
-    
+	static String GetNewNodeName(const String &name, Entity *parentNode);
+	static String GetNewLayerName(const String &name, ParticleEmitter *emitter);
+	
 private:
+	static String GetBaseName(const String& name);
+	static bool IsNodeNameExist(const String &name, Entity *parentNode);
 
-    
-    float32 angleVertical;
-    float32 angleHorizontal;
-    
-    float32 radius;
-    
-    Vector2 moveStartPt;
-    Vector2 moveStopPt;
-    
-    Vector2 zoomStartPt;
-    Vector2 zoomStopPt;
-    
-    float32 zoomLevel;
-    
-    int32 controlHeight;
+	static bool IsLayerNameExist(const String &name, ParticleEmitter *emitter);
+
 };
 
-class ScenePreviewControl: public UI3DView
-{
-public:
-    
-    enum eError
-    {
-        ERROR_WRONG_EXTENSION = 100,
-        ERROR_CANNOT_OPEN_FILE = 101
-    };
-    
-public:
-    ScenePreviewControl(const Rect & rect);
-    virtual ~ScenePreviewControl();
-    
-    virtual void Input(UIEvent * touch);
-    virtual void Update(float32 timeElapsed);
-
-    int32 OpenScene(const FilePath &pathToFile);
-    void ReleaseScene();
-    void RecreateScene();
-    
-protected:
-
-    
-    void SetupCamera();
-    
-    //scene controls
-    Scene * editorScene;
-	Camera * activeCamera;
-    UI3DView * scene3dView;
-    PreviewCameraController * cameraController;
-    
-    FilePath currentScenePath;
-    Entity *rootNode;
-    
-    bool needSetCamera;
-    bool sceCamera;
 };
 
-
-
-#endif // __SCENE_PREVIEW_CONTROL_H__
+#endif /* defined(__PARTICLES_EDITOR_NODE_NAME_HELPER_H__) */

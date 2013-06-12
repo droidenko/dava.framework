@@ -277,6 +277,11 @@ void ParticleEmitter::DeferredUpdate(float32 timeElapsed)
 	
 void ParticleEmitter::Update(float32 timeElapsed)
 {
+	if (isPaused)
+	{
+		return;
+	}
+
 	timeElapsed *= playbackSpeed;
 	time += timeElapsed;
 	float32 t = time / lifeTime;

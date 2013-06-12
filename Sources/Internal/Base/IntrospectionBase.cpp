@@ -20,17 +20,17 @@
 namespace DAVA
 {
 
-IspDesc::IspDesc(const char *_text)
+InspDesc::InspDesc(const char *_text)
 	: text(_text)
 	, enumMap(NULL)
 {}
 
-IspDesc::IspDesc(const char *_text, const EnumMap* _enumMap)
+InspDesc::InspDesc(const char *_text, const EnumMap* _enumMap)
 	: text(_text)
 	, enumMap(_enumMap)
 { }
 
-InspMember::InspMember(const char *_name, const IspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags /* = 0 */)
+InspMember::InspMember(const char *_name, const InspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags /* = 0 */)
 	: name(_name), desc(_desc), offset(_offset), type(_type), flags(_flags)
 { }
 
@@ -39,7 +39,7 @@ const char* InspMember::Name() const
 	return name;
 }
 
-const IspDesc& InspMember::Desc() const
+const InspDesc& InspMember::Desc() const
 {
 	return desc;
 }

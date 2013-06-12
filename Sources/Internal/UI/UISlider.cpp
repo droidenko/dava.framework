@@ -150,6 +150,16 @@ void UISlider::ReleaseAllSubcontrols()
 	}
 }
 
+void UISlider::InitInactiveParts(Sprite* spr)
+{
+	if(NULL == spr)
+	{
+		return;
+	}
+
+	leftInactivePart = rightInactivePart = (int32)((spr->GetWidth() / 2.0f) + 1.0f); /* 1 px added to align it and make touches easier, with default setup */
+}
+
 void UISlider::SetThumb(UIControl *newThumb)
 {
     RemoveControl(thumbButton);
@@ -178,16 +188,13 @@ UISlider::~UISlider()
 void UISlider::SetThumbSprite(Sprite * sprite, int32 frame)
 {
 	thumbButton->SetSprite(sprite, frame);
-	if (sprite)
-	{
-		leftInactivePart = rightInactivePart = (int32)((sprite->GetWidth() / 2.0f) + 1.0f); /* 1 px added to align it and make touches easier, with default setup */
-	}
+	InitInactiveParts(sprite);
 }
 
 void UISlider::SetThumbSprite(const FilePath & spriteName, int32 frame)
 {
 	thumbButton->SetSprite(spriteName, frame);
-	leftInactivePart = rightInactivePart = (int32)((thumbButton->GetBackground()->GetSprite()->GetWidth() / 2.0f) + 1.0f); /* 1 px added to align it and make touches easier, with default setup */
+	InitInactiveParts(thumbButton->GetBackground()->GetSprite());
 }
 
 void UISlider::SetMinSprite(Sprite * sprite, int32 frame)
@@ -595,6 +602,7 @@ void UISlider::AttachToSubcontrols()
 	{
 		thumbButton = FindByName(UISLIDER_THUMB_SPRITE_CONTROL_NAME);
 		DVASSERT(thumbButton);
+		InitInactiveParts(thumbButton->GetBackground()->GetSprite());
 	}
 	
 	if (!bgMin)

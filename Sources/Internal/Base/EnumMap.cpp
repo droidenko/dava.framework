@@ -66,7 +66,7 @@ const char* EnumMap::ToString(const int e) const
 	return ret;
 }
 
-int EnumMap::GetCount() const
+size_t EnumMap::GetCount() const
 {
 	return map.size();
 }

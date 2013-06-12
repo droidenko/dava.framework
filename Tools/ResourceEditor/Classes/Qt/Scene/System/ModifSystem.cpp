@@ -200,7 +200,8 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 						for (size_t i = 0; i < modifEntities.size(); ++i)
 						{
 							// apply modification command
-							CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()));
+							CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()),
+																		   GetScene());
 						}
 					}
 

@@ -139,7 +139,9 @@ private:
     bool ReplaceNodeAfterLoad(Entity * node);
 	void ReplaceOldNodes(Entity * currentNode);
 
-    
+	// Stop all the Particle Effect Components for which appropriate flag is set.
+	void StopParticleEffectComponents(Entity* rootNode);
+
     bool isDebugLogEnabled;
     bool isSaveForGame;
     FilePath rootNodePathName;

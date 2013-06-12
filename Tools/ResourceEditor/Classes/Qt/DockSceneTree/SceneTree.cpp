@@ -16,6 +16,7 @@
 
 #include "DockSceneTree/SceneTree.h"
 #include <QBoxLayout>
+#include <QDropEvent>
 
 SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	: QTreeView(parent)
@@ -42,6 +43,19 @@ SceneTree::SceneTree(QWidget *parent /*= 0*/)
 SceneTree::~SceneTree()
 {
 
+}
+
+void SceneTree::dropEvent(QDropEvent * event)
+{
+	QTreeView::dropEvent(event);
+
+	// this workaround for Qt bug
+	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
+	// for more information
+	if(!treeModel->DropIsAccepted())
+	{
+		event->setDropAction(Qt::IgnoreAction);
+	}
 }
 
 void SceneTree::SceneActivated(SceneEditorProxy *scene)

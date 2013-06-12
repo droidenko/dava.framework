@@ -126,6 +126,8 @@ void SelfUpdater::DownloadFinished()
     QFile().rename(appDir + "/QtGuid4.dll", oldDir + "/QtGuid4.dll");
     QFile().rename(appDir + "/QtNetwork4.dll", oldDir + "/QtNetwork4.dll");
     QFile().rename(appDir + "/QtNetworkd4.dll", oldDir + "/QtNetworkd4.dll");
+    QFile().rename(appDir + "/QtWebKit4.dll", oldDir + "/QtWebKit4.dll");
+    QFile().rename(appDir + "/QtWebKitd4.dll", oldDir + "/QtWebKitd4.dll");
     QFile().rename(appDir + "/quazip1.dll", oldDir + "/quazip1.dll");
 #endif
 

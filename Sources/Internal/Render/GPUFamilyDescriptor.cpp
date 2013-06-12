@@ -34,6 +34,7 @@
 #include "FileSystem/FilePath.h"
 #include "Utils/StringFormat.h"
 #include "Render/TextureDescriptor.h"
+#include "Render/Texture.h"
 
 namespace DAVA
 {
@@ -104,6 +105,8 @@ void GPUFamilyDescriptor::SetupGPUFormats()
     gpuData[GPU_ADRENO].availableFormats[FORMAT_A8] = ".pvr";
     gpuData[GPU_ADRENO].availableFormats[FORMAT_ETC1] = ".pvr";
     gpuData[GPU_ADRENO].availableFormats[FORMAT_ATC_RGB] = ".dds";
+	gpuData[GPU_ADRENO].availableFormats[FORMAT_ATC_RGBA_EXPLICIT_ALPHA] = ".dds";
+	gpuData[GPU_ADRENO].availableFormats[FORMAT_ATC_RGBA_INTERPOLATED_ALPHA] = ".dds";
 
     
     //for test all formats
@@ -231,9 +234,13 @@ String GPUFamilyDescriptor::GetFilenamePostfix(const eGPUFamily gpuFamily, const
         
     
     Map<PixelFormat, String>::const_iterator format = gpuData[gpuFamily].availableFormats.find(pixelFormat);
-    DVASSERT(format != gpuData[gpuFamily].availableFormats.end());
-    
-    String postfix = "." + gpuData[gpuFamily].name + format->second;
+	if(format == gpuData[gpuFamily].availableFormats.end())
+	{
+		Logger::Error("[GPUFamilyDescriptor::GetFilenamePostfix: can't find format %s for gpu %s]", Texture::GetPixelFormatString(pixelFormat), gpuData[gpuFamily].name.c_str());
+		return ".png";
+	}
+
+	String postfix = "." + gpuData[gpuFamily].name + format->second;
     return postfix;
 }
     

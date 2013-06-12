@@ -233,6 +233,26 @@ extern void FrameworkMain(int argc, char *argv[]);
 }
 
 static Vector<DAVA::UIEvent> activeTouches;
+
+void ConvertNSEventToUIEvent(NSEvent *curEvent, UIEvent & event, int32 phase)
+{
+    NSPoint p = [curEvent locationInWindow];
+    
+    if(InputSystem::Instance()->IsCursorPining())
+    {
+        event.physPoint.x = [curEvent deltaX];
+        event.physPoint.y = [curEvent deltaY];
+    }
+    else
+    {
+        event.physPoint.x = p.x;
+        event.physPoint.y = Core::Instance()->GetPhysicalScreenHeight() - p.y;
+    }
+    event.timestamp = curEvent.timestamp;
+    event.tapCount = curEvent.clickCount;
+    event.phase = phase;
+}
+
 void MoveTouchsToVector(NSEvent *curEvent, int touchPhase, Vector<UIEvent> *outTouches)
 {
 	int button = 0;
@@ -271,18 +291,7 @@ void MoveTouchsToVector(NSEvent *curEvent, int touchPhase, Vector<UIEvent> *outT
 	{
 		for(Vector<DAVA::UIEvent>::iterator it = activeTouches.begin(); it != activeTouches.end(); it++)
 		{
-				NSPoint p = [curEvent locationInWindow];
-				it->physPoint.x = p.x;
-				it->physPoint.y = Core::Instance()->GetPhysicalScreenHeight() - p.y;
-            
-                if(InputSystem::Instance()->IsCursorPining())
-                {
-                    it->physPoint.x = [curEvent deltaX];
-                    it->physPoint.y = [curEvent deltaY];
-                }
-				it->timestamp = curEvent.timestamp;
-				it->tapCount = curEvent.clickCount;
-				it->phase = phase;
+            ConvertNSEventToUIEvent(curEvent, (*it), phase);
 		}
 	}
 	
@@ -293,18 +302,7 @@ void MoveTouchsToVector(NSEvent *curEvent, int touchPhase, Vector<UIEvent> *outT
 		{
 			isFind = true;
 			
-			NSPoint p = [curEvent locationInWindow];
-			it->physPoint.x = p.x;
-			it->physPoint.y = Core::Instance()->GetPhysicalScreenHeight() - p.y;
-            
-            if(InputSystem::Instance()->IsCursorPining())
-            {
-                it->physPoint.x = [curEvent deltaX];
-                it->physPoint.y = [curEvent deltaY];
-            }
-			it->timestamp = curEvent.timestamp;
-			it->tapCount = curEvent.clickCount;
-			it->phase = phase;
+            ConvertNSEventToUIEvent(curEvent, (*it), phase);
 
 			break;
 		}
@@ -314,18 +312,9 @@ void MoveTouchsToVector(NSEvent *curEvent, int touchPhase, Vector<UIEvent> *outT
 	{
 		UIEvent newTouch;
 		newTouch.tid = button;
-		NSPoint p = [curEvent locationInWindow];
-		newTouch.physPoint.x = p.x;
-		newTouch.physPoint.y = Core::Instance()->GetPhysicalScreenHeight() - p.y;
         
-        if(InputSystem::Instance()->IsCursorPining())
-        {
-            newTouch.physPoint.x = [curEvent deltaX];
-            newTouch.physPoint.y = [curEvent deltaY];
-        }
-		newTouch.timestamp = curEvent.timestamp;
-		newTouch.tapCount = curEvent.clickCount;
-		newTouch.phase = phase;
+        ConvertNSEventToUIEvent(curEvent, newTouch, phase);
+        
 		activeTouches.push_back(newTouch);
 	}
 

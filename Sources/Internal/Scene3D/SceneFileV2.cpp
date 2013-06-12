@@ -251,6 +251,7 @@ SceneFileV2::eError SceneFileV2::LoadScene(const FilePath & filename, Scene * _s
     }
     
     OptimizeScene(rootNode);
+	StopParticleEffectComponents(rootNode);
     
 	rootNode->SceneDidLoaded();
     
@@ -1002,6 +1003,25 @@ void SceneFileV2::OptimizeScene(Entity * rootNode)
     Logger::Debug("nodes removed: %d before: %d, now: %d, diff: %d", removedNodeCount, beforeCount, nowCount, beforeCount - nowCount);
 }
 
+void SceneFileV2::StopParticleEffectComponents(Entity * currentNode)
+{
+	for(int32 c = 0; c < currentNode->GetChildrenCount(); ++c)
+	{
+		Entity * childNode = currentNode->GetChild(c);
+		if (childNode->GetComponent(Component::PARTICLE_EFFECT_COMPONENT))
+		{
+			ParticleEffectComponent *particleEffect = static_cast<ParticleEffectComponent *>(childNode->GetComponent(Component::PARTICLE_EFFECT_COMPONENT));
+			if (particleEffect->IsStopOnLoad())
+			{
+				particleEffect->Stop();
+			}
+		}
+
+		// Do the same for all children.
+		StopParticleEffectComponents(childNode);
+	}
+		
+}
 
 
 };

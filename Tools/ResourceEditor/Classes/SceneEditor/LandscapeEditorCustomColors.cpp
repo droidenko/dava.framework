@@ -605,7 +605,7 @@ void LandscapeEditorCustomColors::SaveTexture()
 {
 	if (unsavedChanges)
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveTextureCustomColors());
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveTextureCustomColors(), workingScene);
 	}
 	Close();
 }
@@ -637,7 +637,7 @@ void LandscapeEditorCustomColors::CreateUndoPoint()
 	if (originalTexture)
 	{
 		Image* newTexture = StoreState();
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawCustomColors(originalTexture, newTexture));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawCustomColors(originalTexture, newTexture), workingScene);
 		SafeRelease(originalTexture);
 		SafeRelease(newTexture);
 	}

@@ -656,7 +656,8 @@ void LandscapeEditorHeightmap::CreateHeightmapUndo()
 		Rect updatedRect = GetUpdatedRect();
 		if(!((updatedRect.x > GetHeightmap()->Size()) || (updatedRect.y > GetHeightmap()->Size())))
 		{
-			CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawHeightmap(oldHeightmap, GetHeightmap(), GetUpdatedRect()));
+			CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawHeightmap(oldHeightmap, GetHeightmap(), GetUpdatedRect()),
+														   workingScene);
 		}
 		SafeRelease(oldHeightmap);
 	}
@@ -677,7 +678,8 @@ void LandscapeEditorHeightmap::CreateCopyPasteUndo()
 																					 oldTilemap,
 																					 image,
 																					 tilemaskPathname,
-																					 GetUpdatedRect()));
+																					 GetUpdatedRect()),
+													   workingScene);
 		SafeRelease(oldHeightmap);
 		SafeRelease(oldTilemap);
 		SafeRelease(image);

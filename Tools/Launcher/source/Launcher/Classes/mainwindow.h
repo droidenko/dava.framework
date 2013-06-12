@@ -37,6 +37,7 @@ private slots:
     void AvailableSoftWareUpdated(const AvailableSoftWare&);
     void UpdateBtn();
     void OnLogAdded(const QString& log);
+    void UpdateWebPage(const QString& url);
 
     void on_btnInstall_clicked();
     void on_btnRefresh_clicked();

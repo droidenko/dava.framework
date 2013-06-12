@@ -28,6 +28,7 @@ ParticleEffectComponent::ParticleEffectComponent()
 	stopWhenEmpty = false;
 	effectDuration = 0.0f;
 	emittersCurrentlyStopped = 0;
+	stopOnLoad = false;
 }
 
 Component * ParticleEffectComponent::Clone(Entity * toEntity)
@@ -41,6 +42,7 @@ Component * ParticleEffectComponent::Clone(Entity * toEntity)
 	newComponent->playbackComplete = playbackComplete;
 	newComponent->effectDuration = effectDuration;
 	newComponent->emittersCurrentlyStopped = emittersCurrentlyStopped;
+	newComponent->stopOnLoad = stopOnLoad;
 
 	return newComponent;
 }
@@ -76,6 +78,26 @@ void ParticleEffectComponent::Stop()
 	}
 }
 
+bool ParticleEffectComponent::IsStopped()
+{
+	// Effect is stopped if all its emitters are stopped.
+	int32 childrenCount = entity->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		RenderComponent * component = static_cast<RenderComponent*>(entity->GetChild(i)->GetComponent(Component::RENDER_COMPONENT));
+		if(component && component->GetRenderObject() && component->GetRenderObject()->GetType() == RenderObject::TYPE_PARTICLE_EMTITTER)
+		{
+			ParticleEmitter * emitter = static_cast<ParticleEmitter*>(component->GetRenderObject());
+			if (!emitter->IsStopped())
+			{
+				return false;
+			}
+		}
+	}
+	
+	return true;
+}
+	
 void ParticleEffectComponent::Restart()
 {
 	int32 childrenCount = entity->GetChildrenCount();
@@ -226,6 +248,35 @@ int32 ParticleEffectComponent::GetActiveParticlesCount()
 	}
 
 	return totalActiveParticles;
+}
+
+void ParticleEffectComponent::SetStopOnLoad(bool value)
+{
+	this->stopOnLoad = value;
+}
+
+bool ParticleEffectComponent::IsStopOnLoad() const
+{
+	return this->stopOnLoad;
+}
+
+void ParticleEffectComponent::Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
+{
+	Component::Serialize(archive, sceneFile);
+	if(archive)
+	{
+		archive->SetBool("pec.stoponload", this->stopOnLoad);
+	}
+}
+	
+void ParticleEffectComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
+{
+	if(archive)
+	{
+		this->stopOnLoad = archive->GetBool("pec.stoponload", false);
+	}
+		
+	Component::Deserialize(archive, sceneFile);
 }
 
 }

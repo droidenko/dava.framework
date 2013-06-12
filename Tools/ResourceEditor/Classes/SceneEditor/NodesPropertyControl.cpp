@@ -23,6 +23,8 @@
 #include "EditorConfig.h"
 #include "SceneNodePropertyNames.h"
 
+#include "../StringConstants.h"
+
 NodesPropertyControl::NodesPropertyControl(const Rect & rect, bool _createNodeProperties)
     :   UIControl(rect)
 {
@@ -266,11 +268,12 @@ void NodesPropertyControl::ReadFrom(Entity *sceneNode)
     else
     {
         KeyedArchive *customProperties = sceneNode->GetCustomProperties();
-        if(customProperties && customProperties->IsKeyExists("editor.isLocked"))
+        if(customProperties && customProperties->IsKeyExists(ResourceEditor::EDITOR_IS_LOCKED))
         {
             propertyList->AddSection("property.scenenode.customproperties", GetHeaderState("property.scenenode.customproperties", true));
-            propertyList->AddBoolProperty("editor.isLocked", PropertyList::PROPERTY_IS_EDITABLE);
-            propertyList->SetBoolPropertyValue("editor.isLocked", customProperties->GetBool("editor.isLocked"));
+            propertyList->AddBoolProperty(ResourceEditor::EDITOR_IS_LOCKED, PropertyList::PROPERTY_IS_EDITABLE);
+            propertyList->SetBoolPropertyValue(ResourceEditor::EDITOR_IS_LOCKED,
+												customProperties->GetBool(ResourceEditor::EDITOR_IS_LOCKED));
         }
     }
 }

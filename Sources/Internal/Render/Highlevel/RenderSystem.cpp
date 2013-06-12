@@ -110,6 +110,17 @@ void RenderSystem::RemoveFromRender(RenderObject * renderObject)
 		RemoveRenderBatch(batch);
 	}
 
+    List<RenderObject*>::iterator end = markedObjects.end();
+    for (List<RenderObject*>::iterator it = markedObjects.begin(); it != end; ++it)
+    {
+        if(*it == renderObject)
+        {
+            markedObjects.erase(it);
+            break;
+        }
+    }
+
+    
 	RenderObject * lastRenderObject = renderObjectArray[renderObjectArray.size() - 1];
     renderObjectArray[renderObject->GetRemoveIndex()] = lastRenderObject;
     renderObjectArray.pop_back();

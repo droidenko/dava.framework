@@ -35,7 +35,7 @@ public:
 	void SetTotalCount(int32 totalCount);
 	void SetParticleLayer(ParticleLayer * particleLayer);
 
-	virtual RenderBatch * Clone();
+	virtual RenderBatch * Clone(RenderBatch * destination = 0);
 
 protected:
 	int32 totalCount;

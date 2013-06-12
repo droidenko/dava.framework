@@ -36,6 +36,8 @@ protected:
 	SceneTreeModel * treeModel;
 	bool skipTreeSelectionProcessing;
 
+	void dropEvent(QDropEvent * event);
+
 protected slots:
 	void SceneActivated(SceneEditorProxy *scene);
 	void SceneDeactivated(SceneEditorProxy *scene);

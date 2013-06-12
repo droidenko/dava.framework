@@ -439,7 +439,8 @@ void LandscapeEditorColor::CreateUndoPoint()
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawTilemap(originalImage,
 																			  newImage,
 																			  savedPath,
-																			  workingLandscape));
+																			  workingLandscape),
+													   workingScene);
 		SafeRelease(originalImage);
 		SafeRelease(newImage);
 	}

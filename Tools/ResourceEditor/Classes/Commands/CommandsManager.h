@@ -30,16 +30,16 @@ public:
 	CommandsManager();
 	virtual ~CommandsManager();
 	
-    void Execute(Command *command, DAVA::Scene* forScene = NULL);
-	void ExecuteAndRelease(Command* command, DAVA::Scene* forScene = NULL);
-    void Undo(DAVA::Scene* forScene = NULL);
-    void Redo(DAVA::Scene* forScene = NULL);
+    void Execute(Command *command, DAVA::Scene* forScene);
+	void ExecuteAndRelease(Command* command, DAVA::Scene* forScene);
+    void Undo(DAVA::Scene* forScene);
+    void Redo(DAVA::Scene* forScene);
 
-	DAVA::int32 GetUndoQueueLength(DAVA::Scene* forScene = NULL);
-	DAVA::int32 GetRedoQueueLength(DAVA::Scene* forScene = NULL);
+	DAVA::int32 GetUndoQueueLength(DAVA::Scene* forScene);
+	DAVA::int32 GetRedoQueueLength(DAVA::Scene* forScene);
 
-	DAVA::String GetUndoCommandName(DAVA::Scene* forScene = NULL);
-	DAVA::String GetRedoCommandName(DAVA::Scene* forScene = NULL);
+	DAVA::String GetUndoCommandName(DAVA::Scene* forScene);
+	DAVA::String GetRedoCommandName(DAVA::Scene* forScene);
 
 	void SceneReleased(DAVA::Scene* scene);
 

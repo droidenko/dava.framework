@@ -68,6 +68,8 @@ public:
     AppMap m_Development;
     AppMap m_Dependencies;
 
+    QString m_pageUrl;
+
     void Clear();
 
     AppMap* GetAppMap(eAppType type) {

@@ -34,11 +34,18 @@ public:
 	SceneTreeModel(QObject* parent = 0);
 	~SceneTreeModel();
 
+	// virtual QVariant data(const QModelIndex &index, int role) const;
+
 	void SetScene(SceneEditorProxy *scene);
 	SceneEditorProxy* GetScene() const;
 
 	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
 	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+
+	// this workaround for Qt bug
+	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
+	// for more information
+	bool DropIsAccepted();
 
 	// drag and drop support
 	Qt::DropActions supportedDropActions() const;
@@ -47,6 +54,7 @@ public:
 	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
 
 protected:
+	bool dropAccepted;
 	SceneEditorProxy * curScene;
 };
 

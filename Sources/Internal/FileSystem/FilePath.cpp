@@ -750,7 +750,7 @@ FilePath::ePathType FilePath::GetPathType(const String &pathname)
     }
     
     if(    (pathname.find("FBO ") == 0)
-       ||  (pathname.find("memoryfile_0x") == 0)
+       ||  (pathname.find("memoryfile_") == 0)
        ||  (pathname.find("Text ") == 0))
     {
         return PATH_IN_MEMORY;

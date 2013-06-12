@@ -96,14 +96,19 @@ TextureBrowser::TextureBrowser(QWidget *parent)
 
 TextureBrowser::~TextureBrowser()
 {
-	TextureConvertor::Instance()->CancelConvert();
-	TextureConvertor::Instance()->WaitConvertedAll();
-	
+	Close();
+
 	posSaver.SaveState(ui->splitterMain);
 
 	delete textureListImagesDelegate;
 	delete textureListModel;
     delete ui;
+}
+
+void TextureBrowser::Close()
+{
+	TextureConvertor::Instance()->CancelConvert();
+	TextureConvertor::Instance()->WaitConvertedAll();
 
 	DAVA::SafeRelease(curScene);
 
@@ -114,7 +119,7 @@ TextureBrowser::~TextureBrowser()
 void TextureBrowser::closeEvent(QCloseEvent * e)
 {
 	QDialog::closeEvent(e);
-	this->deleteLater();
+	Close();
 }
 
 void TextureBrowser::setTexture(DAVA::Texture *texture, DAVA::TextureDescriptor *descriptor)

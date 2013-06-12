@@ -396,7 +396,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1125,7 +1125,7 @@
     <string>Not Passable Landscape</string>
    </property>
    <property name="toolTip">
-    <string>Impassable Landscape</string>
+    <string>Not Passable Landscape</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>

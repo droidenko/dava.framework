@@ -21,6 +21,7 @@
 SceneTreeModel::SceneTreeModel(QObject* parent /*= 0*/ )
 	: QStandardItemModel(parent)
 	, curScene(NULL)
+	, dropAccepted(false)
 {
 	setColumnCount(1);
 	setSupportedDragActions(Qt::MoveAction);
@@ -108,6 +109,11 @@ DAVA::Entity* SceneTreeModel::GetEntity(const QModelIndex &index) const
 	return ret;
 }
 
+bool SceneTreeModel::DropIsAccepted()
+{
+	return dropAccepted;
+}
+
 Qt::DropActions SceneTreeModel::supportedDropActions() const
 {
 	return Qt::MoveAction;
@@ -143,6 +149,10 @@ QStringList SceneTreeModel::mimeTypes() const
 
 bool SceneTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent)
 {
-	return false;
-	//return QStandardItemModel::dropMimeData(data, action, row, column, parent);
+	bool ret = false;
+
+	//ret = QStandardItemModel::dropMimeData(data, action, row, column, parent);
+
+	dropAccepted = ret;
+	return ret;
 }

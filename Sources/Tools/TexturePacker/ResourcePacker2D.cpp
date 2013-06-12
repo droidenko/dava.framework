@@ -13,6 +13,8 @@
 #include <magick/MagickCore.h>
 #include <magick/property.h>
 
+#include "Render/GPUFamilyDescriptor.h"
+
 namespace DAVA
 {
 
@@ -38,11 +40,15 @@ void ResourcePacker2D::InitFolders(const FilePath & inputPath,const FilePath & o
     
 void ResourcePacker2D::PackResources(eGPUFamily forGPU)
 {
-	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s",
+	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s\n",
                   inputGfxDirectory.GetAbsolutePathname().c_str(),
                   outputGfxDirectory.GetAbsolutePathname().c_str(),
                   excludeDirectory.GetAbsolutePathname().c_str());
 
+    if(CommandLineParser::Instance()->GetVerbose())
+        printf("For GPU: %s \n", GPUFamilyDescriptor::GetGPUName(forGPU).c_str());
+
+    
 	requestedGPUFamily = forGPU;
     
 	isGfxModified = false;

@@ -21,7 +21,6 @@
 #include "DraggableDialog.h"
 #include "../Constants.h"
 
-
 using namespace DAVA;
 
 class CreateNodesDialogDelegeate

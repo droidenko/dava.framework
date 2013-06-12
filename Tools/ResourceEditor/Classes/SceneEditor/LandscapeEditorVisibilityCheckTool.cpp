@@ -749,7 +749,11 @@ void LandscapeEditorVisibilityCheckTool::UpdateLandscapeTilemap(Texture* texture
 void LandscapeEditorVisibilityCheckTool::CreatePointUndoAction()
 {
 	Image* areaImage = visibilityAreaSprite->GetTexture()->CreateImageFromMemory();
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandPlacePointVisibilityTool(landscapePoint, visibilityPoint, isVisibilityPointSet, areaImage));
+	CommandsManager::Instance()->ExecuteAndRelease(new CommandPlacePointVisibilityTool(landscapePoint,
+																					   visibilityPoint,
+																					   isVisibilityPointSet,
+																					   areaImage),
+												   workingScene);
 	SafeRelease(areaImage);
 }
 
@@ -758,6 +762,7 @@ void LandscapeEditorVisibilityCheckTool::CreateAreaUndoAction()
 	Image* areaImage = visibilityAreaSprite->GetTexture()->CreateImageFromMemory();
 	CommandsManager::Instance()->ExecuteAndRelease(new CommandPlaceAreaVisibilityTool(landscapePoint,
 																					  visibilityAreaSize,
-																					  areaImage));
+																					  areaImage),
+												   workingScene);
 	SafeRelease(areaImage);
 }

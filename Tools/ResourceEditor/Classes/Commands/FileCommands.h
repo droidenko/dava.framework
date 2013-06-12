@@ -58,6 +58,19 @@ protected:
 	void SaveParticleEmitterNodeRecursive(Entity* parentNode);
 };
 
+class CommandSaveSpecifiedScene: public Command
+{
+public:	
+	DAVA_DEPRECATED(CommandSaveSpecifiedScene(Entity *activeScene, FilePath& filePath)); // DEPRECATED: using QFileDialog
+    
+protected:	
+    
+    virtual void Execute();
+
+	Entity*		activeScene;
+	FilePath	filePath;
+};
+
 class CommandExport: public Command
 {
     

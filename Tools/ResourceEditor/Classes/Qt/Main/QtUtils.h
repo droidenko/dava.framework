@@ -20,6 +20,8 @@
 #include "DAVAEngine.h"
 #include <QString>
 #include <QColor>
+#include <QMessageBox>
+
 
 #define QSTRING_TO_DAVASTRING(str)   (str).toStdString().data()
 
@@ -41,5 +43,15 @@ bool IsKeyModificatorsPressed();
 
 QColor ColorToQColor(const DAVA::Color& color);
 DAVA::Color QColorToColor(const QColor& qcolor);
+
+enum eMessageBoxFlags
+{
+    MB_FLAG_YES = QMessageBox::Yes,
+    MB_FLAG_NO = QMessageBox::No,
+    MB_FLAG_CANCEL = QMessageBox::Cancel
+};
+
+int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int buttons, int defaultButton);
+int SaveSceneIfChanged(DAVA::Scene *scene);
 
 #endif // __QT_UTILS_H__

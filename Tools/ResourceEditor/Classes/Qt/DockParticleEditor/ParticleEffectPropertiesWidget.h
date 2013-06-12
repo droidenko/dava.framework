@@ -23,6 +23,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QSlider>
+#include <QCheckBox>
 
 class ParticleEffectPropertiesWidget: public QWidget, public BaseParticleEditorContentWidget
 {
@@ -52,6 +53,8 @@ private:
 
 	QLabel* effectPlaybackSpeedLabel;
 	QSlider* effectPlaybackSpeed;
+	
+	QCheckBox* checkboxStopOnLoad;
 	
 	bool blockSignals;
 };

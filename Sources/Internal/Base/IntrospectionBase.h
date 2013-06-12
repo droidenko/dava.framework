@@ -28,10 +28,10 @@ namespace DAVA
 	class KeyedArchive;
 	struct MetaInfo;
 
-	struct IspDesc
+	struct InspDesc
 	{
-		IspDesc(const char *text);
-		IspDesc(const char *text, const EnumMap* enumMap);
+		InspDesc(const char *text);
+		InspDesc(const char *text, const EnumMap* enumMap);
 	
 		const char *text;
 		const EnumMap *enumMap;
@@ -43,13 +43,13 @@ namespace DAVA
 		friend class InspInfo;
 
 	public:
-		InspMember(const char *_name, const IspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0);
+		InspMember(const char *_name, const InspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0);
 
 		// Имя члена интроспекции, соответствует имени члена класса
 		const char* Name() const;
 
 		// Описание члена интроспекции, произвольно указанное пользователем при объявлении интроспекции
-		const IspDesc& Desc() const;
+		const InspDesc& Desc() const;
 
 		// Возвдащает мета-тип члена интроспекции
 		const MetaInfo* Type() const;
@@ -96,7 +96,7 @@ namespace DAVA
 
 	protected:
 		const char* name;
-		IspDesc desc;
+		InspDesc desc;
 		const int offset;
 		const MetaInfo* type;
 		const int flags;
@@ -108,7 +108,7 @@ namespace DAVA
 	public:
 		typedef void* Iterator;
 
-		InspColl(const char *_name, const IspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0)
+		InspColl(const char *_name, const InspDesc &_desc, const int _offset, const MetaInfo *_type, int _flags = 0)
 			: InspMember(_name, _desc, _offset, _type, _flags)
 		{ }
 

@@ -88,14 +88,14 @@ void LibraryView::ShowContextMenu(const QPoint &point)
 				bool canChangeScene = !landsacpesController->EditorLandscapeIsActive() && !c->LandscapeEditorActive();
 				if(canChangeScene)
 				{
-					contextMenu.addAction(new ContextMenuAction(QString("Add"), new CommandAddScene(fileInfo.filePath().toStdString())));
+					contextMenu.addAction(new ContextMenuAction(QString("Add Model"), new CommandAddScene(fileInfo.filePath().toStdString())));
 				}
 
-				contextMenu.addAction(new ContextMenuAction(QString("Edit"), new CommandEditScene(fileInfo.filePath().toStdString())));
+				contextMenu.addAction(new ContextMenuAction(QString("Edit Model"), new CommandEditScene(fileInfo.filePath().toStdString())));
 
 				if(canChangeScene)
 				{
-					contextMenu.addAction(new ContextMenuAction(QString("Reload"), new CommandReloadScene(fileInfo.filePath().toStdString())));
+					contextMenu.addAction(new ContextMenuAction(QString("Reload Model"), new CommandReloadScene(fileInfo.filePath().toStdString())));
 				}
 
 			}
@@ -131,8 +131,6 @@ void LibraryView::FileSelectionChanged(const QItemSelection & selected, const QI
 			previewPath = fileInfo.filePath().toStdString();
 		}
 	}
-
-	SceneDataManager::Instance()->SceneShowPreview(previewPath);
 }
 
 void LibraryView::LibraryFileTypesChanged(bool showDAEFiles, bool showSC2Files)

@@ -28,6 +28,7 @@
 #define URL_test "URL_qa"
 #define URL_development "URL_development"
 #define URL_dependencies "URL_dependencies"
+#define URL_page "URL_page"
 
 #define setString(a, b) {std::string c; b->GetScalar(c); a = c.c_str();}
 
@@ -91,6 +92,8 @@ void ConfigDownloader::ConfigDownloaded()
             if (URL_developmentNode)  setString(m_DevelopmentUrl, URL_developmentNode);
             const YAML::Node* URL_dependenciesNode = doc.FindValue(URL_dependencies);
             if (URL_dependenciesNode)  setString(m_DependenciesUrl, URL_dependenciesNode);
+            const YAML::Node* URL_pageNode = doc.FindValue(URL_page);
+            if (URL_pageNode)  setString(m_UpdatedConfig.m_pageUrl, URL_pageNode);
         }
 
         SetState(eDownloadStateStable);

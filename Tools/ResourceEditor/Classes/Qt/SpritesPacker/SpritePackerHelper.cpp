@@ -117,7 +117,11 @@ void SpritePackerHelper::EnumerateSpritesForReloading(SceneData* sceneData, Map<
 			continue;
 		}
         
-		effectComponent->Stop();
+		bool isStopped = effectComponent->IsStopped();
+		if (!isStopped)
+		{
+			effectComponent->Stop();
+		}
         
 		// All the children of this Scene Node must have Emitter components.
 		int32 emittersCount = curNode->GetChildrenCount();
@@ -129,7 +133,10 @@ void SpritePackerHelper::EnumerateSpritesForReloading(SceneData* sceneData, Map<
 			EnumerateSpritesForParticleEmitter(emitter, sprites);
 		}
         
-		effectComponent->Start();
+		if (!isStopped)
+		{
+			effectComponent->Start();
+		}
 	}
 }
 

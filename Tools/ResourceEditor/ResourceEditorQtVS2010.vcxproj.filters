@@ -450,9 +450,6 @@
     <ClInclude Include="Classes\SceneEditor\ModificationPopUp.h">
       <Filter>Classes\SceneEditor\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\SceneEditor\ScenePreviewControl.h">
-      <Filter>Classes\SceneEditor\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\SceneEditor\UIZoomControl.h">
       <Filter>Classes\SceneEditor\Controls</Filter>
     </ClInclude>
@@ -892,9 +889,6 @@
       <Filter>Classes\Qt\Main</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Qt\Main\QtUtils.cpp">
-      <Filter>Classes\Qt\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\Main\ScenePreviewDialog.cpp">
       <Filter>Classes\Qt\Main</Filter>
     </ClCompile>
     <ClCompile Include="Classes\SceneEditor\LandscapeEditorVisibilityCheckTool.cpp">
@@ -1488,9 +1482,6 @@
     <ClCompile Include="_GeneratedQt\Main\QtUtils_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
-    <ClCompile Include="_GeneratedQt\Main\ScenePreviewDialog_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
     <ClCompile Include="_GeneratedQt\MaterialBrowser\MaterialBrowser_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
@@ -1682,6 +1673,9 @@
     </ClCompile>
     <ClCompile Include="Classes\SceneEditor\EntityOwnerPropertyHelper.cpp">
       <Filter>Classes\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\ParticlesEditorQT\Helpers\ParticlesEditorNodeNameHelper.cpp">
+      <Filter>Classes\ParticlesEditorQT\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2456,9 +2450,6 @@
     <ClInclude Include="Classes\Qt\Main\QtUtils.h">
       <Filter>Classes\Qt\Main</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Qt\Main\ScenePreviewDialog.h">
-      <Filter>Classes\Qt\Main</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\SceneEditor\LandscapeEditorVisibilityCheckTool.h">
       <Filter>Classes\SceneEditor\Landscape</Filter>
     </ClInclude>
@@ -2957,6 +2948,12 @@
     <ClInclude Include="Classes\SceneEditor\EntityOwnerPropertyHelper.h">
       <Filter>Classes\SceneEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Classes\ParticlesEditorQT\Helpers\ParticlesEditorNodeNameHelper.h">
+      <Filter>Classes\ParticlesEditorQT\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\StringConstants.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\dava.resourceeditor.beast\wrapper\BeastDebug.cpp">
@@ -3113,9 +3110,6 @@
       <Filter>Classes\SceneEditor\Controls</Filter>
     </ClCompile>
     <ClCompile Include="Classes\SceneEditor\ModificationsPanel.cpp">
-      <Filter>Classes\SceneEditor\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\SceneEditor\ScenePreviewControl.cpp">
       <Filter>Classes\SceneEditor\Controls</Filter>
     </ClCompile>
     <ClCompile Include="Classes\SceneEditor\UIZoomControl.cpp">

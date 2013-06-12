@@ -101,7 +101,7 @@ void QtPropertyDataIntrospection::AddMember(const DAVA::InspMember *member, int 
 				else
 				{
 					// check if description has some predefines enum values
-					const DAVA::IspDesc &desc = member->Desc();
+					const DAVA::InspDesc &desc = member->Desc();
 
 					if(NULL != desc.enumMap)
 					{

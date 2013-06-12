@@ -30,7 +30,7 @@ REGISTER_CLASS(ParticleEmitterNode);
 ParticleEmitterNode::ParticleEmitterNode()
 :	emitter(0)
 {
-	SetName("Particle emitter");
+	SetName("Particle Emitter");
 }
 
 ParticleEmitterNode::~ParticleEmitterNode()

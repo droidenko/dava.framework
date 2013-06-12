@@ -31,11 +31,6 @@ TexturePacker::TexturePacker()
 
 bool TexturePacker::TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & /*defsList*/)
 {
-	if (CommandLineParser::Instance()->GetVerbose())
-    {
-        Logger::Info("%d x %d, ", textureRect.dx, textureRect.dy);
-    }
-    
 	ImagePacker * packer = new ImagePacker(textureRect);
 	
 	// Packing of sorted by size images

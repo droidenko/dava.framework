@@ -126,9 +126,6 @@ public:
     void SelectNodeQt(Entity *node);
     void OnReloadRootNodesQt();
     
-    void ShowScenePreview(const FilePath & scenePathname);
-    void HideScenePreview();
-
     bool LandscapeEditorModeEnabled();
     bool TileMaskEditorEnabled();
     
@@ -222,7 +219,6 @@ public: //For Qt integration
     
     void ProcessBeast();
     
-    ScenePreviewDialog *scenePreviewDialog;
     UIControl *focusedControl;
 };
 

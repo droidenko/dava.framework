@@ -35,13 +35,20 @@ public:
 	ParticleEffectComponent();
 
 	virtual Component * Clone(Entity * toEntity);
+	virtual void Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	virtual void Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
 
 	void Start();
 
 	void Stop();
 
 	void Restart();
-    
+
+	/**
+     \brief Returns true if all the emitters in the Particle Effect are stopped.    
+	 */
+	bool IsStopped();
+
     /**
      \brief Function marks that all the emitters must be stopped after N repeats of emitter animation.
      \param[in] numberOfRepeats number of times we need to repeat emitter animation before stop.
@@ -76,6 +83,14 @@ public:
      */
 	int32 GetActiveParticlesCount();
 
+	/**
+     \brief Set/reset the "stop Particle Effect on load" flag.
+	 // TODO: Yuri Coder, 2013/06/05 - this logic is temporary, since all the effects
+	 // should be loaded in "stopped" state.
+     */
+	DAVA_DEPRECATED(void SetStopOnLoad(bool value));
+	DAVA_DEPRECATED(bool IsStopOnLoad() const);
+
 protected:
 	// Update the duration for all the child nodes.
 	void UpdateDurationForChildNodes(float32 newEmitterLifeTime);
@@ -105,12 +120,19 @@ private:
 	// Count of emitters currently stopped.
 	int32 emittersCurrentlyStopped;
 
+	// Whether the effect should be stopped immediately after load.
+	// TODO: Yuri Coder, 2013/06/05 - this logic is temporary, since all the effects
+	// should be loaded in "stopped" state.
+	bool stopOnLoad;
+
 public:
 	INTROSPECTION_EXTEND(ParticleEffectComponent, Component,
 		MEMBER(stopAfterNRepeats, "stopAfterNRepeats", I_SAVE)
         MEMBER(stopWhenEmpty, "stopWhenEmpty", I_SAVE)
 //        MEMBER(needEmitPlaybackComplete, "needEmitPlaybackComplete", INTROSPECTION_SERIALIZABLE)
         MEMBER(effectDuration, "effectDuration", I_SAVE)
+		MEMBER(stopOnLoad, "stopOnLoad", I_SAVE)
+
     );
 };
 

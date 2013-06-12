@@ -38,13 +38,15 @@ namespace Ui {
 class TextureBrowser;
 }
 
-class TextureBrowser : public QDialog
+class TextureBrowser : public QDialog, public DAVA::Singleton<TextureBrowser>
 {
     Q_OBJECT
 
 public:
     explicit TextureBrowser(QWidget *parent = 0);
     ~TextureBrowser();
+
+	void Close();
 
 protected:
 	void closeEvent(QCloseEvent * e);

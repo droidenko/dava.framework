@@ -26,6 +26,8 @@
 #include "Input/InputSystem.h"
 #include "Input/KeyboardDevice.h"
 
+#include "../StringConstants.h"
+
 SceneCameraSystem::SceneCameraSystem(DAVA::Scene * scene)
 	: SceneSystem(scene)
 	, curSceneCamera(NULL)
@@ -48,7 +50,7 @@ SceneCameraSystem::SceneCameraSystem(DAVA::Scene * scene)
 		mainCamera->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
 
 		DAVA::Entity *mainCameraEntity = new DAVA::Entity();
-		mainCameraEntity->SetName("editor.main-camera");
+		mainCameraEntity->SetName(ResourceEditor::EDITOR_MAIN_CAMERA);
 		mainCameraEntity->AddComponent(new DAVA::CameraComponent(mainCamera));
 		scene->AddNode(mainCameraEntity);
 		scene->AddCamera(mainCamera);
@@ -60,7 +62,7 @@ SceneCameraSystem::SceneCameraSystem(DAVA::Scene * scene)
 		topCamera->SetupPerspective(70.0f, 320.0f / 480.0f, 1.0f, 5000.0f);
 
 		DAVA::Entity *topCameraEntity = new DAVA::Entity();
-		topCameraEntity->SetName("editor.debug-camera");
+		topCameraEntity->SetName(ResourceEditor::EDITOR_DEBUG_CAMERA);
 		topCameraEntity->AddComponent(new DAVA::CameraComponent(topCamera));
 		scene->AddNode(topCameraEntity);
 		scene->AddCamera(topCamera);

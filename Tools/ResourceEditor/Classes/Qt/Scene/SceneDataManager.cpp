@@ -25,6 +25,7 @@
 #include "./Qt/SpritesPacker/SpritePackerHelper.h"
 #include "../Main/QtUtils.h"
 #include "../SceneEditor/EntityOwnerPropertyHelper.h"
+#include "../StringConstants.h"
 
 using namespace DAVA;
 
@@ -53,7 +54,7 @@ SceneData* SceneDataManager::CreateNewScene()
 	return levelScene;	
 }
 
-void SceneDataManager::AddScene(const FilePath &scenePathname)
+Entity* SceneDataManager::AddScene(const FilePath &scenePathname)
 {
     DVASSERT(scenePathname.IsEqualToExtension(".sc2"));
 
@@ -61,20 +62,20 @@ void SceneDataManager::AddScene(const FilePath &scenePathname)
 	if (!sceneData)
 	{
 		DVASSERT(false && "No way to add the scene when SceneGetActive() returns NULL!");
-		return;
+		return NULL;
 	}
 	
 	EditorScene* scene = sceneData->GetScene();
 	if (!scene)
 	{
 		DVASSERT(false && "sceneData->GetScene() returned NULL!");
-		return;
+		return NULL;
 	}
 
     Entity * rootNode = scene->GetRootNode(scenePathname)->Clone();
 
     KeyedArchive * customProperties = rootNode->GetCustomProperties();
-    customProperties->SetString("editor.referenceToOwner", scenePathname.GetAbsolutePathname());
+    customProperties->SetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, scenePathname.GetAbsolutePathname());
     
     rootNode->SetSolid(true);
     scene->AddNode(rootNode);
@@ -108,9 +109,6 @@ void SceneDataManager::AddScene(const FilePath &scenePathname)
     Landscape *landscape = scene->GetLandscape(scene);
     bool needUpdateLandscapeController = (landscape != NULL);
 
-	
-    SafeRelease(rootNode);
-	
     //TODO: need save scene automatically?
     bool changesWereMade = SceneValidator::Instance()->ValidateSceneAndShowErrors(scene);
 //    SceneValidator::Instance()->EnumerateSceneTextures();
@@ -120,9 +118,10 @@ void SceneDataManager::AddScene(const FilePath &scenePathname)
 		sceneData->SetLandscapesControllerScene(scene);
 	}
 
-	SceneHidePreview();
 	UpdateParticleSprites();
 	emit SceneGraphNeedRebuild();
+
+	return rootNode;
 }
 
 void SceneDataManager::EditLevelScene(const FilePath &scenePathname)
@@ -252,14 +251,15 @@ void SceneDataManager::ReloadNode(EditorScene* scene, Entity *node, const FilePa
 	//если в рут ноды сложить такие же рут ноды то на релоаде все накроет пиздой
     KeyedArchive *customProperties = node->GetCustomProperties();
 	EntityOwnerPropertyHelper::Instance()->UpdateEntityOwner(customProperties);
-    if (customProperties->GetString("editor.referenceToOwner", "") == nodePathname.GetAbsolutePathname())
+    if (customProperties->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, "") == nodePathname.GetAbsolutePathname())
     {
-        Entity *loadedNode = scene->GetRootNode(fromPathname)->Clone();
+        Entity *loadedNode = scene->GetRootNode(fromPathname);
         if(loadedNode)
         {
             Entity *newNode = loadedNode->Clone();
             newNode->SetLocalTransform(node->GetLocalTransform());
-            newNode->GetCustomProperties()->SetString("editor.referenceToOwner", fromPathname.GetAbsolutePathname());
+            newNode->GetCustomProperties()->SetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER,
+															fromPathname.GetAbsolutePathname());
             newNode->SetSolid(true);
             
             Entity *parent = node->GetParent();
@@ -274,7 +274,7 @@ void SceneDataManager::ReloadNode(EditorScene* scene, Entity *node, const FilePa
         {
             errors.insert(Format("Cannot load object: %s", fromPathname.GetAbsolutePathname().c_str()));
         }
-
+        
         return;
     }
     
@@ -357,31 +357,6 @@ DAVA::Entity* SceneDataManager::SceneGetRootNode(SceneData *scene)
 	return node;
 }
 
-void SceneDataManager::SceneShowPreview(const DAVA::FilePath &path)
-{
-	SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-
-	if(screen)
-	{
-		if(path.IsEqualToExtension(".sc2") && FileSystem::Instance()->IsFile(path))
-		{
-			screen->ShowScenePreview(path);
-		}
-		else
-		{
-			SceneHidePreview();
-		}
-	}
-}
-
-void SceneDataManager::SceneHidePreview()
-{
-	SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-	if(NULL != screen)
-	{
-		screen->HideScenePreview();
-	}
-}
 
 EditorScene * SceneDataManager::RegisterNewScene()
 {
@@ -601,6 +576,9 @@ void SceneDataManager::CollectLandscapeDescriptors(DAVA::Set<DAVA::FilePath> &de
 
 void SceneDataManager::CollectDescriptors(DAVA::Set<DAVA::FilePath> &descriptors, const DAVA::FilePath &pathname)
 {
+    if(pathname.GetType() == FilePath::PATH_EMPTY)
+        return;
+
     DVASSERT(pathname.IsEqualToExtension(TextureDescriptor::GetDescriptorExtension()));
     
     if(!pathname.IsEmpty() && SceneValidator::Instance()->IsPathCorrectForProject(pathname))

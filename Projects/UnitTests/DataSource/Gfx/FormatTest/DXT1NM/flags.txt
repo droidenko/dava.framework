@@ -1,1 +1,1 @@
---generateMipMaps --adreno DXT1NM
+--generateMipMaps --adreno DXT1NM --tegra DXT1NM

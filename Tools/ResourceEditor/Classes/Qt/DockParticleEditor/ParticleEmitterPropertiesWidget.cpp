@@ -17,6 +17,7 @@
 #include "ParticleEmitterPropertiesWidget.h"
 #include "Commands/ParticleEditorCommands.h"
 #include "Commands/CommandsManager.h"
+#include "../Scene/SceneDataManager.h"
 
 #include <QLineEdit>
 #include <QEvent>
@@ -148,7 +149,8 @@ void ParticleEmitterPropertiesWidget::OnValueChanged()
 							   size.GetPropLine(),
 							   life,
 							   playbackSpeed);
-	CommandsManager::Instance()->ExecuteAndRelease(commandUpdateEmitter);
+	CommandsManager::Instance()->ExecuteAndRelease(commandUpdateEmitter,
+												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 
 	Init(emitter, false, initEmittersByDef);
 	emit ValueChanged();

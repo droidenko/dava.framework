@@ -23,6 +23,8 @@
 #include "QtMainWindowHandler.h"
 
 #include "TexturePacker/CommandLineParser.h"
+#include "../../Commands/FileCommands.h"
+#include "../../Commands/CommandsManager.h"
 
 #include "DAVAEngine.h"
 using namespace DAVA;
@@ -137,4 +139,30 @@ DAVA::Color QColorToColor(const QColor &qcolor)
 	return Color(qcolor.redF(), qcolor.greenF(), qcolor.blueF(), qcolor.alphaF());
 }
 
+int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int buttons, int defaultButton)
+{
+    int answer = QMessageBox::question(NULL, QString::fromStdString(header), QString::fromStdString(question),
+                                       (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
+    return answer;
+}
 
+int SaveSceneIfChanged(DAVA::Scene *scene)
+{
+    int answer = MB_FLAG_NO;
+    
+    int32 changesCount = CommandsManager::Instance()->GetUndoQueueLength(scene);
+    if(changesCount)
+    {
+        answer = ShowQuestion("Scene was changed", "Do you want to save changes in the current scene prior to creating new one?",
+                                    MB_FLAG_YES | MB_FLAG_NO | MB_FLAG_CANCEL, MB_FLAG_CANCEL);
+        
+        if(answer == MB_FLAG_YES)
+        {
+            // Execute this command directly to do not affect the Undo/Redo queue.
+            CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveScene(),
+														   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+        }
+    }
+    
+    return answer;
+}

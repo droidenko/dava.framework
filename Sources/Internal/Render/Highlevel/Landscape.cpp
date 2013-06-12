@@ -1729,11 +1729,29 @@ RenderObject * Landscape::Clone( RenderObject *newObject )
 {
 	if(!newObject)
 	{
-		DVASSERT_MSG(IsPointerToExactClass<Landscape>(this), "Can clone only LandscapeNode");
+		DVASSERT_MSG(IsPointerToExactClass<Landscape>(this), "Can clone only Landscape");
 		newObject = new Landscape();
 	}
+    
+    Landscape *newLandscape = static_cast<Landscape *>(newObject);
 
-	return RenderObject::Clone(newObject);
+    newLandscape->SetTiledShaderMode((eTiledShaderMode)tiledShaderMode);
+    
+    newLandscape->fogColor = fogColor;
+	newLandscape->isFogEnabled = isFogEnabled;
+    newLandscape->fogDensity = fogDensity;
+    
+    newLandscape->BuildLandscapeFromHeightmapImage(heightmapPath, bbox);
+    
+    for (int32 k = 0; k < TEXTURE_COUNT; ++k)
+    {
+        newLandscape->textureNames[k] = textureNames[k];
+        newLandscape->textures[k] = SafeRetain(textures[k]);
+        newLandscape->textureTiling[k] = textureTiling[k];
+        newLandscape->tileColor[k] = tileColor[k];
+    }
+
+	return newObject;
 }
 
 

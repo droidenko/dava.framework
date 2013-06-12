@@ -18,6 +18,7 @@
 #include "TimeLineWidget.h"
 #include "Commands/ParticleEditorCommands.h"
 #include "Commands/CommandsManager.h"
+#include "../Scene/SceneDataManager.h"
 
 #include <QVBoxLayout>
 #include <QScrollArea>
@@ -139,7 +140,8 @@ void LayerForceWidget::OnValueChanged()
 						 propForceVariable.GetPropLine(),
 						 propForceOverLife.GetPropLine());
 	
-	CommandsManager::Instance()->ExecuteAndRelease(updateForceCmd);
+	CommandsManager::Instance()->ExecuteAndRelease(updateForceCmd,
+												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 
 	Init(emitter, layer, forceIndex, false);
 	emit ValueChanged();

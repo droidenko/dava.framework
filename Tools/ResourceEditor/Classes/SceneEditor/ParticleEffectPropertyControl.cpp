@@ -17,6 +17,7 @@
 #include "ParticleEffectPropertyControl.h"
 #include "Scene3D/ParticleEffectNode.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
+#include "../StringConstants.h"
 
 ParticleEffectPropertyControl::ParticleEffectPropertyControl(const Rect & rect, bool createNodeProperties)
 :	NodesPropertyControl(rect, createNodeProperties)
@@ -35,7 +36,8 @@ void ParticleEffectPropertyControl::ReadFrom(Entity * sceneNode)
 	Component* component = sceneNode->GetComponent(Component::PARTICLE_EFFECT_COMPONENT);
 	DVASSERT(component);
 
-    propertyList->AddSection("Particle Effect", GetHeaderState("Particle Effect", true));
+    propertyList->AddSection(ResourceEditor::PARTICLE_EFFECT_NODE_NAME,
+								GetHeaderState(ResourceEditor::PARTICLE_EFFECT_NODE_NAME, true));
         
 	propertyList->AddMessageProperty(String("Start"), Message(this, &ParticleEffectPropertyControl::OnStart));
 	propertyList->AddMessageProperty(String("Stop"), Message(this, &ParticleEffectPropertyControl::OnStop));

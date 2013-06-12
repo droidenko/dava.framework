@@ -43,7 +43,7 @@ public:
 	SceneData* CreateNewScene();
 
 	// Add the new scene.
-	void AddScene(const FilePath &scenePathname);
+	Entity* AddScene(const FilePath &scenePathname);
 
 	// Edit the existing level scene.
 	void EditLevelScene(const FilePath &scenePathname);
@@ -60,8 +60,6 @@ public:
 	SceneData*			SceneGetLevel();
 	SceneData*			SceneGet(DAVA::int32 index);
 	DAVA::int32			SceneCount();
-	void				SceneShowPreview(const FilePath &path);
-	void				SceneHidePreview();
     
 	void				TextureCompressAllNotCompressed();
 	void				TextureReloadAll(DAVA::eGPUFamily forGPU);

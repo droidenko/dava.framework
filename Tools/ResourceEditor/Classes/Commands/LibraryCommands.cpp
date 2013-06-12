@@ -35,8 +35,8 @@
 using namespace DAVA;
 
 LibraryCommand::LibraryCommand(const DAVA::FilePath &pathname, eCommandType _type, CommandList::eCommandId id)
-    :   Command(_type, id)
-    ,   filePathname(pathname)
+    : Command(_type, id)
+    , filePathname(pathname)
 {
 }
 
@@ -49,23 +49,44 @@ bool LibraryCommand::CheckExtension(const DAVA::String &extenstionToChecking)
 
 //Add scene to current tab
 CommandAddScene::CommandAddScene(const DAVA::FilePath &pathname)
-    :   LibraryCommand(pathname, Command::COMMAND_UNDO_REDO, CommandList::ID_COMMAND_ADD_SCENE)
+    : LibraryCommand(pathname, Command::COMMAND_UNDO_REDO, CommandList::ID_COMMAND_ADD_SCENE)
+	, entity(NULL)
 {
 	commandName = "Add Scene";
+}
+
+CommandAddScene::~CommandAddScene()
+{
+	SafeRelease(entity);
 }
 
 
 void CommandAddScene::Execute()
 {
-    DVASSERT(CheckExtension(String(".sc2")) && "Wrong extension");
-    SceneDataManager::Instance()->AddScene(filePathname);
+	if(entity == NULL)
+	{
+		DVASSERT(CheckExtension(String(".sc2")) && "Wrong extension");
+		entity = SceneDataManager::Instance()->AddScene(filePathname);
+	}
+	else
+	{
+		SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
+		if(NULL != sceneData)
+		{
+			sceneData->AddSceneNode(entity);
+		}
+	}
 }
 
 void CommandAddScene::Cancel()
 {
     DVASSERT(CheckExtension(String(".sc2")) && "Wrong extension");
 
-    //TODO: need code here
+	SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
+	if(NULL != sceneData)
+	{
+		sceneData->RemoveSceneNode(entity);
+	}
 }
 
 

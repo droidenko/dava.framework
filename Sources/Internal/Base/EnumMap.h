@@ -28,7 +28,7 @@ public:
 	bool ToValue(const char *, int &e) const;
 	const char* ToString(const int e) const;
 
-	int GetCount() const;
+	size_t GetCount() const;
 	bool GetValue(size_t index, int &e) const;
 
 	void Register(const int e, const char *) const;

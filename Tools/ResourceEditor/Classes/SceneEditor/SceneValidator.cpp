@@ -24,6 +24,7 @@
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Scene/SceneData.h"
 #include "../EditorScene.h"
+#include "../StringConstants.h"
 
 #include "../LandscapeEditor/EditorLandscape.h"
 #include "../ParticlesEditorQT/Helpers/ParticlesEditorSceneDataHelper.h"
@@ -361,7 +362,7 @@ void SceneValidator::ConvertLightmapSizeFromProperty(Entity *ownerNode, Instance
 bool SceneValidator::NodeRemovingDisabled(Entity *node)
 {
     KeyedArchive *customProperties = node->GetCustomProperties();
-    return (customProperties && customProperties->IsKeyExists("editor.donotremove"));
+    return (customProperties && customProperties->IsKeyExists(ResourceEditor::EDITOR_DO_NOT_REMOVE));
 }
 
 
