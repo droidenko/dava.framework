@@ -418,7 +418,6 @@ void SceneExporter::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 		return;
 	}
 
-	int batchIndex = 0;
 	for (Set<int32>::iterator iter = batchIDs.begin(); iter != batchIDs.end(); iter ++)
 	{
 		int32 batchID = *iter;
@@ -428,20 +427,23 @@ void SceneExporter::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 			continue;
 		}
 		
-		batchIndex ++;
-		Entity* resultEntity = BatchEntities(scene, errorLog, entitiesToBatch, batchIndex);
+		String batchName = GetNextBatchedEntityName(scene);
+		Entity* resultEntity = BatchEntities(scene, errorLog, entitiesToBatch, batchName);
 	
 		if (!resultEntity)
 		{
 			continue;
 		}
-		
-		Entity* parentEntity = (*entitiesToBatch.begin())->GetParent();
+
+		// Add the new batched entity to the parent of the current solid entity, if any.
+		Entity* parentSolidEntity = GetSolidParentEntityIfPresent(*entitiesToBatch.begin());
+		Entity* parentEntity = (parentSolidEntity)->GetParent();
 		if (!parentEntity)
 		{
+			errorLog.insert(Format("Batching: no Parent Entity for %s", parentSolidEntity->GetName().c_str()));
 			continue;
 		}
-		
+
 		parentEntity->AddNode(resultEntity);
 		DeleteEntities(entitiesToBatch);
 	}
@@ -491,7 +493,8 @@ Set<Entity*> SceneExporter::GetEntitiesForBatchIndex(Scene* scene, int32 batchIn
 	return resultSet;
 }
 
-void SceneExporter::GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet)
+void SceneExporter::GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex,
+													  Set<Entity*>& resultSet)
 {
 	if (!rootEntity)
 	{
@@ -510,9 +513,26 @@ void SceneExporter::GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 
 	}
 }
 
+Entity* SceneExporter::GetSolidParentEntityIfPresent(Entity* entity)
+{
+	Entity* solidEntity = entity;
+	while (NULL != solidEntity)
+	{
+		KeyedArchive *customProperties = solidEntity->GetCustomProperties();
+		if(customProperties && customProperties->IsKeyExists(String(Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME)))
+		{
+			break;
+		}
+		solidEntity = solidEntity->GetParent();
+	};
+
+	// If no solid parent entity is present on this level - return the entity passed.
+	return solidEntity ? solidEntity : entity;
+}
+
 Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 									 const Set<Entity*>& entitiesToBatch,
-									 int32 batchIndex)
+									 const String& batchedEntityName)
 {
 	int childrenCount = entitiesToBatch.size();
 	if (childrenCount == 0)
@@ -524,15 +544,22 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	Entity* firstEntity = (*entitiesToBatch.begin());
 	if (!firstEntity)
 	{
-		// TODO! add error to the log!
+		errorLog.insert("Batching: First Entity in Batch is NULL");
 		return NULL;
 	}
-
+	
 	RenderComponent * firstEntityComponent = static_cast<RenderComponent*>(firstEntity->GetComponent(Component::RENDER_COMPONENT));
-	if (!firstEntityComponent || !firstEntityComponent->GetRenderObject() ||
-		!(firstEntityComponent->GetRenderObject()->GetRenderBatchCount() == 1))
+	if (!firstEntityComponent || !firstEntityComponent->GetRenderObject())
 	{
-		// TODO! add error to the log!
+		errorLog.insert(Format("Batching: First Entity %s does'nt have Render Object", firstEntity->GetName().c_str()));
+		return NULL;
+	}
+	
+	if (firstEntityComponent->GetRenderObject()->GetRenderBatchCount() != 1)
+	{
+		errorLog.insert(Format("Batching: First Entity Component for entity %s has %i Render Batches, expected 1",
+							   firstEntity->GetName().c_str(),
+							   firstEntityComponent->GetRenderObject()->GetRenderBatchCount()));
 		return NULL;
 	}
 	
@@ -541,48 +568,57 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	Entity* parentEntity = firstEntity->GetParent();
 	if (!parentEntity)
 	{
-		// TODO! add error to the log!
+		errorLog.insert(Format("Batching: Parent for First Entity %s is NULL", firstEntity->GetName().c_str()));
 		return NULL;
 	}
 
 	Entity* batchedEntity = new Entity();
-	batchedEntity->SetName(Format("BatchedEntity%i", batchIndex));
+	batchedEntity->SetName(batchedEntityName);
 
 	// Precalculate the sizes.
 	uint32 vertexCount = 0;
 	uint32 indexCount = 0;
-	uint32 meshFormat = firstEntityRenderBatch->GetPolygonGroup()->GetFormat();
-	CalculateBatchedEntityParameters(entitiesToBatch, vertexCount, indexCount);
-	
+	AABBox3 batchedBoundingBox;
+	CalculateBatchedEntityParameters(entitiesToBatch, vertexCount, indexCount, batchedBoundingBox);
+
 	if (vertexCount == 0 || indexCount == 0)
 	{
-		// TODO! add error to the log!
+		errorLog.insert(Format("Batching: Vertex/Index count for the Batched Entity %s is 0",
+							   firstEntity->GetName().c_str()));
 		return NULL;
 	}
+
+	Vector3 batchedEntityCenter = batchedBoundingBox.GetCenter();
 
 	// Create the mesh for the new entity.
 	Mesh* batchedMesh = new Mesh();
 	PolygonGroup* batchedPolygonGroup = new PolygonGroup();
+	uint32 meshFormat = firstEntityRenderBatch->GetPolygonGroup()->GetFormat();
 	batchedPolygonGroup->AllocateData(meshFormat, vertexCount, indexCount);
 
 	// Merge the streams themselves.
-	uint32 vertexesBatched = 0;
+	uint32 verticesBatched = 0;
 	uint32 indicesBatched = 0;
 	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end(); iter ++)
 	{
 		// Batch the Vertices and Indices.
 		Entity* curEntity = (*iter);
+
+		// The Transformation Matrix has to be taken from the upper's level "solid" entity,
+		// if it exists.
+		Entity* curSolidEntity = GetSolidParentEntityIfPresent(curEntity);
+		Matrix4 curEntityMatrix = curSolidEntity->GetLocalTransform();
 		RenderComponent * component = static_cast<RenderComponent*>(curEntity->GetComponent(Component::RENDER_COMPONENT));
 
 		if(!component || !component->GetRenderObject())
 		{
-			// TODO! error log!
+			errorLog.insert(Format("Batching: Entity %s does'nt have Render Object", curEntity->GetName().c_str()));
 			continue;
 		}
 
 		if (component->GetRenderObject()->GetType() != RenderObject::TYPE_MESH)
 		{
-			// TODO! error log!
+			errorLog.insert(Format("Batching: Entity %s is not a Mesh", curEntity->GetName().c_str()));
 			continue;
 		}
 
@@ -593,13 +629,17 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 
 		// Batch the polygon groups.
 		PolygonGroup* curPolygonGroup = curMesh->GetPolygonGroup(0);
-		
-		MergePolygonGroups(batchedPolygonGroup, curPolygonGroup, meshFormat, vertexesBatched);
-		MergeIndices(batchedPolygonGroup, curPolygonGroup, indicesBatched);
+		uint32 verticesBatchedOnThisPass = MergePolygonGroups(batchedPolygonGroup, curPolygonGroup, meshFormat,
+															  verticesBatched, curEntityMatrix, batchedEntityCenter);
+		uint32 indicesBatchedOnThisPass = MergeIndices(batchedPolygonGroup, curPolygonGroup, verticesBatched,
+													   indicesBatched);
+
+		verticesBatched += verticesBatchedOnThisPass;
+		indicesBatched += indicesBatchedOnThisPass;
 	}
 	
 	// Done batching.
-	DVASSERT(vertexesBatched == vertexCount);
+	DVASSERT(verticesBatched == vertexCount);
 	DVASSERT(indicesBatched == indexCount);
 	batchedPolygonGroup->BuildBuffers();
 	
@@ -608,12 +648,22 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	RenderComponent* batchedRenderComponent = new RenderComponent();
 	batchedRenderComponent->SetRenderObject(batchedMesh);
 	batchedEntity->AddComponent(batchedRenderComponent);
+
+	// Move the entity back to its correct center.
+	Matrix4 localBatchedMatrix = batchedEntity->GetLocalTransform();
+	Matrix4 moveModification;
 	
+	moveModification.CreateTranslation(batchedEntityCenter);
+	
+	Matrix4 positionedBatchedMatrix = batchedEntity->GetLocalTransform() * moveModification;
+	batchedEntity->SetLocalTransform(positionedBatchedMatrix);
+
 	return batchedEntity;
 }
 
 void SceneExporter::CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
-													 uint32& vertexCount, uint32& indexCount)
+													 uint32& vertexCount, uint32& indexCount,
+													 AABBox3& batchedBoundingBox)
 {
 	for (Set<Entity*>::iterator iter = entitiesToBatch.begin();
 		 iter != entitiesToBatch.end(); iter ++)
@@ -636,64 +686,76 @@ void SceneExporter::CalculateBatchedEntityParameters(const Set<Entity*>& entitie
 		Mesh* curMesh = static_cast<Mesh*>(component->GetRenderObject());
 		uint32 curRenderBatchesCount = curMesh->GetRenderBatchCount();
 		DVASSERT(curRenderBatchesCount == 1);
+
+		RenderBatch* curRenderBatch = curMesh->GetRenderBatch(0);
+		vertexCount += curRenderBatch->GetPolygonGroup()->GetVertexCount();
+		indexCount += curRenderBatch->GetPolygonGroup()->GetIndexCount();
 		
-		vertexCount += curMesh->GetRenderBatch(0)->GetPolygonGroup()->GetVertexCount();
-		indexCount += curMesh->GetRenderBatch(0)->GetPolygonGroup()->GetIndexCount();
+		// Bounding Box is to be calculated in world coordinates.
+		AABBox3 worldBoundingBox;
+		curRenderBatch->GetBoundingBox().GetTransformedBox(curEntity->GetWorldTransform(), worldBoundingBox);
+		batchedBoundingBox.AddAABBox(worldBoundingBox);
 	}
 }
 
-void SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
-									   uint32 meshFormat, uint32& verticesBatched)
+uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+										 uint32 meshFormat, uint32 verticesBatched,
+										 const Matrix4& curEntityMatrix, const Vector3& batchedEntityCenter)
 {
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
 		DVASSERT(false);
 		return;
 	}
-	
+
+	// The translation matrix is needed to move the bounding box to the (0,0,0) coord.
+	// The resulting entity will then be moved back to the original position.
+	Matrix4 translateMatrix;
+	translateMatrix.CreateTranslation(-batchedEntityCenter);
+
 	uint32 verticesToBatch = curPolygonGroup->GetVertexCount();
 	Vector3 vector3Param;
 	Vector2 vector2Param;
 	for (uint32 i = 0; i < verticesToBatch; i ++)
 	{
 		uint32 positionInBatch = i + verticesBatched;
-		if (meshFormat & EVF_VERTEX)
+		if (meshFormat & EVF_VERTEX && curPolygonGroup->vertexArray)
 		{
 			curPolygonGroup->GetCoord(i, vector3Param);
-			batchedPolygonGroup->SetCoord(positionInBatch, vector3Param);
+			Vector3 newCoordParam = vector3Param * curEntityMatrix * translateMatrix;
+			batchedPolygonGroup->SetCoord(positionInBatch, newCoordParam);
 		}
 
-		if (meshFormat & EVF_NORMAL)
+		if (meshFormat & EVF_NORMAL && curPolygonGroup->normalArray)
 		{
 			curPolygonGroup->GetNormal(i, vector3Param);
 			batchedPolygonGroup->SetNormal(positionInBatch, vector3Param);
 		}
 
-		if (meshFormat & EVF_TANGENT)
+		if (meshFormat & EVF_TANGENT && curPolygonGroup->tangentArray)
 		{
 			curPolygonGroup->GetTangent(i, vector3Param);
 			batchedPolygonGroup->SetTangent(positionInBatch, vector3Param);
 		}
 
-		if (meshFormat & EVF_TEXCOORD0)
+		if (meshFormat & EVF_TEXCOORD0 && curPolygonGroup->textureCoordCount > 0)
 		{
 			curPolygonGroup->GetTexcoord(0, i, vector2Param);
 			batchedPolygonGroup->SetTexcoord(0, positionInBatch, vector2Param);
 		}
 	
-		if (meshFormat & EVF_TEXCOORD1)
+		if (meshFormat & EVF_TEXCOORD1 && curPolygonGroup->textureCoordCount > 1)
 		{
 			curPolygonGroup->GetTexcoord(1, i, vector2Param);
 			batchedPolygonGroup->SetTexcoord(1, positionInBatch, vector2Param);
 		}
 	}
 	
-	// Update the position in batched group.
-	verticesBatched += verticesToBatch;
+	return verticesToBatch;
 }
 
-void SceneExporter::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
-								 uint32& indicesBatched)
+uint32 SceneExporter::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
+								 uint32 verticesBatched, uint32 indicesBatched)
 {
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
@@ -706,10 +768,10 @@ void SceneExporter::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup
 	{
 		int32 index = 0;
 		curPolygonGroup->GetIndex(i, index);
-		batchedPolygonGroup->SetIndex(i + indicesBatched, index /*+ indicesBatched*/);
+		batchedPolygonGroup->SetIndex(i + indicesBatched, index + verticesBatched);
 	}
-	
-	indicesBatched += indicesToBatch;
+
+	return indicesToBatch;
 }
 
 void SceneExporter::DeleteEntities(const Set<Entity*>& entitiesToDelete)
@@ -723,11 +785,49 @@ void SceneExporter::DeleteEntities(const Set<Entity*>& entitiesToDelete)
 			continue;
 		}
 		
-		Entity* parentNode = entityToDelete->GetParent();
+		Entity* solidEntityToDelete = GetSolidParentEntityIfPresent(entityToDelete);
+		Entity* parentNode = solidEntityToDelete->GetParent();
 		DVASSERT(parentNode);
 		
 		parentNode->Retain();
-		parentNode->RemoveNode(entityToDelete);
+		parentNode->RemoveNode(solidEntityToDelete);
 		parentNode->Release();
+	}
+}
+
+String SceneExporter::GetNextBatchedEntityName(Scene* scene)
+{
+	Set<String> usedNames;
+	BuildEntityNamesList(scene, usedNames);
+
+	// Lookup through the all scene to find the "free" batched entity names.
+	int32 nextBatchedEntityIndex = 0;
+	while (nextBatchedEntityIndex < 9999)
+	{
+		String curEntityName = Format("BatchedEntity%i", nextBatchedEntityIndex);
+		if (usedNames.find(curEntityName) == usedNames.end())
+		{
+			return curEntityName;
+		}
+		
+		nextBatchedEntityIndex ++;
+	}
+
+	return "BatchedEntity";
+}
+
+void SceneExporter::BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNames)
+{
+	if (!rootEntity)
+	{
+		return;
+	}
+
+	usedNames.insert(rootEntity->GetName());
+
+	int32 childrenCount = rootEntity->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		BuildEntityNamesList(rootEntity->GetChild(i), usedNames);
 	}
 }

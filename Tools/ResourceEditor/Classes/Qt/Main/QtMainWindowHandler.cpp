@@ -173,7 +173,17 @@ void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 		pathToCurrentScene = currentTabProxy->GetScenePath();
 	}
 	
-    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentTabProxy, pathToCurrentScene, gpuFamily));
+    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentTabProxy, pathToCurrentScene, gpuFamily),
+												   currentTabProxy);
+	
+	// Have to reset the selection otherwise batched and already deleted items which might be
+	// currently selected will cause crash.
+	if (currentTabProxy)
+	{
+		currentTabProxy->selectionSystem->SetSelection(NULL);
+	}
+
+	// TODO: Yuri Coder, 2012/06/13. Have to refresh new scene graph here!
 }
 
 

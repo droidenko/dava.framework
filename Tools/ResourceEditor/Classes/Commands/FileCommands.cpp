@@ -331,9 +331,7 @@ void CommandExport::Execute()
 		
 		//TODO: how to be with removed nodes?
 		Set<String> errorsLog;
-		
-		// TODO!! test code!!!
-		activeScenePath = "/Users/yuricoder/Work/DAVA_Framework/work/issues/DF-1127/Exported/";
+
 		exporter.ExportScene(activeScene, activeScenePath, errorsLog);
 		
 		return;
