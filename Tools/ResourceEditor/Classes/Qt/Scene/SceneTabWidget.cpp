@@ -443,7 +443,7 @@ void SceneTabWidget::SetCollisionDrawMode(int mode)
 	}
 }
 
-SceneEditorProxy* SceneTabWidget::GetSceneEditorProxyForCurrentTab() const
+SceneEditor2* SceneTabWidget::GetSceneEditorForCurrentTab() const
 {
 	return GetTabScene(GetCurrentTab());
 }

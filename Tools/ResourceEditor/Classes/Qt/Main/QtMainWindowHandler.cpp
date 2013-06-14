@@ -168,20 +168,20 @@ void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 	// Yuri Coder, 2013/06/12. Current Tab Proxy might be NULL in case new QT
 	// scene editor isn't active.
 	FilePath pathToCurrentScene;
-	SceneEditorProxy* currentTabProxy = sceneTabWidget->GetSceneEditorProxyForCurrentTab();
-	if (currentTabProxy)
+	SceneEditor2* currentSceneEditor = sceneTabWidget->GetSceneEditorForCurrentTab();
+	if (currentSceneEditor)
 	{
-		pathToCurrentScene = currentTabProxy->GetScenePath();
+		pathToCurrentScene = currentSceneEditor->GetScenePath();
 	}
 	
-    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentTabProxy, pathToCurrentScene, gpuFamily),
-												   currentTabProxy);
+    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentSceneEditor, pathToCurrentScene, gpuFamily),
+												   currentSceneEditor);
 	
 	// Have to reset the selection otherwise batched and already deleted items which might be
 	// currently selected will cause crash.
-	if (currentTabProxy)
+	if (currentSceneEditor)
 	{
-		currentTabProxy->selectionSystem->SetSelection(NULL);
+		currentSceneEditor->selectionSystem->SetSelection(NULL);
 	}
 
 	// TODO: Yuri Coder, 2012/06/13. Have to refresh new scene graph here!
@@ -884,13 +884,13 @@ void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
 		return;
 	}
 	
-	SceneEditorProxy* currentTabProxy = sceneTabWidget->GetSceneEditorProxyForCurrentTab();
-	if (!currentTabProxy || !currentTabProxy->selectionSystem)
+	SceneEditor2* currentSceneEditor = sceneTabWidget->GetSceneEditorForCurrentTab();
+	if (!currentSceneEditor || !currentSceneEditor->selectionSystem)
 	{
 		return;
 	}
 	
-	const EntityGroup *selectedEntities = currentTabProxy->selectionSystem->GetSelection();
+	const EntityGroup *selectedEntities = currentSceneEditor->selectionSystem->GetSelection();
 	if (!selectedEntities || selectedEntities->Size() == 0)
 	{
 		QMessageBox msgBox(QMessageBox::Warning, "Warning", "No entities selected to group");
@@ -901,12 +901,12 @@ void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
 	if (isBatch)
 	{
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities),
-													   currentTabProxy);
+													   currentSceneEditor);
 	}
 	else
 	{
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities),
-													   currentTabProxy);
+													   currentSceneEditor);
 	}
 }
 
