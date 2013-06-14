@@ -34,6 +34,7 @@
 #include "../SceneEditor/EditorSettings.h"
 #include "../SceneEditor/SceneEditorScreenMain.h"
 #include "../SceneEditor/EditorBodyControl.h"
+#include "../SceneEditor/TextureSquarenessChecker.h"
 #include "../DockHangingObjects/HangingObjectsHelper.h"
 #include "Scene/SceneDataManager.h"
 #include "Scene/SceneData.h"
@@ -124,7 +125,7 @@ void QtMainWindowHandler::ClearActions(int32 count, QAction **actions)
 void QtMainWindowHandler::NewScene()
 {
 	CommandsManager::Instance()->ExecuteAndRelease(new CommandNewScene(),
-												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+												   SceneDataManager::Instance()->SceneGetLevel()->GetScene());
 }
 
 
@@ -447,6 +448,22 @@ void QtMainWindowHandler::Beast()
 {
     CommandsManager::Instance()->ExecuteAndRelease(new CommandBeast(),
 												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+}
+
+void QtMainWindowHandler::SquareTextures()
+{ 
+    SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
+    if(screen->CurrentScenePathname().IsEmpty())
+        return;
+
+    int32 answer = ShowQuestion("Warning!", "All non-square textures will enlarged to square and scene file will resave. Do you want to continue?",
+        MB_FLAG_YES | MB_FLAG_NO, MB_FLAG_NO);
+
+    if(answer == MB_FLAG_YES)
+    {
+        SceneData * activeScene = SceneDataManager::Instance()->SceneGetActive();
+        TextureSquarenessChecker::Instance()->CheckSceneForTextureSquarenessAndResave(activeScene->GetScene());
+    }
 }
 
 void QtMainWindowHandler::SetDefaultFocusWidget(QWidget *widget)

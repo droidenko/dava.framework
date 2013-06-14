@@ -14,48 +14,61 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#ifndef __COMMAND_STACK_H__
+#define __COMMAND_STACK_H__
 
-#include <QPair>
-#include <QStandardItemModel>
+#include "Base/BaseTypes.h"
+#include "Commands2/Command2.h"
+#include "Commands2/CommandBatch.h"
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
+struct CommandStackNotify;
 
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+class CommandStack : public CommandNotifyProvider
 {
-	Q_OBJECT
+	friend struct CommandStackNotify;
 
 public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+	CommandStack();
+	~CommandStack();
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+	bool CanRedo() const;
+	bool CanUndo() const;
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+	void Clear();
+	
+	void Undo();
+	void Redo();
+	void Exec(Command2 *command);
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+	void BeginBatch(const DAVA::String &text);
+	void EndBatch();
 
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+	size_t GetUndoLimit() const;
+	void SetUndoLimit(size_t limit);
 
 protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
+	std::list<Command2 *> commandList;
+	size_t commandListLimit;
+	size_t nextCommandIndex;
+
+	CommandBatch* curBatchCommand;
+	CommandStackNotify *stackCommandsNotify;
+
+	void ExecInternal(Command2 *command);
+
+	void ClearRedoCommands();
+	void ClearLimitedCommands();
+
+	Command2* GetCommand(size_t index);
+	void CommandExecuted(const Command2 *command, bool redo);
 };
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+struct CommandStackNotify : public CommandNotify
+{
+	CommandStack* stack;
+
+	CommandStackNotify(CommandStack *_stack);
+	virtual void Notify(const Command2 *command, bool redo);
+};
+
+#endif // __COMMAND_STACK_H__

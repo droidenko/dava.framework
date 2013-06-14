@@ -115,8 +115,8 @@ void QtMainWindow::SetupActions()
 	connect(ui->actionSaveScene, SIGNAL(triggered()), actionHandler, SLOT(SaveScene()));
 	connect(ui->actionSaveToFolder, SIGNAL(triggered()), actionHandler, SLOT(SaveToFolderWithChilds()));
     
-    ui->actionExportPVRIOS->setData(GPU_POVERVR_IOS);
-    ui->actionExportPVRAndroid->setData(GPU_POVERVR_ANDROID);
+    ui->actionExportPVRIOS->setData(GPU_POWERVR_IOS);
+    ui->actionExportPVRAndroid->setData(GPU_POWERVR_ANDROID);
     ui->actionExportTegra->setData(GPU_TEGRA);
     ui->actionExportMali->setData(GPU_MALI);
     ui->actionExportAdreno->setData(GPU_ADRENO);
@@ -136,6 +136,7 @@ void QtMainWindow::SetupActions()
 	connect(ui->actionTileMapEditor, SIGNAL(triggered()), actionHandler, SLOT(TilemapEditor()));
 	connect(ui->actionRulerTool, SIGNAL(triggered()), actionHandler, SLOT(RulerTool()));
 	connect(ui->actionShowSettings, SIGNAL(triggered()), actionHandler, SLOT(ShowSettings()));
+    connect(ui->actionSquareTextures, SIGNAL(triggered()), actionHandler, SLOT(SquareTextures()));
     
 #if defined (__DAVAENGINE_MACOS__)
     ui->menuTools->removeAction(ui->actionBeast);
@@ -234,8 +235,8 @@ void QtMainWindow::SetupMainMenu()
     //View Options
     connect(ui->actionShowNotPassableLandscape, SIGNAL(triggered()), actionHandler, SLOT(ToggleNotPassableTerrain()));
 
-    ui->actionReloadPoverVRIOS->setData(GPU_POVERVR_IOS);
-    ui->actionReloadPoverVRAndroid->setData(GPU_POVERVR_ANDROID);
+    ui->actionReloadPoverVRIOS->setData(GPU_POWERVR_IOS);
+    ui->actionReloadPoverVRAndroid->setData(GPU_POWERVR_ANDROID);
     ui->actionReloadTegra->setData(GPU_TEGRA);
     ui->actionReloadMali->setData(GPU_MALI);
     ui->actionReloadAdreno->setData(GPU_ADRENO);

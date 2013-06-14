@@ -33,10 +33,10 @@
 // old ui. should be removed later -->
 class SceneEditorScreenMain;
 // <--
-class SceneEditorProxy;
+class SceneEditor2;
 class DAVAUI3DView;
 
-Q_DECLARE_METATYPE(SceneEditorProxy *);
+Q_DECLARE_METATYPE(SceneEditor2 *);
 
 class SceneTabWidget : public QWidget
 {
@@ -81,7 +81,7 @@ public slots:
 	void TabBarCloseRequest(int index);
 
 	// scene mouse over selected object
-	void MouseOverSelectedEntities(SceneEditorProxy* scene, const EntityGroup *entities);
+	void MouseOverSelectedEntities(SceneEditor2* scene, const EntityGroup *entities);
 
 // old ui. should be removed later -->
 protected:
@@ -104,15 +104,15 @@ protected:
 	void InitDAVAUI();
 	void ReleaseDAVAUI();
 
-	SceneEditorProxy* GetTabScene(int index) const;
-	void SetTabScene(int index, SceneEditorProxy* scene);
+	SceneEditor2* GetTabScene(int index) const;
+	void SetTabScene(int index, SceneEditor2* scene);
 
 	virtual void resizeEvent(QResizeEvent * event);
 
 private:
 	int newSceneCounter;
 
-	SceneEditorProxy *curScene;
+	SceneEditor2 *curScene;
 	ST_Axis curModifAxis;
 	ST_ModifMode curModifMode;
 	ST_PivotPoint curPivotPoint;

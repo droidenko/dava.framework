@@ -31,10 +31,10 @@ SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	setDropIndicatorShown(true);
 
 	// scene signals
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditorProxy *)), this, SLOT(SceneActivated(SceneEditorProxy *)));
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Deactivated(SceneEditorProxy *)), this, SLOT(SceneDeactivated(SceneEditorProxy *)));
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Selected(SceneEditorProxy *, DAVA::Entity *)), this, SLOT(EntitySelected(SceneEditorProxy *, DAVA::Entity *)));
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Deselected(SceneEditorProxy *, DAVA::Entity *)), this, SLOT(EntityDeselected(SceneEditorProxy *, DAVA::Entity *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditor2 *)), this, SLOT(SceneActivated(SceneEditor2 *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Deactivated(SceneEditor2 *)), this, SLOT(SceneDeactivated(SceneEditor2 *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Selected(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntitySelected(SceneEditor2 *, DAVA::Entity *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Deselected(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntityDeselected(SceneEditor2 *, DAVA::Entity *)));
 
 	// this widget signals
 	QObject::connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(TreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
@@ -49,7 +49,7 @@ void SceneTree::dropEvent(QDropEvent * event)
 {
 	QTreeView::dropEvent(event);
 
-	// this workaround for Qt bug
+	// this is a workaround for Qt bug
 	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
 	// for more information
 	if(!treeModel->DropIsAccepted())
@@ -58,17 +58,17 @@ void SceneTree::dropEvent(QDropEvent * event)
 	}
 }
 
-void SceneTree::SceneActivated(SceneEditorProxy *scene)
+void SceneTree::SceneActivated(SceneEditor2 *scene)
 {
 	treeModel->SetScene(scene);
 }
 
-void SceneTree::SceneDeactivated(SceneEditorProxy *scene)
+void SceneTree::SceneDeactivated(SceneEditor2 *scene)
 {
 	treeModel->SetScene(NULL);
 }
 
-void SceneTree::EntitySelected(SceneEditorProxy *scene, DAVA::Entity *entity)
+void SceneTree::EntitySelected(SceneEditor2 *scene, DAVA::Entity *entity)
 {
 	if(!skipTreeSelectionProcessing)
 	{
@@ -93,7 +93,7 @@ void SceneTree::EntitySelected(SceneEditorProxy *scene, DAVA::Entity *entity)
 	}
 }
 
-void SceneTree::EntityDeselected(SceneEditorProxy *scene, DAVA::Entity *entity)
+void SceneTree::EntityDeselected(SceneEditor2 *scene, DAVA::Entity *entity)
 {
 	if(!skipTreeSelectionProcessing)
 	{
@@ -123,7 +123,7 @@ void SceneTree::TreeSelectionChanged(const QItemSelection & selected, const QIte
 	{
 		skipTreeSelectionProcessing = true;
 
-		SceneEditorProxy* curScene = treeModel->GetScene();
+		SceneEditor2* curScene = treeModel->GetScene();
 		if(NULL != curScene)
 		{
 			// deselect items in scene

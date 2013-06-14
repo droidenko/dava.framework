@@ -21,7 +21,7 @@
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Scene/SceneData.h"
 
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 #include "Scene/System/CollisionSystem.h"
 
 #include "BatchEntitiesHelper.h"
@@ -46,7 +46,7 @@ CommandGroupEntitiesForMultiselect::CommandGroupEntitiesForMultiselect(const Ent
 	sep = NULL;
 	if(NULL != en)
 	{
-		sep = dynamic_cast<SceneEditorProxy *>(en->GetScene());
+		sep = dynamic_cast<SceneEditor2 *>(en->GetScene());
 	}
 }
 
@@ -250,7 +250,7 @@ void CommandTransformObject::UpdateCollision()
 {
 	Entity* node = *entities.begin();
 
-	SceneEditorProxy *sep = dynamic_cast<SceneEditorProxy *>(node->GetScene());
+	SceneEditor2 *sep = dynamic_cast<SceneEditor2 *>(node->GetScene());
 	if(NULL != sep && NULL != sep->collisionSystem)
 	{
 		// make sure that worldtransform is up to date

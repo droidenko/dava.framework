@@ -241,7 +241,7 @@ void TextureDescriptor::LoadVersion2(int32 signature, DAVA::File *file)
     }
     else if(signature == NOTCOMPRESSED_FILE)
     {
-        ReadCompressionWithDateOld(file, compression[GPU_POVERVR_IOS]);
+        ReadCompressionWithDateOld(file, compression[GPU_POWERVR_IOS]);
         ReadCompressionWithDateOld(file, compression[GPU_TEGRA]);
     }
 }
@@ -262,7 +262,7 @@ void TextureDescriptor::LoadVersion3(int32 signature, DAVA::File *file)
 	}
 	else if(signature == NOTCOMPRESSED_FILE)
 	{
-        ReadCompressionWithDateOld(file, compression[GPU_POVERVR_IOS]);
+        ReadCompressionWithDateOld(file, compression[GPU_POWERVR_IOS]);
         ReadCompressionWithDateOld(file, compression[GPU_TEGRA]);
 	}
 }
@@ -283,7 +283,7 @@ void TextureDescriptor::LoadVersion4(int32 signature, DAVA::File *file)
 	}
 	else if(signature == NOTCOMPRESSED_FILE)
 	{
-		ReadCompressionWith16CRCOld(file, compression[GPU_POVERVR_IOS]);
+		ReadCompressionWith16CRCOld(file, compression[GPU_POWERVR_IOS]);
 		ReadCompressionWith16CRCOld(file, compression[GPU_TEGRA]);
 	}
 }
@@ -304,11 +304,11 @@ void TextureDescriptor::LoadVersion5(int32 signature, DAVA::File *file)
 	{
         int8 format;
         file->Read(&format, sizeof(format));
-        compression[GPU_POVERVR_IOS].format = (PixelFormat)format;
+        compression[GPU_POWERVR_IOS].format = (PixelFormat)format;
         
-        file->Read(&compression[GPU_POVERVR_IOS].compressToWidth, sizeof(compression[GPU_POVERVR_IOS].compressToWidth));
-        file->Read(&compression[GPU_POVERVR_IOS].compressToHeight, sizeof(compression[GPU_POVERVR_IOS].compressToHeight));
-        file->Read(&compression[GPU_POVERVR_IOS].crc, sizeof(compression[GPU_POVERVR_IOS].crc));
+        file->Read(&compression[GPU_POWERVR_IOS].compressToWidth, sizeof(compression[GPU_POWERVR_IOS].compressToWidth));
+        file->Read(&compression[GPU_POWERVR_IOS].compressToHeight, sizeof(compression[GPU_POWERVR_IOS].compressToHeight));
+        file->Read(&compression[GPU_POWERVR_IOS].crc, sizeof(compression[GPU_POWERVR_IOS].crc));
 
 
         file->Read(&format, sizeof(format));

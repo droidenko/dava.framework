@@ -216,7 +216,7 @@ void UITextField::DidAppear()
 #ifdef __DAVAENGINE_IPHONE__
 	textFieldiPhone->ShowField();
 #elif defined(__DAVAENGINE_ANDROID__)
-	textFieldAndroid->ShowField();
+//	textFieldAndroid->ShowField();
 #endif
 }
 

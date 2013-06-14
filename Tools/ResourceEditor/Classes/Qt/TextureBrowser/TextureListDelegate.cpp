@@ -172,10 +172,10 @@ void TextureListDelegate::drawPreviewBig(QPainter *painter, const QStyleOptionVi
 			infoText += "\nData size: ";
 			infoText += textureDataSize.toString();
 
-			if(curTextureDescriptor->compression[DAVA::GPU_POVERVR_IOS].format != DAVA::FORMAT_INVALID)
+			if(curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
 			{
 				infoText += "\nPVR: ";
-				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_POVERVR_IOS].format));
+				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format));
 			}
 
 			if(curTextureDescriptor->compression[DAVA::GPU_TEGRA].format != DAVA::FORMAT_INVALID)
@@ -267,7 +267,7 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 		rect.setX(rect.x() + rect.width() - FORMAT_INFO_WIDTH);
 		rect.setWidth(FORMAT_INFO_WIDTH);
 
-		if(descriptor->compression[DAVA::GPU_POVERVR_IOS].format != DAVA::FORMAT_INVALID)
+		if(descriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
 		{
 			painter->setPen(FORMAT_PVR_COLOR);
 			painter->setBrush(QBrush(FORMAT_PVR_COLOR));
@@ -285,7 +285,7 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
 		}
 
-		if((descriptor->compression[DAVA::GPU_POVERVR_IOS].format == DAVA::FORMAT_PVR4 || descriptor->compression[DAVA::GPU_POVERVR_IOS].format == DAVA::FORMAT_PVR2) &&
+		if((descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR4 || descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR2) &&
 			texture->width != texture->height)
 		{
 			QRect r = rect;

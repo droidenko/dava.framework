@@ -276,7 +276,7 @@ void EditorBodyControl::PlaceOnLandscape(Entity *node)
 {
 	if (node)
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandPlaceOnLandscape(node, this), node->GetScene());
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandPlaceOnLandscape(node, this), scene);
 	}
 }
 

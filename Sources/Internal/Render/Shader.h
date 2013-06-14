@@ -139,6 +139,11 @@ public:
 //    String relativeFileName;
 //#endif //#if defined(__DAVAENGINE_ANDROID__) 
 
+#if defined(__DAVAENGINE_ANDROID__)
+	virtual void Lost();
+	virtual void Invalidate();
+#endif //#if defined(__DAVAENGINE_ANDROID__)
+
     
 private:
 #if defined(__DAVAENGINE_DIRECTX9__)

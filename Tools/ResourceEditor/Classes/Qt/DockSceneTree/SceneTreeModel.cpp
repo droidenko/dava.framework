@@ -40,7 +40,7 @@ SceneTreeModel::~SceneTreeModel()
 	}
 }
 
-void SceneTreeModel::SetScene(SceneEditorProxy *scene)
+void SceneTreeModel::SetScene(SceneEditor2 *scene)
 {
 	// remove add rows
 	removeRows(0, rowCount());
@@ -69,7 +69,7 @@ void SceneTreeModel::SetScene(SceneEditorProxy *scene)
 	}
 }
 
-SceneEditorProxy* SceneTreeModel::GetScene() const
+SceneEditor2* SceneTreeModel::GetScene() const
 {
 	return curScene;
 }

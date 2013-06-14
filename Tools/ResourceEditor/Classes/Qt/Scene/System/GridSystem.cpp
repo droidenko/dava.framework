@@ -74,3 +74,8 @@ void SceneGridSystem::Draw()
 	rm->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	rm->SetState(oldState);
 }
+
+void SceneGridSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+
+}

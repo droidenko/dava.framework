@@ -172,6 +172,9 @@
     <Filter Include="Classes\Qt\DockConsole">
       <UniqueIdentifier>{3fea7404-6e38-4d26-ab20-9ab00124dc31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\Commands2">
+      <UniqueIdentifier>{cbfcc1d7-9146-43fd-a91a-ec972c86126d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Collada\ColladaAnimatedMesh.cpp">
@@ -1191,7 +1194,7 @@
     <ClCompile Include="Classes\Qt\DockSceneGraph\SceneGraphModelStateHelper.cpp">
       <Filter>Classes\Qt\DockSceneGraph</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Qt\Scene\SceneEditorProxy.cpp">
+    <ClCompile Include="Classes\Qt\Scene\SceneEditor2.cpp">
       <Filter>Classes\Qt\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Qt\Scene\SceneTabWidget.cpp">
@@ -1554,7 +1557,7 @@
     <ClCompile Include="_GeneratedQt\Scene\SceneData_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
-    <ClCompile Include="_GeneratedQt\Scene\SceneEditorProxy_moc.cpp">
+    <ClCompile Include="_GeneratedQt\Scene\SceneEditor2_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
     <ClCompile Include="_GeneratedQt\Scene\SceneSignals_moc.cpp">
@@ -1676,6 +1679,24 @@
     </ClCompile>
     <ClCompile Include="Classes\ParticlesEditorQT\Helpers\ParticlesEditorNodeNameHelper.cpp">
       <Filter>Classes\ParticlesEditorQT\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\SceneEditor\TextureSquarenessChecker.cpp">
+      <Filter>Classes\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\CommandStack.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\CommandBatch.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\Command2.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\TransformCommand.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\CommandNotify.cpp">
+      <Filter>Classes\Commands2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2753,7 +2774,7 @@
     <ClInclude Include="Classes\Qt\DockSceneGraph\SceneGraphModelStateHelper.h">
       <Filter>Classes\Qt\DockSceneGraph</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Qt\Scene\SceneEditorProxy.h">
+    <ClInclude Include="Classes\Qt\Scene\SceneEditor2.h">
       <Filter>Classes\Qt\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Qt\Scene\SceneTabWidget.h">
@@ -2953,6 +2974,27 @@
     </ClInclude>
     <ClInclude Include="Classes\StringConstants.h">
       <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\SceneEditor\TextureSquarenessChecker.h">
+      <Filter>Classes\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\CommandStack.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\CommandBatch.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\Command2.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\TransformCommand.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\CommandNotify.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\CommandID.h">
+      <Filter>Classes\Commands2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

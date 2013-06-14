@@ -517,15 +517,18 @@ GLint Shader::LinkProgram(GLuint prog)
     
     RENDER_VERIFY(glLinkProgram(prog));
     
-    GLint logLength = 0;
-    RENDER_VERIFY(glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength));
-    if (logLength > 1)
+#ifdef __DAVAENGINE_DEBUG__
     {
-        GLchar *log = (GLchar *)malloc(logLength);
-        RENDER_VERIFY(glGetProgramInfoLog(prog, logLength, &logLength, log));
-        Logger::Debug("Program link log:\n%s", log);
-        free(log);
+		GLchar log[4096] = {0};
+		GLsizei logLength = 0;
+
+        RENDER_VERIFY(glGetProgramInfoLog(prog, 4096, &logLength, log));
+		if (logLength)
+		{
+			Logger::Debug("Program link log:\n%s", log);
+		}
     }
+#endif
     
     RENDER_VERIFY(glGetProgramiv(prog, GL_LINK_STATUS, &status));
     if (status == GL_FALSE)
@@ -568,7 +571,7 @@ GLint Shader::CompileShader(GLuint *shader, GLenum type, GLint count, const GLch
     
 #ifdef __DAVAENGINE_DEBUG__
 	{
-		GLchar log[4096];
+		GLchar log[4096] = {0};
 		GLsizei logLength = 0;
 		RENDER_VERIFY(glGetShaderInfoLog(*shader, 4096, &logLength, log));
 		if (logLength)
@@ -693,28 +696,29 @@ Shader * Shader::RecompileNewInstance(const String & combination)
     return shader;
 }
 
-    
-//#if defined(__DAVAENGINE_ANDROID__) || defined (__DAVAENGINE_MACOS__)
-//void Shader::SaveToSystemMemory()
-//{
-//    RenderResource::Lost();
-//}
-//
-//void Shader::Lost()
-//{
-////    Logger::Debug("[Shader::Lost]");
-//    DeleteShaders();
-//    RenderResource::Lost();
-//}
-//void Shader::Invalidate()
-//{
-////    Logger::Debug("[Shader::Invalidate]");
-////    LoadFromYaml(relativeFileName);
-//    Recompile();
-//    
-//    RenderResource::Invalidate();
-//}
-//#endif //#if defined(__DAVAENGINE_ANDROID__) 
+#if defined(__DAVAENGINE_ANDROID__)
+void Shader::Lost()
+{
+	RenderResource::Lost();
+	
+	//DeleteShaders();
+
+	//YZ: shader always deleted when app paused on android
+	vertexShader = 0;
+	fragmentShader = 0;
+	if (program == activeProgram)
+		activeProgram = 0;
+	program = 0;
+	activeAttributes = 0;
+	activeUniforms = 0;
+}
+
+void Shader::Invalidate()
+{
+	RenderResource::Invalidate();
+	Recompile();
+}
+#endif //#if defined(__DAVAENGINE_ANDROID__)
 
 
 #endif 

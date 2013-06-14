@@ -16,7 +16,7 @@
 
 #include <QApplication>
 
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/SelectionSystem.h"
 
@@ -199,7 +199,7 @@ void SceneCameraSystem::ProcessUIEvent(DAVA::UIEvent *event)
 		{
 			if(Qt::AltModifier & QApplication::keyboardModifiers())
 			{
-				SceneSelectionSystem *selectionSystem = ((SceneEditorProxy *) GetScene())->selectionSystem;
+				SceneSelectionSystem *selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 				if(NULL != selectionSystem)
 				{
 					const EntityGroup* selection = selectionSystem->GetSelection();
@@ -223,6 +223,11 @@ void SceneCameraSystem::ProcessUIEvent(DAVA::UIEvent *event)
 void SceneCameraSystem::Draw()
 {
 	// Nothing to draw
+}
+
+void SceneCameraSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+
 }
 
 void SceneCameraSystem::ProcessKeyboardMove(DAVA::float32 timeElapsed)

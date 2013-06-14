@@ -14,48 +14,61 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#include "Commands2/CommandBatch.h"
 
-#include <QPair>
-#include <QStandardItemModel>
+CommandBatch::CommandBatch()
+	: Command2(CMDID_BATCH)
+{ }
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
-
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+CommandBatch::~CommandBatch()
 {
-	Q_OBJECT
+	std::list<Command2 *>::iterator i = commandList.begin();
+	std::list<Command2 *>::iterator end = commandList.end(); 
 
-public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+	for(; i != end; i++)
+	{
+		delete *i;
+	}
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+	commandList.clear();
+}
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+void CommandBatch::Undo()
+{
+	std::list<Command2 *>::reverse_iterator i = commandList.rbegin();
+	std::list<Command2 *>::reverse_iterator end = commandList.rend(); 
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+	for(; i != end; i++)
+	{
+		UndoInternalCommand(*i);
+	}
+}
 
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
+void CommandBatch::Redo()
+{
+	std::list<Command2 *>::iterator i = commandList.begin();
+	std::list<Command2 *>::iterator end = commandList.end(); 
 
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+	for(; i != end; i++)
+	{
+		RedoInternalCommand(*i);
+	}
+}
 
-protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
-};
+DAVA::Entity* CommandBatch::GetEntity() const
+{
+	return NULL;
+}
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+void CommandBatch::Add(Command2 *command)
+{
+	if(NULL != command)
+	{
+		commandList.push_back(command);
+	}
+}
+
+int CommandBatch::Size() const
+{
+	return commandList.size();
+}

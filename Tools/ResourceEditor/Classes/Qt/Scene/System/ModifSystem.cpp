@@ -22,10 +22,12 @@
 #include "Qt/Scene/SceneSignals.h"
 
 #include "Scene/EntityGroup.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 
 #include "Commands/CommandsManager.h"
 #include "Commands/EditorBodyControlCommands.h"
+
+#include "Commands2/TransformCommand.h"
 
 EntityModificationSystem::EntityModificationSystem(DAVA::Scene * scene, SceneCollisionSystem *colSys, SceneCameraSystem *camSys, HoodSystem *hoodSys)
 	: DAVA::SceneSystem(scene)
@@ -75,7 +77,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 	if(NULL != collisionSystem)
 	{
 		// current selected entities
-		SceneSelectionSystem *selectionSystem = ((SceneEditorProxy *) GetScene())->selectionSystem;
+		SceneSelectionSystem *selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 		const EntityGroup *selectedEntities = selectionSystem->GetSelection();
 
 		// remember current cursor point, when looking from current camera
@@ -112,7 +114,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 			// can we start modification???
 			if(modifCanStart)
 			{
-				SceneSignals::Instance()->EmitMouseOverSelection((SceneEditorProxy *) GetScene(), selectedEntities);
+				SceneSignals::Instance()->EmitMouseOverSelection((SceneEditor2 *) GetScene(), selectedEntities);
 
 				if(DAVA::UIEvent::PHASE_BEGAN == event->phase)
 				{
@@ -138,7 +140,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 			}
 			else
 			{
-				SceneSignals::Instance()->EmitMouseOverSelection((SceneEditorProxy *) GetScene(), NULL);
+				SceneSignals::Instance()->EmitMouseOverSelection((SceneEditor2 *) GetScene(), NULL);
 			}
 		}
 		// or we are already in modification state
@@ -200,8 +202,10 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 						for (size_t i = 0; i < modifEntities.size(); ++i)
 						{
 							// apply modification command
-							CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()),
-																		   GetScene());
+							//CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()),
+							//											   GetScene());
+							
+							((SceneEditor2 *) GetScene())->Exec(new TransformCommand(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()));
 						}
 					}
 
@@ -218,6 +222,12 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 
 void EntityModificationSystem::Draw()
 { }
+
+void EntityModificationSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+
+}
+
 
 void EntityModificationSystem::BeginModification(const EntityGroup *entities)
 {
@@ -294,7 +304,7 @@ void EntityModificationSystem::BeginModification(const EntityGroup *entities)
 		rotateNormal.Normalize();
 
 		// remember current selection pivot point
-		SceneSelectionSystem *selectionSystem = ((SceneEditorProxy *) GetScene())->selectionSystem;
+		SceneSelectionSystem *selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 		modifPivotPoint = selectionSystem->GetPivotPoint();
 	}
 }

@@ -17,6 +17,8 @@
 #ifndef __ENTITY_MODIFICATION_SYSTEM_H__
 #define __ENTITY_MODIFICATION_SYSTEM_H__
 
+#include "Commands2/Command2.h"
+
 #include "Entity/SceneSystem.h"
 #include "Scene3D/Entity.h"
 #include "UI/UIEvent.h"
@@ -30,7 +32,7 @@ class HoodSystem;
 
 class EntityModificationSystem : public DAVA::SceneSystem
 {
-	friend class SceneEditorProxy;
+	friend class SceneEditor2;
 
 public:
 	EntityModificationSystem(DAVA::Scene * scene, SceneCollisionSystem *colSys, SceneCameraSystem *camSys, HoodSystem *hoodSys);
@@ -48,8 +50,10 @@ protected:
 	HoodSystem* hoodSystem;
 
 	void Update(DAVA::float32 timeElapsed);
-	void ProcessUIEvent(DAVA::UIEvent *event);
 	void Draw();
+
+	void ProcessUIEvent(DAVA::UIEvent *event);
+	void PropeccCommand(const Command2 *command, bool redo);
 
 protected:
 	struct EntityToModify

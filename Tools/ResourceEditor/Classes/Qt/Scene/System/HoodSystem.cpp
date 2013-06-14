@@ -19,7 +19,7 @@
 #include "Scene/System/CollisionSystem.h"
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 
 HoodSystem::HoodSystem(DAVA::Scene * scene, SceneCameraSystem *camSys)
 	: DAVA::SceneSystem(scene)
@@ -259,6 +259,11 @@ void HoodSystem::Draw()
 		// debug draw axis collision word
 		//collWorld->debugDrawWorld();
 	}
+}
+
+void HoodSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+
 }
 
 void HoodSystem::SetModifAxis(ST_Axis axis)

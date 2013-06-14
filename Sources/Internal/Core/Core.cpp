@@ -65,10 +65,6 @@ Core::Core()
 	fixedProportions = true;
     
     desirableIndex = 0;
-    
-#if defined (__DAVAENGINE_ANDROID__)
-    screenHeight = screenWidth = 0;
-#endif // #if defined (__DAVAENGINE_ANDROID__)
 
     EnableReloadResourceOnResize(true);
 }
@@ -182,9 +178,11 @@ void Core::SetOptions(KeyedArchive * archiveOfOptions)
 #elif defined(__DAVAENGINE_ANDROID__)
 		useAutodetectContentScaleFactor = options->GetBool("Android_autodetectScreenScaleFactor", false);
 #endif //#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
-	
+
+#if not defined(__DAVAENGINE_ANDROID__)
+	//YZ android platform always use SCREEN_ORIENTATION_PORTRAIT and rotate system view and don't rotate GL view  
 	screenOrientation = options->GetInt32("orientation", SCREEN_ORIENTATION_PORTRAIT);
-	
+#endif
 }
     
 void Core::CheckDataTypeSizes()

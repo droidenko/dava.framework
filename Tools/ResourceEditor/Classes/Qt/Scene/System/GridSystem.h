@@ -17,12 +17,14 @@
 #ifndef __SCENE_GRID_SYSTEM_H__
 #define __SCENE_GRID_SYSTEM_H__
 
+#include "Commands2/Command2.h"
+
 #include "Entity/SceneSystem.h"
 #include "UI/UIEvent.h"
 
 class SceneGridSystem : public DAVA::SceneSystem
 {
-	friend class SceneEditorProxy;
+	friend class SceneEditor2;
 
 public:
 	SceneGridSystem(DAVA::Scene * scene);
@@ -30,8 +32,10 @@ public:
 
 protected:
 	virtual void Update(float timeElapsed);
-	void ProcessUIEvent(DAVA::UIEvent *event);
 	void Draw();
+
+	void ProcessUIEvent(DAVA::UIEvent *event);
+	void PropeccCommand(const Command2 *command, bool redo);
 };
 
 #endif

@@ -14,48 +14,44 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#include "Commands2/CommandNotify.h"
 
-#include <QPair>
-#include <QStandardItemModel>
+CommandNotify::CommandNotify()
+{ }
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
+CommandNotify::~CommandNotify()
+{ }
 
-// framework
-#include "Scene3D/Scene.h"
+CommandNotifyProvider::CommandNotifyProvider()
+	: curNotify(NULL)
+	, curAutorelease(false)
+{ }
 
-class SceneTreeModel : public QStandardItemModel
+CommandNotifyProvider::~CommandNotifyProvider()
 {
-	Q_OBJECT
+	SetNotify(NULL, true);
+}
 
-public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+void CommandNotifyProvider::SetNotify(CommandNotify *notify, bool autorelease)
+{
+	if(NULL != curNotify && curAutorelease)
+	{
+		delete curNotify;
+	}
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+	curNotify = notify;
+	curAutorelease = autorelease;
+}
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+CommandNotify* CommandNotifyProvider::GetNotify() const
+{
+	return curNotify;
+}
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
-
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
-
-protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
-};
-
-#endif // __QT_SCENE_TREE_MODEL_H__
+void CommandNotifyProvider::EmitNotify(const Command2 *command, bool redo)
+{
+	if(NULL != curNotify)
+	{
+		curNotify->Notify(command, redo);
+	}
+}

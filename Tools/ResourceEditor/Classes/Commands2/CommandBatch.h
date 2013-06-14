@@ -14,48 +14,27 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#ifndef __COMMAND_BATCH_H__
+#define __COMMAND_BATCH_H__
 
-#include <QPair>
-#include <QStandardItemModel>
+#include "Commands2/Command2.h"
+#include "Commands2/CommandNotify.h"
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
-
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+class CommandBatch : public Command2
 {
-	Q_OBJECT
-
 public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+	CommandBatch();
+	~CommandBatch();
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+	virtual void Undo();
+	virtual void Redo();
+	virtual DAVA::Entity* GetEntity() const;
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
-
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
-
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+	void Add(Command2 *command);
+	int Size() const;
 
 protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
+	std::list<Command2 *> commandList;
 };
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+#endif // __COMMAND_BATCH_H__

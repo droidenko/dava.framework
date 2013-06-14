@@ -20,49 +20,49 @@
 #include <QObject>
 
 #include "Scene/EntityGroup.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 
 // framework
 #include "Base/StaticSingleton.h"
 #include "Scene3D/Entity.h"
 
-class SceneEditorProxy;
+class SceneEditor2;
 
 class SceneSignals : public QObject, public DAVA::StaticSingleton<SceneSignals>
 {
 	Q_OBJECT
 
 signals:
-	void Opened(SceneEditorProxy *scene);
-	void Closed(SceneEditorProxy *scene);
+	void Opened(SceneEditor2 *scene);
+	void Closed(SceneEditor2 *scene);
 
-	void Loaded(SceneEditorProxy *scene);
-	void Saved(SceneEditorProxy *scene);
+	void Loaded(SceneEditor2 *scene);
+	void Saved(SceneEditor2 *scene);
 
-	void Activated(SceneEditorProxy *scene);
-	void Deactivated(SceneEditorProxy *scene);
+	void Activated(SceneEditor2 *scene);
+	void Deactivated(SceneEditor2 *scene);
 
-	void Selected(SceneEditorProxy *scene, DAVA::Entity *entity);
-	void Deselected(SceneEditorProxy *scene, DAVA::Entity *entity);
+	void Selected(SceneEditor2 *scene, DAVA::Entity *entity);
+	void Deselected(SceneEditor2 *scene, DAVA::Entity *entity);
 
-	void MouseOver(SceneEditorProxy *scene, const EntityGroup *entities);
-	void MouseOverSelection(SceneEditorProxy *scene, const EntityGroup *entities);
+	void MouseOver(SceneEditor2 *scene, const EntityGroup *entities);
+	void MouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities);
 
 public:
-	void EmitOpened(SceneEditorProxy *scene) { emit Opened(scene); }
-	void EmitClosed(SceneEditorProxy *scene) { emit Closed(scene); }
+	void EmitOpened(SceneEditor2 *scene) { emit Opened(scene); }
+	void EmitClosed(SceneEditor2 *scene) { emit Closed(scene); }
 
-	void EmitLoaded(SceneEditorProxy *scene) { emit Loaded(scene); }
-	void EmitSaved(SceneEditorProxy *scene) { emit Saved(scene); }
+	void EmitLoaded(SceneEditor2 *scene) { emit Loaded(scene); }
+	void EmitSaved(SceneEditor2 *scene) { emit Saved(scene); }
 
-	void EmitActivated(SceneEditorProxy *scene) { emit Activated(scene); }
-	void EmitDeactivated(SceneEditorProxy *scene) { emit Deactivated(scene); }
+	void EmitActivated(SceneEditor2 *scene) { emit Activated(scene); }
+	void EmitDeactivated(SceneEditor2 *scene) { emit Deactivated(scene); }
 
-	void EmitSelected(SceneEditorProxy *scene, DAVA::Entity *entity) { emit Selected(scene, entity); }
-	void EmitDeselected(SceneEditorProxy *scene, DAVA::Entity *entity)  { emit Deselected(scene, entity); }
+	void EmitSelected(SceneEditor2 *scene, DAVA::Entity *entity) { emit Selected(scene, entity); }
+	void EmitDeselected(SceneEditor2 *scene, DAVA::Entity *entity)  { emit Deselected(scene, entity); }
 
-	void EmitMouseOver(SceneEditorProxy *scene, const EntityGroup *entities) { emit MouseOver(scene, entities); }
-	void EmitMouseOverSelection(SceneEditorProxy *scene, const EntityGroup *entities) { emit MouseOverSelection(scene, entities); }
+	void EmitMouseOver(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOver(scene, entities); }
+	void EmitMouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOverSelection(scene, entities); }
 };
 
 #endif // __SCENE_MANAGER_H__

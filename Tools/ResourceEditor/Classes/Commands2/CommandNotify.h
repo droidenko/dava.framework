@@ -14,48 +14,35 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#ifndef __COMMAND_NOTIFY_H__
+#define __COMMAND_NOTIFY_H__
 
-#include <QPair>
-#include <QStandardItemModel>
+#include "Base/BaseTypes.h"
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
+class Command2;
 
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+struct CommandNotify
 {
-	Q_OBJECT
+	CommandNotify();
+	~CommandNotify();
 
-public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
-
-	// virtual QVariant data(const QModelIndex &index, int role) const;
-
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
-
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
-
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
-
-protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
+	virtual void Notify(const Command2 *command, bool redo) = 0;
 };
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+class CommandNotifyProvider
+{
+public:
+	CommandNotifyProvider();
+	~CommandNotifyProvider();
+
+	void SetNotify(CommandNotify *notify, bool autorelease);
+	CommandNotify* GetNotify() const;
+
+	void EmitNotify(const Command2 *command, bool redo);
+
+protected:
+	bool curAutorelease;
+	CommandNotify* curNotify;
+};
+
+#endif // __COMMAND_NOTIFY_H__

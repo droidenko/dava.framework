@@ -72,6 +72,9 @@ public:
 	// changes size of image to required size (without any filtration)
 	void ResizeImage(uint32 newWidth, uint32 newHeight);
 
+    // changes size of image canvas to square
+    void ResizeImageToSquare();
+
 	/*
      //	void ConvertToFormat(PixelFormat format);
         \todo extract all image format conversion functions to separate functions to allow to use them in different places, like textures.

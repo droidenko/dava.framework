@@ -159,8 +159,7 @@ int SaveSceneIfChanged(DAVA::Scene *scene)
         if(answer == MB_FLAG_YES)
         {
             // Execute this command directly to do not affect the Undo/Redo queue.
-            CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveScene(),
-														   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+            CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveScene(), scene);
         }
     }
     

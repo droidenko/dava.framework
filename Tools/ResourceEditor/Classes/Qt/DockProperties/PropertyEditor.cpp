@@ -41,8 +41,8 @@ PropertyEditor::PropertyEditor(QWidget *parent /* = 0 */)
 	QObject::connect(SceneDataManager::Instance(), SIGNAL(SceneNodeSelected(SceneData *, DAVA::Entity *)), this, SLOT(sceneNodeSelected(SceneData *, DAVA::Entity *)));
 
 	// 
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Selected(SceneEditorProxy *, DAVA::Entity *)), this, SLOT(EntitySelected(SceneEditorProxy *, DAVA::Entity *)));
-	QObject::connect(SceneSignals::Instance(), SIGNAL(Deselected(SceneEditorProxy *, DAVA::Entity *)), this, SLOT(EntityDeselected(SceneEditorProxy *, DAVA::Entity *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Selected(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntitySelected(SceneEditor2 *, DAVA::Entity *)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Deselected(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntityDeselected(SceneEditor2 *, DAVA::Entity *)));
 
 	// MainWindow actions
 	QObject::connect(QtMainWindow::Instance()->GetUI()->actionShowAdvancedProp, SIGNAL(triggered()), this, SLOT(actionShowAdvanced()));
@@ -200,12 +200,12 @@ void PropertyEditor::actionShowAdvanced()
 }
 
 
-void PropertyEditor::EntitySelected(SceneEditorProxy *scene, DAVA::Entity *entity)
+void PropertyEditor::EntitySelected(SceneEditor2 *scene, DAVA::Entity *entity)
 {
 	SetNode(entity);
 }
 
-void PropertyEditor::EntityDeselected(SceneEditorProxy *scene, DAVA::Entity *entity)
+void PropertyEditor::EntityDeselected(SceneEditor2 *scene, DAVA::Entity *entity)
 {
 
 }

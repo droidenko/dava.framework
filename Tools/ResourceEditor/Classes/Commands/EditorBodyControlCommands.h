@@ -23,7 +23,7 @@
 #include "Qt/Scene/EntityGroup.h"
 
 class EditorBodyControl;
-class SceneEditorProxy;
+class SceneEditor2;
 
 class CommandEntityModification: public Command
 {
@@ -62,7 +62,7 @@ protected:
 	EntityGroup				entitiesToGroup;
 	Entity*					resultEntity;
 	Map<Entity*, Entity*>	originalChildParentRelations;//child, paretn
-	SceneEditorProxy*		sep;
+	SceneEditor2*		sep;
 	
 	Map<Entity*, Matrix4> originalMatrixes; // local, world
 

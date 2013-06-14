@@ -50,13 +50,12 @@ extern "C"
 	JNIEXPORT void JNICALL Java_com_dava_framework_JNIGLSurfaceView_nativeOnInput(JNIEnv * env, jobject classthis, jint action, jint id, jfloat x, jfloat y, jdouble time, jint source);
 	JNIEXPORT void JNICALL Java_com_dava_framework_JNIGLSurfaceView_nativeOnKeyDown(JNIEnv * env, jobject classthis, jint keyCode);
 
-	JNIEXPORT void JNICALL Java_com_dava_framework_JNIGLSurfaceView_nativeOnResumeView(JNIEnv * env, jobject classthis);
-	JNIEXPORT void JNICALL Java_com_dava_framework_JNIGLSurfaceView_nativeOnPauseView(JNIEnv * env, jobject classthis, jboolean isLock);
-
 	//JNIRenderer
 	JNIEXPORT void JNICALL Java_com_dava_framework_JNIRenderer_nativeResize(JNIEnv * env, jobject classthis, jint w, jint h);
 	JNIEXPORT void JNICALL Java_com_dava_framework_JNIRenderer_nativeRender(JNIEnv * env, jobject classthis);
 	JNIEXPORT void JNICALL Java_com_dava_framework_JNIRenderer_nativeRenderRecreated(JNIEnv * env, jobject classthis);
+	JNIEXPORT void JNICALL Java_com_dava_framework_JNIRenderer_nativeOnResumeView(JNIEnv * env, jobject classthis);
+	JNIEXPORT void JNICALL Java_com_dava_framework_JNIRenderer_nativeOnPauseView(JNIEnv * env, jobject classthis, jboolean isLock);
 };
 
 
@@ -274,14 +273,20 @@ void Java_com_dava_framework_JNIGLSurfaceView_nativeOnKeyDown(JNIEnv * env, jobj
 	}
 }
 
-void Java_com_dava_framework_JNIGLSurfaceView_nativeOnResumeView(JNIEnv * env, jobject classthis)
+// END OF JNIGLSurfaceView
+
+
+
+// CALLED FROM JNIRenderer
+
+void Java_com_dava_framework_JNIRenderer_nativeOnResumeView(JNIEnv * env, jobject classthis)
 {
 	if(core)
 	{
 		core->StartForeground();
 	}
 }
-void Java_com_dava_framework_JNIGLSurfaceView_nativeOnPauseView(JNIEnv * env, jobject classthis, jboolean isLock)
+void Java_com_dava_framework_JNIRenderer_nativeOnPauseView(JNIEnv * env, jobject classthis, jboolean isLock)
 {
 	if(core)
 	{
@@ -289,29 +294,12 @@ void Java_com_dava_framework_JNIGLSurfaceView_nativeOnPauseView(JNIEnv * env, jo
 	}
 }
 
-
-// END OF JNIGLSurfaceView
-
-
-
-// CALLED FROM JNIRenderer
-// private static native void nativeResize(int w, int h);
-// private static native void nativeRender();
 void Java_com_dava_framework_JNIRenderer_nativeResize(JNIEnv * env, jobject classthis, jint w, jint h)
 {
 	if(core)
 	{
 		LOGI("__ NATIVE RESIZE ___ %d, %d", w, h);
-
-//		core->ResizeView(w, h);
-        core->RenderRecreated(w, h);
-
-// 		DAVA::Sound *s = DAVA::Sound::Create("~res:/Sound/lake.wav", DAVA::Sound::TYPE_STATIC);
-// 		if(s)
-// 		{
-// 			DAVA::Logger::Debug("sound created");
-// 			s->Play();
-// 		}
+		core->RenderRecreated(w, h);
 	}
 }
 

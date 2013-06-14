@@ -19,6 +19,7 @@
 
 #include "Scene/EntityGroup.h"
 #include "Scene/SceneTypes.h"
+#include "Commands2/Command2.h"
 
 // framework
 #include "Entity/SceneSystem.h"
@@ -30,7 +31,7 @@ class HoodSystem;
 
 class SceneSelectionSystem : public DAVA::SceneSystem
 {
-	friend class SceneEditorProxy;
+	friend class SceneEditor2;
 	friend class EntityModificationSystem;
 
 public:
@@ -51,8 +52,10 @@ public:
 
 protected:
 	void Update(DAVA::float32 timeElapsed);
-	void ProcessUIEvent(DAVA::UIEvent *event);
 	void Draw();
+
+	void ProcessUIEvent(DAVA::UIEvent *event);
+	void PropeccCommand(const Command2 *command, bool redo);
 
 	EntityGroup GetSelecetableFromCollision(const EntityGroup *collisionEntities);
 	EntityGroupItem GetSelectableEntity(DAVA::Entity* entity);

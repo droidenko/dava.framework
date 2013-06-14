@@ -1,33 +1,56 @@
 package com.dava.framework;
 
+import android.util.Log;
+
 public class JNITextField {
 	final static String TAG = "JNITextField";
 	
 	public static void ShowField(final float x, final float y, final float dx, final float dy, final String defaultText)
 	{
 		final JNIActivity activity = JNIActivity.GetActivity();
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				activity.ShowEditText(x, y, dx, dy, defaultText);
+		final Object sync = new Object();
+		synchronized (sync) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					synchronized (sync) {
+						activity.ShowEditText(x, y, dx, dy, defaultText);
+						sync.notify();
+					}
+				}
+			});
+			try {
+				sync.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		});
+		}
 	}
 	
 	public static void HideField()
 	{
-    	final JNIActivity activity = JNIActivity.GetActivity();
-    	if (activity.IsEditTextVisible())
-    	{
-    		String text = activity.GetEditText();
-    		activity.runOnUiThread(new Runnable() {
-    			@Override
-    			public void run() {
-    				activity.HideEditText();
-    			}
-    		});
-    		FieldHiddenWithText(text);
-    	}
+		final Object sync = new Object();
+		synchronized (sync) {
+			final JNIActivity activity = JNIActivity.GetActivity();
+			String text = activity.GetEditText();
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					synchronized (sync) {
+						activity.HideEditText();
+						sync.notify();
+					}
+				}
+			});
+
+			try {
+				sync.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			FieldHiddenWithText(text);
+		};
 	}
 	
 	public static native void FieldHiddenWithText(String text);

@@ -22,6 +22,8 @@
 #include "Scene3D/Scene.h"
 #include "Base/StaticSingleton.h"
 
+#include "Commands2/CommandStack.h"
+
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/CollisionSystem.h"
 #include "Scene/System/GridSystem.h"
@@ -29,12 +31,13 @@
 #include "Scene/System/SelectionSystem.h"
 #include "Scene/System/ModifSystem.h"
 
-class SceneEditorProxy : public DAVA::Scene
+class SceneEditor2 : public DAVA::Scene
 {
 public:
-	SceneEditorProxy();
-	~SceneEditorProxy();
+	SceneEditor2();
+	~SceneEditor2();
 
+	// editor systems
 	SceneCameraSystem *cameraSystem;
 	SceneCollisionSystem *collisionSystem;
 	SceneGridSystem *gridSystem;
@@ -42,6 +45,7 @@ public:
 	SceneSelectionSystem *selectionSystem;
 	EntityModificationSystem *modifSystem;
 
+	// save/load
 	bool Load(const DAVA::FilePath &path);
 	bool Save(const DAVA::FilePath &path);
 	bool Save();
@@ -49,6 +53,19 @@ public:
 	DAVA::FilePath GetScenePath();
 	void SetScenePath(const DAVA::FilePath &newScenePath);
 
+	// commands
+	bool CanUndo() const;
+	bool CanRedo() const;
+
+	void Undo();
+	void Redo();
+
+	void BeginBatch(const DAVA::String &text);
+	void EndBatch();
+
+	void Exec(Command2 *command);
+
+	// DAVA events
 	void PostUIEvent(DAVA::UIEvent *event);
 
 	// this function should be called each time UI3Dview changes its position
@@ -57,9 +74,22 @@ public:
 
 protected:
 	DAVA::FilePath curScenePath;
+	CommandStack commandStack;
 
+	virtual void EditorCommandProcess(const Command2 *command, bool redo);
 	virtual void Update(float timeElapsed);
 	virtual void Draw();
+
+private:
+	friend struct EditorCommandNotify;
+
+	struct EditorCommandNotify : public CommandNotify
+	{
+		SceneEditor2* editor;
+
+		EditorCommandNotify(SceneEditor2 *_editor);
+		virtual void Notify(const Command2 *command, bool redo);
+	};
 };
 
 #endif // __SCENE_EDITOR_PROXY_H__

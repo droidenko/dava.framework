@@ -129,7 +129,8 @@ public slots:
     void RulerTool();
     void ShowSettings();
     void Beast();
-    
+    void SquareTextures();
+
     //ViewOptions
     void MenuViewOptionsWillShow();
     void ToggleNotPassableTerrain();

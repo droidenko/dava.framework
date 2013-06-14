@@ -61,6 +61,7 @@ namespace DAVA
 		renderIsActive = false;
 		width = 0;
 		height = 0;
+		screenOrientation = Core::SCREEN_ORIENTATION_PORTRAIT; //no need rotate GL for Android
 
 		foreground = false;
 	}
@@ -133,8 +134,7 @@ namespace DAVA
 	void CorePlatformAndroid::UpdateScreenMode()
 	{
 		Logger::Debug("[CorePlatformAndroid::UpdateScreenMode] start");
-//		UIControlSystem::Instance()->SetInputScreenAreaSize(width, height);
-		UIControlSystem::Instance()->SetInputScreenAreaSize(height, width);
+		UIControlSystem::Instance()->SetInputScreenAreaSize(width, height);
 		Core::Instance()->SetPhysicalScreenSize(width, height);
 
 		RenderManager::Instance()->InitFBSize(width, height);
@@ -164,7 +164,7 @@ namespace DAVA
 
 		if(wasCreated)
 		{
-            ResizeView(w, h);
+			ResizeView(w, h);
 			RenderResource::InvalidateAllResources();
 		}
 		else
@@ -177,10 +177,9 @@ namespace DAVA
 			RenderManager::Instance()->InitFBO(androidDelegate->RenderBuffer(), androidDelegate->FrameBuffer());
 			Logger::Debug("[CorePlatformAndroid::] after create renderer");
 
-            ResizeView(w, h);
+			ResizeView(w, h);
 
 			FrameworkDidLaunched();
-			screenOrientation = Core::SCREEN_ORIENTATION_PORTRAIT; //no need rotate GL for Android
 
 			RenderManager::Instance()->SetFPS(60);
 
@@ -240,8 +239,8 @@ namespace DAVA
 	void CorePlatformAndroid::StopForeground(bool isLock)
 	{
 		Logger::Debug("[CorePlatformAndroid::StopForeground]");
-		//TODO: VK: add code for handling
 
+		RenderManager::Instance()->Invalidate();
 		RenderResource::SaveAllResourcesToSystemMem();
 		RenderResource::LostAllResources();
 

@@ -19,7 +19,7 @@
 #include "Scene/System/CollisionSystem/CollisionLandscape.h"
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 
 // framework
 #include "Scene3D/Components/ComponentHelpers.h"
@@ -141,7 +141,7 @@ const EntityGroup* SceneCollisionSystem::ObjectsRayTest(const DAVA::Vector3 &fro
 
 const EntityGroup* SceneCollisionSystem::ObjectsRayTestFromCamera()
 {
-	SceneCameraSystem *cameraSystem	= ((SceneEditorProxy *) GetScene())->cameraSystem;
+	SceneCameraSystem *cameraSystem	= ((SceneEditor2 *) GetScene())->cameraSystem;
 
 	DAVA::Vector3 camPos = cameraSystem->GetCameraPosition();
 	DAVA::Vector3 camDir = cameraSystem->GetPointDirection(lastMousePos);
@@ -196,7 +196,7 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const
 
 DAVA::Vector3 SceneCollisionSystem::LandRayTestFromCamera()
 {
-	SceneCameraSystem *cameraSystem	= ((SceneEditorProxy *) GetScene())->cameraSystem;
+	SceneCameraSystem *cameraSystem	= ((SceneEditor2 *) GetScene())->cameraSystem;
 
 	DAVA::Vector3 camPos = cameraSystem->GetCameraPosition();
 	DAVA::Vector3 camDir = cameraSystem->GetPointDirection(lastMousePos);
@@ -276,7 +276,7 @@ void SceneCollisionSystem::Draw()
 	if(drawMode & ST_COLL_DRAW_OBJECTS_SELECTED)
 	{
 		// current selected entities
-		SceneSelectionSystem *selectionSystem = ((SceneEditorProxy *) GetScene())->selectionSystem;
+		SceneSelectionSystem *selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 		if(NULL != selectionSystem)
 		{
 			const EntityGroup *selectedEntities = selectionSystem->GetSelection();
@@ -301,6 +301,22 @@ void SceneCollisionSystem::Draw()
 	}
 
 	DAVA::RenderManager::Instance()->SetState(oldState);
+}
+
+void SceneCollisionSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+	if(NULL != command)
+	{
+		switch(command->GetId())
+		{
+		case CMDID_TRANSFORM:
+			// update bullet object
+			UpdateCollisionObject(command->GetEntity());
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void SceneCollisionSystem::AddEntity(DAVA::Entity * entity)

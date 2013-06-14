@@ -177,5 +177,10 @@ void Image::ResizeCanvas(uint32 newWidth, uint32 newHeight)
     }
 }
 
+void Image::ResizeImageToSquare()
+{
+    float32 newImageSize = Max(width, height);
+    ResizeCanvas(newImageSize, newImageSize);
+}
 
 };

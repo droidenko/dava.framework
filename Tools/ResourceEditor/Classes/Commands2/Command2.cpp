@@ -14,48 +14,47 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#include "Commands2/Command2.h"
 
-#include <QPair>
-#include <QStandardItemModel>
+Command2::Command2(int _id, const DAVA::String& _text)
+	: id(_id)
+	, text(_text)
+{ }
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
-
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+bool Command2::MergeWith(const Command2* command)
 {
-	Q_OBJECT
+	return false;
+}
 
-public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+int Command2::GetId() const
+{
+	return id;
+}
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+DAVA::String Command2::GetText() const
+{
+	return text;
+}
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+void Command2::SetText(const DAVA::String &_text)
+{
+	text = _text;
+}
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+void Command2::UndoInternalCommand(Command2 *command)
+{
+	if(NULL != command)
+	{
+		command->Undo();
+		EmitNotify(command, false);
+	}
+}
 
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
-
-protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
-};
-
-#endif // __QT_SCENE_TREE_MODEL_H__
+void Command2::RedoInternalCommand(Command2 *command)
+{
+	if(NULL != command)
+	{
+		command->Redo();
+		EmitNotify(command, true);
+	}
+}

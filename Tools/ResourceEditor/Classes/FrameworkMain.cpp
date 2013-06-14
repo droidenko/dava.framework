@@ -22,6 +22,7 @@
 #include "SceneEditor/EditorSettings.h"
 #include "SceneEditor/EditorConfig.h"
 #include "SceneEditor/SceneValidator.h"
+#include "SceneEditor/TextureSquarenessChecker.h"
 
 #include "CommandLine/CommandLineManager.h"
 #include "CommandLine/SceneExporter/SceneExporter.h"
@@ -103,6 +104,7 @@ void FrameworkDidLaunched()
     new EditorSettings();
 	new EditorConfig();
     new SceneValidator();
+    new TextureSquarenessChecker();
 
     
     SceneValidator::Instance()->SetPathForChecking(EditorSettings::Instance()->GetProjectPath());

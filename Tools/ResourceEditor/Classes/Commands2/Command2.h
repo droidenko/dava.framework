@@ -14,48 +14,37 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#ifndef __COMMAND2_H__
+#define __COMMAND2_H__
 
-#include <QPair>
-#include <QStandardItemModel>
-
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
-
-// framework
+#include "Base/BaseTypes.h"
 #include "Scene3D/Scene.h"
 
-class SceneTreeModel : public QStandardItemModel
+#include "Commands2/CommandID.h"
+#include "Commands2/CommandNotify.h"
+
+class Command2 : public CommandNotifyProvider
 {
-	Q_OBJECT
-
 public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+	Command2(int _id, const DAVA::String& _text = "");
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+	int GetId() const;
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+	virtual void Undo() = 0;
+	virtual void Redo() = 0;
+	virtual DAVA::Entity* GetEntity() const = 0;
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+	virtual bool MergeWith(const Command2* command);
 
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
-
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+	DAVA::String GetText() const;
+	void SetText(const DAVA::String &text);
 
 protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
+	int id;
+	DAVA::String text;
+
+	void UndoInternalCommand(Command2 *command);
+	void RedoInternalCommand(Command2 *command);
 };
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+#endif // __COMMAND2_H__

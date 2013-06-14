@@ -14,60 +14,31 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __SCENE_CAMERA_SYSTEM_H__
-#define __SCENE_CAMERA_SYSTEM_H__
+#ifndef __TEXTURE_SQUARENESS_CHECKER_H__
+#define __TEXTURE_SQUARENESS_CHECKER_H__
 
-#include "Entity/SceneSystem.h"
-#include "Render/Highlevel/Camera.h"
-#include "UI/UIEvent.h"
+#include "DAVAEngine.h"
 
-#include "Commands2/Command2.h"
+using namespace DAVA;
 
-class SceneCameraSystem : public DAVA::SceneSystem
+class TextureSquarenessChecker: public Singleton<TextureSquarenessChecker>
 {
-	friend class SceneEditor2;
-
+    
 public:
-	SceneCameraSystem(DAVA::Scene * scene);
-	~SceneCameraSystem();
+    TextureSquarenessChecker();
+    virtual ~TextureSquarenessChecker();
 
-	DAVA::Vector3 GetPointDirection(const DAVA::Vector2 &point);
-	DAVA::Vector3 GetCameraPosition();
+    void CheckSceneForTextureSquarenessAndResave(Scene *scene);
 
-	void SetMoveSeep(DAVA::float32 speed);
-	DAVA::float32 GetMoveSpeed();
-
-	void SetViewportRect(const DAVA::Rect &rect);
-	const DAVA::Rect GetViewportRect();
-
-	DAVA::Vector2 GetScreenPos(const DAVA::Vector3 &pos3);
-	DAVA::Vector3 GetScenePos(const DAVA::float32 x, const DAVA::float32 y, const DAVA::float32 z);
-
+    
 protected:
-	void Update(DAVA::float32 timeElapsed);
-	void Draw();
+    bool CheckTexureSquareness(Texture *texure, Vector2 &oldSize);
+    void CheckSceneNode(Entity *sceneNode);
 
-	void ProcessUIEvent(DAVA::UIEvent *event);
-	void PropeccCommand(const Command2 *command, bool redo);
-
-protected:
-	DAVA::Rect viewportRect;
-
-	DAVA::float32 curSpeed;
-	DAVA::Camera* curSceneCamera;
-
-	DAVA::Vector2 rotateStartPoint;
-	DAVA::Vector2 rotateStopPoint;
-
-	DAVA::float32 curViewAngleZ, curViewAngleY;
-	const DAVA::float32 maxViewAngle;
-
-	void ProcessKeyboardMove(float timeElapsed);
-
-	void RecalcCameraViewAngles();
-	void MouseMoveCameraPosition();
-	void MouseMoveCameraDirection();
-	void MouseMoveCameraPosAroundPoint(const DAVA::Vector3 &point);
+    Map<Texture*, Vector2> squaredTextures; //value it's scale coeff
+    Vector<PolygonGroup*> parsedPG;
 };
 
-#endif
+
+
+#endif // __TEXTURE_SQUARENESS_CHECKER_H__

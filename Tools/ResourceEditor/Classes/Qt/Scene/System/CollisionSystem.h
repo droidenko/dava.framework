@@ -20,6 +20,7 @@
 #include <QMap>
 #include "Scene/EntityGroup.h"
 #include "Scene/SceneTypes.h"
+#include "Commands2/Command2.h"
 
 // bullet
 #include "bullet/btBulletCollisionCommon.h"
@@ -36,7 +37,7 @@ class SceneCollisionDebugDrawer;
 
 class SceneCollisionSystem : public DAVA::SceneSystem
 {
-	friend class SceneEditorProxy;
+	friend class SceneEditor2;
 	friend class EntityModificationSystem;
 
 public:
@@ -58,8 +59,10 @@ public:
 
 protected:
 	void Update(DAVA::float32 timeElapsed);
-	void ProcessUIEvent(DAVA::UIEvent *event);
 	void Draw();
+
+	void ProcessUIEvent(DAVA::UIEvent *event);
+	void PropeccCommand(const Command2 *command, bool redo);
 
 	virtual void AddEntity(DAVA::Entity * entity);
 	virtual void RemoveEntity(DAVA::Entity * entity);

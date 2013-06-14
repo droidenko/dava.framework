@@ -14,48 +14,54 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __QT_SCENE_TREE_MODEL_H__
-#define __QT_SCENE_TREE_MODEL_H__
+#include "Commands2/TransformCommand.h"
 
-#include <QPair>
-#include <QStandardItemModel>
+#include "Scene3D/Entity.h"
+#include "Scene3D/Components/TransformComponent.h"
 
-#include "Scene/SceneEditor2.h"
-#include "Qt/DockSceneTree/SceneTreeItem.h"
-
-// framework
-#include "Scene3D/Scene.h"
-
-class SceneTreeModel : public QStandardItemModel
+TransformCommand::TransformCommand(DAVA::Entity* _entity, const DAVA::Matrix4& _origTransform, const DAVA::Matrix4& _newTransform)
+	: Command2(CMDID_TRANSFORM, "Transform")
+	, entity(_entity)
+	, undoTransform(_origTransform)
+	, redoTransform(_newTransform)
 {
-	Q_OBJECT
 
-public:
-	SceneTreeModel(QObject* parent = 0);
-	~SceneTreeModel();
+}
 
-	// virtual QVariant data(const QModelIndex &index, int role) const;
+TransformCommand::~TransformCommand()
+{
 
-	void SetScene(SceneEditor2 *scene);
-	SceneEditor2* GetScene() const;
+}
 
-	QModelIndex GetEntityIndex(DAVA::Entity *entity) const;
-	DAVA::Entity* GetEntity(const QModelIndex &index) const;
+void TransformCommand::Undo()
+{
+	if(NULL != entity)
+	{
+		entity->SetLocalTransform(undoTransform);
 
-	// this workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	bool DropIsAccepted();
+		// make sure that WorldTransform is up to date
+		if(NULL != entity->GetScene())
+		{
+			entity->GetScene()->transformSystem->Process();
+		}
+	}
+}
 
-	// drag and drop support
-	Qt::DropActions supportedDropActions() const;
-	QMimeData *	mimeData(const QModelIndexList & indexes) const;
-	QStringList	mimeTypes() const;
-	bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+void TransformCommand::Redo()
+{
+	if(NULL != entity)
+	{
+		entity->SetLocalTransform(redoTransform);
 
-protected:
-	bool dropAccepted;
-	SceneEditor2 * curScene;
-};
+		// make sure that WorldTransform is up to date
+		if(NULL != entity->GetScene())
+		{
+			entity->GetScene()->transformSystem->Process();
+		}
+	}
+}
 
-#endif // __QT_SCENE_TREE_MODEL_H__
+DAVA::Entity* TransformCommand::GetEntity() const
+{
+	return entity;
+}

@@ -50,26 +50,26 @@ void GPUFamilyDescriptor::SetupGPUParameters()
 void GPUFamilyDescriptor::SetupGPUFormats()
 {
     //pvr ios
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_RGBA8888] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_RGBA5551] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_RGBA4444] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_RGB888] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_RGB565] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_A8] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_PVR4] = ".pvr";
-    gpuData[GPU_POVERVR_IOS].availableFormats[FORMAT_PVR2] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_RGBA8888] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_RGBA5551] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_RGBA4444] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_RGB888] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_RGB565] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_A8] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_PVR4] = ".pvr";
+    gpuData[GPU_POWERVR_IOS].availableFormats[FORMAT_PVR2] = ".pvr";
     
 
     //pvr android
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_RGBA8888] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_RGBA5551] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_RGBA4444] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_RGB888] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_RGB565] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_A8] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_PVR4] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_PVR2] = ".pvr";
-    gpuData[GPU_POVERVR_ANDROID].availableFormats[FORMAT_ETC1] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_RGBA8888] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_RGBA5551] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_RGBA4444] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_RGB888] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_RGB565] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_A8] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_PVR4] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_PVR2] = ".pvr";
+    gpuData[GPU_POWERVR_ANDROID].availableFormats[FORMAT_ETC1] = ".pvr";
 
     //tegra
     gpuData[GPU_TEGRA].availableFormats[FORMAT_RGBA8888] = ".pvr";
@@ -135,8 +135,8 @@ void GPUFamilyDescriptor::SetupGPUFormats()
 
 void GPUFamilyDescriptor::SetupGPUPostfixes()
 {
-    gpuData[GPU_POVERVR_IOS].name = "PoverVR_iOS";
-    gpuData[GPU_POVERVR_ANDROID].name = "PoverVR_Android";
+    gpuData[GPU_POWERVR_IOS].name = "PowerVR_iOS";
+    gpuData[GPU_POWERVR_ANDROID].name = "PowerVR_Android";
     gpuData[GPU_TEGRA].name = "tegra";
     gpuData[GPU_MALI].name = "mali";
     gpuData[GPU_ADRENO].name = "adreno";
