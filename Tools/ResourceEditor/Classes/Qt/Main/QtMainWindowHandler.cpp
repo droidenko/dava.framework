@@ -173,10 +173,12 @@ void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 	{
 		pathToCurrentScene = currentSceneEditor->GetScenePath();
 	}
-	
+
+	Scene* sceneForCommandsManager = currentSceneEditor ? currentSceneEditor->GetScene() :
+		SceneDataManager::Instance()->SceneGetActive()->GetScene();
     CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentSceneEditor, pathToCurrentScene, gpuFamily),
-												   currentSceneEditor);
-	
+												   sceneForCommandsManager);
+
 	// Have to reset the selection otherwise batched and already deleted items which might be
 	// currently selected will cause crash.
 	if (currentSceneEditor)
