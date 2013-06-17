@@ -179,7 +179,7 @@ void Core::SetOptions(KeyedArchive * archiveOfOptions)
 		useAutodetectContentScaleFactor = options->GetBool("Android_autodetectScreenScaleFactor", false);
 #endif //#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
 
-#if not defined(__DAVAENGINE_ANDROID__)
+#if !defined(__DAVAENGINE_ANDROID__)
 	//YZ android platform always use SCREEN_ORIENTATION_PORTRAIT and rotate system view and don't rotate GL view  
 	screenOrientation = options->GetInt32("orientation", SCREEN_ORIENTATION_PORTRAIT);
 #endif

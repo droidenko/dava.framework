@@ -196,6 +196,7 @@
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\PngImage.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\TexturePacker.cpp" />
+    <ClCompile Include="Classes\BatchEntitiesHelper.cpp" />
     <ClCompile Include="Classes\BeastProxy.cpp" />
     <ClCompile Include="Classes\BulletObject.cpp" />
     <ClCompile Include="Classes\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
@@ -667,6 +668,7 @@
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\TexturePacker.h" />
     <ClInclude Include="Classes\AppScreens.h" />
+    <ClInclude Include="Classes\BatchEntitiesHelper.h" />
     <ClInclude Include="Classes\BeastProxy.h" />
     <ClInclude Include="Classes\BulletObject.h" />
     <ClInclude Include="Classes\bullet\btBulletCollisionCommon.h" />

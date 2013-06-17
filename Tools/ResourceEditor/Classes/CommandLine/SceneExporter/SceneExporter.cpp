@@ -705,7 +705,7 @@ uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, Poly
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
 		DVASSERT(false);
-		return;
+		return 0;
 	}
 
 	// The translation matrix is needed to move the bounding box to the (0,0,0) coord.
@@ -760,7 +760,7 @@ uint32 SceneExporter::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGro
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
 		DVASSERT(false);
-		return;
+		return 0;
 	}
 	
 	int32 indicesToBatch = curPolygonGroup->GetIndexCount();
