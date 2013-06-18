@@ -1340,8 +1340,11 @@ ArrowsNode* EditorBodyControl::GetArrowsNode(bool createIfNotExist)
 	if (!arrowsNode && createIfNotExist)
 	{
 		arrowsNode = new ArrowsNode();
-		arrowsNode->SetName(ResourceEditor::EDITOR_ARROWS_NODE);
-		AddNode(arrowsNode);
+        arrowsNode->SetName(ResourceEditor::EDITOR_ARROWS_NODE);
+
+        EditorScene *scene = SceneDataManager::Instance()->SceneGetActive()->GetScene();
+        scene->InsertBeforeNode(arrowsNode, scene->GetChild(0));
+
 		arrowsNode->Release();
 	}
 
