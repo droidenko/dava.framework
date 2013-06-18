@@ -77,6 +77,16 @@ void InstanceMaterialState::SetUVOffsetScale(const Vector2 & _uvOffset, const Ve
     uvScale = _uvScale;
 }
 
+Vector2 InstanceMaterialState::GetUVOffset()
+{
+	return uvOffset;
+}
+	
+Vector2 InstanceMaterialState::GetUVScale()
+{
+	return uvScale;
+}
+	
 int32 InstanceMaterialState::GetLightmapSize()
 {
 	return lightmapSize;

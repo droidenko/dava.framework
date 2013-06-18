@@ -564,12 +564,13 @@ void CommandBatchEntities::Execute()
 	// At this point just mark all the entities to be batched with the same Batch ID.
 	for(size_t i = 0; i < entitiesToBatch.Size(); ++i)
 	{
-		Entity *entity = entitiesToBatch.GetEntity(i);
+		// Get the high-level "solid" entity for correct batching.
+		Entity *entity = entitiesToBatch.GetSolidEntity(i);
 		if (!entity)
 		{
 			continue;
 		}
-		
+
 		// This entity might already belong to the other batch.
 		int prevBatchIndex = GetBatchIndex(entity);
 		prevBatchIndexes[entity] = prevBatchIndex;
@@ -624,7 +625,7 @@ void CommandUnbatchEntities::Execute()
 	// At this point just mark all the entities to be batched with the same Batch ID.
 	for(size_t i = 0; i < entitiesToUnbatch.Size(); ++i)
 	{
-		Entity *entity = entitiesToUnbatch.GetEntity(i);
+		Entity *entity = entitiesToUnbatch.GetSolidEntity(i);
 		if (!entity)
 		{
 			continue;

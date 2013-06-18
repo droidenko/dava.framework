@@ -427,8 +427,9 @@ void SceneExporter::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 			continue;
 		}
 		
+		Set<Entity*> geometryEntitiesToBatch = SelectGeometryEntities(entitiesToBatch);
 		String batchName = GetNextBatchedEntityName(scene);
-		Entity* resultEntity = BatchEntities(scene, errorLog, entitiesToBatch, batchName);
+		Entity* resultEntity = BatchEntities(scene, errorLog, geometryEntitiesToBatch, batchName);
 	
 		if (!resultEntity)
 		{
@@ -489,7 +490,7 @@ Set<Entity*> SceneExporter::GetEntitiesForBatchIndex(Scene* scene, int32 batchIn
 	{
 		GetEntitiesForBatchIndexRecursive(scene, batchIndex, resultSet);
 	}
-	
+
 	return resultSet;
 }
 
@@ -629,8 +630,11 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 
 		// Batch the polygon groups.
 		PolygonGroup* curPolygonGroup = curMesh->GetPolygonGroup(0);
+		InstanceMaterialState* curMaterialInstance = curMesh->GetRenderBatch(0)->GetMaterialInstance();
+		
 		uint32 verticesBatchedOnThisPass = MergePolygonGroups(batchedPolygonGroup, curPolygonGroup, meshFormat,
-															  verticesBatched, curEntityMatrix, batchedEntityCenter);
+															  verticesBatched, curEntityMatrix, batchedEntityCenter,
+															  curMaterialInstance);
 		uint32 indicesBatchedOnThisPass = MergeIndices(batchedPolygonGroup, curPolygonGroup, verticesBatched,
 													   indicesBatched);
 
@@ -644,7 +648,16 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	batchedPolygonGroup->BuildBuffers();
 	
 	batchedMesh->AddPolygonGroup(batchedPolygonGroup, firstEntityRenderBatch->GetMaterial());
+
+	// Update the material instance for the batched mesh.
+	RenderBatch* batchedRenderBatch = batchedMesh->GetRenderBatch(0);
+	InstanceMaterialState* batchedMaterialInstance = batchedRenderBatch->GetMaterialInstance();
 	
+	// Lightmap Texture is common through the whole scene.
+	const FilePath& lightMapTextureName = firstEntityRenderBatch->GetMaterialInstance()->GetLightmapName();
+	batchedMaterialInstance->SetLightmap(DAVA::Texture::CreateFromFile(lightMapTextureName), lightMapTextureName);
+	batchedMaterialInstance->SetUVOffsetScale(Vector2(1.0f, 1.0f), Vector2(1.0f, 1.0f));
+
 	RenderComponent* batchedRenderComponent = new RenderComponent();
 	batchedRenderComponent->SetRenderObject(batchedMesh);
 	batchedEntity->AddComponent(batchedRenderComponent);
@@ -700,7 +713,8 @@ void SceneExporter::CalculateBatchedEntityParameters(const Set<Entity*>& entitie
 
 uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
 										 uint32 meshFormat, uint32 verticesBatched,
-										 const Matrix4& curEntityMatrix, const Vector3& batchedEntityCenter)
+										 const Matrix4& curEntityMatrix, const Vector3& batchedEntityCenter,
+										 InstanceMaterialState* curMaterialInstance)
 {
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
@@ -744,9 +758,18 @@ uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, Poly
 			batchedPolygonGroup->SetTexcoord(0, positionInBatch, vector2Param);
 		}
 	
+		// In case we have Material Instance from the current entity - recalculate
+		// the TextCoord1 (LightMap) positions.
 		if (meshFormat & EVF_TEXCOORD1 && curPolygonGroup->textureCoordCount > 1)
 		{
 			curPolygonGroup->GetTexcoord(1, i, vector2Param);
+			if (curMaterialInstance)
+			{
+				vector2Param = Vector2(vector2Param.x * curMaterialInstance->GetUVScale().x,
+									   vector2Param.y * curMaterialInstance->GetUVScale().y);
+				vector2Param += curMaterialInstance->GetUVOffset();
+			}
+
 			batchedPolygonGroup->SetTexcoord(1, positionInBatch, vector2Param);
 		}
 	}
@@ -829,5 +852,61 @@ void SceneExporter::BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNa
 	for (int32 i = 0; i < childrenCount; i ++)
 	{
 		BuildEntityNamesList(rootEntity->GetChild(i), usedNames);
+	}
+}
+
+Set<Entity*> SceneExporter::SelectGeometryEntities(Set<Entity*>& entitiesToBatch)
+{
+	Set<Entity*> resultSet;
+	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end();
+		 iter ++)
+	{
+		SelectGeometryEntitiesRecursive((*iter), resultSet);
+	}
+	
+	return resultSet;
+}
+
+void SceneExporter::SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet)
+{
+	LodComponent* lodComponent = GetLodComponent(entity);
+	RenderObject* renderObject = GetRenerObject(entity);
+	if (renderObject)
+	{
+		// This entity is a geometry one - add as is.
+		Logger::Debug("Adding render component %s", entity->GetName().c_str());
+		resultSet.insert(entity);
+	}
+	else if (lodComponent)
+	{
+		// For LOD entities we have to add all the LOD 0 entities.
+		Vector<LodComponent::LodData*> lodLayers;
+		lodComponent->GetLodData(lodLayers);
+		if (lodLayers.size() > 0)
+		{
+			for (int32 i = 0; i < lodLayers[0]->nodes.size(); i ++)
+			{
+				Entity* lodEntity = lodLayers[0]->nodes[i];
+				if (!lodEntity)
+				{
+					continue;
+				}
+
+				// TODO: Yuri Coder, 2013/06/18. Return to LOD batching later!
+				Logger::Debug("Adding render component %s from LOD", lodEntity->GetName().c_str());
+				resultSet.insert(lodEntity);
+			}
+		}
+
+		// LOD level is the deepest one - no need to go further.
+		return;
+	}
+	
+	// Verify for the children.
+	int32 childrenCount = entity->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		Entity* childEntity = entity->GetChild(i);
+		SelectGeometryEntitiesRecursive(childEntity, resultSet);
 	}
 }

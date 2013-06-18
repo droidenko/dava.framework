@@ -64,6 +64,10 @@ protected:
 	Set<Entity*> GetEntitiesForBatchIndex(Scene* scene, int32 batchIndex);
 	void GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet);
 
+	// Select only the entities contain geometry from the list of entities to batch.
+	Set<Entity*> SelectGeometryEntities(Set<Entity*>& entitiesToBatch);
+	void SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet);
+
 	// Perform the actual batch (vertices, indexes, textures).
 	Entity* BatchEntities(Scene* scene, Set<String>& errorLog, const Set<Entity*>& entitiesToBatch, const String& batchedEntityName);
 
@@ -76,7 +80,8 @@ protected:
 	uint32 MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
 							uint32 meshFormat, uint32 verticesBatched,
 							  const Matrix4& curEntityMatrix,
-							  const Vector3& batchedEntityCenter);
+							  const Vector3& batchedEntityCenter,
+							  InstanceMaterialState* curMaterialInstance);
 
 	// Merge the Indices.
 	uint32 MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
