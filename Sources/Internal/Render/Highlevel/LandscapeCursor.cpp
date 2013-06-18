@@ -29,9 +29,9 @@ LandscapeCursor::LandscapeCursor()
 	shader->LoadFromYaml("~res:/Shaders/Landscape/cursor.shader");
 	shader->Recompile();
 
-	uniformTexture = shader->FindUniformLocationByName("texture0");
-	uniformPosition = shader->FindUniformLocationByName("position");
-	uniformScale = shader->FindUniformLocationByName("scale");
+	uniformTexture = shader->FindUniformIndexByName("texture0");
+	uniformPosition = shader->FindUniformIndexByName("position");
+	uniformScale = shader->FindUniformIndexByName("scale");
 }
 
 void LandscapeCursor::Prepare()
@@ -45,11 +45,11 @@ void LandscapeCursor::Prepare()
 	RenderManager::Instance()->SetShader(shader);
 	RenderManager::Instance()->FlushState();
 	RenderManager::Instance()->AttachRenderData();
-	shader->SetUniformValue(uniformTexture, 0);
-	shader->SetUniformValue(uniformScale, bigSize/scale);
+	shader->SetUniformValueByIndex(uniformTexture, 0);
+	shader->SetUniformValueByIndex(uniformScale, bigSize/scale);
 
 	Vector2 actualPosition = position/bigSize;
-	shader->SetUniformValue(uniformPosition, actualPosition);
+	shader->SetUniformValueByIndex(uniformPosition, actualPosition);
 }
 
 LandscapeCursor::~LandscapeCursor()
