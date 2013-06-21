@@ -509,13 +509,6 @@
 			remoteGlobalIDString = E898A2C416BD265400732C04;
 			remoteInfo = FrameworkQt;
 		};
-		E8D9BE301760E4500064B302 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8BD1EF616DE40E300499E18 /* Framework.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 176DEB77174B5561007A983B;
-			remoteInfo = FrameworkNPAPI;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -3353,13 +3346,6 @@
 			fileType = archive.ar;
 			path = libFrameworkQt.a;
 			remoteRef = E8BD1EFE16DE40E300499E18 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8D9BE311760E4500064B302 /* libFrameworkNPAPI.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFrameworkNPAPI.a;
-			remoteRef = E8D9BE301760E4500064B302 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

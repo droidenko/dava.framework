@@ -19,6 +19,7 @@
 
 #include "DAVAEngine.h"
 #include "CommandLine/SceneUtils/SceneUtils.h"
+#include "TexturePacker/TexturePacker.h"
 
 using namespace DAVA;
 
@@ -69,7 +70,11 @@ protected:
 	void SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet);
 
 	// Perform the actual batch (vertices, indexes, textures).
-	Entity* BatchEntities(Scene* scene, Set<String>& errorLog, const Set<Entity*>& entitiesToBatch, const String& batchedEntityName);
+	Entity* BatchEntities(Scene* scene, Set<String>& errorLog,
+						  const Set<Entity*>& entitiesToBatch,
+						  const String& batchedEntityName,
+						  Material* batchedMaterial,
+						  const BatchTexturesResult& batchTexturesResult);
 
 	// Calculate the paremeters for the batched entity.
 	void CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
@@ -81,7 +86,8 @@ protected:
 							uint32 meshFormat, uint32 verticesBatched,
 							  const Matrix4& curEntityMatrix,
 							  const Vector3& batchedEntityCenter,
-							  InstanceMaterialState* curMaterialInstance);
+							  InstanceMaterialState* curMaterialInstance,
+							  const Vector2& textureMultiply, const Vector2& textureOffset);
 
 	// Merge the Indices.
 	uint32 MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
@@ -96,6 +102,14 @@ protected:
 	// Get the index for the next entity.
 	String GetNextBatchedEntityName(Scene* scene);
 	void BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNames);
+
+	// Textures batching.
+	Material* BatchTextures(const Set<Entity*> entitiesToBatch, int32 batchID,
+							BatchTexturesResult& batchTextureResult,
+							Set<String> &errorLog);
+
+	// Get the first render batch for the entity.
+	RenderBatch* GetFirstRenderBatch(Entity* entity);
 
 protected:
     

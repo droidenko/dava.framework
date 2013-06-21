@@ -422,15 +422,37 @@ void SceneExporter::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 	{
 		int32 batchID = *iter;
 		Set<Entity*> entitiesToBatch = GetEntitiesForBatchIndex(scene, batchID);
+		for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end(); iter ++)
+		{
+			Logger::Debug("Entity to batch: %s", (*iter)->GetName().c_str());
+		}
+	
 		if (entitiesToBatch.size() == 0)
 		{
 			continue;
 		}
 		
 		Set<Entity*> geometryEntitiesToBatch = SelectGeometryEntities(entitiesToBatch);
+		
+		// A new Material is created for the batched entity - it might contain new batched texture.
+		BatchTexturesResult batchTexturesResult;
+		Material* batchedMaterial = BatchTextures(geometryEntitiesToBatch, batchID,
+												  batchTexturesResult, errorLog);
+		if (!batchedMaterial)
+		{
+			errorLog.insert(Format("Unable to build new Material for batch ID %i - skipping", batchID));
+			continue;
+		}
+
+		// For batching only the nodes contains geometry is added. For LOD nodes -
+		// need to take only the first LOD level.
+		// TODO! handle LODs separately!!!
+		// TODO! handle LODs separately!!!
+		// TODO! handle LODs separately!!!
 		String batchName = GetNextBatchedEntityName(scene);
-		Entity* resultEntity = BatchEntities(scene, errorLog, geometryEntitiesToBatch, batchName);
-	
+		Entity* resultEntity = BatchEntities(scene, errorLog, geometryEntitiesToBatch,
+											 batchName, batchedMaterial, batchTexturesResult);
+
 		if (!resultEntity)
 		{
 			continue;
@@ -533,7 +555,9 @@ Entity* SceneExporter::GetSolidParentEntityIfPresent(Entity* entity)
 
 Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 									 const Set<Entity*>& entitiesToBatch,
-									 const String& batchedEntityName)
+									 const String& batchedEntityName,
+									 Material* batchedMaterial,
+									 const BatchTexturesResult& batchTexturesResult)
 {
 	int childrenCount = entitiesToBatch.size();
 	if (childrenCount == 0)
@@ -600,6 +624,7 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	// Merge the streams themselves.
 	uint32 verticesBatched = 0;
 	uint32 indicesBatched = 0;
+	
 	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end(); iter ++)
 	{
 		// Batch the Vertices and Indices.
@@ -628,13 +653,46 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 		uint32 curRenderBatchesCount = curMesh->GetRenderBatchCount();
 		DVASSERT(curRenderBatchesCount == 1);
 
+		Material* curMaterial = curMesh->GetRenderBatch(0)->GetMaterial();
+		if (!curMaterial)
+		{
+			errorLog.insert(Format("Batching: Entity %s, RenderBatch 0 doesn't have an Material attached", curEntity->GetName().c_str()));
+			continue;
+		}
+
+		Texture* curTexture = curMaterial->GetTexture(Material::TEXTURE_DIFFUSE);
+		if (!curTexture)
+		{
+			errorLog.insert(Format("Batching: Entity %s, RenderBatch 0 doesn't have an TEXTURE_DIFFUSE", curEntity->GetName().c_str()));
+			continue;
+		}
+
 		// Batch the polygon groups.
 		PolygonGroup* curPolygonGroup = curMesh->GetPolygonGroup(0);
 		InstanceMaterialState* curMaterialInstance = curMesh->GetRenderBatch(0)->GetMaterialInstance();
+
+		Vector2 textureMultiply( ((float32)curTexture->GetWidth() / (float32)batchTexturesResult.batchedTextureWidth),
+								 ((float32)curTexture->GetHeight() / (float32)batchTexturesResult.batchedTextureHeight));
+		Vector2 textureOffset;
+		// TODO!! REWORK!
+		// TODO!! REWORK!
+		for (int32 i = 0; i < batchTexturesResult.outputData.size(); i ++)
+		{
+			const BatchTexturesOutputData& outputData = batchTexturesResult.outputData[i];
+			if (outputData.texturePath == curMesh->GetRenderBatch(0)->GetMaterial()->GetTexture(Material::TEXTURE_DIFFUSE)->GetPathname())
+			{
+				textureOffset.x = (float32)outputData.offsetX / (float32)batchTexturesResult.batchedTextureWidth;
+				textureOffset.y = (float32)outputData.offsetY / (float32)batchTexturesResult.batchedTextureHeight;
+				break;
+			}
+		}
+		// TODO!! REWORK!
+		// TODO!! REWORK!
+		// TODO!! REWORK!
 		
 		uint32 verticesBatchedOnThisPass = MergePolygonGroups(batchedPolygonGroup, curPolygonGroup, meshFormat,
 															  verticesBatched, curEntityMatrix, batchedEntityCenter,
-															  curMaterialInstance);
+															  curMaterialInstance, textureMultiply, textureOffset);
 		uint32 indicesBatchedOnThisPass = MergeIndices(batchedPolygonGroup, curPolygonGroup, verticesBatched,
 													   indicesBatched);
 
@@ -647,7 +705,7 @@ Entity* SceneExporter::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	DVASSERT(indicesBatched == indexCount);
 	batchedPolygonGroup->BuildBuffers();
 	
-	batchedMesh->AddPolygonGroup(batchedPolygonGroup, firstEntityRenderBatch->GetMaterial());
+	batchedMesh->AddPolygonGroup(batchedPolygonGroup, batchedMaterial);
 
 	// Update the material instance for the batched mesh.
 	RenderBatch* batchedRenderBatch = batchedMesh->GetRenderBatch(0);
@@ -714,7 +772,8 @@ void SceneExporter::CalculateBatchedEntityParameters(const Set<Entity*>& entitie
 uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
 										 uint32 meshFormat, uint32 verticesBatched,
 										 const Matrix4& curEntityMatrix, const Vector3& batchedEntityCenter,
-										 InstanceMaterialState* curMaterialInstance)
+										 InstanceMaterialState* curMaterialInstance,
+										 const Vector2& textureMultiply, const Vector2& textureOffset)
 {
 	if (!batchedPolygonGroup || !curPolygonGroup)
 	{
@@ -755,6 +814,8 @@ uint32 SceneExporter::MergePolygonGroups(PolygonGroup* batchedPolygonGroup, Poly
 		if (meshFormat & EVF_TEXCOORD0 && curPolygonGroup->textureCoordCount > 0)
 		{
 			curPolygonGroup->GetTexcoord(0, i, vector2Param);
+			vector2Param.x = vector2Param.x * textureMultiply.x + textureOffset.x;
+			vector2Param.y = vector2Param.y * textureMultiply.y + textureOffset.y;
 			batchedPolygonGroup->SetTexcoord(0, positionInBatch, vector2Param);
 		}
 	
@@ -909,4 +970,120 @@ void SceneExporter::SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>
 		Entity* childEntity = entity->GetChild(i);
 		SelectGeometryEntitiesRecursive(childEntity, resultSet);
 	}
+}
+
+Material* SceneExporter::BatchTextures(const Set<Entity*> entitiesToBatch, int32 batchID,
+									   BatchTexturesResult& batchTexturesResult,
+									   Set<String> &errorLog)
+{
+	batchTexturesResult.isSucceeded = false;
+	if (entitiesToBatch.size() < 2)
+	{
+		// Nothing to batch.
+		errorLog.insert(Format("Amount of entities to batch for Batch ID %i is %i - minimum two entities required",
+						batchID, entitiesToBatch.size()));
+		return NULL;
+	}
+	
+	Entity* firstEntity = (*entitiesToBatch.begin());
+	RenderBatch* firstRenderBatch = GetFirstRenderBatch(firstEntity);
+	if (!firstEntity || !firstRenderBatch)
+	{
+		errorLog.insert(Format("First Entity or First Render Batch does not exist for Batch ID %i",
+						batchID));
+		return NULL;
+	}
+
+	Material* firstMaterial = firstRenderBatch->GetMaterial();
+	if (!firstMaterial)
+	{
+		errorLog.insert(Format("First Entity %s for Batch ID %i does not have Material assigned",
+						firstEntity->GetName().c_str(), batchID));
+		return NULL;
+	}
+	
+	// First pass - determine whether the material can be batched, and determine the list
+	// of textures to batch, if any.
+	List<Texture*> texturesToBatch;
+	texturesToBatch.push_back(firstMaterial->GetTexture(Material::TEXTURE_DIFFUSE));
+
+	bool textureBatchingNeeded = false;
+	bool textureBatchingCanBeDone = true;
+	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end();
+		 iter ++)
+	{
+		Entity* curEntity = (*iter);
+		RenderBatch* curRenderBatch = GetFirstRenderBatch(curEntity);
+
+		if (!curEntity || !curRenderBatch)
+		{
+			continue;
+		}
+
+		Material* curMaterial = curRenderBatch->GetMaterial();
+		Material::eMaterialComparisonResult compareResult = firstMaterial->Compare(curMaterial, true);
+		if (compareResult == Material::MATERIALS_DIFFERENT)
+		{
+			// Can't batch.
+			textureBatchingCanBeDone = false;
+			break;
+		}
+		else if (compareResult == Material::MATERIALS_DIFFER_IN_TEXTURES_ONLY)
+		{
+			// Remember the texture we have to batch.
+			textureBatchingNeeded = true;
+			texturesToBatch.push_back(curMaterial->GetTexture(Material::TEXTURE_DIFFUSE));
+		}
+	}
+	
+	if (!textureBatchingCanBeDone)
+	{
+		// Cannot batch these textures at all - the materials are different.
+		errorLog.insert(Format("Can't batch Batch ID %i - Materials assigned to the batch components are different",
+						batchID));
+		return NULL;
+	}
+
+	if (!textureBatchingNeeded)
+	{
+		// No textures batching is needed at all - the materials are identical. Not an error.
+		return firstMaterial->Clone();
+	}
+		
+	// Batch the textures themselves.
+	TexturePacker texturePacker;
+	batchTexturesResult = texturePacker.Batch(texturesToBatch, batchID);
+	if (!batchTexturesResult.isSucceeded)
+	{
+		// Cannot batch these textures at all - the materials are different.
+		errorLog.insert(Format("Can't batch Batch ID %i - Texture Packer returned FALSE", batchID));
+		return NULL;
+	}
+
+	// Build the new Material based on the Batch Result.
+	Material* batchedMaterial = firstMaterial->Clone();
+	batchedMaterial->SetTexture(Material::TEXTURE_DIFFUSE, batchTexturesResult.batchedTexturePath);
+
+	return batchedMaterial;
+}
+
+RenderBatch* SceneExporter::GetFirstRenderBatch(Entity* entity)
+{
+	if (!entity)
+	{
+		return NULL;
+	}
+	
+	RenderComponent* renderComponent = static_cast<RenderComponent*>(entity->GetComponent(Component::RENDER_COMPONENT));
+	if (!renderComponent || !renderComponent->GetRenderObject())
+	{
+		return NULL;
+	}
+	
+	if (renderComponent->GetRenderObject()->GetRenderBatchCount() != 1)
+	{
+		return NULL;
+	}
+	
+	return renderComponent->GetRenderObject()->GetRenderBatch(0);
 }

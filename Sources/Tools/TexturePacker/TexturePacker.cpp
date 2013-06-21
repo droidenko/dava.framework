@@ -5,11 +5,10 @@
 #include "TexturePacker/DefinitionFile.h"
 #include "Render/TextureDescriptor.h"
 #include "FileSystem/FileSystem.h"
-#include "Render/Texture.h"
 #include "TextureCompression/PVRConverter.h"
 #include "TextureCompression/DXTConverter.h"
 #include "Render/GPUFamilyDescriptor.h"
-
+#include "Utils/StringFormat.h"
 
 #ifdef WIN32
 #define snprintf _snprintf
@@ -209,25 +208,11 @@ void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePat
 	if (CommandLineParser::Instance()->GetVerbose())
 		Logger::Info("* Packing tries started: ");
 	
-    bool needOnlySquareTexture = onlySquareTextures || NeedSquareTextureForCompression(forGPU);
-	for (int yResolution = 8; yResolution <= maxTextureSize; yResolution *= 2)
-		 for (int xResolution = 8; xResolution <= maxTextureSize; xResolution *= 2)
-		 {
-			 if (needOnlySquareTexture && (xResolution != yResolution))continue;
-			 
-			 Rect2i textureRect = Rect2i(0, 0, xResolution, yResolution);
-			 
-			 if (xResolution * yResolution < bestResolution)
-				 if (TryToPack(textureRect, defsList))
-				 {
-					 bestResolution = xResolution * yResolution;
-					 bestXResolution = xResolution;
-					 bestYResolution = yResolution;
-				 }
-		 }
+	bool canPackToSingleTexture = DetermineBestResolution(bestXResolution, bestYResolution, bestResolution, defsList, forGPU);
+
 	if (CommandLineParser::Instance()->GetVerbose())
 		Logger::Info("\n");
-	if (bestResolution != (maxTextureSize + 1) * (maxTextureSize + 1))
+	if (canPackToSingleTexture)
 	{
 		FilePath textureName = outputPath + "texture";
 		if (CommandLineParser::Instance()->GetVerbose())
@@ -401,7 +386,49 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 	}	
 }
 
+BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batchID)
+{
+	if (texturesList.empty())
+	{
+		return BatchErrorResult();
+	}
 
+	// Take the output path from the first texture in the batch.
+	FilePath outputPath = texturesList.front()->GetPathname();
+	outputPath = outputPath.GetDirectory();
+
+	// Build the definitions list.
+	List<DefinitionFile*> definitionsList;
+	for (List<Texture*>::iterator iter = texturesList.begin(); iter != texturesList.end(); iter ++)
+	{
+		Texture* texture = (*iter);
+		if (!texture)
+		{
+			continue;
+		}
+			
+		DefinitionFile* defFile = new DefinitionFile();
+		defFile->InitFromTexture(texture);
+		definitionsList.push_back(defFile);
+	}
+
+	if (definitionsList.size() == 0)
+	{
+		return BatchErrorResult();
+	}
+
+	// Do the packing itself!
+	BatchTexturesResult batchResult;
+
+	// TODO! TO PARAMS!
+	UseOnlySquareTextures();
+	SetMaxTextureSize(2048);
+
+	// TODO! Yuri Coder, 2013/06/17. Return to GPU_UNKNOWN flag when the PNG value
+	// will be added to enum.
+	return BatchTextures(outputPath, definitionsList, batchID);
+}
+	
 Rect2i TexturePacker::ReduceRectToOriginalSize(const Rect2i & _input)
 {
 	Rect2i r = _input;
@@ -564,9 +591,9 @@ void TexturePacker::SetMaxTextureSize(int32 _maxTextureSize)
 	maxTextureSize = _maxTextureSize;
 }
 
-void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU)
+void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, bool forceGenerateMipmaps)
 {
-    TextureDescriptor *descriptor = CreateDescriptor(forGPU);
+    TextureDescriptor *descriptor = CreateDescriptor(forGPU, forceGenerateMipmaps);
     descriptor->pathname = TextureDescriptor::GetDescriptorPathname(exportedPathname);
     descriptor->Export(descriptor->pathname);
 
@@ -597,12 +624,13 @@ void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPath
 }
 
 
-TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU)
+TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU, bool forceGenerateMipmaps)
 {
     TextureDescriptor *descriptor = new TextureDescriptor();
 
     descriptor->settings.wrapModeS = descriptor->settings.wrapModeT = Texture::WRAP_CLAMP_TO_EDGE;
-    descriptor->settings.generateMipMaps = CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
+    descriptor->settings.generateMipMaps = forceGenerateMipmaps ||
+		CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
     if(descriptor->settings.generateMipMaps)
     {
         descriptor->settings.minFilter = Texture::FILTER_LINEAR_MIPMAP_LINEAR;
@@ -647,5 +675,124 @@ bool TexturePacker::NeedSquareTextureForCompression(eGPUFamily forGPU)
     const String gpuNameFlag = "--" + GPUFamilyDescriptor::GetGPUName(forGPU);
     return (CommandLineParser::Instance()->IsFlagSet(gpuNameFlag));
 }
+
+bool TexturePacker::DetermineBestResolution(int& bestXResolution, int& bestYResolution, int& bestResolution, List<DefinitionFile*> & defsList, eGPUFamily forGPU)
+{
+    bool needOnlySquareTexture = onlySquareTextures || NeedSquareTextureForCompression(forGPU);
+
+	for (int yResolution = 8; yResolution <= maxTextureSize; yResolution *= 2)
+	{
+		for (int xResolution = 8; xResolution <= maxTextureSize; xResolution *= 2)
+		{
+			if (needOnlySquareTexture && (xResolution != yResolution))
+			{
+				continue;
+			}
+				
+			Rect2i textureRect = Rect2i(0, 0, xResolution, yResolution);
+			if (xResolution * yResolution < bestResolution)
+			{
+				if (TryToPack(textureRect, defsList))
+				{
+					bestResolution = xResolution * yResolution;
+					bestXResolution = xResolution;
+					bestYResolution = yResolution;
+				}
+			}
+		}
+	}
+	
+	// If the best resolution is less then allowed Max Texture Size - this means
+	// we can pack these textures into the single texture.
+	return bestResolution != (maxTextureSize + 1) * (maxTextureSize + 1);
+}
+
+BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList,
+									  int32 batchID)
+{
+	lastPackedPacker = 0;
+
+	// There is always one frame per each definition file to batch.
+	const int frameIndex = 0;
+	for (List<DefinitionFile*>::iterator dfi = defsList.begin(); dfi != defsList.end(); ++dfi)
+	{
+		DefinitionFile * defFile = *dfi;
+		DVASSERT(defFile && defFile->frameCount == 1);
+
+		SizeSortItem sortItem;
+		sortItem.imageSize = defFile->frameRects[frameIndex].dx * defFile->frameRects[frameIndex].dy;
+		sortItem.defFile = defFile;
+		sortItem.frameIndex = frameIndex;
+		sortVector.push_back(sortItem);
+	}
+
+	std::sort(sortVector.begin(), sortVector.end(), sortFn);
+		
+	// try to pack for each resolution
+	int bestResolution = (maxTextureSize + 1) * (maxTextureSize + 1);
+	int bestXResolution, bestYResolution;
+
+	bool canPackToSingleTexture = DetermineBestResolution(bestXResolution, bestYResolution,
+														  bestResolution, defsList, GPU_UNKNOWN);
+	if (!canPackToSingleTexture)
+	{
+		return BatchErrorResult();
+	}
+
+	// Batching.
+	BatchTexturesResult result;
+
+	String batchedTextureName = Format("batchedTexture%i", batchID);
+	FilePath textureName = outputPath + batchedTextureName;
+
+	result.batchedTexturePath = textureName;
+	result.batchedTexturePath.ReplaceExtension(".tex");
+
+	result.batchedTextureWidth = bestXResolution;
+	result.batchedTextureHeight = bestYResolution;
+		
+	PngImageExt finalImage;
+	finalImage.Create(bestXResolution, bestYResolution);
+
+	// Writing
+	FilePath excludeFolder; // isn't used here.
+	for (List<DefinitionFile*>::iterator dfi = defsList.begin(); dfi != defsList.end(); ++dfi)
+	{
+		DefinitionFile * defFile = *dfi;
+		Rect2i *destRect = lastPackedPacker->SearchRectForPtr(&defFile->frameRects[frameIndex]);
+		if (!destRect)
+		{
+			Logger::Error("*** ERROR Can't find rect for frame\n");
+			continue;
+		}
+
+		FilePath pngTextureName = defFile->filename;
+		pngTextureName.ReplaceExtension(".png");
+
+		PngImageExt image;
+		image.Read(pngTextureName.GetAbsolutePathname());
+		finalImage.DrawImage(destRect->x, destRect->y, &image);
+
+		textureName.ReplaceExtension(".png");
+		ExportImage(&finalImage, textureName, GPU_UNKNOWN, true);
+
+		BatchTexturesOutputData curOutputData;
+		curOutputData.texturePath = defFile->filename;
+		curOutputData.offsetX = destRect->x;
+		curOutputData.offsetY = destRect->y;
+		result.outputData.push_back(curOutputData);
+	}
+	
+	result.isSucceeded = true;
+	return result;
+}
+	
+BatchTexturesResult TexturePacker::BatchErrorResult()
+{
+	BatchTexturesResult errorResult;
+	errorResult.isSucceeded = false;
+	return errorResult;
+}
+
 
 };
