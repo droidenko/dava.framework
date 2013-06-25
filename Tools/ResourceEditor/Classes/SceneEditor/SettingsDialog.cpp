@@ -54,7 +54,6 @@ SettingsDialog::SettingsDialog(const Rect & rect, SettingsDialogDelegate *newDel
     
     propertyList->AddIntProperty("settingsdialog.screenwidth", PropertyList::PROPERTY_IS_EDITABLE);
     propertyList->AddIntProperty("settingsdialog.screenheight", PropertyList::PROPERTY_IS_EDITABLE);
-    propertyList->AddFloatProperty("settingsdialog.autosave", PropertyList::PROPERTY_IS_EDITABLE);
     languages.push_back("en");
     languages.push_back("ru");
     propertyList->AddComboProperty("settingsdialog.language", languages);
@@ -107,7 +106,6 @@ void SettingsDialog::WillAppear()
 {
     propertyList->SetIntPropertyValue("settingsdialog.screenwidth", EditorSettings::Instance()->GetScreenWidth());
     propertyList->SetIntPropertyValue("settingsdialog.screenheight", EditorSettings::Instance()->GetScreenHeight());
-    propertyList->SetFloatPropertyValue("settingsdialog.autosave", EditorSettings::Instance()->GetAutosaveTime());
     
     String language = EditorSettings::Instance()->GetLanguage();
     int32 index = 0;
@@ -157,12 +155,7 @@ void SettingsDialog::OnStringPropertyChanged(PropertyList *, const String &forKe
 
 void SettingsDialog::OnFloatPropertyChanged(PropertyList *, const String &forKey, float newValue)
 {
-    if ("settingsdialog.autosave" == forKey) 
-    {
-        EditorSettings::Instance()->SetAutosaveTime(newValue);
-        EditorSettings::Instance()->Save();
-    }
-    else if("settingsdialog.cameraspeed1" == forKey)
+    if("settingsdialog.cameraspeed1" == forKey)
     {
         EditorSettings::Instance()->SetCameraSpeed(0, newValue);
         EditorSettings::Instance()->Save();

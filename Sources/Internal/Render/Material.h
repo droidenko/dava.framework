@@ -286,6 +286,7 @@ public:
         TEXTURE_DIFFUSE = 0,
         TEXTURE_DETAIL = 1,
         TEXTURE_DECAL = 1,
+		TEXTURE_LIGHTMAP = 1,
 		TEXTURE_NORMALMAP = 2,
         
         TEXTURE_COUNT, 

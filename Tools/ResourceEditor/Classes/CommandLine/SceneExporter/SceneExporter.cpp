@@ -367,8 +367,6 @@ void SceneExporter::ExportLandscapeFullTiledTexture(Landscape *landscape, Set<St
 
 
 
-
-
 void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, Set<String> &errorLog)
 {
     if(descriptor->exportedAsGpuFamily == GPU_UNKNOWN)

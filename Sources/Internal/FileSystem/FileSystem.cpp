@@ -370,56 +370,17 @@ const FilePath & FileSystem::GetCurrentWorkingDirectory()
 	return currentWorkingDirectory;
 }
 
-const FilePath & FileSystem::GetCurrentExecutableDirectory()
+FilePath FileSystem::GetCurrentExecutableDirectory()
 {
+    char tempDir[2048];
+    FilePath currentExecuteDirectory;
 #if defined(__DAVAENGINE_WIN32__)
-	TCHAR szFileName[MAX_PATH];
-	GetModuleFileName( NULL, szFileName, MAX_PATH );
-
-	TCHAR drive[FILENAME_MAX];
-	TCHAR folder[MAX_PATH];
-	TCHAR fName[FILENAME_MAX];
-	TCHAR ext[FILENAME_MAX];
-	_wsplitpath(szFileName, drive, folder, fName, ext);
-	
-	TCHAR currentDir[MAX_PATH];
-	_tcscpy( currentDir, drive );
-	_tcscat( currentDir, folder );
-	
-	currentExecuteDirectory = FilePath(WStringToString(WideString(currentDir)));
-	currentExecuteDirectory.MakeDirectoryPathname();
-	return currentExecuteDirectory;
-#elif defined(__DAVAENGINE_MACOS__) 
-	char tempDir[2048];
+    ::GetModuleFileNameA( NULL, tempDir, 2048 );
+    currentExecuteDirectory = FilePath(tempDir).GetDirectory();
+#elif defined(__DAVAENGINE_MACOS__)
     proc_pidpath(getpid(), tempDir, sizeof(tempDir));
-    
     currentExecuteDirectory = FilePath(dirname(tempDir));
-	currentExecuteDirectory.MakeDirectoryPathname();
-	return currentExecuteDirectory;
-#elif defined(__DAVAENGINE_IPHONE__)
-    pid_t pid = getpid();
-    int32 mib[3] = {CTL_KERN, KERN_ARGMAX, 0};
-    
-    size_t argmaxsize = sizeof(size_t);
-    size_t size;
-    
-    int32 ret = sysctl(mib, 2, &size, &argmaxsize, NULL, 0);
-    DVASSERT(ret == 0);
-
-    mib[1] = KERN_PROCARGS2;
-    mib[2] = (int32)pid;
-    
-    char *procargv = (char*)malloc(size);
-    ret = sysctl(mib, 3, procargv, &size, NULL, 0);
-        
-    DVASSERT(ret == 0);
-
-    currentExecuteDirectory = FilePath(dirname(procargv + sizeof(int32)));
-	currentExecuteDirectory.MakeDirectoryPathname();
-    free(procargv);
-	return currentExecuteDirectory;
-#elif defined(__DAVAENGINE_ANDROID__)
-	//unnecessary to find full path because of apk archive
+#elif defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
 	DVASSERT(0);
 #endif //PLATFORMS
 	currentExecuteDirectory.MakeDirectoryPathname();

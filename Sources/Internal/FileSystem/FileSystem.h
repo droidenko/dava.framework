@@ -101,7 +101,7 @@ public:
 		\brief Function to retrieve directory, which contain executable binary file
 		\returns current directory, with  executable file
 	 */
-	virtual const FilePath & GetCurrentExecutableDirectory();
+	virtual FilePath  GetCurrentExecutableDirectory();
 
 	/**
 		\brief Function to set current working directory
@@ -224,7 +224,6 @@ private:
     
 	virtual eCreateDirectoryResult CreateExactDirectory(const FilePath & filePath);
 
-    FilePath currentExecuteDirectory;
 	FilePath currentWorkingDirectory;
     FilePath currentDocDirectory;
 

@@ -94,16 +94,19 @@ const uint32 crc32_tab[256] =
 uint32 CRC32::ForFile(const FilePath & pathName)
 {
 	File * f = File::Create(pathName, File::OPEN | File::READ);
+    if(!f)
+    {
+        return 0;
+    }
 
 	char buf[BUFSIZE];
-	uint32 crc32 = 0;
-	int64 i = 0, n = 0;
+
+	uint32 crc32 = 0xffffffff;
 	
-	crc32 = 0xffffffff;
-	
-	while((n = f->Read(buf, 1)) > 0)
+	uint32 n = 0;
+	while((n = f->Read(buf, BUFSIZE)) > 0)
 	{
-		for(i = 0; i < n; i++)
+		for(uint32 i = 0; i < n; i++)
 		{
 			crc32 = (crc32 >> 8) ^ crc32_tab[(crc32 ^ buf[i]) & 0xff];
 		}
@@ -111,8 +114,7 @@ uint32 CRC32::ForFile(const FilePath & pathName)
 
 	crc32 ^= 0xffffffff;
 
-	SafeRelease(f);
-
+	f->Release();
 	return crc32;
 }
 

@@ -94,7 +94,6 @@ void SceneEditorScreenMain::LoadResources()
 	    InitControls();
     
 	    InitializeBodyList();
-	    SetupAnimation();
 	}
 }
 
@@ -407,43 +406,6 @@ void SceneEditorScreenMain::EditMaterial(Material *material)
         AddControl(materialEditor);
     }
 }
-
-
-void SceneEditorScreenMain::AutoSaveLevel(BaseObject *, void *, void *)
-{
-    time_t now = time(0);
-    tm* utcTime = localtime(&now);
-    
-    FilePath folderPath = EditorSettings::Instance()->GetDataSourcePath() + "Autosave/";
-    bool folderExcists = FileSystem::Instance()->IsDirectory(folderPath);
-    if(!folderExcists)
-    {
-        FileSystem::Instance()->CreateDirectory(folderPath);
-    }
-
-    
-    
-    FilePath pathToFile = folderPath + String(Format("AutoSave_%04d.%02d.%02d_%02d_%02d.sc2",
-                                            utcTime->tm_year + 1900, utcTime->tm_mon + 1, utcTime->tm_mday, 
-                                            utcTime->tm_hour, utcTime->tm_min));
-    
-    BodyItem *iBody = bodies[0];
-    Scene * scene = iBody->bodyControl->GetScene();
-    SceneFileV2 * file = new SceneFileV2();
-    file->EnableDebugLog(false);
-    file->SaveScene(pathToFile, scene);
-    SafeRelease(file);
-    
-    SetupAnimation();
-}
-
-void SceneEditorScreenMain::SetupAnimation()
-{
-    float32 minutes = EditorSettings::Instance()->GetAutosaveTime();
-    Animation * anim = WaitAnimation(minutes * 60.f); 
-    anim->AddEvent(Animation::EVENT_ANIMATION_END, Message(this, &SceneEditorScreenMain::AutoSaveLevel));
-}
-
 
 
 void SceneEditorScreenMain::SettingsChanged()

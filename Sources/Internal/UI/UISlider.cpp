@@ -102,10 +102,12 @@ void UISlider::AddControl(DAVA::UIControl *control)
 	else if (control->GetName() == UISLIDER_MIN_SPRITE_CONTROL_NAME)
 	{
 		bgMin = control;
+		PostInitBackground(bgMin);
 	}
 	else if (control->GetName() == UISLIDER_MAX_SPRITE_CONTROL_NAME)
 	{
 		bgMax = control;
+		PostInitBackground(bgMax);
 	}
 }
 		
@@ -116,6 +118,8 @@ void UISlider::InitMinBackground()
 		bgMin = new UIControl(this->GetRect());
 		bgMin->SetName(UISLIDER_MIN_SPRITE_CONTROL_NAME);
 		UIControl::AddControl(bgMin);
+		
+		PostInitBackground(bgMin);
 	}
 }
 
@@ -126,6 +130,8 @@ void UISlider::InitMaxBackground()
 		bgMax = new UIControl(this->GetRect());
 		bgMax->SetName(UISLIDER_MAX_SPRITE_CONTROL_NAME);
 		UIControl::AddControl(bgMax);
+		
+		PostInitBackground(bgMin);
 	}
 }
 
@@ -578,11 +584,13 @@ void UISlider::CopyDataFrom(UIControl *srcControl)
 	{
 		bgMin = t->bgMin->Clone();
 		AddControl(bgMin);
+		PostInitBackground(bgMin);
 	}
 	if (t->bgMax)
 	{
 		bgMax = t->bgMax->Clone();
 		AddControl(bgMax);
+		PostInitBackground(bgMax);
 	}
 	
 	clipPointRelative = t->clipPointRelative;
@@ -616,7 +624,10 @@ void UISlider::AttachToSubcontrols()
 		bgMax = FindByName(UISLIDER_MAX_SPRITE_CONTROL_NAME);
 		DVASSERT(bgMax);
 	}
-	
+
+	PostInitBackground(bgMin);
+	PostInitBackground(bgMax);
+
 	// All the controls will be released in the destructor, so need to addref.
 	SafeRetain(thumbButton);
 	SafeRetain(bgMin);
@@ -631,6 +642,20 @@ List<UIControl*> UISlider::GetSubcontrols()
 	AddControlToList(subControls, UISLIDER_MAX_SPRITE_CONTROL_NAME);
 
 	return subControls;
+}
+
+void UISlider::PostInitBackground(UIControl* backgroundControl)
+{
+	if (!backgroundControl)
+	{
+		return;
+	}
+	
+	// UISlider's background are drawn in specific way, so they have to be
+	// positioned to (0.0) coordinates to avoid input interception. See pls
+	// DF-1379 for details.
+	backgroundControl->SetInputEnabled(false);
+	backgroundControl->SetPosition(Vector2(0.0f, 0.0f));
 }
 	
 } // ns

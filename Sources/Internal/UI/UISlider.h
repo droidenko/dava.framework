@@ -113,6 +113,8 @@ protected:
 	void AttachToSubcontrols();
 	void ReleaseAllSubcontrols();
 	void InitInactiveParts(Sprite* spr);
+
+	void PostInitBackground(UIControl* backgroundControl);
 };
     
     

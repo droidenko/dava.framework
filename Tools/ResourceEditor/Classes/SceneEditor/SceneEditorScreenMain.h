@@ -142,10 +142,6 @@ private:
     
     void InitControls();
     
-    
-    void AutoSaveLevel(BaseObject * obj, void *, void *);
-    void SetupAnimation();
-    
     void AddLineControl(Rect r);
     
     Vector<BodyItem *> bodies;

@@ -665,7 +665,7 @@ bool SceneValidator::IsTextureChanged(const TextureDescriptor *descriptor, eGPUF
 {
     DVASSERT(descriptor);
     
-    return descriptor->IsSourceChanged(forGPU);
+    return !descriptor->IsCompressedTextureActual(forGPU);
 }
 
 

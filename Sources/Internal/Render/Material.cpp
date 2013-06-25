@@ -634,9 +634,16 @@ void Material::Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
 {
     DataNode::Load(keyedArchive, sceneFile);
 
+	eType mtype = (eType)keyedArchive->GetInt32("mat.type", type);
+
     int32 texCount = keyedArchive->GetInt32("mat.texCount");
     for (int32 k = 0; k < texCount; ++k)
     {
+		if(mtype == MATERIAL_UNLIT_TEXTURE_LIGHTMAP && k == TEXTURE_LIGHTMAP)
+		{
+			continue;
+		}
+
         String relativePathname = keyedArchive->GetString(Format("mat.tex%d", k));
         if (!relativePathname.empty())
         {
@@ -678,7 +685,6 @@ void Material::Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
 	isFlatColorEnabled = keyedArchive->GetBool("mat.isFlatColorEnabled", isFlatColorEnabled);
 	isTexture0ShiftEnabled = keyedArchive->GetBool("mat.isTexture0ShiftEnabled", isTexture0ShiftEnabled);
 
-    eType mtype = (eType)keyedArchive->GetInt32("mat.type", type);
     SetType(mtype);
 
 	if(keyedArchive->IsKeyExists("mat.staticTransparencyColor"))

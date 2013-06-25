@@ -698,7 +698,7 @@ void SceneDataManager::TextureReloadAll(DAVA::eGPUFamily forGPU)
 		{
 			Texture *newTexture = TextureReload(descriptor, it->second, forGPU);
 			SafeRelease(descriptor);
-		}
+		} //todo: need to reload texture as pinkplaceholder
 	}
 }
 
