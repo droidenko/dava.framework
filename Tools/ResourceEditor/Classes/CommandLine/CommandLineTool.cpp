@@ -18,4 +18,7 @@
 
 using namespace DAVA;
 
-
+CommandLineTool::CommandLineTool()
+{
+	oneFrameCommand = true;
+}

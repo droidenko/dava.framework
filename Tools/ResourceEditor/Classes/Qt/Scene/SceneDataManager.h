@@ -59,6 +59,7 @@ public:
 	SceneData*			SceneGetActive();
 	SceneData*			SceneGetLevel();
 	SceneData*			SceneGet(DAVA::int32 index);
+	SceneData*			SceneGet(DAVA::Scene *scene);
 	DAVA::int32			SceneCount();
     
 	void				TextureCompressAllNotCompressed();
@@ -75,6 +76,9 @@ public:
 	// Refresh the information regarding the particular Particles Editor nods.
 	void RefreshParticlesLayer(DAVA::ParticleLayer* layer);
 
+public slots:
+    void UpdateCameraLightOnScene(bool show);
+    
 signals:
 	void SceneCreated(SceneData *scene);
 	void SceneActivated(SceneData *scene);
@@ -128,7 +132,7 @@ protected:
 
 	// Apply the default fog settings for the new entity.
 	void ApplyDefaultFogSettings(Landscape* landscape, DAVA::Entity *entity);
-
+    
 protected:
     SceneData *currentScene;
     DAVA::List<SceneData *>scenes;

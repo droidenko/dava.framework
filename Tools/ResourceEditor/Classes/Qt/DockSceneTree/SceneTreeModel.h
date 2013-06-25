@@ -56,6 +56,9 @@ public:
 protected:
 	bool dropAccepted;
 	SceneEditor2 * curScene;
+
+protected slots:
+	void EntityRemoved(SceneEditor2 *scene, DAVA::Entity *entity);
 };
 
 #endif // __QT_SCENE_TREE_MODEL_H__

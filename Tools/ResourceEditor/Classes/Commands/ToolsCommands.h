@@ -33,13 +33,15 @@ protected:
 class CommandConvertToShadow : public Command
 {
 public:
-	DAVA_DEPRECATED(CommandConvertToShadow()); //DEPRECATED : use SceneDataManager(QOBJECT)
+	DAVA_DEPRECATED(CommandConvertToShadow(DAVA::Entity * entity)); //DEPRECATED : use SceneDataManager(QOBJECT)
 
 protected:
-	virtual void Execute();
+    virtual void Execute();
+    virtual void Cancel();
 	virtual DAVA::Set<DAVA::Entity*> GetAffectedEntities();
 
 	DAVA::Entity* affectedEntity;
+    DAVA::RenderBatch * changedRenderBatch;
 };
 
 

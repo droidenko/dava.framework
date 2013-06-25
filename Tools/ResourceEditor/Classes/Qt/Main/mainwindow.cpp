@@ -146,6 +146,12 @@ void QtMainWindow::SetupActions()
     
 	//Edit
 	connect(ui->actionConvertToShadow, SIGNAL(triggered()), actionHandler, SLOT(ConvertToShadow()));
+    
+    ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
+	connect(ui->actionEnableCameraLight, SIGNAL(triggered()), actionHandler, SLOT(CameraLightTrigerred()));
+
+    //Help
+    connect(ui->actionHelp, SIGNAL(triggered()), actionHandler, SLOT(OpenHelp()));
 }
 
 void QtMainWindow::SetupMainMenu()
@@ -320,6 +326,15 @@ void QtMainWindow::SetupToolBars()
 	ui->actionAddNewComponent->setEnabled(false);
 	ui->actionRemoveComponent->setEnabled(false);
 
+	QAction *undoSceneEditor2 = new QAction("Undo2", this);
+	QAction *redoSceneEditor2 = new QAction("Redo2", this);
+
+	QObject::connect(undoSceneEditor2, SIGNAL(triggered()), this, SLOT(Undo2()));
+	QObject::connect(redoSceneEditor2, SIGNAL(triggered()), this, SLOT(Redo2()));
+	ui->viewModeToolBar->addAction(undoSceneEditor2);
+	ui->viewModeToolBar->addAction(redoSceneEditor2);
+
+
 	// <-
 }
 
@@ -492,6 +507,7 @@ void QtMainWindow::ProjectOpened(const QString &path)
 	UpdateParticleSprites();
 }
 
+
 void QtMainWindow::UpdateParticleSprites()
 {
 	if(repackSpritesWaitDialog != NULL)
@@ -548,3 +564,20 @@ void QtMainWindow::UpdateLibraryFileTypes(bool showDAEFiles, bool showSC2Files)
 	emit LibraryFileTypesChanged(showDAEFiles, showSC2Files);
 }
 
+void QtMainWindow::Undo2()
+{
+	SceneEditor2* sceneEditor = ui->sceneTabWidget->GetCurrentScene();
+	if(NULL != sceneEditor)
+	{
+		sceneEditor->Undo();
+	}
+}
+
+void QtMainWindow::Redo2()
+{
+	SceneEditor2* sceneEditor = ui->sceneTabWidget->GetCurrentScene();
+	if(NULL != sceneEditor)
+	{
+		sceneEditor->Redo();
+	}
+}

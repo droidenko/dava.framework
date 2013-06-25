@@ -21,17 +21,27 @@
 #include "FileSystem/ResourceArchive.h"
 
 
-#if defined(__DAVAENGINE_MACOS__) || defined(__DAVAENGINE_IPHONE__)
+#if defined(__DAVAENGINE_MACOS__)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
 #include <copyfile.h>
+#include <libproc.h>
+#include <libgen.h>
+#elif defined(__DAVAENGINE_IPHONE__)
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <copyfile.h>
+#include <libgen.h>
+#include <sys/sysctl.h>
 #elif defined(__DAVAENGINE_WIN32__)
 #include <direct.h>
 #include <io.h> 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <Shlobj.h>
+#include <tchar.h>
 #elif defined(__DAVAENGINE_ANDROID__)
 #include "Platform/TemplateAndroid/CorePlatformAndroid.h"
 #include <unistd.h>
@@ -358,6 +368,62 @@ const FilePath & FileSystem::GetCurrentWorkingDirectory()
 #endif //PLATFORMS
 	currentWorkingDirectory.MakeDirectoryPathname();
 	return currentWorkingDirectory;
+}
+
+const FilePath & FileSystem::GetCurrentExecutableDirectory()
+{
+#if defined(__DAVAENGINE_WIN32__)
+	TCHAR szFileName[MAX_PATH];
+	GetModuleFileName( NULL, szFileName, MAX_PATH );
+
+	TCHAR drive[FILENAME_MAX];
+	TCHAR folder[MAX_PATH];
+	TCHAR fName[FILENAME_MAX];
+	TCHAR ext[FILENAME_MAX];
+	_wsplitpath(szFileName, drive, folder, fName, ext);
+	
+	TCHAR currentDir[MAX_PATH];
+	_tcscpy( currentDir, drive );
+	_tcscat( currentDir, folder );
+	
+	currentExecuteDirectory = FilePath(WStringToString(WideString(currentDir)));
+	currentExecuteDirectory.MakeDirectoryPathname();
+	return currentExecuteDirectory;
+#elif defined(__DAVAENGINE_MACOS__) 
+	char tempDir[2048];
+    proc_pidpath(getpid(), tempDir, sizeof(tempDir));
+    
+    currentExecuteDirectory = FilePath(dirname(tempDir));
+	currentExecuteDirectory.MakeDirectoryPathname();
+	return currentExecuteDirectory;
+#elif defined(__DAVAENGINE_IPHONE__)
+    pid_t pid = getpid();
+    int32 mib[3] = {CTL_KERN, KERN_ARGMAX, 0};
+    
+    size_t argmaxsize = sizeof(size_t);
+    size_t size;
+    
+    int32 ret = sysctl(mib, 2, &size, &argmaxsize, NULL, 0);
+    DVASSERT(ret == 0);
+
+    mib[1] = KERN_PROCARGS2;
+    mib[2] = (int32)pid;
+    
+    char *procargv = (char*)malloc(size);
+    ret = sysctl(mib, 3, procargv, &size, NULL, 0);
+        
+    DVASSERT(ret == 0);
+
+    currentExecuteDirectory = FilePath(dirname(procargv + sizeof(int32)));
+	currentExecuteDirectory.MakeDirectoryPathname();
+    free(procargv);
+	return currentExecuteDirectory;
+#elif defined(__DAVAENGINE_ANDROID__)
+	//unnecessary to find full path because of apk archive
+	DVASSERT(0);
+#endif //PLATFORMS
+	currentExecuteDirectory.MakeDirectoryPathname();
+	return currentExecuteDirectory;
 }
 
 bool FileSystem::SetCurrentWorkingDirectory(const FilePath & newWorkingDirectory)

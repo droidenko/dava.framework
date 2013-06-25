@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>QtIcons/help.png</file>
+    <file>QtIcons/zoom.png</file>
     <file>QtIconsTextureDialog/convertall.png</file>
     <file>QtIconsTextureDialog/convert.png</file>
     <file>QtIcons/color.png</file>
@@ -52,5 +54,6 @@
     <file>QtIcons/rulertool.png</file>
     <file>QtIcons/transform_bake.png</file>
     <file>QtIcons/shadow.png</file>
+    <file>QtIcons/light.png</file>
   </qresource>
 </RCC>

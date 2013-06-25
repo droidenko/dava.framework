@@ -33,14 +33,22 @@
 
 #include "CommandLine/SceneExporter/SceneExporter.h"
 #include "CommandLine/SceneSaver/SceneSaver.h"
+#include "CommandLine/CommandLineManager.h"
+#include "CommandLine/Beast/BeastCommandLineTool.h"
 
 #include "../Qt/Scene/SceneData.h"
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Main/QtUtils.h"
+#include "../Qt/Main/QtMainWindowHandler.h"
 #include "FileSystem/FileSystem.h"
 
 #include "../Commands/SceneEditorScreenMainCommands.h"
 #include "../Commands/CommandsManager.h"
+#include "../Commands/FileCommands.h"
+#include "../Commands/ToolsCommands.h"
+
+
+
 
 SceneEditorScreenMain::SceneEditorScreenMain()
 	:	UIScreen()
@@ -105,7 +113,45 @@ void SceneEditorScreenMain::UnloadResources()
 
 void SceneEditorScreenMain::WillAppear()
 {
+#if defined (__DAVAENGINE_WIN32__)
+    BeastCommandLineTool *beastTool = dynamic_cast<BeastCommandLineTool *>(CommandLineManager::Instance()->GetActiveCommandLineTool());
+    if(beastTool && (0 == CommandLineManager::Instance()->GetErrorsCount()))
+    {
+		FilePath scenePathname = beastTool->GetScenePathname();
+
+		String path = scenePathname.GetAbsolutePathname();
+		String dataSourceFolder = "/DataSource/3d/";
+		String::size_type pos = path.find(dataSourceFolder);
+		if(pos != String::npos)
+		{
+			EditorSettings::Instance()->SetProjectPath(path.substr(0, pos + 1));
+			EditorSettings::Instance()->SetDataSourcePath(path.substr(0, pos + dataSourceFolder.length()));
+		}
+
+		SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
+		DVASSERT(levelScene);
+
+        CommandsManager::Instance()->ExecuteAndRelease(new CommandOpenScene(scenePathname), levelScene->GetScene());
+    }
+#endif //#if defined (__DAVAENGINE_WIN32__)
 }
+
+void SceneEditorScreenMain::DidAppear()
+{
+#if defined (__DAVAENGINE_WIN32__)
+	BeastCommandLineTool *beastTool = dynamic_cast<BeastCommandLineTool *>(CommandLineManager::Instance()->GetActiveCommandLineTool());
+	if(beastTool && (0 == CommandLineManager::Instance()->GetErrorsCount()))
+    {
+        Update(0.1f);
+
+		SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
+		DVASSERT(levelScene);
+
+        CommandsManager::Instance()->ExecuteAndRelease(new CommandBeast(), levelScene->GetScene());
+    }
+#endif //#if defined (__DAVAENGINE_WIN32__)
+}
+
 
 void SceneEditorScreenMain::WillDisappear()
 {
@@ -244,10 +290,19 @@ void SceneEditorScreenMain::OnCloseBody(BaseObject * owner, void *, void *)
     {
         if(btn == bodies[i]->closeButton)
         {
-            int32 saved = SaveSceneIfChanged(bodies[i]->bodyControl->GetScene());
-            if(saved == MB_FLAG_CANCEL)
+            int32 answer = ShowSaveSceneQuestion(bodies[i]->bodyControl->GetScene());
+            if(answer == MB_FLAG_CANCEL)
             {
                 return;
+            }
+            
+            if(answer == MB_FLAG_YES)
+            {
+                bool saved = QtMainWindowHandler::Instance()->SaveScene(bodies[i]->bodyControl->GetScene());
+                if(!saved)
+                {
+                    return;
+                }
             }
 
             if(bodies[i]->bodyControl->GetParent())
@@ -488,19 +543,6 @@ bool SceneEditorScreenMain::SaveIsAvailable()
 
     return true;
 }
-
-FilePath SceneEditorScreenMain::CurrentScenePathname()
-{
-    SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
-    FilePath pathname(sceneData->GetScenePathname());
-    if (!pathname.IsEmpty())
-    {
-        pathname.ReplaceExtension(".sc2");
-    }
-
-    return pathname;
-}
-
 
 void SceneEditorScreenMain::SaveSceneToFile(const FilePath &pathToFile)
 {

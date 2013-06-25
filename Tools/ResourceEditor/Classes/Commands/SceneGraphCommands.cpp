@@ -197,10 +197,10 @@ void CommandInternalRemoveSceneNode::Execute()
 	for (uint32 i = 0; i < nodesForDeletion.size(); ++i)
 	{
 		nodesForDeletion[i].nodeParent->RemoveNode(nodesForDeletion[i].node);
-
 	}
 
 	SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
+    activeScene->GetScene()->UpdateCameraLightOnScene();
 	activeScene->RebuildSceneGraph();
 }
 

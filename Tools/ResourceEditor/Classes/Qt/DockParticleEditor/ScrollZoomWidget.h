@@ -22,7 +22,6 @@
 #include <QWidget>
 #include <QString>
 #include <QDialog>
-#include <QDoubleSpinBox>
 #include <QScrollBar.h>
 #include <qslider.h>
 

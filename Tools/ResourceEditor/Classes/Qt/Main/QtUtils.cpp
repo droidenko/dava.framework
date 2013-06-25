@@ -111,9 +111,9 @@ void ShowErrorDialog(const DAVA::Set<DAVA::String> &errors)
 
 void ShowErrorDialog(const DAVA::String &errorMessage)
 {
-	bool forceMode =    CommandLineParser::CommandIsFound(String("-force"))
+	bool forceClose =    CommandLineParser::CommandIsFound(String("-force"))
 					||  CommandLineParser::CommandIsFound(String("-forceclose"));
-	if(!forceMode)
+	if(!forceClose)
 	{
 		QMessageBox::critical(QtMainWindow::Instance(), "Error", errorMessage.c_str());
 	}
@@ -146,7 +146,7 @@ int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int b
     return answer;
 }
 
-int SaveSceneIfChanged(DAVA::Scene *scene)
+int ShowSaveSceneQuestion(DAVA::Scene *scene)
 {
     int answer = MB_FLAG_NO;
     
@@ -155,13 +155,8 @@ int SaveSceneIfChanged(DAVA::Scene *scene)
     {
         answer = ShowQuestion("Scene was changed", "Do you want to save changes in the current scene prior to creating new one?",
                                     MB_FLAG_YES | MB_FLAG_NO | MB_FLAG_CANCEL, MB_FLAG_CANCEL);
-        
-        if(answer == MB_FLAG_YES)
-        {
-            // Execute this command directly to do not affect the Undo/Redo queue.
-            CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveScene(), scene);
-        }
     }
     
     return answer;
 }
+

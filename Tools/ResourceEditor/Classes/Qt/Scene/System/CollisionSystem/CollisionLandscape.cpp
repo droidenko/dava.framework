@@ -26,11 +26,15 @@ CollisionLandscape::CollisionLandscape(DAVA::Entity *entity, btCollisionWorld *w
 		if(NULL != heightmap)
 		{
 			DAVA::Vector3 landSize;
-			DAVA::AABBox3 landTransformedBox;
-			DAVA::Matrix4 landWorldTransform = entity->GetWorldTransform();
+			DAVA::AABBox3 landBox = landscape->GetBoundingBox();
 
-			landscape->GetBoundingBox().GetTransformedBox(landWorldTransform, landTransformedBox);
-			landSize = landTransformedBox.max - landTransformedBox.min;
+			//DAVA::AABBox3 landTransformedBox;
+			//DAVA::Matrix4 landWorldTransform = entity->GetWorldTransform();
+			// 
+			//landBox.GetTransformedBox(landWorldTransform, landTransformedBox);
+			//landSize = landTransformedBox.max - landTransformedBox.min;
+
+			landSize = landBox.max - landBox.min;
 
 			DAVA::float32 landWidth = landSize.x;
 			DAVA::float32 landScaleW = landWidth / heightmap->Size();
@@ -60,6 +64,8 @@ CollisionLandscape::CollisionLandscape(DAVA::Entity *entity, btCollisionWorld *w
 			btObject->setWorldTransform(landTransform);
 			btObject->setCollisionShape(btTerrain);
 			btWord->addCollisionObject(btObject);
+
+			boundingBox = landBox;
 		}
 	}
 }

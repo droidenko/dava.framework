@@ -21,6 +21,7 @@
 #include "Base/BaseTypes.h"
 #include "Base/BaseMath.h"
 #include "Base/ScopedPtr.h"
+#include "Base/FastNameMap.h"
 
 namespace FMOD
 {
@@ -65,8 +66,8 @@ private:
 	FMOD::System * fmodSystem;
 	FMOD::EventSystem * fmodEventSystem;
 
-	Map<int, SoundGroup*> soundGroups;
-	Vector<VolumeAnimatedObject *> animatedObjects;
+	FastNameMap<SoundGroup*> soundGroups;
+	Vector<VolumeAnimatedObject*> animatedObjects;
 
 friend class SoundGroup;
 friend class Sound;

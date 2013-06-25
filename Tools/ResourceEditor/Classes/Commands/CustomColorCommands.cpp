@@ -20,6 +20,8 @@
 #include "../Qt/Main/QtUtils.h"
 #include <QFileDialog>
 #include "../SceneEditor/EditorBodyControl.h"
+#include "../Qt/Scene/SceneDataManager.h"
+#include "../Qt/Scene/SceneData.h"
 
 CommandSaveTextureCustomColors::CommandSaveTextureCustomColors()
 :   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_SAVE_TEXTURE_CUSTOM_COLORS)
@@ -37,7 +39,7 @@ void CommandSaveTextureCustomColors::Execute()
 
 	if(selectedPathname.IsEmpty())
 	{
-		selectedPathname = FilePath(screen->CurrentScenePathname().GetDirectory());
+        selectedPathname = SceneDataManager::Instance()->SceneGetActive()->GetScenePathname().GetDirectory();
 	}
 
 	QString filePath = QFileDialog::getSaveFileName(NULL, QString("Save texture"), QString(selectedPathname.GetAbsolutePathname().c_str()), QString("PNG image (*.png)"));
@@ -60,10 +62,9 @@ void CommandLoadTextureCustomColors::Execute()
 		return;
 
 	FilePath currentPath = screen->CustomColorsGetCurrentSaveFileName();
-
 	if(currentPath.IsEmpty())
 	{
-		currentPath = FilePath(screen->CurrentScenePathname().GetDirectory());
+        currentPath = SceneDataManager::Instance()->SceneGetActive()->GetScenePathname().GetDirectory();
 	}
 
 	FilePath selectedPathname = GetOpenFileName(String("Load texture"), currentPath, String("PNG image (*.png)"));

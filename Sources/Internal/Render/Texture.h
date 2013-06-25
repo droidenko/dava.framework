@@ -34,6 +34,14 @@ namespace DAVA
 class Image;
 class TextureDescriptor;
 class File;
+class Texture;
+	
+class TextureInvalidater
+{
+public:
+	virtual void InvalidateTexture(Texture * texure) = 0;
+};
+	
 class Texture : public RenderResource
 {
 public:
@@ -207,6 +215,7 @@ public:
     void Reload();
     void ReloadAs(eGPUFamily gpuFamily);
 	void ReloadAs(eGPUFamily gpuFamily, const TextureDescriptor *descriptor);
+	void SetInvalidater(TextureInvalidater* invalidater);
 
 public:							// properties for fast access
 
@@ -246,6 +255,7 @@ public:							// properties for fast access
 	PixelFormat format;			// texture format 
 	DepthFormat depthFormat;
 	bool		isRenderTarget;
+	TextureInvalidater* invalidater;
 
 	void SetDebugInfo(const String & _debugInfo);
 

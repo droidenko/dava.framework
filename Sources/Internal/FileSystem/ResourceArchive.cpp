@@ -159,6 +159,14 @@ int32 ResourceArchive::GetFileCount() const
 	return header.fileCount;
 }
 
+int32 ResourceArchive::GetFileSize(const uint32 resourceIndex) const
+{
+    if (resourceIndex >= header.fileCount)
+        return -1;
+
+    return nodeArray[resourceIndex].fileSize;
+}
+
 //! \brief Get resource relative pathname
 //! \param resourceIndex index of resource from what we want to get pathname
 //! \return pathName or String("") if any error occurred
@@ -318,9 +326,9 @@ bool ResourceArchive::UnpackResource(int32 resourceIndex, uint8 * data)
 
 	DictionaryNode node = nodeArray[resourceIndex];
 	archiveFile->Seek(nodeArray[resourceIndex].filePosition, File::SEEK_FROM_START);
-	archiveFile->Read(data, nodeArray[resourceIndex].packedFileSize);
+	uint32 actuallyRead = archiveFile->Read(data, nodeArray[resourceIndex].packedFileSize);
 
-	return false;
+	return (actuallyRead > 0);
 }
 
 int32 ResourceArchive::LoadResource(const uint32 resourceIndex, void * data)
@@ -366,6 +374,28 @@ int32	ResourceArchive::LoadResource(const FilePath & pathName, void * data)
 		}
 	}
 	return LoadResource(resourceIndex, data);
+}
+
+void    ResourceArchive::UnpackToFolder(const FilePath & dirPath)
+{
+    int32 fileCount = GetFileCount();
+    for(int32 i = 0; i < fileCount; i++)
+    {
+        int32 fileSize = GetFileSize(i);
+        if(fileSize > 0)
+        {
+            char * fileData = new char[fileSize];
+            if(LoadResource(i, fileData) > 0)
+            {
+                String resPath = GetResourcePathname(i);
+                File * file = File::Create(dirPath + resPath, File::CREATE | File::WRITE);
+                if(file)
+                    file->Write(fileData, fileSize);
+                SafeRelease(file);
+            }
+            SafeDeleteArray(fileData);
+        }
+    }
 }
 
 int32	ResourceArchive::FindPathnameIndex(const FilePath & pathName)

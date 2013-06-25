@@ -146,12 +146,7 @@ Texture::Texture()
 	rboID = -1;
 #endif
 
-//#if defined(__DAVAENGINE_ANDROID__)
-//	savedData = NULL;
-//	savedDataSize = 0;
-//	renderTargetModified = false;
-//    renderTargetAutosave = true;
-//#endif //#if defined(__DAVAENGINE_ANDROID__)
+	invalidater = NULL;
 }
 
 Texture::~Texture()
@@ -1007,15 +1002,15 @@ void Texture::Invalidate()
 	}
 	
 	if (relativePathname.GetType() == FilePath::PATH_IN_FILESYSTEM ||
-			relativePathname.GetType() == FilePath::PATH_IN_RESOURCES ||
-			relativePathname.GetType() == FilePath::PATH_IN_DOCUMENTS)
+		relativePathname.GetType() == FilePath::PATH_IN_RESOURCES ||
+		relativePathname.GetType() == FilePath::PATH_IN_DOCUMENTS)
 	{
 		Reload();
 	}
 	else if (relativePathname.GetType() == FilePath::PATH_IN_MEMORY)
 	{
-		//TODO:
-		Logger::Debug("Texture::Invalidate need reload in memory texture");
+		if (invalidater)
+			invalidater->InvalidateTexture(this);
 	}
 	else if (this == pinkPlaceholder)
 	{
@@ -1391,7 +1386,11 @@ eGPUFamily Texture::GetFormatForLoading(const eGPUFamily requestedGPU, const Tex
     
     return requestedGPU;
 }
-    
+
+void Texture::SetInvalidater(TextureInvalidater* invalidater)
+{
+	this->invalidater = invalidater;
+}
 
 
 };

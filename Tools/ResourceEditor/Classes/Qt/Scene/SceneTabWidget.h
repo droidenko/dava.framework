@@ -68,7 +68,7 @@ public:
 	int GetCollisionDrawMode() const;
 	void SetCollisionDrawMode(int mode);
 	
-	SceneEditor2* GetSceneEditorForCurrentTab() const;
+	SceneEditor2* GetCurrentScene() const;
 
 public slots:
 	// this slot redirects any UIEvent to the active sceneProxy for processing

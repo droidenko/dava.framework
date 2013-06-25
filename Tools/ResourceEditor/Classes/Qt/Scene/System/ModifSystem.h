@@ -92,6 +92,8 @@ protected:
 	void BeginModification(const EntityGroup *entities);
 	void EndModification();
 
+	void ApplyModification();
+
 	DAVA::Vector3 CamCursorPosToModifPos(const DAVA::Vector3 &camPosition, const DAVA::Vector3 &camPointDirection, const DAVA::Vector3 &planePoint);
 	DAVA::Vector2 Cam2dProjection(const DAVA::Vector3 &from, const DAVA::Vector3 &to);
 

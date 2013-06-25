@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
     if(CommandLineManager::Instance()->IsCommandLineModeEnabled())
     {
         CommandLineManager::Instance()->Process();
-        needToQuit = CommandLineManager::Instance()->PrintResults();
+		CommandLineManager::Instance()->PrintResults();
+        needToQuit = CommandLineManager::Instance()->NeedCloseApplication();
     }
     
     if(!needToQuit)

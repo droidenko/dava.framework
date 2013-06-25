@@ -19,12 +19,12 @@
 
 #include <QWidget>
 #include <QDialog>
-#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
 
 #include <DAVAEngine.h>
 #include "ScrollZoomWidget.h"
+#include "../CustomControls/EventFilterDoubleSpinBox.h"
 
 using namespace DAVA;
 
@@ -119,7 +119,7 @@ private:
 		float32 GetValue() const;
 		
 	private:
-		QDoubleSpinBox* valueSpin;
+		EventFilterDoubleSpinBox* valueSpin;
 	};
 };
 

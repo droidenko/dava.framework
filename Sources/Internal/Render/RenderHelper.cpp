@@ -737,6 +737,14 @@ void RenderHelper::DrawCornerBox(const AABBox3 & bbox, float32 lineWidth)
 		DAVA::float32 k = arrowLength / 4;
 
 		Vector3 n = c.CrossProduct(to);
+
+		if(n.IsZero())
+		{
+			if(0 == to.x) n = Vector3(1, 0, 0);
+			else if(0 == to.y) n = Vector3(0, 1, 0);
+			else if(0 == to.z) n = Vector3(0, 0, 1);
+		}
+
 		n.Normalize();
 		n *= k;
 

@@ -199,14 +199,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 				{
 					if(modified)
 					{
-						for (size_t i = 0; i < modifEntities.size(); ++i)
-						{
-							// apply modification command
-							//CommandsManager::Instance()->ExecuteAndRelease(new CommandTransformObject(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()),
-							//											   GetScene());
-							
-							((SceneEditor2 *) GetScene())->Exec(new TransformCommand(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()));
-						}
+						ApplyModification();
 					}
 
 					hoodSystem->Unlock();
@@ -313,6 +306,31 @@ void EntityModificationSystem::EndModification()
 {
 	modifEntitiesCenter.Set(0, 0, 0);
 	modifEntities.clear();
+}
+
+void EntityModificationSystem::ApplyModification()
+{
+	SceneEditor2 *sceneEditor = ((SceneEditor2 *) GetScene());
+
+	if(NULL != sceneEditor)
+	{
+		bool isMultiple = (modifEntities.size() > 1);
+
+		if(isMultiple)
+		{
+			sceneEditor->BeginBatch("Multiple transform");
+		}
+
+		for (size_t i = 0; i < modifEntities.size(); ++i)
+		{
+			sceneEditor->Exec(new TransformCommand(modifEntities[i].entity,	modifEntities[i].originalTransform, modifEntities[i].entity->GetLocalTransform()));
+		}
+
+		if(isMultiple)
+		{
+			sceneEditor->EndBatch();
+		}
+	}
 }
 
 DAVA::Vector3 EntityModificationSystem::CamCursorPosToModifPos(const DAVA::Vector3 &camPosition, const DAVA::Vector3 &camPointDirection, const DAVA::Vector3 &planePoint)

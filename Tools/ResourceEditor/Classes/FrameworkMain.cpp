@@ -157,6 +157,7 @@ void FrameworkWillTerminate()
 	SceneValidator::Instance()->Release();
 	EditorConfig::Instance()->Release();
 	EditorSettings::Instance()->Release();
+    TextureSquarenessChecker::Instance()->Release();
 
 	CommandLineManager::Instance()->Release();
 }

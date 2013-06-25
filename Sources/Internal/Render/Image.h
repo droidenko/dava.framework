@@ -73,7 +73,7 @@ public:
 	void ResizeImage(uint32 newWidth, uint32 newHeight);
 
     // changes size of image canvas to square
-    void ResizeImageToSquare();
+    void ResizeToSquare();
 
 	/*
      //	void ConvertToFormat(PixelFormat format);

@@ -32,8 +32,9 @@ public:
 
     
 protected:
-    bool CheckTexureSquareness(Texture *texure, Vector2 &oldSize);
-    void CheckSceneNode(Entity *sceneNode);
+    void MakeTexureSquare(Texture *texure, Vector2 &oldSize);
+    bool CheckTexureSquareness(Texture *texure);
+    void ValidateTextureCoordsOfNodeGeometry(Entity *sceneNode);
 
     Map<Texture*, Vector2> squaredTextures; //value it's scale coeff
     Vector<PolygonGroup*> parsedPG;

@@ -25,6 +25,8 @@
 #include <QPainter>
 #include <QLineEdit>
 
+#include "../../../SceneEditor/EditorSettings.h"
+
 QtPropertyDataDavaVariant::QtPropertyDataDavaVariant(const DAVA::VariantType &value)
 	: curVariantValue(value)
 	, iconCacheIsValid(false)
@@ -190,7 +192,7 @@ void QtPropertyDataDavaVariant::SetValueInternal(const QVariant &value)
 		ToAABBox3(value);
 		break;
 	case DAVA::VariantType::TYPE_FILEPATH:
-		curVariantValue.SetFilePath(DAVA::FilePath(DAVA::FilePath::GetBundleName(), value.toString().toStdString()));
+		curVariantValue.SetFilePath(value.toString().toStdString());
 		break;
 
 	case DAVA::VariantType::TYPE_BYTE_ARRAY:
@@ -473,7 +475,7 @@ QVariant QtPropertyDataDavaVariant::FromDavaVariant(const DAVA::VariantType &var
 		v = FromAABBox3(variant.AsAABBox3());
 		break;
 	case DAVA::VariantType::TYPE_FILEPATH:
-		v = variant.AsFilePath().GetRelativePathname(DAVA::FilePath::GetBundleName()).c_str();
+		v = variant.AsFilePath().GetAbsolutePathname().c_str();
 		break;
 
 	case DAVA::VariantType::TYPE_BYTE_ARRAY:

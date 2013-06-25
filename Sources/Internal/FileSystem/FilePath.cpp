@@ -94,7 +94,13 @@ const List<FilePath> FilePath::GetResourcesFolders()
 #if defined(__DAVAENGINE_WIN32__)
 void FilePath::InitializeBundleName()
 {
-    SetBundleName(FileSystem::Instance()->GetCurrentWorkingDirectory());
+	FilePath execDirectory = FileSystem::Instance()->GetCurrentExecutableDirectory();
+	FilePath workingDirectory = FileSystem::Instance()->GetCurrentWorkingDirectory();
+	SetBundleName(execDirectory);
+	if(workingDirectory != execDirectory)
+	{
+		AddResourcesFolder(workingDirectory);
+	}
 }
 #endif //#if defined(__DAVAENGINE_WIN32__)
 

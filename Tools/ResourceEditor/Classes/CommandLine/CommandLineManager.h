@@ -29,8 +29,13 @@ public:
     bool IsCommandLineModeEnabled() { return isCommandLineModeEnabled; };
     
     void Process();
-    bool PrintResults();
+    void PrintResults();
+	bool NeedCloseApplication();
     
+    CommandLineTool * GetActiveCommandLineTool() { return  activeTool; };
+
+	DAVA::uint32 GetErrorsCount() const;
+
 protected:
 
     void AddCommandLineTool(CommandLineTool *tool);

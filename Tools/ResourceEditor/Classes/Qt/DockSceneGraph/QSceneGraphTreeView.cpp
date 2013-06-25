@@ -200,7 +200,6 @@ void QSceneGraphTreeView::ShowSceneGraphMenu(const QModelIndex &index, const QPo
 
 
 
-		AddActionToMenu(&menu, QString("Remove Root Nodes"), new CommandRemoveRootNodes());
 		AddActionToMenu(&menu, QString("Look at Object"), new CommandLockAtObject());
 		AddActionToMenu(&menu, QString("Remove Object"), new CommandRemoveSceneNode());
 	
@@ -216,6 +215,9 @@ void QSceneGraphTreeView::ShowSceneGraphMenu(const QModelIndex &index, const QPo
                 if (properties && properties->IsKeyExists(String(ResourceEditor::EDITOR_REFERENCE_TO_OWNER)))
                 {
                     String filePathname = properties->GetString(String(ResourceEditor::EDITOR_REFERENCE_TO_OWNER));
+
+                    AddActionToMenu(&menu, QString("Remove Root Nodes"), new CommandRemoveRootNodes());
+                    
                     AddActionToMenu(&menu, QString("Edit Model"), new CommandEditScene(filePathname));
                     AddActionToMenu(&menu, QString("Reload Model"), new CommandReloadScene(filePathname));
                     AddActionToMenu(&menu, QString("Reload Model From"), new CommandReloadEntityFrom(filePathname));

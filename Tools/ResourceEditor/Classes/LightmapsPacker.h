@@ -28,7 +28,7 @@ class LightmapsPacker : public SpritesPacker
 public:
 	LightmapsPacker();
 
-	void Compress();
+	void CreateDescriptors();
 	void ParseSpriteDescriptors();
 	Vector<LightmapAtlasingData> * GetAtlasingData();
 

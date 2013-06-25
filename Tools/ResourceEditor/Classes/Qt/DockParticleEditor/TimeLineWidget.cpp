@@ -1373,12 +1373,12 @@ SetPointValueDlg::SetPointValueDlg(float32 time, float32 minTime, float32 maxTim
 	setLayout(mainBox);
 	
 	QHBoxLayout* valueBox = new QHBoxLayout;
-	timeSpin = new QDoubleSpinBox(this);
+	timeSpin = new EventFilterDoubleSpinBox(this);
 
 	if(isInteger)
 		valueSpinInt = new QSpinBox(this);
 	else
-		valueSpin = new QDoubleSpinBox(this);
+		valueSpin = new EventFilterDoubleSpinBox(this);
 
 	valueBox->addWidget(new QLabel("T:"));
 	valueBox->addWidget(timeSpin);

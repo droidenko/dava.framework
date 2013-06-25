@@ -40,6 +40,7 @@
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Scene/SceneData.h"
 #include "../Qt/Main/QtUtils.h"
+#include "../Qt/Main/QtMainWindowHandler.h"
 #include "../RulerTool/RulerTool.h"
 
 #include "../SceneEditor/EditorConfig.h"
@@ -48,6 +49,10 @@
 #include "../Commands/EditorBodyControlCommands.h"
 #include "../Commands/CommandReloadTextures.h"
 #include "../StringConstants.h"
+
+#include "../CommandLine/CommandLineManager.h"
+#include "../CommandLine/Beast/BeastCommandLineTool.h"
+#include "TexturePacker/CommandLineParser.h"
 
 #include "ArrowsNode.h"
 
@@ -758,6 +763,28 @@ void EditorBodyControl::Update(float32 timeElapsed)
 		PackLightmaps();
 		BeastProxy::Instance()->SafeDeleteManager(&beastManager);
 
+		Landscape *land = scene->GetLandscape(scene);
+		if(land)
+		{
+			FilePath textureName = land->GetTextureName(DAVA::Landscape::TEXTURE_COLOR);
+			textureName.ReplaceFilename("temp_beast.png");
+
+			FileSystem::Instance()->DeleteFile(textureName);
+		}
+
+#if defined (__DAVAENGINE_WIN32__)
+		BeastCommandLineTool *beastTool = dynamic_cast<BeastCommandLineTool *>(CommandLineManager::Instance()->GetActiveCommandLineTool());
+        if(beastTool)
+        {
+            QtMainWindowHandler::Instance()->SaveScene(scene, beastTool->GetScenePathname());
+
+			bool forceClose =	CommandLineParser::CommandIsFound(String("-force"))
+							||  CommandLineParser::CommandIsFound(String("-forceclose"));
+			if(forceClose)
+	            Core::Instance()->Quit();
+        }
+#endif //#if defined (__DAVAENGINE_WIN32__)
+        
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandReloadTextures(), scene);
 	}
 }
@@ -927,20 +954,22 @@ void EditorBodyControl::PackLightmaps()
 	SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
 
 	FilePath inputDir(EditorSettings::Instance()->GetProjectPath()+"DataSource/lightmaps_temp/");
-	FilePath outputDir(sceneData->GetScenePathname() + "_lightmaps/");
-	FileSystem::Instance()->MoveFile(inputDir+"landscape.png", "test_landscape.png", true);
+
+ 	FilePath outputDir = FilePath::CreateWithNewExtension(sceneData->GetScenePathname(),  + ".sc2_lightmaps/");
+
+	FileSystem::Instance()->MoveFile(inputDir+"landscape.png", inputDir+"test_landscape.png", true);
 
 	LightmapsPacker packer;
 	packer.SetInputDir(inputDir);
 
 	packer.SetOutputDir(outputDir);
 	packer.Pack();
-	packer.Compress();
+	packer.CreateDescriptors();
 	packer.ParseSpriteDescriptors();
 
 	BeastProxy::Instance()->UpdateAtlas(beastManager, packer.GetAtlasingData());
 
-	FileSystem::Instance()->MoveFile("test_landscape.png", outputDir+"landscape.png", true);
+	FileSystem::Instance()->MoveFile(inputDir+"test_landscape.png", outputDir+"landscape.png", true);
 }
 
 void EditorBodyControl::Draw(const UIGeometricData &geometricData)

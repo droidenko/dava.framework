@@ -45,6 +45,7 @@
 #include "ModificationWidget.h"
 #include "../Commands/CommandSignals.h"
 #include "SceneEditor/EntityOwnerPropertyHelper.h"
+#include "StringConstants.h"
 
 #include <QPoint>
 #include <QMenu>
@@ -57,7 +58,8 @@
 #include <QStatusBar>
 #include <QSpinBox.h>
 #include <QFileDialog>
-#include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "Render/LibDxtHelper.h"
 
@@ -68,7 +70,6 @@ QtMainWindowHandler::QtMainWindowHandler(QObject *parent)
 	,	menuResentScenes(NULL)
 	,	defaultFocusWidget(NULL)
     ,   statusBar(NULL)
-	,	sceneTabWidget(NULL)
 {
     new CommandsManager();
 	new TextureBrowser((QWidget *) parent);
@@ -93,6 +94,8 @@ QtMainWindowHandler::QtMainWindowHandler(QObject *parent)
 	connect(QtMainWindow::Instance(), SIGNAL(RepackAndReloadFinished()), this, SLOT(ReloadSceneTextures()));
 	connect(CommandSignals::Instance(), SIGNAL(CommandAffectsEntities(DAVA::Scene* , CommandList::eCommandId , const DAVA::Set<DAVA::Entity*>& ) ) ,
 			this,SLOT( OnEntityModified(DAVA::Scene* , CommandList::eCommandId , const DAVA::Set<DAVA::Entity*>& ) ));
+    
+    connect(this, SIGNAL(UpdateCameraLightOnScene(bool)), sceneDataManager, SLOT(UpdateCameraLightOnScene(bool)));
 }
 
 QtMainWindowHandler::~QtMainWindowHandler()
@@ -124,8 +127,31 @@ void QtMainWindowHandler::ClearActions(int32 count, QAction **actions)
 
 void QtMainWindowHandler::NewScene()
 {
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandNewScene(),
-												   SceneDataManager::Instance()->SceneGetLevel()->GetScene());
+    SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
+    if(screen)
+    {
+        SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
+        int32 answer = ShowSaveSceneQuestion(levelScene->GetScene());
+        if(answer == MB_FLAG_CANCEL)
+        {
+            return;
+        }
+        
+        if(answer == MB_FLAG_YES)
+        {
+            bool saved = SaveScene(levelScene->GetScene());
+            if(!saved)
+            {
+                return;
+            }
+        }
+        
+		// Can now create the scene.
+		screen->NewScene();
+        
+        SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
+        SceneDataManager::Instance()->SetActiveScene(activeScene->GetScene());
+    }
 }
 
 
@@ -154,12 +180,102 @@ void QtMainWindowHandler::OpenResentScene(int32 index)
 												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 }
 
-void QtMainWindowHandler::SaveScene()
+bool QtMainWindowHandler::SaveScene()
 {
-    CommandsManager::Instance()->ExecuteAndRelease(new CommandSaveScene(),
-												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
-	UpdateRecentScenesList();
+	return SaveScene(SceneDataManager::Instance()->SceneGetActive()->GetScene());
 }
+
+bool QtMainWindowHandler::SaveScene(Scene *scene)
+{
+    bool sceneWasSaved = false;
+    
+    SceneData *activeScene = SceneDataManager::Instance()->SceneGet(scene);
+    if(activeScene->CanSaveScene())
+    {
+		FilePath currentPath = activeScene->GetScenePathname();
+        if(currentPath.IsEmpty())
+        {
+			currentPath = EditorSettings::Instance()->GetDataSourcePath();
+        }
+        
+        QString filePath = QFileDialog::getSaveFileName(NULL, QString("Save Scene File"), QString(currentPath.GetAbsolutePathname().c_str()),
+                                                        QString("Scene File (*.sc2)")
+                                                        );
+        if(0 < filePath.size())
+        {
+			FilePath normalizedPathname = PathnameToDAVAStyle(filePath);
+			sceneWasSaved = SaveScene(scene, normalizedPathname);
+
+			EditorSettings::Instance()->AddLastOpenedFile(normalizedPathname);
+			UpdateRecentScenesList();
+        }
+    }
+    
+    QtMainWindowHandler::Instance()->RestoreDefaultFocus();
+    return sceneWasSaved;
+}
+
+bool QtMainWindowHandler::SaveScene(Scene *scene, const FilePath &pathname)
+{
+	SaveParticleEmitterNodes(scene);
+
+	SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
+	screen->SaveSceneToFile(pathname);
+
+	return true;
+}
+
+
+void QtMainWindowHandler::SaveParticleEmitterNodes(Scene* scene)
+{
+	if (!scene) return;
+    
+	int32 childrenCount = scene->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		SaveParticleEmitterNodeRecursive(scene->GetChild(i));
+	}
+}
+
+void QtMainWindowHandler::SaveParticleEmitterNodeRecursive(Entity* parentNode)
+{
+	bool needSaveThisLevelNode = true;
+	ParticleEmitter * emitter = GetEmitter(parentNode);
+	if (!emitter)
+	{
+		needSaveThisLevelNode = false;
+	}
+    
+	if (needSaveThisLevelNode)
+	{
+		// Do we have file name? Ask for it, if not.
+		FilePath yamlPath = emitter->GetConfigPath();
+		if (yamlPath.IsEmpty())
+		{
+			QString saveDialogCaption = QString("Save Particle Emitter \"%1\"").arg(QString::fromStdString(parentNode->GetName()));
+			QString saveDialogYamlPath = QFileDialog::getSaveFileName(NULL, saveDialogCaption, "", QString("Yaml File (*.yaml)"));
+            
+			if (!saveDialogYamlPath.isEmpty())
+			{
+				yamlPath = PathnameToDAVAStyle(saveDialogYamlPath);
+			}
+		}
+        
+		if (!yamlPath.IsEmpty())
+		{
+			emitter->SaveToYaml(yamlPath);
+		}
+	}
+    
+	// Repeat for all children.
+	int32 childrenCount = parentNode->GetChildrenCount();
+	for (int32 i = 0; i < childrenCount; i ++)
+	{
+		SaveParticleEmitterNodeRecursive(parentNode->GetChild(i));
+	}
+}
+
+
 
 void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 {
@@ -454,8 +570,7 @@ void QtMainWindowHandler::Beast()
 
 void QtMainWindowHandler::SquareTextures()
 { 
-    SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-    if(screen->CurrentScenePathname().IsEmpty())
+    if(SceneDataManager::Instance()->SceneGetActive()->GetScenePathname().IsEmpty())
         return;
 
     int32 answer = ShowQuestion("Warning!", "All non-square textures will enlarged to square and scene file will resave. Do you want to continue?",
@@ -1019,12 +1134,24 @@ void QtMainWindowHandler::UndoAction()
 {
 	CommandsManager::Instance()->Undo(SceneDataManager::Instance()->SceneGetActive()->GetScene());
 	UpdateUndoActionsState();
+
+	SceneEditor2 *curScene = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+	if(NULL != curScene)
+	{
+		curScene->Undo();
+	}
 }
 
 void QtMainWindowHandler::RedoAction()
 {
 	CommandsManager::Instance()->Redo(SceneDataManager::Instance()->SceneGetActive()->GetScene());
 	UpdateUndoActionsState();
+
+	SceneEditor2 *curScene = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+	if(NULL != curScene)
+	{
+		curScene->Redo();
+	}
 }
 
 void QtMainWindowHandler::UpdateUndoActionsState()
@@ -1082,11 +1209,23 @@ void QtMainWindowHandler::OnSceneReleased(SceneData *scene)
 
 void QtMainWindowHandler::ConvertToShadow()
 {
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandConvertToShadow(),
+    Entity * entity = SceneDataManager::Instance()->SceneGetSelectedNode(SceneDataManager::Instance()->SceneGetActive());
+	CommandsManager::Instance()->ExecuteAndRelease(new CommandConvertToShadow(entity),
 												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 }
 
-void QtMainWindowHandler::SetSceneTabWidget(SceneTabWidget* widget)
+void QtMainWindowHandler::CameraLightTrigerred()
 {
-	this->sceneTabWidget = widget;
+    bool enabled = EditorSettings::Instance()->GetShowEditorCamerLight();
+    EditorSettings::Instance()->SetShowEditorCamerLight(!enabled);
+    
+    emit UpdateCameraLightOnScene(!enabled);
+}
+
+
+void QtMainWindowHandler::OpenHelp()
+{
+    FilePath docsPath = ResourceEditor::DOCUMENTATION_PATH + "index.html";
+    QString docsFile = QString::fromStdString("file:///" + docsPath.GetAbsolutePathname());
+    QDesktopServices::openUrl(QUrl(docsFile));
 }

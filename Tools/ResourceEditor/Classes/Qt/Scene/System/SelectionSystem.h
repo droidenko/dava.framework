@@ -50,6 +50,8 @@ public:
 	void SetPivotPoint(ST_PivotPoint pp);
 	ST_PivotPoint GetPivotPoint() const;
 
+	DAVA::AABBox3 CalcAABox(DAVA::Entity *entity) const;
+
 protected:
 	void Update(DAVA::float32 timeElapsed);
 	void Draw();
@@ -57,13 +59,11 @@ protected:
 	void ProcessUIEvent(DAVA::UIEvent *event);
 	void PropeccCommand(const Command2 *command, bool redo);
 
-	EntityGroup GetSelecetableFromCollision(const EntityGroup *collisionEntities);
-	EntityGroupItem GetSelectableEntity(DAVA::Entity* entity);
-
 	void UpdateHoodPos() const;
 	void SelectedItemsWereModified();
 
-	DAVA::AABBox3 CalcAABox(DAVA::Entity *entity) const;
+	EntityGroup GetSelecetableFromCollision(const EntityGroup *collisionEntities);
+	EntityGroupItem GetSelectableEntity(DAVA::Entity* entity);
 
 private:
 	int drawMode;

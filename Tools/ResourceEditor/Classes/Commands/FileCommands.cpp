@@ -121,127 +121,7 @@ void CommandOpenScene::Execute()
     }
 }
 
-//New
-CommandNewScene::CommandNewScene()
-:   Command(Command::COMMAND_CLEAR_UNDO_QUEUE, CommandList::ID_COMMAND_NEW_SCENE)
-{
-}
-
-
-void CommandNewScene::Execute()
-{
-    SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-    if(screen)
-    {
-        SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
-        int32 saved = SaveSceneIfChanged(levelScene->GetScene());
-        if(saved == MB_FLAG_CANCEL)
-        {
-            return;
-        }
-
-		// Can now create the scene.
-		screen->NewScene();
-//        SceneValidator::Instance()->EnumerateSceneTextures();
-        
-        SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
-        SceneDataManager::Instance()->SetActiveScene(activeScene->GetScene());
-    }
-}
-
-
 //Save
-CommandSaveScene::CommandSaveScene()
-:   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_SAVE_SCENE)
-{
-}
-
-void CommandSaveScene::Execute()
-{
-    SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
-    if(activeScene->CanSaveScene())
-    {
-        SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-        
-		FilePath currentPath;
-		if(!screen->CurrentScenePathname().IsEmpty())
-		{
-			currentPath = screen->CurrentScenePathname();    
-		}
-		else
-		{
-			currentPath = EditorSettings::Instance()->GetDataSourcePath();
-		}
-
-        QString filePath = QFileDialog::getSaveFileName(NULL, QString("Save Scene File"), QString(currentPath.GetAbsolutePathname().c_str()),
-                                                        QString("Scene File (*.sc2)")
-                                                        );
-        if(0 < filePath.size())
-        {
-			FilePath normalizedPathname = PathnameToDAVAStyle(filePath);
-
-			EditorSettings::Instance()->AddLastOpenedFile(normalizedPathname);
-
-			SaveParticleEmitterNodes(activeScene->GetScene());
-            screen->SaveSceneToFile(normalizedPathname);
-        }
-    }
-
-	QtMainWindowHandler::Instance()->RestoreDefaultFocus();
-}
-
-void CommandSaveScene::SaveParticleEmitterNodes(EditorScene* scene)
-{
-	if (!scene)
-	{
-		return;
-	}
-
-	int32 childrenCount = scene->GetChildrenCount();
-	for (int32 i = 0; i < childrenCount; i ++)
-	{
-		SaveParticleEmitterNodeRecursive(scene->GetChild(i));
-	}
-}
-
-void CommandSaveScene::SaveParticleEmitterNodeRecursive(Entity* parentNode)
-{
-	bool needSaveThisLevelNode = true;
-	ParticleEmitter * emitter = GetEmitter(parentNode);
-	if (!emitter)
-	{
-		needSaveThisLevelNode = false;
-	}
-
-	if (needSaveThisLevelNode)
-	{
-		// Do we have file name? Ask for it, if not.
-		FilePath yamlPath = emitter->GetConfigPath();
-		if (yamlPath.IsEmpty())
-		{
-			QString saveDialogCaption = QString("Save Particle Emitter \"%1\"").arg(QString::fromStdString(parentNode->GetName()));
-			QString saveDialogYamlPath = QFileDialog::getSaveFileName(NULL, saveDialogCaption, "", QString("Yaml File (*.yaml)"));
-
-			if (!saveDialogYamlPath.isEmpty())
-			{
-				yamlPath = PathnameToDAVAStyle(saveDialogYamlPath);
-			}
-		}
-
-		if (!yamlPath.IsEmpty())
-		{
-			emitter->SaveToYaml(yamlPath);
-		}
-	}
-
-	// Repeat for all children.
-	int32 childrenCount = parentNode->GetChildrenCount();
-	for (int32 i = 0; i < childrenCount; i ++)
-	{
-		SaveParticleEmitterNodeRecursive(parentNode->GetChild(i));
-	}
-}
-
 CommandSaveSpecifiedScene::CommandSaveSpecifiedScene(Entity* activeScene, FilePath& filePath)
 :	Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_SAVE_SPECIFIED_SCENE)
 {
@@ -267,7 +147,7 @@ void CommandSaveSpecifiedScene::Execute()
 		DVASSERT(activeScene);
 		Entity* entityToAdd = activeScene->Clone();
 		
-		entityToAdd->RestoreOriginalTransforms();
+		entityToAdd->SetLocalTransform(Matrix4::IDENTITY);
 
 		Scene* sc = new Scene();
 		
@@ -279,10 +159,21 @@ void CommandSaveSpecifiedScene::Execute()
 			{
 				sc->AddNode(entityToAdd);
 			}
-			
-			for(uint32 i = 0; i< size; ++i)
+			else
 			{
-				sc->AddNode(entityToAdd->GetChild(i));
+				Vector<Entity*> tempV;
+				tempV.reserve(size);
+				for (int32 ci = 0; ci < size; ++ci)
+				{
+					Entity *child = entityToAdd->GetChild(ci);
+					child->Retain();
+					tempV.push_back(child);
+				}
+				for (int32 ci = 0; ci < (int32)tempV.size(); ++ci)
+				{
+					sc->AddNode(tempV[ci]);
+					tempV[ci]->Release();
+				}
 			}
 		}
 		else

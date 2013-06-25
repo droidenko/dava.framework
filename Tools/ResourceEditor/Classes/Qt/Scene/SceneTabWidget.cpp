@@ -71,7 +71,8 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 
 	OpenTab("/Users/yuricoder/Work/DAVA_Framework/work/dava.framework_scenesamples/BigBatchScene/DataSource/3d/Maps/desert_train/desert_train.sc2");
 	OpenTab("/Users/yuricoder/Work/DAVA_Framework/work/dava.framework_scenesamples/BigBatchScene/Data/3d/Maps/desert_train/desert_train.sc2");
-	//OpenTab("/Projects/dava.wot.art/DataSource/3d/Maps/dike_village/dike_village.sc2");
+	OpenTab("/Projects/dava.wot.art/DataSource/3d/Tanks/USSR/T-44.sc2");
+	OpenTab("/Projects/dava.wot.art/DataSource/3d/Maps/dike_village/dike_village.sc2");
 	//AddTab("/Projects/dava.wot.art/DataSource/3d/Maps/desert_train/desert_train.sc2");
 
 	QObject::connect(tabBar, SIGNAL(currentChanged(int)), this, SLOT(TabBarCurrentChanged(int)));
@@ -444,7 +445,7 @@ void SceneTabWidget::SetCollisionDrawMode(int mode)
 	}
 }
 
-SceneEditor2* SceneTabWidget::GetSceneEditorForCurrentTab() const
+SceneEditor2* SceneTabWidget::GetCurrentScene() const
 {
 	return GetTabScene(GetCurrentTab());
 }

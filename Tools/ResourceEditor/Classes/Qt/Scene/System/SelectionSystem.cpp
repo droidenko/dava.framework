@@ -167,7 +167,14 @@ void SceneSelectionSystem::Draw()
 
 void SceneSelectionSystem::PropeccCommand(const Command2 *command, bool redo)
 {
-
+	if(NULL != command)
+	{
+		if(command->GetId() == CMDID_ENTITY_REMOVE)
+		{
+			// remove from selection entity that was removed by command
+			RemSelection(command->GetEntity());
+		}
+	}
 }
 
 void SceneSelectionSystem::SetSelection(DAVA::Entity *entity)

@@ -34,8 +34,9 @@ ShadowVolume::ShadowVolume()
 	shader->LoadFromYaml("~res:/Shaders/ShadowVolume/shadowvolume.shader");
 	shader->Recompile();
 
-    
     SetOwnerLayerName(LAYER_SHADOW_VOLUME);
+    
+    aabbox = AABBox3(Vector3(), Vector3());
 }
 
 ShadowVolume::~ShadowVolume()

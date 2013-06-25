@@ -17,6 +17,8 @@
 #include "TextureSquarenessChecker.h"
 #include "Qt/Scene/SceneDataManager.h"
 #include "SceneEditor/SceneEditorScreenMain.h"
+#include "Scene3D/Components/ComponentHelpers.h"
+#include "Qt/Main/QtUtils.h"
 
 TextureSquarenessChecker::TextureSquarenessChecker()
 {
@@ -39,9 +41,10 @@ void TextureSquarenessChecker::CheckSceneForTextureSquarenessAndResave(Scene *sc
             Texture *texture = allMaterials[i]->GetTexture(Material::TEXTURE_DIFFUSE);
             if(texture)
             {
-                Vector2 oldTextureSize;
-                if(!CheckTexureSquareness(texture, oldTextureSize))
+                if(!CheckTexureSquareness(texture))
                 {
+                    Vector2 oldTextureSize;
+                    MakeTexureSquare(texture, oldTextureSize);
                     if(squaredTextures.count(texture) == 0)
                     {
                         float32 newSize = texture->GetWidth();
@@ -55,10 +58,11 @@ void TextureSquarenessChecker::CheckSceneForTextureSquarenessAndResave(Scene *sc
 
         if(squaredTextures.size())
         {
-            CheckSceneNode(scene);
+            ValidateTextureCoordsOfNodeGeometry(scene);
 
-            SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
-            FilePath currentPath = screen->CurrentScenePathname();
+			FilePath currentPath = SceneDataManager::Instance()->SceneGetActive()->GetScenePathname();
+
+			SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
             screen->SaveSceneToFile(currentPath);
         }
     }
@@ -67,7 +71,7 @@ void TextureSquarenessChecker::CheckSceneForTextureSquarenessAndResave(Scene *sc
     parsedPG.clear();
 }
 
-void TextureSquarenessChecker::CheckSceneNode(Entity *sceneNode)
+void TextureSquarenessChecker::ValidateTextureCoordsOfNodeGeometry(Entity *sceneNode)
 {
     if(!sceneNode)
         return;
@@ -77,19 +81,15 @@ void TextureSquarenessChecker::CheckSceneNode(Entity *sceneNode)
     {
         Entity *node = sceneNode->GetChild(i);
 
-        CheckSceneNode(node);
+        ValidateTextureCoordsOfNodeGeometry(node);
 
-        RenderComponent *rc = static_cast<RenderComponent *>(node->GetComponent(Component::RENDER_COMPONENT));
-        if(!rc) continue;
-
-        RenderObject *ro = rc->GetRenderObject();
+        RenderObject *ro = GetRenerObject(node);
         if(!ro) continue;
 
         uint32 count = ro->GetRenderBatchCount();
         for(uint32 b = 0; b < count; ++b)
         {
             RenderBatch *rb = ro->GetRenderBatch(b);
-            if(!rb) continue;
 
             PolygonGroup *polygonGroup = rb->GetPolygonGroup();
             if(!polygonGroup) continue;
@@ -111,8 +111,9 @@ void TextureSquarenessChecker::CheckSceneNode(Entity *sceneNode)
                     texCoord.y *= newScale.y;
                     polygonGroup->SetTexcoord(0, i, texCoord);
 
-                    polygonGroup->BuildBuffers();
                 }
+
+                polygonGroup->BuildBuffers();
 
                 parsedPG.push_back(polygonGroup);
             }
@@ -121,38 +122,27 @@ void TextureSquarenessChecker::CheckSceneNode(Entity *sceneNode)
     }
 }
 
-bool TextureSquarenessChecker::CheckTexureSquareness(Texture *texure, Vector2 &oldSize)
+bool TextureSquarenessChecker::CheckTexureSquareness(Texture *texure)
 {
     if(texure->GetWidth() == texure->GetHeight())
     {
         return true;
     }
-    else
-    {
-        FilePath texturePath = texure->GetPathname();
-        texturePath = FilePath::CreateWithNewExtension(texturePath, ".png");
-        
-        File *file = File::Create(texturePath, File::OPEN | File::READ);
-        if(!file)
-        {
-            Logger::Debug("[SceneValidator::ValidateTexureSquareness] Cannot open file %s", texturePath.GetAbsolutePathname().c_str());
-            return true;
-        }
 
-        Vector<Image *> imageSet = ImageLoader::CreateFromFile(file);
-        SafeRelease(file);
-        if(imageSet.size() != 0)
-        {
-            Image * img = imageSet[0];
+    return false;
+}
 
-            oldSize = Vector2(img->GetWidth(), img->GetHeight());
-            img->ResizeImageToSquare();
-            float32 newSize = img->GetWidth();
-            ImageLoader::Save(img, texturePath);
+void TextureSquarenessChecker::MakeTexureSquare(Texture *texure, Vector2 &oldSize)
+{
+    FilePath texturePath = texure->GetPathname();
+    texturePath = FilePath::CreateWithNewExtension(texturePath, ".png");
 
-            texure->Reload();
-        }
+    Image * img = CreateTopLevelImage(texturePath);
 
-        return false;
-    }
+    oldSize = Vector2(img->GetWidth(), img->GetHeight());
+    img->ResizeToSquare();
+    float32 newSize = img->GetWidth();
+    ImageLoader::Save(img, texturePath);
+
+    texure->Reload();
 }

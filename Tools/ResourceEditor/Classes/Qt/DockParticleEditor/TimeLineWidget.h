@@ -22,10 +22,10 @@
 #include <QWidget>
 #include <QString>
 #include <QDialog>
-#include <QDoubleSpinBox>
 #include <QScrollBar.h>
 #include <qslider.h>
 #include "ScrollZoomWidget.h"
+#include "../CustomControls/EventFilterDoubleSpinBox.h"
 
 using namespace DAVA;
 
@@ -164,8 +164,8 @@ public:
 private:
 	bool isInteger;
 
-	QDoubleSpinBox* timeSpin;
-	QDoubleSpinBox* valueSpin;
+	EventFilterDoubleSpinBox* timeSpin;
+	EventFilterDoubleSpinBox* valueSpin;
 	QSpinBox* valueSpinInt;
 };
 

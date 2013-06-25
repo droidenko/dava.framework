@@ -1,7 +1,5 @@
 package com.dava.framework;
 
-import android.util.Log;
-
 public class JNITextField {
 	final static String TAG = "JNITextField";
 	

@@ -676,7 +676,7 @@ ParticleTimeLineWidget::SetPointValueDlg::SetPointValueDlg(float32 value, float3
 	QVBoxLayout* mainBox = new QVBoxLayout;
 	setLayout(mainBox);
 	
-	valueSpin = new QDoubleSpinBox(this);
+	valueSpin = new EventFilterDoubleSpinBox(this);
 	mainBox->addWidget(valueSpin);
 	
 	QHBoxLayout* btnBox = new QHBoxLayout;

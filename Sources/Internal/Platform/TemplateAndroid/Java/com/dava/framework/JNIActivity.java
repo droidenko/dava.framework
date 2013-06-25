@@ -155,6 +155,13 @@ public abstract class JNIActivity extends Activity implements JNIAccelerometer.J
         	glView.onResume();
         }
         
+        if (editText != null)
+        {
+        	//YZ restore keyboard
+    		InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    		input.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+        }
+        
         Log.i(JNIConst.LOG_TAG, "[Activity::onResume] finish");
     }
 
@@ -194,6 +201,13 @@ public abstract class JNIActivity extends Activity implements JNIAccelerometer.J
         	nativeIsFinishing();
         }
         
+        if (editText != null)
+        {
+        	//YZ hide keyboard
+        	InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        	input.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+
         Log.i(JNIConst.LOG_TAG, "[Activity::onPause] finish");
     }
 

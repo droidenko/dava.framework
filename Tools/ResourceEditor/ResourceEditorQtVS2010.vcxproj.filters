@@ -175,6 +175,12 @@
     <Filter Include="Classes\Commands2">
       <UniqueIdentifier>{cbfcc1d7-9146-43fd-a91a-ec972c86126d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\CommandLine\Beast">
+      <UniqueIdentifier>{0dc39ab9-3c4d-4e3c-ab77-216083362ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Qt\CustomControls">
+      <UniqueIdentifier>{b01bcaef-a885-49ab-a146-e565b9716060}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Collada\ColladaAnimatedMesh.cpp">
@@ -1701,6 +1707,33 @@
     <ClCompile Include="Classes\BatchEntitiesHelper.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\CommandLine\Beast\BeastCommandLineTool.cpp">
+      <Filter>Classes\CommandLine\Beast</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\CustomControls\EventFilterDoubleSpinBox.cpp">
+      <Filter>Classes\Qt\CustomControls</Filter>
+    </ClCompile>
+    <ClCompile Include="_GeneratedQt\CustomControls\EventFilterDoubleSpinBox_moc.cpp">
+      <Filter>QtGenerated</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\Scene\System\StructureSystem.cpp">
+      <Filter>Classes\Qt\Scene\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\EntityRemoveCommand.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\EntityInsertCommand.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\EntityMoveCommand.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\EntityAddCommand.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Commands2\CommandAction.cpp">
+      <Filter>Classes\Commands2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h">
@@ -3001,6 +3034,30 @@
     </ClInclude>
     <ClInclude Include="Classes\BatchEntitiesHelper.h">
       <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\CommandLine\Beast\BeastCommandLineTool.h">
+      <Filter>Classes\CommandLine\Beast</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\CustomControls\EventFilterDoubleSpinBox.h">
+      <Filter>Classes\Qt\CustomControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\Scene\System\StructureSystem.h">
+      <Filter>Classes\Qt\Scene\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\EntityRemoveCommand.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\EntityInsertCommand.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\EntityMoveCommand.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\EntityAddCommand.h">
+      <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Commands2\CommandAction.h">
+      <Filter>Classes\Commands2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -52,6 +52,8 @@ enum eMessageBoxFlags
 };
 
 int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int buttons, int defaultButton);
-int SaveSceneIfChanged(DAVA::Scene *scene);
+int ShowSaveSceneQuestion(DAVA::Scene *scene);
+
+
 
 #endif // __QT_UTILS_H__

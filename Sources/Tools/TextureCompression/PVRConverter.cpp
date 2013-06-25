@@ -36,7 +36,7 @@ FilePath PVRConverter::ConvertPngToPvr(const TextureDescriptor &descriptor, eGPU
     
 	if(!command.empty())
 	{
- 		FileSystem::Instance()->Spawn(Format("\"%s\"", command.c_str()));
+		FileSystem::Instance()->Spawn("\"" + command + "\"");
 		outputName = GetPVRToolOutput(descriptor, gpuFamily);
 	}
 
@@ -45,7 +45,6 @@ FilePath PVRConverter::ConvertPngToPvr(const TextureDescriptor &descriptor, eGPU
 
 String PVRConverter::GetCommandLinePVR(const TextureDescriptor &descriptor, eGPUFamily gpuFamily)
 {
-// 	String command = "\"" + pvrTexToolPathname.GetAbsolutePathname() + "\"";
 	String command = pvrTexToolPathname.GetAbsolutePathname();
 	String format = pixelFormatToPVRFormat[(PixelFormat) descriptor.compression[gpuFamily].format];
 

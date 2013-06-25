@@ -32,12 +32,13 @@ namespace ResourceEditor
 	static const String SWITCH_NODE_NAME = "SwitchNode";
 	static const String PARTICLE_EFFECT_NODE_NAME = "Particle Effect";
 	static const String LAYER_NODE_NAME = "Layer";
-	
+
 	// Base node names
 	static const String EDITOR_BASE = "editor.";
 	static const String EDITOR_MAIN_CAMERA = "editor.main-camera";
 	static const String EDITOR_DEBUG_CAMERA = "editor.debug-camera";
 	static const String EDITOR_ARROWS_NODE = "editor.arrows-node";
+	static const String EDITOR_CAMERA_LIGHT = "editor.camera-light";
 	
 	// Headers
 	static const WideString CREATE_NODE_LANDSCAPE = L"createnode.landscape";
@@ -54,6 +55,9 @@ namespace ResourceEditor
 	static const String EDITOR_REFERENCE_TO_OWNER = "editor.referenceToOwner";
 	static const String EDITOR_IS_LOCKED = "editor.isLocked";
 	static const String EDITOR_DO_NOT_REMOVE = "editor.donotremove";
+
+    //Documentation
+    static const String DOCUMENTATION_PATH = "~doc:/ResourceEditorHelp/";
 }
 
 #endif //#ifndef __STRING_CONSTANTS_H__

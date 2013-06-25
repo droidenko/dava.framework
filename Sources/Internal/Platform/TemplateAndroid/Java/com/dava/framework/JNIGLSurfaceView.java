@@ -8,8 +8,8 @@ import com.bda.controller.StateEvent;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -20,21 +20,11 @@ public class JNIGLSurfaceView extends GLSurfaceView
 
 	private native void nativeOnInput(int action, int id, float x, float y, double time, int source);
 	private native void nativeOnKeyDown(int keyCode);
+	private native void nativeOnKeyUp(int keyCode);
 	
-	public static int MSG_GL_INITIALIZED = 0x1;
-
 	MOGAListener mogaListener = null;
-	Handler messageHandler = new Handler()
-	{
-		@Override
-		public void handleMessage(android.os.Message msg)
-		{
-			if (msg.what == MSG_GL_INITIALIZED)
-			{
-				setRenderMode(RENDERMODE_CONTINUOUSLY);
-			}
-		};
-	};
+
+	boolean[] pressedKeys = new boolean[KeyEvent.getMaxKeyCode()];
 
 	public JNIGLSurfaceView(Context context) 
 	{
@@ -56,11 +46,16 @@ public class JNIGLSurfaceView extends GLSurfaceView
 		setEGLContextFactory(new JNIContextFactory());
 		setEGLConfigChooser(new JNIConfigChooser(8, 8, 8, 8, 16, 8));
 
-		mRenderer = new JNIRenderer(messageHandler);
+		mRenderer = new JNIRenderer();
 		setRenderer(mRenderer);
-		setRenderMode(RENDERMODE_WHEN_DIRTY);
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
 		
 		mogaListener = new MOGAListener(this);
+		
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+		{
+			setPreserveEGLContextOnPause(true);
+		}
 	}
 	
 	@Override
@@ -81,6 +76,13 @@ public class JNIGLSurfaceView extends GLSurfaceView
 			}
 		});
 	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
+	};
 
 	class InputRunnable implements Runnable
 	{
@@ -183,11 +185,21 @@ public class JNIGLSurfaceView extends GLSurfaceView
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	queueEvent(new KeyInputRunnable(keyCode));
+    	if(pressedKeys[keyCode] == false)
+    		queueEvent(new KeyInputRunnable(keyCode));
+    	pressedKeys[keyCode] = true;
+    	
     	if(keyCode == KeyEvent.KEYCODE_BACK)
     		return super.onKeyDown(keyCode, event);
     	else
     		return true;
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	pressedKeys[keyCode] = false;
+        nativeOnKeyUp(keyCode);
+    	return super.onKeyUp(keyCode, event);
     }
     
     @Override

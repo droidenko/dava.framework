@@ -6,8 +6,6 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
-import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -25,17 +23,17 @@ public class JNIRenderer implements GLSurfaceView.Renderer {
 	private int width = 0;
 	private int height = 0;
 	
-	private Handler msgHandler = null;
+	private boolean isRenderRecreated = false;
 	
-	public JNIRenderer(Handler handler)
+	public JNIRenderer()
 	{
-		msgHandler = handler;
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.w(JNIConst.LOG_TAG, "_________onSurfaceCreated_____!!!!_____");
 
+		isRenderRecreated = true;
 		nativeRenderRecreated();
 
 		LogExtensions();
@@ -57,11 +55,15 @@ public class JNIRenderer implements GLSurfaceView.Renderer {
 	@Override
 	public void onSurfaceChanged(GL10 gl, int w, int h) {
 		Log.w(JNIConst.LOG_TAG, "_________onSurfaceChanged");
-		width = w;
-		height = h;
+		if (isRenderRecreated || width != w || height != h)
+		{
+			width = w;
+			height = h;
 
-		nativeResize(width, height);
-		OnResume();
+			nativeResize(width, height);
+			OnResume();
+			isRenderRecreated = false;
+		}
 
 		Log.w(JNIConst.LOG_TAG, "_________onSurfaceChanged__DONE___");
 	}
@@ -85,8 +87,5 @@ public class JNIRenderer implements GLSurfaceView.Renderer {
 	public void OnResume()
 	{
 		nativeOnResumeView();
-		Message initialiedMsg = new Message();
-		initialiedMsg.what = JNIGLSurfaceView.MSG_GL_INITIALIZED;
-		msgHandler.sendMessage(initialiedMsg);
 	}
 }

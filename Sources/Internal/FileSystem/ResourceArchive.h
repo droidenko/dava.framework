@@ -64,6 +64,11 @@ public:
 	// Loading resources functions
 	
 
+    //! \brief function to get file size in archive
+    //! \return file size
+    int32	GetFileSize(const uint32 resourceIndex) const;
+
+
 	//! \brief function to get this archive file count
 	//! \return file count
 	int32	GetFileCount() const;
@@ -115,6 +120,8 @@ public:
 	//! \return if succeed returns number from 0 to added resource file count. 
 	//!			else return -1.
 	int32	SaveProgress(int32 * resourcePackedSize = 0, int32 * resourceRealSize = 0);
+
+    void    UnpackToFolder(const FilePath & dirPath);
 
 private:
 

@@ -164,7 +164,13 @@ namespace DAVA
 
 		if(wasCreated)
 		{
+			RenderManager::Instance()->Lost();
+			RenderResource::SaveAllResourcesToSystemMem();
+			RenderResource::LostAllResources();
+
 			ResizeView(w, h);
+
+			RenderManager::Instance()->Invalidate();
 			RenderResource::InvalidateAllResources();
 		}
 		else
@@ -240,10 +246,6 @@ namespace DAVA
 	{
 		Logger::Debug("[CorePlatformAndroid::StopForeground]");
 
-		RenderManager::Instance()->Invalidate();
-		RenderResource::SaveAllResourcesToSystemMem();
-		RenderResource::LostAllResources();
-
 		DAVA::Core::Instance()->GoBackground(isLock);
 
 		foreground = false;
@@ -253,31 +255,16 @@ namespace DAVA
 	}
 
 	static Vector<DAVA::UIEvent> activeTouches;
-//	void CorePlatformAndroid::KeyUp(int32 keyCode)
-//	{
-//		Vector<DAVA::UIEvent> touches;
-//		Vector<DAVA::UIEvent> emptyTouches;
-//
-//		for(Vector<DAVA::UIEvent>::iterator it = activeTouches.begin(); it != activeTouches.end(); it++)
-//		{
-//			touches.push_back(*it);
-//		}
-//
-//		DAVA::UIEvent ev;
-//		ev.keyChar = (char16)keyCode;
-//		ev.phase = DAVA::UIEvent::PHASE_KEYCHAR;
-//		ev.tapCount = 1;
-//		ev.tid = (int32)keyCode;
-//
-//		touches.push_back(ev);
-//
-//		UIControlSystem::Instance()->OnInput(0, emptyTouches, touches);
-//		touches.pop_back();
-//		UIControlSystem::Instance()->OnInput(0, emptyTouches, touches);
-//	}
+
+	void CorePlatformAndroid::KeyUp(int32 keyCode)
+	{
+		InputSystem::Instance()->GetKeyboard()->OnSystemKeyUnpressed(keyCode);
+	}
 
 	void CorePlatformAndroid::KeyDown(int32 keyCode)
 	{
+		InputSystem::Instance()->GetKeyboard()->OnSystemKeyPressed(keyCode);
+
 		UIEvent * keyEvent = new UIEvent;
 		keyEvent->keyChar = 0;
 		keyEvent->phase = DAVA::UIEvent::PHASE_KEYCHAR;

@@ -117,6 +117,7 @@ public:
 	bool ChangeDisplayMode(DisplayMode mode, bool isFullscreen);
 	
 #if defined(__DAVAENGINE_ANDROID__)
+	void Lost();
 	void Invalidate();
 #endif
 

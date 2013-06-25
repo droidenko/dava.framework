@@ -15,6 +15,7 @@
 =====================================================================================*/
 
 #include "Commands2/CommandStack.h"
+#include "Commands2/CommandAction.h"
 
 CommandStack::CommandStack()
 	: commandListLimit(0)
@@ -104,13 +105,22 @@ void CommandStack::Exec(Command2 *command)
 {
 	if(NULL != command)
 	{
-		if(NULL != curBatchCommand)
+		CommandAction* action = dynamic_cast<CommandAction*>(command);
+		if (!action)
 		{
-			curBatchCommand->Add(command);
+			if(NULL != curBatchCommand)
+			{
+				curBatchCommand->Add(command);
+			}
+			else
+			{
+				ExecInternal(command);
+			}
 		}
 		else
 		{
-			ExecInternal(command);
+			action->Redo();
+			delete action;
 		}
 	}
 }

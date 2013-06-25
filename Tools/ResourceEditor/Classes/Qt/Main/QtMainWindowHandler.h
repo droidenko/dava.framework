@@ -26,7 +26,7 @@
 #include "DAVAEngine.h"
 #include "../Constants.h"
 #include "Classes/SceneEditor/EditorSettings.h"
-#include "Classes/Qt/Scene/SceneTabWidget.h"
+
 #include "TextureBrowser/TextureBrowser.h"
 #include "MaterialBrowser/MaterialBrowser.h"
 #include "Classes/Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
@@ -70,8 +70,7 @@ public:
     
     void RegisterStatusBar(QStatusBar *registeredSatusBar);
     void ShowStatusBarMessage(const DAVA::String &message, DAVA::int32 displayTime = 0);
-    void SetSceneTabWidget(SceneTabWidget* widget);
-
+    
     void SetWaitingCursorEnabled(bool enabled);
     
 	//custom colors
@@ -98,6 +97,10 @@ public:
 	void SetAreaButtonStateVisibilityTool(bool state);
 
 	void UpdateUndoActionsState();
+    
+    bool SaveScene(Scene *scene);
+	bool SaveScene(Scene *scene, const FilePath &pathname);
+
 
 public slots:
     void CreateNodeTriggered(QAction *nodeAction);
@@ -109,9 +112,11 @@ public slots:
     void OpenScene();
     void OpenProject();
     void OpenResentScene(DAVA::int32 index);
-    void SaveScene();
+
+	bool SaveScene();
     void ExportMenuTriggered(QAction *exportAsAction);
-    void SaveToFolderWithChilds();
+
+	void SaveToFolderWithChilds();
 
 	//Edit
 	void UndoAction();
@@ -136,6 +141,9 @@ public slots:
     void ToggleNotPassableTerrain();
     void ReloadMenuTriggered(QAction *reloadAsAction);
     
+    //Help
+    void OpenHelp();
+
     //scene graph
     void RefreshSceneGraph();
     
@@ -190,8 +198,12 @@ public slots:
 
 	void OnEntityModified(DAVA::Scene* scene, CommandList::eCommandId id, const DAVA::Set<DAVA::Entity*>& affectedEntities);
 
+    void CameraLightTrigerred();
+
+    
 signals:
 	void ProjectChanged();
+    void UpdateCameraLightOnScene(bool show);
 
 private:
     //create node
@@ -204,7 +216,10 @@ private:
     void ClearActions(int32 count, QAction **actions);
 
 	void UpdateModificationActions();
-	void ExecuteModifyBatchStateCommand(bool isBatch);
+    
+	void SaveParticleEmitterNodes(Scene* scene);
+	void SaveParticleEmitterNodeRecursive(Entity* parentNode);
+
 
 private:
 	//set switch index
@@ -245,7 +260,6 @@ private:
 
     QMenu *menuResentScenes;
 	QWidget *defaultFocusWidget;
-	SceneTabWidget *sceneTabWidget;
     
     QStatusBar *statusBar;
 };

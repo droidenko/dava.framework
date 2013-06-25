@@ -43,19 +43,18 @@ void CommandBeast::Execute()
 }
 
 
-CommandConvertToShadow::CommandConvertToShadow()
-:   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_CONVERT_TO_SHADOW)
+CommandConvertToShadow::CommandConvertToShadow(DAVA::Entity * entity)
+:   Command(Command::COMMAND_UNDO_REDO, CommandList::ID_COMMAND_CONVERT_TO_SHADOW)
 {
-
+	affectedEntity = entity;
+    changedRenderBatch = 0;
 }
 
 void CommandConvertToShadow::Execute()
 {
-	Entity * entity = SceneDataManager::Instance()->SceneGetSelectedNode(SceneDataManager::Instance()->SceneGetActive());
-	if(entity)
+	if(affectedEntity)
 	{
-		RenderComponent * rc = static_cast<RenderComponent*>(entity->GetComponent(Component::RENDER_COMPONENT));
-		RenderObject * ro = GetRenerObject(entity);
+		RenderObject * ro = GetRenerObject(affectedEntity);
 		if (NULL == ro)
 		{
 			// Yuri Coder, 2013/05/17. This Entity doesn't have Render Object and can't be converted to Shadow.
@@ -69,23 +68,49 @@ void CommandConvertToShadow::Execute()
 
 			ShadowVolume * shadowVolume = ro->CreateShadow();
 
-			ro->RemoveRenderBatch(ro->GetRenderBatch(0));
+            changedRenderBatch = ro->GetRenderBatch(0);
+            changedRenderBatch->Retain();
+
+			ro->RemoveRenderBatch(changedRenderBatch);
 			ro->AddRenderBatch(shadowVolume);
 
-			entity->SetLocalTransform(entity->GetLocalTransform());//just forced update of worldTransform
+			affectedEntity->SetLocalTransform(affectedEntity->GetLocalTransform());//just forced update of worldTransform
 
-			
-			SceneDataManager::Instance()->SceneGetActive()->SelectNode(entity);
-
-			affectedEntity = entity;
+			SceneDataManager::Instance()->SceneGetActive()->SelectNode(affectedEntity);
 		}
 	}
+}
+
+void CommandConvertToShadow::Cancel()
+{
+    if(changedRenderBatch && affectedEntity)
+    {
+        RenderObject * ro = GetRenerObject(affectedEntity);
+        if(ro && ro->GetRenderBatchCount() == 1 && typeid(*(ro->GetRenderBatch(0))) == typeid(DAVA::ShadowVolume))
+        {
+            SceneDataManager::Instance()->SceneGetActive()->SelectNode(0);
+
+            RenderBatch * shadowVolume = ro->GetRenderBatch(0);
+            ro->RemoveRenderBatch(shadowVolume);
+            shadowVolume->Release();
+
+            ro->AddRenderBatch(changedRenderBatch);
+            changedRenderBatch->Release();
+
+            affectedEntity->SetLocalTransform(affectedEntity->GetLocalTransform());
+
+            SceneDataManager::Instance()->SceneGetActive()->SelectNode(affectedEntity);
+        }
+    }
 }
 
 DAVA::Set<DAVA::Entity*> CommandConvertToShadow::GetAffectedEntities()
 {
 	Set<Entity*> entities;
-	entities.insert(affectedEntity);
+	if(affectedEntity)
+	{
+		entities.insert(affectedEntity);
+	}
 
 	return entities;
 }

@@ -40,6 +40,9 @@ public:
 	void SetViewportRect(const DAVA::Rect &rect);
 	const DAVA::Rect GetViewportRect();
 
+	void LookAt(const DAVA::AABBox3 &box);
+	void MoveTo(const DAVA::Vector3 &pos, const DAVA::Vector3 &direction = DAVA::Vector3());
+
 	DAVA::Vector2 GetScreenPos(const DAVA::Vector3 &pos3);
 	DAVA::Vector3 GetScenePos(const DAVA::float32 x, const DAVA::float32 y, const DAVA::float32 z);
 
@@ -59,6 +62,11 @@ protected:
 	DAVA::Vector2 rotateStartPoint;
 	DAVA::Vector2 rotateStopPoint;
 
+	bool animateToNewPos;
+	DAVA::float32 animateToNewPosTime;
+	DAVA::Vector3 newPos;
+	DAVA::Vector3 newDir;
+
 	DAVA::float32 curViewAngleZ, curViewAngleY;
 	const DAVA::float32 maxViewAngle;
 
@@ -68,6 +76,8 @@ protected:
 	void MouseMoveCameraPosition();
 	void MouseMoveCameraDirection();
 	void MouseMoveCameraPosAroundPoint(const DAVA::Vector3 &point);
+
+	void MoveAnimate(DAVA::float32 timeElapsed);
 };
 
 #endif

@@ -64,7 +64,7 @@ ParticleEmitterPropertiesWidget::ParticleEmitterPropertiesWidget(QWidget* parent
 
 	QHBoxLayout *emitterLifeHBox = new QHBoxLayout();
 	emitterLifeHBox->addWidget(new QLabel("life"));
-	emitterLife = new QDoubleSpinBox(this);
+	emitterLife = new EventFilterDoubleSpinBox(this);
 	emitterLife->setMinimum(0.f);
 	emitterLife->setMaximum(10000000);
 	emitterLifeHBox->addWidget(emitterLife);

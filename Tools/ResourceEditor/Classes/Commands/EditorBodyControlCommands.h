@@ -90,7 +90,7 @@ protected:
 	virtual void Execute();
 	virtual void Cancel();
 
-	void UpdateCollision(DAVA::Entity* node);
+	DAVA_DEPRECATED(void UpdateCollision(DAVA::Entity* node));
 };
 
 class CommandCloneAndTransform: public MultiCommand

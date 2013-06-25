@@ -99,6 +99,9 @@ public:
 
 	FilePath GetParticlesConfigsPath();
     
+    bool GetShowEditorCamerLight();
+    void SetShowEditorCamerLight(bool show);
+    
 protected:
 
 	Vector4 ToVector4(const Color &color);

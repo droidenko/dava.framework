@@ -22,9 +22,9 @@
 #include "GradientPickerWidget.h"
 #include "TimeLineWidget.h"
 #include "BaseParticleEditorContentWidget.h"
+#include "../CustomControls/EventFilterDoubleSpinBox.h"
 
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QSlider>
 
@@ -70,7 +70,7 @@ private:
 	TimeLineWidget* emitterEmissionVector;
 	TimeLineWidget* emitterRadius;
 	TimeLineWidget* emitterSize;
-	QDoubleSpinBox* emitterLife;
+	EventFilterDoubleSpinBox* emitterLife;
 	GradientPickerWidget* emitterColorWidget;
 	
 	QLabel* emitterPlaybackSpeedLabel;

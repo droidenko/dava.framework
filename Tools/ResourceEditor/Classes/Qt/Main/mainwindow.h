@@ -63,6 +63,9 @@ public slots:
 	void UpdateParticleSprites();
 	void RepackAndReloadScene();
 
+	void Undo2();
+	void Redo2();
+
 private slots:
 	void ProjectOpened(const QString &path);
 	void LibraryFileTypesChanged();

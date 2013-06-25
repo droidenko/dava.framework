@@ -17,6 +17,7 @@
 #include "DockSceneTree/SceneTree.h"
 #include <QBoxLayout>
 #include <QDropEvent>
+#include <QMenu>
 
 SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	: QTreeView(parent)
@@ -29,6 +30,7 @@ SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	setDragEnabled(true);
 	setAcceptDrops(true);
 	setDropIndicatorShown(true);
+	setContextMenuPolicy(Qt::CustomContextMenu);
 
 	// scene signals
 	QObject::connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditor2 *)), this, SLOT(SceneActivated(SceneEditor2 *)));
@@ -38,6 +40,9 @@ SceneTree::SceneTree(QWidget *parent /*= 0*/)
 
 	// this widget signals
 	QObject::connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(TreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+	QObject::connect(this, SIGNAL(clicked(const QModelIndex &)), this, SLOT(TreeItemClicked(const QModelIndex &)));
+	QObject::connect(this, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(TreeItemDoubleClicked(const QModelIndex &)));
+	QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(ShowContextMenu(const QPoint&)));
 }
 
 SceneTree::~SceneTree()
@@ -144,5 +149,82 @@ void SceneTree::TreeSelectionChanged(const QItemSelection & selected, const QIte
 		}
 
 		skipTreeSelectionProcessing = false;
+	}
+}
+
+void SceneTree::TreeItemClicked(const QModelIndex & index)
+{
+	SceneEditor2* sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		// TODO:
+		// ...
+	}
+}
+
+void SceneTree::TreeItemDoubleClicked(const QModelIndex & index)
+{
+	SceneEditor2* sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		DAVA::Entity *entity = treeModel->GetEntity(index);
+		if(NULL != entity)
+		{
+			DAVA::AABBox3 worldBox;
+			DAVA::AABBox3 box = sceneEditor->selectionSystem->CalcAABox(entity);
+
+			box.GetTransformedBox(entity->GetWorldTransform(), worldBox);
+			sceneEditor->cameraSystem->LookAt(worldBox);
+		}
+	}
+}
+
+void SceneTree::ShowContextMenu(const QPoint &pos)
+{
+	QMenu contextMenu;
+
+	contextMenu.addAction(QIcon(":/QtIcons/zoom.png"), "Look at", this, SLOT(LookAtSelection()));
+	contextMenu.addSeparator();
+	contextMenu.addAction(QIcon(":/QtIcons/remove.png"), "Remove", this, SLOT(RemoveSelection()));
+
+	contextMenu.exec(mapToGlobal(pos));
+}
+
+void SceneTree::LookAtSelection()
+{
+	SceneEditor2* sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		const EntityGroup* selection = sceneEditor->selectionSystem->GetSelection();
+		if(NULL != selection)
+		{
+			sceneEditor->cameraSystem->LookAt(selection->GetCommonBbox());
+		}
+	}
+}
+
+void SceneTree::RemoveSelection()
+{
+	SceneEditor2* sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		const EntityGroup* selection = sceneEditor->selectionSystem->GetSelection();
+		if(NULL != selection)
+		{
+			if(selection->Size() > 1)
+			{
+				sceneEditor->BeginBatch("Remove entities");
+			}
+
+			for(int i = 0; i < selection->Size(); ++i)
+			{
+				sceneEditor->structureSystem->Remove(selection->GetEntity(i));
+			}
+
+			if(selection->Size() > 1)
+			{
+				sceneEditor->EndBatch();
+			}
+		}
 	}
 }
