@@ -54,62 +54,6 @@ protected:
 
     void ExportLandscape(Scene *scene, Set<String> &errorLog);
     void ExportLandscapeFullTiledTexture(Landscape *landscape, Set<String> &errorLog);
-	void BatchSceneNodes(Scene *scene, Set<String> &errorLog);
-	
-	// Batch Entities functionality.
-	// Build the list of unique Batch Indices in the scene.
-	Set<int32> BuildBatchIndicesList(Scene* scene);
-	void BuildBatchIndicesListRecursive(Entity* rootEntity, Set<int32>& resultSet);
-	
-    // Get all the entities with the same Batch Index.
-	Set<Entity*> GetEntitiesForBatchIndex(Scene* scene, int32 batchIndex);
-	void GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet);
-
-	// Select only the entities contain geometry from the list of entities to batch.
-	Set<Entity*> SelectGeometryEntities(Set<Entity*>& entitiesToBatch);
-	void SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet);
-
-	// Perform the actual batch (vertices, indexes, textures).
-	Entity* BatchEntities(Scene* scene, Set<String>& errorLog,
-						  const Set<Entity*>& entitiesToBatch,
-						  const String& batchedEntityName,
-						  Material* batchedMaterial,
-						  const BatchTexturesResult& batchTexturesResult);
-
-	// Calculate the paremeters for the batched entity.
-	void CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
-										  uint32& vertexCount, uint32& indexCount,
-										  AABBox3& batchedBoundingBox);
-
-	// Merge the Polygon Groups.
-	uint32 MergePolygonGroups(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
-							uint32 meshFormat, uint32 verticesBatched,
-							  const Matrix4& curEntityMatrix,
-							  const Vector3& batchedEntityCenter,
-							  InstanceMaterialState* curMaterialInstance,
-							  const Vector2& textureMultiply, const Vector2& textureOffset);
-
-	// Merge the Indices.
-	uint32 MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGroup* curPolygonGroup,
-					  uint32 verticesBatched, uint32 indicesBatched);
-
-	// Delete the entities.
-	void DeleteEntities(const Set<Entity*>& entitiesToDelete);
-
-	// Get the "solid" entity for current one, if present.
-	Entity* GetSolidParentEntityIfPresent(Entity* entity);
-
-	// Get the index for the next entity.
-	String GetNextBatchedEntityName(Scene* scene);
-	void BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNames);
-
-	// Textures batching.
-	Material* BatchTextures(const Set<Entity*> entitiesToBatch, int32 batchID,
-							BatchTexturesResult& batchTextureResult,
-							Set<String> &errorLog);
-
-	// Get the first render batch for the entity.
-	RenderBatch* GetFirstRenderBatch(Entity* entity);
 
 protected:
     

@@ -22,28 +22,11 @@ struct SizeSortItem
 	int					frameIndex;
 };
 
-// The output of the batched texture data.
-struct BatchTexturesOutputData
-{
-	FilePath texturePath;
-	int32 offsetX;
-	int32 offsetY;
-};
-	
-// The result of whole Batch Textures execution.
-struct BatchTexturesResult
-{
-	bool isSucceeded;
-	FilePath batchedTexturePath;
-	int32 batchedTextureWidth;
-	int32 batchedTextureHeight;
-	Vector<BatchTexturesOutputData> outputData;
-};
-    
-class TexturePacker 
+class TexturePacker
 {
 public:
 	TexturePacker();
+
 	
 	// pack textures to single texture
 	void PackToTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList, eGPUFamily forGPU);
@@ -53,6 +36,30 @@ public:
 	void PackToMultipleTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & remainingList, eGPUFamily forGPU);
 	
 	// batch textures to one (simplified version of PackToTextures code).
+	struct BatchTexturesOutputData
+	{
+		FilePath texturePath;
+		int32 offsetX;
+		int32 offsetY;
+	};
+	
+	enum eBatchTexturesErrorCode
+	{
+		SUCCESS = 0,
+		NO_TEXTURES_TO_BATCH,
+		TEXTURES_TOO_LARGE
+	};
+	
+	// The result of whole Batch Textures execution.
+	struct BatchTexturesResult
+	{
+		eBatchTexturesErrorCode errorCode;
+		FilePath batchedTexturePath;
+		int32 batchedTextureWidth;
+		int32 batchedTextureHeight;
+		Map<FilePath, BatchTexturesOutputData> outputData;
+	};
+	
 	BatchTexturesResult Batch(List<Texture*> texturesList, int32 batchID);
 
 	bool TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & defsList);
@@ -81,7 +88,7 @@ private:
 	// Batch Textures functionality.
 	BatchTexturesResult BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList, int32 batchID);
 
-	BatchTexturesResult BatchErrorResult();
+	BatchTexturesResult BatchErrorResult(eBatchTexturesErrorCode errorCode);
 
 	ImagePacker *			lastPackedPacker;
 	Vector<ImagePacker*> usedPackers;

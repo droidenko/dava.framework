@@ -386,11 +386,11 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 	}	
 }
 
-BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batchID)
+TexturePacker::BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batchID)
 {
 	if (texturesList.empty())
 	{
-		return BatchErrorResult();
+		return BatchErrorResult(TexturePacker::NO_TEXTURES_TO_BATCH);
 	}
 
 	// Take the output path from the first texture in the batch.
@@ -414,18 +414,10 @@ BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batc
 
 	if (definitionsList.size() == 0)
 	{
-		return BatchErrorResult();
+		return BatchErrorResult(TexturePacker::NO_TEXTURES_TO_BATCH);
 	}
 
-	// Do the packing itself!
-	BatchTexturesResult batchResult;
-
-	// TODO! TO PARAMS!
-	UseOnlySquareTextures();
-	SetMaxTextureSize(2048);
-
-	// TODO! Yuri Coder, 2013/06/17. Return to GPU_UNKNOWN flag when the PNG value
-	// will be added to enum.
+	// Do the packing itself.
 	return BatchTextures(outputPath, definitionsList, batchID);
 }
 	
@@ -707,8 +699,9 @@ bool TexturePacker::DetermineBestResolution(int& bestXResolution, int& bestYReso
 	return bestResolution != (maxTextureSize + 1) * (maxTextureSize + 1);
 }
 
-BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList,
-									  int32 batchID)
+TexturePacker::BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath,
+																List<DefinitionFile*> & defsList,
+																int32 batchID)
 {
 	lastPackedPacker = 0;
 
@@ -736,7 +729,7 @@ BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath, Li
 														  bestResolution, defsList, GPU_UNKNOWN);
 	if (!canPackToSingleTexture)
 	{
-		return BatchErrorResult();
+		return BatchErrorResult(TEXTURES_TOO_LARGE);
 	}
 
 	// Batching.
@@ -780,17 +773,17 @@ BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath, Li
 		curOutputData.texturePath = defFile->filename;
 		curOutputData.offsetX = destRect->x;
 		curOutputData.offsetY = destRect->y;
-		result.outputData.push_back(curOutputData);
+		result.outputData[curOutputData.texturePath] = curOutputData;
 	}
-	
-	result.isSucceeded = true;
+
+	result.errorCode = SUCCESS;
 	return result;
 }
 	
-BatchTexturesResult TexturePacker::BatchErrorResult()
+	TexturePacker::BatchTexturesResult TexturePacker::BatchErrorResult(TexturePacker::eBatchTexturesErrorCode errorCode)
 {
 	BatchTexturesResult errorResult;
-	errorResult.isSucceeded = false;
+	errorResult.errorCode = errorCode;
 	return errorResult;
 }
 
