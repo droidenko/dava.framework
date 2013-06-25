@@ -30,7 +30,7 @@ public:
 	virtual void Redo();
 	virtual DAVA::Entity* GetEntity() const;
 
-	void Add(Command2 *command);
+	void AddAndExec(Command2 *command);
 	int Size() const;
 
 protected:

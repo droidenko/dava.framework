@@ -85,6 +85,8 @@ private:
 	FMOD::Sound * fmodSound;
 	FMOD::ChannelGroup * fmodInstanceGroup;
 
+    uint8 * soundData;
+
 	IMPLEMENT_EVENT_DISPATCHER(eventDispatcher);
 };
 

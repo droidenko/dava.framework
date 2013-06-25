@@ -16,11 +16,13 @@
 
 #include "DockSceneTree/SceneTreeItem.h"
 
+// framework
+#include "Scene3d/Components/ComponentHelpers.h"
 
 SceneTreeItem::SceneTreeItem(DAVA::Entity *_entity)
 	: entity(_entity)
 {
-	UpdateEntity();
+	UpdateChilds();
 }
 
 SceneTreeItem::~SceneTreeItem()
@@ -37,11 +39,14 @@ QVariant SceneTreeItem::data(int role) const
 
 	switch(role)
 	{
-	//case Qt::DecorationRole:
-	//	v = itemData->GetIcon();
-	//	break;
+	case Qt::DecorationRole:
+		v = GetIcon();
+		break;
 	case Qt::DisplayRole:
 		v = entity->GetName().c_str();
+		break;
+	case TreeItemEntityRole:
+		v = qVariantFromValue(GetEntity());
 		break;
 	default:
 		break;
@@ -53,24 +58,6 @@ QVariant SceneTreeItem::data(int role) const
 	}
 
 	return v;
-}
-
-void SceneTreeItem::setData(const QVariant & value, int role)
-{
-	switch(role)
-	{
-	case Qt::EditRole:
-		/*
-		if(NULL != itemData)
-		{
-			itemData->SetValue(value);
-		}
-		break;
-		*/
-	default:
-		QStandardItem::setData(value, role);
-		break;
-	}
 }
 
 DAVA::Entity* SceneTreeItem::GetEntity() const
@@ -103,25 +90,89 @@ SceneTreeItem* SceneTreeItem::SearchEntity(DAVA::Entity *entityToSearch)
 	return ret;
 }
 
-void SceneTreeItem::UpdateEntity()
+void SceneTreeItem::UpdateChilds()
 {
 	if(NULL != entity)
 	{
-		// remove all item children
-		removeRows(0, rowCount());
-
-		// check if entity has children
-		if(entity->GetChildrenCount() > 0)
+		DAVA::int32 i;
+		for(i = 0; i < entity->GetChildrenCount(); ++i)
 		{
-			// if entity is solid - just mark it
-			if(!entity->GetSolid())
+			DAVA::Entity *childEntity = entity->GetChild(i);
+
+			SceneTreeItem *childItem = (SceneTreeItem *) child(i);
+			if(NULL == childItem)
 			{
-				// add child items
-				for (int i = 0; i < entity->GetChildrenCount(); ++i)
-				{
-					appendRow(new SceneTreeItem(entity->GetChild(i)));
-				}
+				appendRow(new SceneTreeItem(childEntity));
+			}
+			else if(childEntity != childItem->GetEntity())
+			{
+				insertRow(i, new SceneTreeItem(childEntity));
 			}
 		}
+
+		if(i < rowCount())
+		{
+			removeRows(i, rowCount() - i);
+		}
 	}
+}
+
+QIcon SceneTreeItem::GetIcon() const
+{
+	QIcon ret;
+
+	if(NULL != DAVA::GetLandscape(entity))
+	{
+		ret = GetIconLandscape();
+	}
+	else if(NULL != DAVA::GetLodComponent(entity))
+	{
+		ret = GetIconLOD();
+	}
+	else if(NULL != DAVA::GetRenerObject(entity))
+	{
+		ret = GetIconRenderObject();
+	}
+	else
+	{
+		ret = GetIconDefault();
+	}
+
+	return ret;
+}
+
+QIcon SceneTreeItem::GetIconDefault()
+{
+	static QIcon icon = QIcon(":/QtIcons/box_closed.png");
+	return icon;
+}
+
+QIcon SceneTreeItem::GetIconRenderObject()
+{
+	static QIcon icon = QIcon(":/QtIcons/render_object.png");
+	return icon;
+}
+
+QIcon SceneTreeItem::GetIconLOD()
+{
+	static QIcon icon = QIcon(":/QtIcons/box_closed.png");
+	return icon;
+}
+
+QIcon SceneTreeItem::GetIconLight()
+{
+	static QIcon icon = QIcon(":/QtIcons/box_closed.png");
+	return icon;
+}
+
+QIcon SceneTreeItem::GetIconLandscape()
+{
+	static QIcon icon = QIcon(":/QtIcons/box_closed.png");
+	return icon;
+}
+
+QIcon SceneTreeItem::GetIconUserObject()
+{
+	static QIcon icon = QIcon(":/QtIcons/box_closed.png");
+	return icon;
 }

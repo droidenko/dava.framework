@@ -18,13 +18,12 @@
 #include "Scene/SceneSignals.h"
 #include "Scene/SceneEditor2.h"
 
-#include "Commands2/EntityAddCommand.h"
-#include "Commands2/EntityInsertCommand.h"
 #include "Commands2/EntityMoveCommand.h"
 #include "Commands2/EntityRemoveCommand.h"
 
 StructureSystem::StructureSystem(DAVA::Scene * scene)
 	: DAVA::SceneSystem(scene)
+	, locked(false)
 {
 
 }
@@ -34,9 +33,51 @@ StructureSystem::~StructureSystem()
 
 }
 
-void StructureSystem::Add(DAVA::Entity *entity, DAVA::Entity *parent /*= NULL*/)
+void StructureSystem::Init()
 {
+	SceneEditor2* sceneEditor = (SceneEditor2*) GetScene();
+	if(NULL != sceneEditor)
+	{
+		// mark solid all entities, that has childs as solid
+		for(DAVA::int32 i = 0; i < sceneEditor->GetChildrenCount(); ++i)
+		{
+			CheckAndMarkSolid(sceneEditor->GetChild(i));
+			CheckAndMarkLocked(sceneEditor->GetChild(i));
+		}
+	}
+}
 
+void StructureSystem::Move(DAVA::Entity *entity, DAVA::Entity *newParent, DAVA::Entity *before)
+{
+	SceneEditor2* sceneEditor = (SceneEditor2*) GetScene();
+	if(NULL != sceneEditor)
+	{
+		sceneEditor->Exec(new EntityMoveCommand(entity, newParent, before));
+	}
+}
+
+void StructureSystem::Move(const EntityGroup *entityGroup, DAVA::Entity *newParent, DAVA::Entity *newBefore)
+{
+	SceneEditor2* sceneEditor = (SceneEditor2*) GetScene();
+	if(NULL != sceneEditor && NULL != entityGroup)
+	{
+		EntityGroup toMove = *entityGroup;
+
+		if(toMove.Size() > 1)
+		{
+			sceneEditor->BeginBatch("Move entities");
+		}
+
+		for(size_t i = 0; i < toMove.Size(); ++i)
+		{
+			sceneEditor->Exec(new EntityMoveCommand(toMove.GetEntity(i), newParent, newBefore));
+		}
+
+		if(toMove.Size() > 1)
+		{
+			sceneEditor->EndBatch();
+		}
+	}
 }
 
 void StructureSystem::Remove(DAVA::Entity *entity)
@@ -48,9 +89,38 @@ void StructureSystem::Remove(DAVA::Entity *entity)
 	}
 }
 
-void StructureSystem::Move(DAVA::Entity *entity, DAVA::Entity *newParent)
+void StructureSystem::Remove(const EntityGroup *entityGroup)
 {
+	SceneEditor2* sceneEditor = (SceneEditor2*) GetScene();
+	if(NULL != sceneEditor && NULL != entityGroup)
+	{
+		EntityGroup toRemove = *entityGroup;
 
+		if(toRemove.Size() > 1)
+		{
+			sceneEditor->BeginBatch("Remove entities");
+		}
+
+		for(size_t i = 0; i < toRemove.Size(); ++i)
+		{
+			sceneEditor->Exec(new EntityRemoveCommand(toRemove.GetEntity(i)));
+		}
+
+		if(toRemove.Size() > 1)
+		{
+			sceneEditor->EndBatch();
+		}
+	}
+}
+
+void StructureSystem::Lock()
+{
+	locked = true;
+}
+
+void StructureSystem::Unlock()
+{
+	locked = false;
 }
 
 void StructureSystem::Update(DAVA::float32 timeElapsed)
@@ -75,10 +145,79 @@ void StructureSystem::PropeccCommand(const Command2 *command, bool redo)
 
 void StructureSystem::AddEntity(DAVA::Entity * entity)
 {
-	SceneSignals::Instance()->EmitAdded((SceneEditor2 *) GetScene(), entity);
+	if(!locked)
+	{
+		DAVA::Entity *before = NULL;
+		DAVA::Entity *parent = entity->GetParent();
+
+		if(NULL != parent)
+		{
+			before = parent->GetNextChild(entity);
+		}
+
+		SceneSignals::Instance()->EmitMoved((SceneEditor2 *) GetScene(), entity);
+	}
 }
 
 void StructureSystem::RemoveEntity(DAVA::Entity * entity)
 {
-	SceneSignals::Instance()->EmitRemoved((SceneEditor2 *) GetScene(), entity);
+	if(!locked)
+	{
+		SceneSignals::Instance()->EmitRemoved((SceneEditor2 *) GetScene(), entity);
+	}
+}
+
+void StructureSystem::CheckAndMarkSolid(DAVA::Entity *entity)
+{
+	if(NULL != entity)
+	{
+		if(entity->GetChildrenCount() > 0)
+		{
+			entity->SetSolid(true);
+
+			for(DAVA::int32 i = 0; i < entity->GetChildrenCount(); ++i)
+			{
+				CheckAndMarkSolid(entity->GetChild(i));
+			}
+		}
+		else
+		{
+			entity->SetSolid(false);
+		}
+	}
+}
+
+void StructureSystem::CheckAndMarkLocked(DAVA::Entity *entity)
+{
+	if(NULL != entity)
+	{
+		// mark lod childs as locked
+		if(NULL != entity->GetComponent(DAVA::Component::LOD_COMPONENT))
+		{
+			for(int i = 0; i < entity->GetChildrenCount(); ++i)
+			{
+				MarkLocked(entity->GetChild(i));
+			}
+		}
+		else
+		{
+			for(int i = 0; i < entity->GetChildrenCount(); ++i)
+			{
+				CheckAndMarkLocked(entity->GetChild(i));
+			}
+		}
+	}
+}
+
+void StructureSystem::MarkLocked(DAVA::Entity *entity)
+{
+	if(NULL != entity)
+	{
+		entity->SetLocked(true);
+
+		for(int i = 0; i < entity->GetChildrenCount(); ++i)
+		{
+			MarkLocked(entity->GetChild(i));
+		}
+	}
 }

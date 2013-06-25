@@ -38,3 +38,14 @@ void ReloadTexturesAsCommand::Execute()
 //    SceneValidator::Instance()->EnumerateSceneTextures();
 }
 
+ReplaceMipmapLevelCommand::ReplaceMipmapLevelCommand(int32 _mipmapLevel, Entity * forEntity)
+    :   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_REPLACE_MIPMAP_LEVEL)
+    ,   mipmapLevel(_mipmapLevel)
+    ,   entity(forEntity)
+{
+}
+
+void ReplaceMipmapLevelCommand::Execute()
+{
+    MipMapReplacer::ReplaceMipMaps(entity, mipmapLevel);
+}

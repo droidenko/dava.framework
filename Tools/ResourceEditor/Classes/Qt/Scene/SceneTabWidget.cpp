@@ -35,7 +35,7 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	, curModifMode(ST_MODIF_MOVE)
 	, curPivotPoint(ST_PIVOT_COMMON_CENTER)
 	, curSelDrawMode(ST_SELDRAW_DRAW_CORNERS | ST_SELDRAW_FILL_SHAPE)
-	, curColDrawMode(ST_COLL_DRAW_LAND_COLLISION)
+	, curColDrawMode(ST_COLL_DRAW_NOTHING)
 {
 	this->setMouseTracking(true);
 

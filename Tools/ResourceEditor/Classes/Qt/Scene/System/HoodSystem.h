@@ -55,14 +55,13 @@ public:
 	void SetScale(DAVA::float32 scale);
 	DAVA::float32 GetScale() const;
 
-	void Lock();
-	void Unlock();
-
-	void Show();
-	void Hide();
+	void LockScale(bool lock);
+	void LockModif(bool lock);
+	void Show(bool show);
 
 protected:
-	bool locked;
+	bool lockedScale;
+	bool lockedModif;
 	bool visible;
 
 	ST_ModifMode curMode;

@@ -119,6 +119,7 @@
 
 #include "Render/LibDxtHelper.h"
 
+#include "Render/MipmapReplacer.h"
 
 // Fonts
 #include "Render/2D/Font.h"

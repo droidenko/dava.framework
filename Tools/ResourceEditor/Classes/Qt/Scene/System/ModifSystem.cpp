@@ -88,31 +88,8 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 		// that have mouse cursor at the top of it
 		if(!inModifState)
 		{
-			bool modifCanStart = false;
-
-			// we can start modification only if mouse is over hood
-			// on mouse is over one of currently selected items
-			ST_Axis mouseOverAxis = hoodSystem->GetPassingAxis();
-			if(mouseOverAxis != ST_AXIS_NONE)
-			{
-				// allow starting modification
-				modifCanStart = true;
-			}
-			else if(selectedEntities->Size() > 0)
-			{
-				// send this ray to collision system and get collision objects
-				const EntityGroup *collisionEntities = collisionSystem->ObjectsRayTestFromCamera();
-
-				// check if one of got collision objects is intersected with selected items
-				// if so - we can start modification
-				if(NULL != selectedEntities->IntersectedEntity(collisionEntities))
-				{
-					modifCanStart = true;
-				}
-			}
-
 			// can we start modification???
-			if(modifCanStart)
+			if(ModifCanStart(selectedEntities))
 			{
 				SceneSignals::Instance()->EmitMouseOverSelection((SceneEditor2 *) GetScene(), selectedEntities);
 
@@ -126,7 +103,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 						// select current hood axis as active
 						if(curMode == ST_MODIF_MOVE || curMode == ST_MODIF_ROTATE)
 						{
-							SetModifAxis(mouseOverAxis);
+							SetModifAxis(hoodSystem->GetPassingAxis());
 						}
 
 						// set entities to be modified
@@ -184,12 +161,8 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 					selectionSystem->SelectedItemsWereModified();
 
 					// lock hood, so it wont process ui events, wont calc. scale depending on it current position
-					hoodSystem->Lock();
+					hoodSystem->LockScale(true);
 					hoodSystem->MovePosition(moveOffset);
-
-					// TODO:
-					// emit move/rotate/scale offset/angle/force
-					// ...
 				}
 			}
 			// phase ended
@@ -202,7 +175,7 @@ void EntityModificationSystem::ProcessUIEvent(DAVA::UIEvent *event)
 						ApplyModification();
 					}
 
-					hoodSystem->Unlock();
+					hoodSystem->LockScale(false);
 
 					EndModification();
 					inModifState = false;
@@ -231,7 +204,7 @@ void EntityModificationSystem::BeginModification(const EntityGroup *entities)
 	{
 		for(size_t i = 0; i < entities->Size(); ++i)
 		{
-			DAVA::Entity *en = entities->GetSolidEntity(i);
+			DAVA::Entity *en = entities->GetEntity(i);
 
 			if(NULL == en)
 			{
@@ -246,6 +219,22 @@ void EntityModificationSystem::BeginModification(const EntityGroup *entities)
 				etm.originalTransform = en->GetLocalTransform();
 				etm.moveToZeroPos.CreateTranslation(-etm.originalCenter);
 				etm.moveFromZeroPos.CreateTranslation(etm.originalCenter);
+
+				// inverse parent world transform, and remember it
+				if(NULL != en->GetParent())
+				{
+					etm.inversedParentWorldTransform = en->GetParent()->GetWorldTransform();
+					etm.inversedParentWorldTransform.SetTranslationVector(DAVA::Vector3(0, 0, 0));
+					if(!etm.inversedParentWorldTransform.Inverse())
+					{
+						etm.inversedParentWorldTransform.Identity();
+					}
+				}
+				else
+				{
+					etm.inversedParentWorldTransform.Identity();
+				}
+
 				modifEntities.push_back(etm);
 			}
 		}
@@ -306,6 +295,72 @@ void EntityModificationSystem::EndModification()
 {
 	modifEntitiesCenter.Set(0, 0, 0);
 	modifEntities.clear();
+}
+
+bool EntityModificationSystem::ModifCanStart(const EntityGroup *selectedEntities) const
+{
+	bool modifCanStart = false;
+
+	if(selectedEntities->Size() > 0)
+	{
+		bool hasLocked = false;
+
+		// check if we have some locked items in selection
+		for(size_t i = 0; i < selectedEntities->Size(); ++i)
+		{
+			if(selectedEntities->GetEntity(i)->GetLocked())
+			{
+				hasLocked = true;
+				break;
+			}
+		}
+
+		// we can start modif only if there is no locked entities
+		if(!hasLocked)
+		{
+			// we can start modification only if mouse is over hood
+			// on mouse is over one of currently selected items
+			if(hoodSystem->GetPassingAxis() != ST_AXIS_NONE)
+			{
+				// allow starting modification
+				modifCanStart = true;
+			}
+			else
+			{
+				// send this ray to collision system and get collision objects
+				const EntityGroup *collisionEntities = collisionSystem->ObjectsRayTestFromCamera();
+
+				// check if one of got collision objects is intersected with selected items
+				// if so - we can start modification
+				if(collisionEntities->Size() > 0)
+				{
+					for(size_t i = 0; !modifCanStart && i < collisionEntities->Size(); ++i)
+					{
+						DAVA::Entity *collisionedEntity = collisionEntities->GetEntity(i);
+
+						for(size_t j = 0; !modifCanStart && j < selectedEntities->Size(); ++j)
+						{
+							DAVA::Entity *selectedEntity = selectedEntities->GetEntity(j);
+
+							if(selectedEntity == collisionedEntity)
+							{
+								modifCanStart = true;
+							}
+							else
+							{
+								if(selectedEntity->GetSolid())
+								{
+									modifCanStart = IsEntityContainRecursive(selectedEntity, collisionedEntity);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return modifCanStart;
 }
 
 void EntityModificationSystem::ApplyModification()
@@ -426,7 +481,7 @@ DAVA::Vector3 EntityModificationSystem::Move(const DAVA::Vector3 &newPos3d)
 	{
 		DAVA::Matrix4 moveModification;
 		moveModification.Identity();
-		moveModification.CreateTranslation(moveOffset);
+		moveModification.CreateTranslation(moveOffset * modifEntities[i].inversedParentWorldTransform);
 
 		DAVA::Matrix4 newLocalTransform = modifEntities[i].originalTransform * moveModification;
 		modifEntities[i].entity->SetLocalTransform(newLocalTransform);
@@ -502,4 +557,26 @@ DAVA::float32 EntityModificationSystem::Scale(const DAVA::Vector2 &newPos2d)
 	}
 
 	return scaleForce;
+}
+
+bool EntityModificationSystem::IsEntityContainRecursive(const DAVA::Entity *entity, const DAVA::Entity *child) const
+{
+	bool ret = false;
+
+	if(NULL != entity && NULL != child)
+	{
+		for(int i = 0; !ret && i < entity->GetChildrenCount(); ++i)
+		{
+			if(child == entity->GetChild(i))
+			{
+				ret = true;
+			}
+			else
+			{
+				ret = IsEntityContainRecursive(entity->GetChild(i), child);
+			}
+		}
+	}
+
+	return ret;
 }

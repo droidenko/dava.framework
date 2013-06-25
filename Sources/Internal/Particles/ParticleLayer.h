@@ -71,6 +71,20 @@ public:
 	void Restart(bool isDeleteAllParticles = true);
 	
 	/**
+	 \brief Enable/disable loop otion.
+	 If loop option is enabled, layer will automatically restart after it's lifeTime ends.
+	 Option is enabled by default.
+	 \param[in] autoRestart enable autorestart if true
+	 */
+	void SetLooped(bool isLopped);
+
+	/**
+	 \brief Get isLooped state.
+	 \returns current autorestart state.
+	 */
+	bool GetLooped();
+	
+	/**
 		\brief This function retrieve current particle count from current layer.
 		\returns particle count
 	 */
@@ -175,7 +189,8 @@ public:
 protected:
 	void GenerateNewParticle(int32 emitIndex);
 	void GenerateSingleParticle();
-	
+
+	void CheckLayerNeedRestart();
 
 	void DeleteAllParticles();
 	
@@ -223,6 +238,7 @@ protected:
 
 	bool		isDisabled;
 	bool		additive;
+	bool		isLooped;
 	float32		playbackSpeed;
 
 	Vector2		layerPivotPoint;

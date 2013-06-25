@@ -48,27 +48,15 @@ void NormalHood::Draw(ST_Axis selectedAxis, ST_Axis mouseOverAxis)
 	DAVA::RenderManager::Instance()->SetBlendMode(DAVA::BLEND_SRC_ALPHA, DAVA::BLEND_ONE_MINUS_SRC_ALPHA);
 
 	// x
-	if(selectedAxis & ST_AXIS_X) 
-		DAVA::RenderManager::Instance()->SetColor(colorS);
-	else 
-		DAVA::RenderManager::Instance()->SetColor(colorX);
-
+	DAVA::RenderManager::Instance()->SetColor(colorX);
 	DAVA::RenderHelper::Instance()->DrawLine(axisX->curFrom, axisX->curTo);
 
 	// y
-	if(selectedAxis & ST_AXIS_Y) 
-		DAVA::RenderManager::Instance()->SetColor(colorS);
-	else 
-		DAVA::RenderManager::Instance()->SetColor(colorY);
-
+	DAVA::RenderManager::Instance()->SetColor(colorY);
 	DAVA::RenderHelper::Instance()->DrawLine(axisY->curFrom, axisY->curTo);
 
 	// z
-	if(selectedAxis & ST_AXIS_Z) 
-		DAVA::RenderManager::Instance()->SetColor(colorS);
-	else 
-		DAVA::RenderManager::Instance()->SetColor(colorZ);
-
+	DAVA::RenderManager::Instance()->SetColor(colorZ);
 	DAVA::RenderHelper::Instance()->DrawLine(axisZ->curFrom, axisZ->curTo);
 
 	DAVA::RenderManager::Instance()->SetBlendMode(oldBlendSrc, oldBlendDst);

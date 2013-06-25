@@ -17,7 +17,6 @@
 #include "Commands2/TransformCommand.h"
 
 #include "Scene3D/Entity.h"
-#include "Scene3D/Components/TransformComponent.h"
 
 TransformCommand::TransformCommand(DAVA::Entity* _entity, const DAVA::Matrix4& _origTransform, const DAVA::Matrix4& _newTransform)
 	: Command2(CMDID_TRANSFORM, "Transform")
@@ -38,12 +37,6 @@ void TransformCommand::Undo()
 	if(NULL != entity)
 	{
 		entity->SetLocalTransform(undoTransform);
-
-		// make sure that WorldTransform is up to date
-		if(NULL != entity->GetScene())
-		{
-			entity->GetScene()->transformSystem->Process();
-		}
 	}
 }
 
@@ -52,12 +45,6 @@ void TransformCommand::Redo()
 	if(NULL != entity)
 	{
 		entity->SetLocalTransform(redoTransform);
-
-		// make sure that WorldTransform is up to date
-		if(NULL != entity->GetScene())
-		{
-			entity->GetScene()->transformSystem->Process();
-		}
 	}
 }
 

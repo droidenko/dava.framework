@@ -28,14 +28,13 @@ EntityGroup::EntityGroup(const EntityGroup &ss)
 EntityGroup::~EntityGroup()
 { }
 
-void EntityGroup::Add(DAVA::Entity *entity, DAVA::Entity *solidEntity, DAVA::AABBox3 entityBbox /* = DAVA::AABBox3() */)
+void EntityGroup::Add(DAVA::Entity *entity, DAVA::AABBox3 entityBbox /* = DAVA::AABBox3() */)
 {
 	size_t i;
 	if(!Index(entity, i))
 	{
 		EntityGroupItem item;
 		item.entity = entity;
-		item.solidEntity = solidEntity;
 		item.bbox = entityBbox;
 
 		entities.push_back(item);
@@ -45,14 +44,14 @@ void EntityGroup::Add(DAVA::Entity *entity, DAVA::Entity *solidEntity, DAVA::AAB
 
 void EntityGroup::Add(const EntityGroupItem &groupItem)
 {
-	Add(groupItem.entity, groupItem.solidEntity, groupItem.bbox);
+	Add(groupItem.entity, groupItem.bbox);
 }
 
 void EntityGroup::Rem(DAVA::Entity *entity)
 {
 	for(size_t i = 0; i < entities.size(); ++i)
 	{
-		if(entities[i].entity == entity || entities[i].solidEntity == entity)
+		if(entities[i].entity == entity)
 		{
 			DAVA::Vector<EntityGroupItem>::iterator it = entities.begin();
 			entities.erase(it + i);
@@ -92,25 +91,13 @@ DAVA::Entity* EntityGroup::GetEntity(size_t i) const
 	return ret;
 }
 
-DAVA::Entity* EntityGroup::GetSolidEntity(size_t i) const
+EntityGroupItem* EntityGroup::GetItem(size_t i) const
 {
-	DAVA::Entity *ret = NULL;
+	EntityGroupItem* ret = NULL;
 
 	if(i < entities.size())
 	{
-		ret = entities[i].solidEntity;
-	}
-
-	return ret;
-}
-
-EntityGroupItem EntityGroup::GetItem(size_t i) const
-{
-	EntityGroupItem ret;
-
-	if(i < entities.size())
-	{
-		ret = entities[i];
+		ret = (EntityGroupItem *) &entities[i];
 	}
 
 	return ret;

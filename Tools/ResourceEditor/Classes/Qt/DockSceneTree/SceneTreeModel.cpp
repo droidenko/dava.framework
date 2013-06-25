@@ -19,6 +19,9 @@
 #include "DockSceneTree/SceneTreeModel.h"
 #include "Scene/SceneSignals.h"
 
+const char* SceneTreeModel::mimeFormatEntity = "application/dava.entity";
+const char* SceneTreeModel::mimeFormatEmitter = "application/dava.emitter";
+
 SceneTreeModel::SceneTreeModel(QObject* parent /*= 0*/ )
 	: QStandardItemModel(parent)
 	, curScene(NULL)
@@ -31,6 +34,7 @@ SceneTreeModel::SceneTreeModel(QObject* parent /*= 0*/ )
 	headerLabels.append("Scene hierarchy");
 	setHorizontalHeaderLabels(headerLabels);
 
+	QObject::connect(SceneSignals::Instance(), SIGNAL(Moved(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntityMoved(SceneEditor2 *, DAVA::Entity *)));
 	QObject::connect(SceneSignals::Instance(), SIGNAL(Removed(SceneEditor2 *, DAVA::Entity *)), this, SLOT(EntityRemoved(SceneEditor2 *, DAVA::Entity *)));
 }
 
@@ -112,9 +116,41 @@ DAVA::Entity* SceneTreeModel::GetEntity(const QModelIndex &index) const
 	return ret;
 }
 
+void SceneTreeModel::SetSolid(const QModelIndex &index, bool solid)
+{
+	DAVA::Entity *entity = GetEntity(index);
+	if(NULL != entity)
+	{
+		entity->SetSolid(solid);
+	}
+}
+
 bool SceneTreeModel::DropIsAccepted()
 {
 	return dropAccepted;
+}
+
+bool SceneTreeModel::DropCanBeAccepted(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) const
+{
+	bool ret = true;
+
+	// we don't accept drops if it has locked items
+	QByteArray encodedData = data->data(SceneTreeModel::mimeFormatEntity);
+	QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+	while(!stream.atEnd())
+	{
+		DAVA::Entity *entity = NULL;
+
+		stream.readRawData((char *) &entity, sizeof(DAVA::Entity*));
+		if(NULL != entity && entity->GetLocked())
+		{
+			ret = false;
+			break;
+		}
+	}
+
+	return ret;
 }
 
 Qt::DropActions SceneTreeModel::supportedDropActions() const
@@ -125,19 +161,20 @@ Qt::DropActions SceneTreeModel::supportedDropActions() const
 QMimeData * SceneTreeModel::mimeData(const QModelIndexList & indexes) const
 {
 	QMimeData *mimeData = new QMimeData();
-	QByteArray encodeData;
+	QByteArray encodedData;
 
-	QDataStream stream(&encodeData, QIODevice::WriteOnly);
+	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 	foreach(QModelIndex index, indexes)
 	{
 		if(index.isValid())
 		{
 			DAVA::Entity* entity = GetEntity(index);
-			stream.writeBytes((char *) &entity, sizeof(DAVA::Entity*));
+			stream.writeRawData((char *) &entity, sizeof(DAVA::Entity*));
 		}
 	}
 
-	mimeData->setData("application/dava.entity", encodeData);
+	mimeData->setData(SceneTreeModel::mimeFormatEntity, encodedData);
+
 	return mimeData;
 }
 
@@ -145,7 +182,8 @@ QStringList SceneTreeModel::mimeTypes() const
 {
 	QStringList types;
 
-	types << "application/dava.entity";
+	types << SceneTreeModel::mimeFormatEntity;
+	types << SceneTreeModel::mimeFormatEmitter;
 
 	return types;
 }
@@ -154,12 +192,38 @@ bool SceneTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
 {
 	bool ret = false;
 
-	DAVA::Entity *parentEntity = GetEntity(parent);
-	if(NULL != parentEntity)
+	if(data->hasFormat(SceneTreeModel::mimeFormatEntity))
 	{
+		DAVA::Entity *parentEntity = GetEntity(parent);
+		DAVA::Entity *before = GetEntity(index(row, column, parent));
+		DAVA::Entity *entity = NULL;
+
+		if(NULL == parentEntity)
+		{
+			parentEntity = curScene;
+		}
+
+		QByteArray encodedData = data->data(SceneTreeModel::mimeFormatEntity);
+		QDataStream stream(&encodedData, QIODevice::ReadOnly);
+		EntityGroup entityGroup;
+
+		while(!stream.atEnd())
+		{
+			stream.readRawData((char *) &entity, sizeof(DAVA::Entity*));
+			if(NULL != entity)
+			{
+				entityGroup.Add(entity);
+			}
+
+			entity = NULL;
+		}
+
+		if(entityGroup.Size() > 0)
+		{
+			curScene->structureSystem->Move(&entityGroup, parentEntity, before);
+		}
 
 	}
-
 	//ret = QStandardItemModel::dropMimeData(data, action, row, column, parent);
 
 	dropAccepted = ret;
@@ -174,6 +238,64 @@ void SceneTreeModel::EntityRemoved(SceneEditor2 *scene, DAVA::Entity *entity)
 		if(index.isValid())
 		{
 			removeRow(index.row(), index.parent());
+		}
+	}
+}
+
+void SceneTreeModel::EntityMoved(SceneEditor2 *scene, DAVA::Entity *entity)
+{
+	if(curScene == scene)
+	{
+		DAVA::Entity *parentEntity = entity->GetParent();
+		QModelIndex parentIndex = GetEntityIndex(parentEntity);
+		QStandardItem *parentItem = (SceneTreeItem *) itemFromIndex(parentIndex);
+		SceneTreeItem* entityItem = NULL;
+		int entityRow = -1;
+
+		if(NULL == parentItem)
+		{
+			parentItem = invisibleRootItem();
+		}
+
+		DAVA::Entity *next = NULL;
+		if(NULL != entity->GetParent())
+		{
+			next = entity->GetParent()->GetNextChild(entity);
+		}
+
+		// search for item, that contains specified entity
+		// and item that is next after specified entity
+		for(int i = 0; i < parentItem->rowCount(); ++i)
+		{
+			SceneTreeItem* item = (SceneTreeItem*) parentItem->child(i);
+			if(item->GetEntity() == entity)
+			{
+				entityItem = item;
+				break;
+			}
+			else if(item->GetEntity() == next)
+			{
+				entityRow = i;
+			}
+		}
+
+		// no such entity in parent item childs, so add it
+		if(NULL == entityItem)
+		{
+			entityItem = new SceneTreeItem(entity);
+
+			if(-1 != entityRow)
+			{
+				parentItem->insertRow(entityRow, entityItem);
+			}
+			else
+			{
+				parentItem->appendRow(entityItem);
+			}
+		}
+		else
+		{
+			entityItem->UpdateChilds();
 		}
 	}
 }

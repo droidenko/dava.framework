@@ -1,5 +1,12 @@
 <RCC>
   <qresource prefix="/">
+    <file>QtIcons/box_closed.png</file>
+    <file>QtIcons/box_open.png</file>
+    <file>QtIcons/render_object.png</file>
+    <file>QtIcons/lock_add.png</file>
+    <file>QtIcons/lock_delete.png</file>
+    <file>QtIcons/locked.png</file>
+    <file>QtIcons/mipmap.png</file>
     <file>QtIcons/help.png</file>
     <file>QtIcons/zoom.png</file>
     <file>QtIconsTextureDialog/convertall.png</file>

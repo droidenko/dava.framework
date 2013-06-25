@@ -19,6 +19,8 @@
 
 CollisionRenderObject::CollisionRenderObject(DAVA::Entity *entity, btCollisionWorld *word, DAVA::RenderObject *renderObject)
 	: CollisionBaseObject(entity, word)
+	, btTriangles(NULL)
+	, btShape(NULL)
 {
 	if(NULL != renderObject && NULL != word)
 	{

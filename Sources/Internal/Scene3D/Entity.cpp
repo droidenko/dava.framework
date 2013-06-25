@@ -43,6 +43,7 @@ REGISTER_CLASS(Entity);
 
 // Property Names.
 const char* Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME = "editor.isSolid";
+const char* Entity::SCENE_NODE_IS_LOCKED_PROPERTY_NAME = "editor.isLocked";
 
 Entity::Entity()
 	: scene(0)
@@ -220,11 +221,11 @@ void Entity::InsertBeforeNode(Entity *newNode, Entity *beforeNode)
             if(beforeNode == (*it))
             {
                 newNode->Retain();
-                children.insert(it, newNode);
                 if (newNode->parent)
                 {
                     newNode->parent->RemoveNode(newNode);
                 }
+				children.insert(it, newNode);
                 newNode->SetParent(this);
                 newNode->SetScene(GetScene());
                 break;
@@ -258,20 +259,39 @@ void Entity::RemoveNode(Entity * node)
 	
 }
 	
-Entity * Entity::GetChild(int32 index)
+Entity * Entity::GetChild(int32 index) const
 {
 	return children[index];
 }
 
-int32 Entity::GetChildrenCount()
+Entity* Entity::GetNextChild(Entity *child)
+{
+	Entity* next = NULL;
+
+	for(uint32 i = 0; i < children.size(); i++)
+	{
+		if(children[i] == child)
+		{
+			if((i + 1) < children.size())
+			{
+				next = children[i + 1];
+			}
+			break;
+		}
+	}
+
+	return next;
+}
+
+int32 Entity::GetChildrenCount() const
 {
     return (int32)children.size();
 }
-int32 Entity::GetChildrenCountRecursive()
+int32 Entity::GetChildrenCountRecursive() const
 {
     int32 result = 0;
     result += (int32)children.size();
-    for (std::vector<Entity*>::iterator t = children.begin(); t != children.end(); ++t)
+    for (std::vector<Entity*>::const_iterator t = children.begin(); t != children.end(); ++t)
 	{
         Entity *node = *t;
         result += node->GetChildrenCountRecursive();
@@ -818,10 +838,20 @@ void Entity::SetSolid(bool isSolid)
     customProperties->SetBool(SCENE_NODE_IS_SOLID_PROPERTY_NAME, isSolid);
 }
     
-bool Entity::GetSolid()
+bool Entity::GetSolid() const
 {
 //    return isSolidNode;
     return customProperties->GetBool(SCENE_NODE_IS_SOLID_PROPERTY_NAME, false);
+}
+
+void Entity::SetLocked(bool isLocked)
+{
+	customProperties->SetBool(SCENE_NODE_IS_LOCKED_PROPERTY_NAME, isLocked);
+}
+
+bool Entity::GetLocked() const
+{
+	return customProperties->GetBool(SCENE_NODE_IS_LOCKED_PROPERTY_NAME, false);
 }
 
 void Entity::GetDataNodes(Set<DataNode*> & dataNodes)

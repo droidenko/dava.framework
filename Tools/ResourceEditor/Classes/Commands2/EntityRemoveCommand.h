@@ -29,7 +29,6 @@ public:
 	virtual void Redo();
 	virtual DAVA::Entity* GetEntity() const;
 
-protected:
 	DAVA::Entity* entity;
 	DAVA::Entity* before;
 	DAVA::Entity* parent;

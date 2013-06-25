@@ -64,6 +64,8 @@ bool SceneEditor2::Load(const DAVA::FilePath &path)
 {
 	bool ret = false;
 
+	structureSystem->Lock();
+
 	Entity * rootNode = GetRootNode(path);
 	if(rootNode)
 	{
@@ -89,6 +91,9 @@ bool SceneEditor2::Load(const DAVA::FilePath &path)
 
 		curScenePath = path;
 	}
+
+	structureSystem->Init();
+	structureSystem->Unlock();
 
 	SceneSignals::Instance()->EmitLoaded(this);
 	return ret;

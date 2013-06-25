@@ -22,23 +22,39 @@
 // framework
 #include "Scene3D/Entity.h"
 
+Q_DECLARE_METATYPE(DAVA::Entity*);
+
 class SceneTreeItem : public QStandardItem
 {
 public:
+	enum PropertyItemDataRole
+	{
+		TreeItemEntityRole = Qt::UserRole,
+	};
+
 	SceneTreeItem(DAVA::Entity *entity);
 	~SceneTreeItem();
 
 	int	type() const;
 	QVariant data(int role) const;
-	void setData(const QVariant & value, int role);
 
 	DAVA::Entity* GetEntity() const;
 	SceneTreeItem* SearchEntity(DAVA::Entity *entity);
 
+	void UpdateChilds();
+
+
 protected:
 	DAVA::Entity *entity;
 
-	void UpdateEntity();
+	QIcon GetIcon() const;
+
+	static QIcon GetIconDefault();
+	static QIcon GetIconRenderObject();
+	static QIcon GetIconLandscape();
+	static QIcon GetIconLOD();
+	static QIcon GetIconLight();
+	static QIcon GetIconUserObject();
 };
 
 #endif // __QT_PROPERTY_ITEM_H__

@@ -61,10 +61,11 @@
 		4FFE5C86176B37B600728624 /* TransformCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C80176B37B600728624 /* TransformCommand.cpp */; };
 		4FFE5C88176B393900728624 /* SceneEditor2_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C87176B393900728624 /* SceneEditor2_moc.cpp */; };
 		4FFE5C8E1770C04100728624 /* StructureSystem.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C8C1770C04100728624 /* StructureSystem.cpp */; };
-		4FFE5C9B1770C08600728624 /* EntityAddCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C931770C08600728624 /* EntityAddCommand.cpp */; };
-		4FFE5C9C1770C08600728624 /* EntityInsertCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C951770C08600728624 /* EntityInsertCommand.cpp */; };
 		4FFE5C9D1770C08600728624 /* EntityMoveCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C971770C08600728624 /* EntityMoveCommand.cpp */; };
 		4FFE5C9E1770C08600728624 /* EntityRemoveCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5C991770C08600728624 /* EntityRemoveCommand.cpp */; };
+		4FFE5CAB1779DA3E00728624 /* CollisionParticleEmitter.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CA91779DA3E00728624 /* CollisionParticleEmitter.cpp */; };
+		4FFE5CB51779E38300728624 /* SceneTreeDelegate.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CA61779D98100728624 /* SceneTreeDelegate.cpp */; };
+		4FFE5CB71779E60600728624 /* SceneTreeDelegate_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CB61779E60600728624 /* SceneTreeDelegate_moc.cpp */; };
 		50474EDC16FD872600A17478 /* ExtraUserData.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 50474ED816FD872600A17478 /* ExtraUserData.cpp */; };
 		50474EDD16FD872600A17478 /* PointerHolder.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 50474EDA16FD872600A17478 /* PointerHolder.cpp */; };
 		5C048FD816037725008631C2 /* LandscapeRenderer.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 5C048FD716037725008631C2 /* LandscapeRenderer.cpp */; };
@@ -633,14 +634,15 @@
 		4FFE5C87176B393900728624 /* SceneEditor2_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneEditor2_moc.cpp; sourceTree = "<group>"; };
 		4FFE5C8C1770C04100728624 /* StructureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureSystem.cpp; sourceTree = "<group>"; };
 		4FFE5C8D1770C04100728624 /* StructureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSystem.h; sourceTree = "<group>"; };
-		4FFE5C931770C08600728624 /* EntityAddCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityAddCommand.cpp; sourceTree = "<group>"; };
-		4FFE5C941770C08600728624 /* EntityAddCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityAddCommand.h; sourceTree = "<group>"; };
-		4FFE5C951770C08600728624 /* EntityInsertCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityInsertCommand.cpp; sourceTree = "<group>"; };
-		4FFE5C961770C08600728624 /* EntityInsertCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityInsertCommand.h; sourceTree = "<group>"; };
 		4FFE5C971770C08600728624 /* EntityMoveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityMoveCommand.cpp; sourceTree = "<group>"; };
 		4FFE5C981770C08600728624 /* EntityMoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMoveCommand.h; sourceTree = "<group>"; };
 		4FFE5C991770C08600728624 /* EntityRemoveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityRemoveCommand.cpp; sourceTree = "<group>"; };
 		4FFE5C9A1770C08600728624 /* EntityRemoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityRemoveCommand.h; sourceTree = "<group>"; };
+		4FFE5CA61779D98100728624 /* SceneTreeDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTreeDelegate.cpp; sourceTree = "<group>"; };
+		4FFE5CA71779D98100728624 /* SceneTreeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneTreeDelegate.h; sourceTree = "<group>"; };
+		4FFE5CA91779DA3E00728624 /* CollisionParticleEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionParticleEmitter.cpp; sourceTree = "<group>"; };
+		4FFE5CAA1779DA3E00728624 /* CollisionParticleEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionParticleEmitter.h; sourceTree = "<group>"; };
+		4FFE5CB61779E60600728624 /* SceneTreeDelegate_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTreeDelegate_moc.cpp; sourceTree = "<group>"; };
 		50474ED816FD872600A17478 /* ExtraUserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtraUserData.cpp; sourceTree = "<group>"; };
 		50474ED916FD872600A17478 /* ExtraUserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraUserData.h; sourceTree = "<group>"; };
 		50474EDA16FD872600A17478 /* PointerHolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerHolder.cpp; sourceTree = "<group>"; };
@@ -1544,6 +1546,8 @@
 		02E9E43B173965B800C501BC /* DockSceneTree */ = {
 			isa = PBXGroup;
 			children = (
+				4FFE5CA61779D98100728624 /* SceneTreeDelegate.cpp */,
+				4FFE5CA71779D98100728624 /* SceneTreeDelegate.h */,
 				02E9E43C173965B800C501BC /* SceneTree.cpp */,
 				02E9E43D173965B800C501BC /* SceneTree.h */,
 				02E9E43E173965B800C501BC /* SceneTreeItem.cpp */,
@@ -1558,6 +1562,7 @@
 		02F64048173A8F170053F038 /* DockSceneTree */ = {
 			isa = PBXGroup;
 			children = (
+				4FFE5CB61779E60600728624 /* SceneTreeDelegate_moc.cpp */,
 				02F64049173A8F170053F038 /* SceneTree_moc.cpp */,
 				02F6404A173A8F170053F038 /* SceneTreeItem_moc.cpp */,
 				02F6404B173A8F170053F038 /* SceneTreeModel_moc.cpp */,
@@ -1671,10 +1676,6 @@
 			children = (
 				49F26F1C1771D67D008012B5 /* CommandAction.cpp */,
 				49F26F1D1771D67D008012B5 /* CommandAction.h */,
-				4FFE5C931770C08600728624 /* EntityAddCommand.cpp */,
-				4FFE5C941770C08600728624 /* EntityAddCommand.h */,
-				4FFE5C951770C08600728624 /* EntityInsertCommand.cpp */,
-				4FFE5C961770C08600728624 /* EntityInsertCommand.h */,
 				4FFE5C971770C08600728624 /* EntityMoveCommand.cpp */,
 				4FFE5C981770C08600728624 /* EntityMoveCommand.h */,
 				4FFE5C991770C08600728624 /* EntityRemoveCommand.cpp */,
@@ -3125,6 +3126,8 @@
 		E8C4C63217294079004B0B3B /* CollisionSystem */ = {
 			isa = PBXGroup;
 			children = (
+				4FFE5CA91779DA3E00728624 /* CollisionParticleEmitter.cpp */,
+				4FFE5CAA1779DA3E00728624 /* CollisionParticleEmitter.h */,
 				E8C4C63317294079004B0B3B /* CollisionBaseObject.h */,
 				E8C4C63417294079004B0B3B /* CollisionLandscape.cpp */,
 				E8C4C63517294079004B0B3B /* CollisionLandscape.h */,
@@ -3934,13 +3937,14 @@
 				E8C8139E176F4918003758F3 /* QtPropertyDataMetaObject.cpp in Build Sources */,
 				E8C813A3176F493B003758F3 /* ImageTools.cpp in Build Sources */,
 				4FFE5C8E1770C04100728624 /* StructureSystem.cpp in Build Sources */,
-				4FFE5C9B1770C08600728624 /* EntityAddCommand.cpp in Build Sources */,
-				4FFE5C9C1770C08600728624 /* EntityInsertCommand.cpp in Build Sources */,
 				4FFE5C9D1770C08600728624 /* EntityMoveCommand.cpp in Build Sources */,
 				4FFE5C9E1770C08600728624 /* EntityRemoveCommand.cpp in Build Sources */,
 				49F26F1E1771D67D008012B5 /* CommandAction.cpp in Build Sources */,
 				1714B8921774330D0014A14B /* SceneBatcher.cpp in Build Sources */,
 				17C803171779CF050049B0CC /* CameraStateHelper.cpp in Build Sources */,
+				4FFE5CAB1779DA3E00728624 /* CollisionParticleEmitter.cpp in Build Sources */,
+				4FFE5CB51779E38300728624 /* SceneTreeDelegate.cpp in Build Sources */,
+				4FFE5CB71779E60600728624 /* SceneTreeDelegate_moc.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

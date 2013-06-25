@@ -166,6 +166,7 @@ public:
 			  bool isDisabled,
 			  bool additive,
   			  bool isLong,
+			  bool isLooped,
 			  Sprite* sprite,
 			  RefPtr< PropertyLine<float32> > life,
 			  RefPtr< PropertyLine<float32> > lifeVariation,
@@ -207,6 +208,7 @@ private:
 	bool isDisabled;
 	bool isLong;
 	bool additive;
+	bool isLooped;
 	Sprite* sprite;
 	RefPtr< PropertyLine<float32> > life;
 	RefPtr< PropertyLine<float32> > lifeVariation;

@@ -75,10 +75,11 @@ public:
     virtual void    InsertBeforeNode(Entity *newNode, Entity *beforeNode);
     
 	virtual void	RemoveNode(Entity * node);
-	virtual Entity * GetChild(int32 index);
-	virtual int32   GetChildrenCount();
-    virtual int32   GetChildrenCountRecursive();
+	virtual Entity* GetChild(int32 index) const;
+	virtual int32   GetChildrenCount() const;
+    virtual int32   GetChildrenCountRecursive() const;
 	virtual void	RemoveAllChildren();
+	virtual Entity*	GetNextChild(Entity *child);
         
 	virtual bool FindNodesByNamePart(const String & namePart, List<Entity *> &outNodeList);
     
@@ -251,7 +252,10 @@ public:
     uint32 GetDebugFlags() const;
     	
     void SetSolid(bool isSolid);
-    bool GetSolid();
+    bool GetSolid() const;
+
+	void SetLocked(bool isLocked);
+	bool GetLocked() const;
 
     /**
         \brief function returns maximum bounding box of scene in world coordinates.
@@ -321,6 +325,7 @@ public:
     
 	// Property names.
 	static const char* SCENE_NODE_IS_SOLID_PROPERTY_NAME;
+	static const char* SCENE_NODE_IS_LOCKED_PROPERTY_NAME;
 
 	void FindComponentsByTypeRecursive(Component::eType type, List<DAVA::Entity*> & components);
    

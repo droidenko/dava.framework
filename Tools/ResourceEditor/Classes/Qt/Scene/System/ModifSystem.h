@@ -59,6 +59,7 @@ protected:
 	struct EntityToModify
 	{
 		DAVA::Entity* entity;
+		DAVA::Matrix4 inversedParentWorldTransform;
 		DAVA::Matrix4 originalTransform;
 		DAVA::Vector3 originalCenter;
 		DAVA::Matrix4 moveToZeroPos;
@@ -93,6 +94,7 @@ protected:
 	void EndModification();
 
 	void ApplyModification();
+	bool ModifCanStart(const EntityGroup *selectedEntities) const;
 
 	DAVA::Vector3 CamCursorPosToModifPos(const DAVA::Vector3 &camPosition, const DAVA::Vector3 &camPointDirection, const DAVA::Vector3 &planePoint);
 	DAVA::Vector2 Cam2dProjection(const DAVA::Vector3 &from, const DAVA::Vector3 &to);
@@ -104,6 +106,8 @@ protected:
 	void MoveDone(const DAVA::Vector2 &newPos3d);
 	void RotateDone(const DAVA::Vector2 &newPos2d);
 	void ScaleDone(const DAVA::Vector2 &newPos2d);
+
+	bool IsEntityContainRecursive(const DAVA::Entity *entity, const DAVA::Entity *child) const;
 };
 
 #endif //__ENTITY_MODIFICATION_SYSTEM_H__

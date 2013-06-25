@@ -345,11 +345,11 @@ bool HierarchyTree::DoSave(const QString& projectPath, bool saveAll)
 		YamlNode* fontPathNode = new YamlNode(YamlNode::TYPE_ARRAY);
 		
 		// Put font path
-		fontPathNode->AddValueToArray(fontPath.GetAbsolutePathname());
+		fontPathNode->AddValueToArray(fontPath.GetFrameworkPath());
 		// Put font sprite path if it available
 		if (!fontSpritePath.IsEmpty())
 		{
-			fontPathNode->AddValueToArray(fontSpritePath.GetAbsolutePathname());
+			fontPathNode->AddValueToArray(fontSpritePath.GetFrameworkPath());
 		}
 		// Insert array into node
 		fontMap.insert(std::pair<String, YamlNode*>(DEFAULT_FONT_PATH_NODE, fontPathNode));

@@ -35,5 +35,15 @@ protected:
     DAVA::eGPUFamily gpuFamily;
 };
 
+class ReplaceMipmapLevelCommand: public Command
+{
+public:	
+    ReplaceMipmapLevelCommand(DAVA::int32 mipmapLevel, DAVA::Entity * forEntity);
 
+protected:	
+    virtual void Execute();
+
+    DAVA::int32 mipmapLevel;
+    DAVA::Entity * entity;
+};
 #endif // #ifndef __TEXTURE_OPTIONS_COMMANDS_H__

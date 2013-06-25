@@ -18,6 +18,7 @@
 #define __SCENE_STRUCTURE_SYSTEM_H__
 
 #include "Commands2/Command2.h"
+#include "Scene/EntityGroup.h"
 
 // framework
 #include "Entity/SceneSystem.h"
@@ -32,16 +33,29 @@ public:
 	StructureSystem(DAVA::Scene * scene);
 	~StructureSystem();
 
-	void Add(DAVA::Entity *entity, DAVA::Entity *parent = NULL);
+	void Init();
+
+	void Move(DAVA::Entity *entity, DAVA::Entity *newParent, DAVA::Entity *newBefore);
+	void Move(const EntityGroup *entityGroup, DAVA::Entity *newParent, DAVA::Entity *newBefore);
+
 	void Remove(DAVA::Entity *entity);
-	void Move(DAVA::Entity *entity, DAVA::Entity *newParent);
+	void Remove(const EntityGroup *entityGroup);
+
+	void Lock();
+	void Unlock();
 
 protected:
+	bool locked;
+
 	void Update(DAVA::float32 timeElapsed);
 	void Draw();
 
 	void ProcessUIEvent(DAVA::UIEvent *event);
 	void PropeccCommand(const Command2 *command, bool redo);
+
+	void CheckAndMarkSolid(DAVA::Entity *entity);
+	void CheckAndMarkLocked(DAVA::Entity *entity);
+	void MarkLocked(DAVA::Entity *entity);
 
 	virtual void AddEntity(DAVA::Entity * entity);
 	virtual void RemoveEntity(DAVA::Entity * entity);

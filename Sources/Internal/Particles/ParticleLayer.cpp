@@ -91,6 +91,7 @@ ParticleLayer::ParticleLayer()
 	frameOverLifeFPS = 0;
 
     isDisabled = false;
+	isLooped = true;
 
 	playbackSpeed = 1.0f;
 }
@@ -296,11 +297,32 @@ void ParticleLayer::Restart(bool isDeleteAllParticles)
 	}
 }
 
+void ParticleLayer::SetLooped(bool _isLooped)
+{
+	isLooped = _isLooped;
+}
+
+bool ParticleLayer::GetLooped()
+{
+	return isLooped;
+}
+
+void ParticleLayer::CheckLayerNeedRestart()
+{
+	// Restart layer effect if auto restart option is on and layer time exceeds its endtime
+	if(isLooped && (layerTime > endTime) && !emitter->IsPaused())
+	{
+		Restart(true);
+	}
+}
+
 void ParticleLayer::Update(float32 timeElapsed)
 {
 	// increment timer, take the playbackSpeed into account.
 	timeElapsed *= playbackSpeed;
 	layerTime += timeElapsed;
+	
+	CheckLayerNeedRestart();
 
 	switch(type)
 	{

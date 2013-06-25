@@ -136,6 +136,7 @@ void QtMainWindow::SetupActions()
 	connect(ui->actionRulerTool, SIGNAL(triggered()), actionHandler, SLOT(RulerTool()));
 	connect(ui->actionShowSettings, SIGNAL(triggered()), actionHandler, SLOT(ShowSettings()));
     connect(ui->actionSquareTextures, SIGNAL(triggered()), actionHandler, SLOT(SquareTextures()));
+    connect(ui->actionShowMipmapLevel, SIGNAL(triggered()), actionHandler, SLOT(ReplaceZeroMipmaps()));
     
 #if defined (__DAVAENGINE_MACOS__)
     ui->menuTools->removeAction(ui->actionBeast);

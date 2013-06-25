@@ -419,6 +419,7 @@
     <ClInclude Include="..\..\Sources\Internal\Render\Material\MaterialGraphNode.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Material\NMaterial.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Material\NMaterialConsts.h" />
+    <ClInclude Include="..\..\Sources\Internal\Render\MipmapReplacer.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\OGLHelpers.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\PVRDefines.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\RenderBase.h" />
@@ -761,6 +762,7 @@
     <ClCompile Include="..\..\Sources\Internal\Render\Material\MaterialGraph.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Material\MaterialGraphNode.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Material\NMaterial.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\Render\MipmapReplacer.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\RenderBase.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\RenderDataObject.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\RenderEffect.cpp" />

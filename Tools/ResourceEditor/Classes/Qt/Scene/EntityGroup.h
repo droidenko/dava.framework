@@ -21,15 +21,14 @@
 
 struct EntityGroupItem 
 {
-	EntityGroupItem() : entity(NULL), solidEntity(NULL)	
+	EntityGroupItem() : entity(NULL)
 	{ }
 
-	EntityGroupItem(DAVA::Entity *_entity, DAVA::Entity *_solidEntity, DAVA::AABBox3 _bbox) 
-		: entity(_entity), solidEntity(_solidEntity), bbox(_bbox)
+	EntityGroupItem(DAVA::Entity *_entity, DAVA::AABBox3 _bbox) 
+		: entity(_entity), bbox(_bbox)
 	{ }
 
 	DAVA::Entity *entity;
-	DAVA::Entity *solidEntity;
 	DAVA::AABBox3 bbox;
 };
 
@@ -40,15 +39,14 @@ public:
 	EntityGroup(const EntityGroup &ss);
 	~EntityGroup();
 
-	void Add(DAVA::Entity *entity, DAVA::Entity *solidEntity, DAVA::AABBox3 entityBbox);
+	void Add(DAVA::Entity *entity, DAVA::AABBox3 entityBbox = DAVA::AABBox3());
 	void Add(const EntityGroupItem &groupItem);
 	void Rem(DAVA::Entity *entity);
 	void Clear();
 
 	size_t Size() const;
 	DAVA::Entity* GetEntity(size_t i) const;
-	DAVA::Entity* GetSolidEntity(size_t i) const;
-	EntityGroupItem GetItem(size_t i) const;
+	EntityGroupItem* GetItem(size_t i) const;
 	DAVA::AABBox3 GetBbox(size_t i) const;
 	DAVA::AABBox3 GetCommonBbox() const;
 

@@ -60,11 +60,12 @@ DAVA::Entity* CommandBatch::GetEntity() const
 	return NULL;
 }
 
-void CommandBatch::Add(Command2 *command)
+void CommandBatch::AddAndExec(Command2 *command)
 {
 	if(NULL != command)
 	{
 		commandList.push_back(command);
+		RedoInternalCommand(command);
 	}
 }
 

@@ -131,7 +131,7 @@ void QtPropertyModel::OnItemChanged(QStandardItem* item)
 void QtPropertyModel::OnRefreshTimeout()
 {
 	// refresh column 1, it has all properties values
-	emit dataChanged(index(0, 1), index(0, rowCount()));
+	emit dataChanged(index(0, 1), index(rowCount(), 1));
 	SetRefreshTimeout(refreshTimeout);
 }
 

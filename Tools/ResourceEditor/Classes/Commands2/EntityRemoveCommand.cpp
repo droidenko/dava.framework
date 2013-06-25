@@ -27,20 +27,9 @@ EntityRemoveCommand::EntityRemoveCommand(DAVA::Entity* _entity)
 	if(NULL != entity)
 	{
 		parent = entity->GetParent();
-
 		if(NULL != parent)
 		{
-			for (int i = 0; i < parent->GetChildrenCount(); i++)
-			{
-				if(parent->GetChild(i) == entity)
-				{
-					break;
-				}
-				else
-				{
-					before = parent->GetChild(i);
-				}
-			}
+			before = parent->GetNextChild(entity);
 		}
 	}
 }

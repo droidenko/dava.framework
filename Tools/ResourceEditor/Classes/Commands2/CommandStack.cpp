@@ -110,11 +110,11 @@ void CommandStack::Exec(Command2 *command)
 		{
 			if(NULL != curBatchCommand)
 			{
-				curBatchCommand->Add(command);
+				curBatchCommand->AddAndExec(command);
 			}
 			else
 			{
-				ExecInternal(command);
+				ExecInternal(command, true);
 			}
 		}
 		else
@@ -131,6 +131,7 @@ void CommandStack::BeginBatch(const DAVA::String &text)
 	{
 		curBatchCommand = new CommandBatch();
 		curBatchCommand->SetText(text);
+		curBatchCommand->SetNotify(stackCommandsNotify, false);
 	}
 }
 
@@ -140,7 +141,9 @@ void CommandStack::EndBatch()
 	{
 		if(curBatchCommand->Size() > 0)
 		{
-			ExecInternal(curBatchCommand);
+			// all command were already executed in batch
+			// so just add them to stack without calling redo
+			ExecInternal(curBatchCommand, false);
 		}
 		else
 		{
@@ -161,17 +164,20 @@ void CommandStack::SetUndoLimit(size_t limit)
 	commandListLimit = limit;
 }
 
-void CommandStack::ExecInternal(Command2 *command)
+void CommandStack::ExecInternal(Command2 *command, bool runCommand)
 {
 	ClearRedoCommands();
 
 	commandList.push_back(command);
 	nextCommandIndex++;
 
-	command->SetNotify(stackCommandsNotify, false);
-	command->Redo();
-	EmitNotify(command, true);
+	if(runCommand)
+	{
+		command->SetNotify(stackCommandsNotify, false);
+		command->Redo();
+	}
 
+	EmitNotify(command, true);
 	ClearLimitedCommands();
 }
 

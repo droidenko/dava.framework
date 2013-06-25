@@ -153,6 +153,8 @@ void HierarchyTreePlatformNode::ActivatePlatform()
 	if (rootNode)
 	{
 		String bundleName = rootNode->GetProjectDir().toStdString();
+        //after platform ativation only one item(projDir) should be placed to it
+		FilePath::CleanResourcesFolders();
 		FilePath::SetBundleName(bundleName);
 	}
 }

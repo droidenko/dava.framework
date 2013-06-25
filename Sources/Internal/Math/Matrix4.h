@@ -113,6 +113,8 @@ struct Matrix4
 
 
 	inline Vector3 GetTranslationVector() const;
+	inline void SetTranslationVector(const Vector3 & vector);
+
 	inline Vector3 GetScaleVector() const;
 	
 	
@@ -550,14 +552,19 @@ inline void	Matrix4::CreateRotation(const Vector3 & r, float32 angleInRadians)
 inline void	Matrix4::CreateTranslation(const Vector3 & _v)
 {
 	Identity();
-	_30 = _v.x;
-	_31 = _v.y;
-	_32 = _v.z;
+	SetTranslationVector(_v);
 }
 	
 inline Vector3 Matrix4::GetTranslationVector() const
 {
 	return Vector3(_30, _31, _32);
+}
+
+inline void Matrix4::SetTranslationVector(const Vector3 & _v)
+{
+	_30 = _v.x;
+	_31 = _v.y;
+	_32 = _v.z;
 }
 
 inline Vector3 Matrix4::GetScaleVector() const

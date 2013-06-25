@@ -96,7 +96,7 @@ protected:
 	QMap<DAVA::Entity*, CollisionBaseObject*> entityToCollision;
 	QMap<btCollisionObject*, DAVA::Entity*> collisionToEntity;
 
-	void BuildFromEntity(DAVA::Entity * entity);
+	CollisionBaseObject* BuildFromEntity(DAVA::Entity * entity);
 	void DestroyFromEntity(DAVA::Entity * entity);
 };
 

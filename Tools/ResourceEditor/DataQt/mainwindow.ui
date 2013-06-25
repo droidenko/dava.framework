@@ -323,6 +323,7 @@
    <addaction name="actionMaterialEditor"/>
    <addaction name="actionTextureConverter"/>
    <addaction name="actionEnableCameraLight"/>
+   <addaction name="actionShowMipmapLevel"/>
    <addaction name="separator"/>
    <addaction name="actionHeightMapEditor"/>
    <addaction name="actionTileMapEditor"/>
@@ -397,7 +398,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -466,6 +467,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowSettings"/>
     <addaction name="actionEnableCameraLight"/>
+    <addaction name="actionShowMipmapLevel"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1075,6 +1077,9 @@
    <property name="text">
     <string>Texture Converter</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+T</string>
+   </property>
   </action>
   <action name="actionIPhone">
    <property name="text">
@@ -1477,6 +1482,18 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="actionShowMipmapLevel">
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/mipmap.png</normaloff>:/QtIcons/mipmap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Zero Mipmap Level</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Zero Mipmap Level</string>
    </property>
   </action>
  </widget>

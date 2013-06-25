@@ -691,6 +691,12 @@
 		4FA5CDC01757AF430040CC6E /* EnumMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FA5CDBE1757AF430040CC6E /* EnumMap.h */; };
 		4FE7D3591745056700D2FCE6 /* GlobalEnum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FE7D3571745056700D2FCE6 /* GlobalEnum.cpp */; };
 		4FE7D35A1745056700D2FCE6 /* GlobalEnum.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FE7D3581745056700D2FCE6 /* GlobalEnum.h */; };
+		4FFE5CAE1779DBC700728624 /* MipmapReplacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CAC1779DBC700728624 /* MipmapReplacer.cpp */; };
+		4FFE5CAF1779DBC700728624 /* MipmapReplacer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FFE5CAD1779DBC700728624 /* MipmapReplacer.h */; };
+		4FFE5CB11779E09300728624 /* MipmapReplacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CAC1779DBC700728624 /* MipmapReplacer.cpp */; };
+		4FFE5CB21779E09C00728624 /* MipmapReplacer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FFE5CAD1779DBC700728624 /* MipmapReplacer.h */; };
+		4FFE5CB31779E0B200728624 /* MipmapReplacer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FFE5CAD1779DBC700728624 /* MipmapReplacer.h */; };
+		4FFE5CB41779E0B400728624 /* MipmapReplacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FFE5CAC1779DBC700728624 /* MipmapReplacer.cpp */; };
 		509740D816C12EED00631E71 /* IntrospectionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8CC1BF616C109F1009B49BF /* IntrospectionBase.cpp */; };
 		509740DA16C12EEE00631E71 /* IntrospectionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8CC1BF616C109F1009B49BF /* IntrospectionBase.cpp */; };
 		50D6C8EA16C107D500BB3F78 /* GlobalEventSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D6C8E716C107D500BB3F78 /* GlobalEventSystem.h */; };
@@ -1959,17 +1965,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		02E9E46B173A459E00C501BC /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				02E9E46C173A45A400C501BC /* libfmodevent.dylib in CopyFiles */,
-				02E9E46D173A45A400C501BC /* libfmodex.dylib in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		176DEB71174B5561007A983B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2022,6 +2017,8 @@
 		4FA5CDBE1757AF430040CC6E /* EnumMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumMap.h; sourceTree = "<group>"; };
 		4FE7D3571745056700D2FCE6 /* GlobalEnum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalEnum.cpp; sourceTree = "<group>"; };
 		4FE7D3581745056700D2FCE6 /* GlobalEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalEnum.h; sourceTree = "<group>"; };
+		4FFE5CAC1779DBC700728624 /* MipmapReplacer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MipmapReplacer.cpp; sourceTree = "<group>"; };
+		4FFE5CAD1779DBC700728624 /* MipmapReplacer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MipmapReplacer.h; sourceTree = "<group>"; };
 		50D6C8E616C107D400BB3F78 /* GlobalEventSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalEventSystem.cpp; sourceTree = "<group>"; };
 		50D6C8E716C107D500BB3F78 /* GlobalEventSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalEventSystem.h; sourceTree = "<group>"; };
 		5C42C98314E3AFA400EB3F53 /* libxml_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxml_macos.a; path = ../../Libs/libs/libxml_macos.a; sourceTree = "<group>"; };
@@ -3227,6 +3224,8 @@
 		E8989C1516BD24E400732C04 /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				4FFE5CAC1779DBC700728624 /* MipmapReplacer.cpp */,
+				4FFE5CAD1779DBC700728624 /* MipmapReplacer.h */,
 				E8951B721738FEEC00755339 /* GPUFamilyDescriptor.cpp */,
 				E8951B731738FEEC00755339 /* GPUFamilyDescriptor.h */,
 				CCC7A47B16F1D64D0061EA5D /* RenderState.cpp */,
@@ -4067,6 +4066,7 @@
 				17E2706F174CB1660019EF87 /* NPAPIPluginMacOS.h in Headers */,
 				1795E4BF174CB87700050F64 /* NPAPIOpenGLLayerMacOS.h in Headers */,
 				1795E4C5174CC24D00050F64 /* NPAPICorePlatformMacOS.h in Headers */,
+				4FFE5CB31779E0B200728624 /* MipmapReplacer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4407,6 +4407,7 @@
 				846CFE5F174D1A64004ECE3C /* OpenUDIDApple.h in Headers */,
 				846CFE63174D1A75004ECE3C /* OpenUDIDMacOS.h in Headers */,
 				4FA5CDC01757AF430040CC6E /* EnumMap.h in Headers */,
+				4FFE5CAF1779DBC700728624 /* MipmapReplacer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4739,6 +4740,7 @@
 				02E9E43A173964DA00C501BC /* SoundUpdateSystem.h in Headers */,
 				CCC7A4FA17579C680061EA5D /* GlobalEnum.h in Headers */,
 				CCC7A4FC17579C6D0061EA5D /* EnumMap.h in Headers */,
+				4FFE5CB21779E09C00728624 /* MipmapReplacer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5139,6 +5141,7 @@
 				1795E4BA174CB86800050F64 /* NPAPIPluginMacOS.mm in Sources */,
 				1795E4BB174CB86D00050F64 /* NPAPIOpenGLLayerMacOS.mm in Sources */,
 				1795E4C4174CC24D00050F64 /* NPAPICorePlatformMacOS.cpp in Sources */,
+				4FFE5CB41779E0B400728624 /* MipmapReplacer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5434,6 +5437,7 @@
 				846CFE60174D1A64004ECE3C /* OpenUDIDApple.mm in Sources */,
 				846CFE64174D1A75004ECE3C /* OpenUDIDMacOS.mm in Sources */,
 				4FA5CDBF1757AF430040CC6E /* EnumMap.cpp in Sources */,
+				4FFE5CAE1779DBC700728624 /* MipmapReplacer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5723,6 +5727,7 @@
 				1789108F1740DFBC007B72BA /* NMaterialConsts.cpp in Sources */,
 				CCC7A4FB17579C6B0061EA5D /* GlobalEnum.cpp in Sources */,
 				CCC7A4FD17579C700061EA5D /* EnumMap.cpp in Sources */,
+				4FFE5CB11779E09300728624 /* MipmapReplacer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

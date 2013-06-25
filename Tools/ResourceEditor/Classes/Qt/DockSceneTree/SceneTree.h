@@ -23,6 +23,7 @@
 
 #include "Scene/SceneSignals.h"
 #include "DockSceneTree/SceneTreeModel.h"
+#include "DockSceneTree/SceneTreeDelegate.h"
 
 class SceneTree : public QTreeView
 {
@@ -36,12 +37,18 @@ public slots:
 	void ShowContextMenu(const QPoint &pos);
 	void LookAtSelection();
 	void RemoveSelection();
+	void LockEntities();
+	void UnlockEntities();
 
 protected:
 	SceneTreeModel * treeModel;
+	SceneTreeDelegate *treeDelegate;
+
 	bool skipTreeSelectionProcessing;
 
 	void dropEvent(QDropEvent * event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dragEnterEvent(QDragEnterEvent *event);
 
 protected slots:
 	void SceneActivated(SceneEditor2 *scene);
@@ -52,6 +59,11 @@ protected slots:
 	void TreeSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void TreeItemClicked(const QModelIndex & index);
 	void TreeItemDoubleClicked(const QModelIndex & index);
+	void TreeItemCollapsed(const QModelIndex &index);
+	void TreeItemExpanded(const QModelIndex &index);
+
+	void SyncSelectionToTree();
+	void SyncSelectionFromTree();
 };
 
 #endif // __QT_SCENE_TREE_H__

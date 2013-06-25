@@ -54,7 +54,7 @@ protected:
 	CommandBatch* curBatchCommand;
 	CommandStackNotify *stackCommandsNotify;
 
-	void ExecInternal(Command2 *command);
+	void ExecInternal(Command2 *command, bool runCommand);
 
 	void ClearRedoCommands();
 	void ClearLimitedCommands();

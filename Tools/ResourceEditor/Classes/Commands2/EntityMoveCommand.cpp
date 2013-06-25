@@ -19,8 +19,8 @@
 EntityMoveCommand::EntityMoveCommand(DAVA::Entity* _entity, DAVA::Entity *_newParent, DAVA::Entity *_newBefore /* = NULL */)
 	: Command2(CMDID_ENTITY_MOVE, "Move entity")
 	, entity(_entity)
-	, parent(NULL)
-	, before(NULL)
+	, oldParent(NULL)
+	, oldBefore(NULL)
 	, newParent(_newParent)
 	, newBefore(_newBefore)
 {
@@ -28,21 +28,11 @@ EntityMoveCommand::EntityMoveCommand(DAVA::Entity* _entity, DAVA::Entity *_newPa
 
 	if(NULL != entity)
 	{
-		parent = entity->GetParent();
+		oldParent = entity->GetParent();
 
-		if(NULL != parent)
+		if(NULL != oldParent)
 		{
-			for (int i = 0; i < parent->GetChildrenCount(); i++)
-			{
-				if(parent->GetChild(i) == entity)
-				{
-					break;
-				}
-				else
-				{
-					before = parent->GetChild(i);
-				}
-			}
+			oldBefore = oldParent->GetNextChild(entity);
 		}
 	}
 }
@@ -56,15 +46,15 @@ void EntityMoveCommand::Undo()
 {
 	if(NULL != entity)
 	{
-		if(NULL != parent)
+		if(NULL != oldParent)
 		{
-			if(NULL != before)
+			if(NULL != oldBefore)
 			{
-				parent->InsertBeforeNode(entity, before);
+				oldParent->InsertBeforeNode(entity, oldBefore);
 			}
 			else
 			{
-				parent->AddNode(entity);
+				oldParent->AddNode(entity);
 			}
 		}
 		else

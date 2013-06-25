@@ -135,6 +135,7 @@ public slots:
     void ShowSettings();
     void Beast();
     void SquareTextures();
+    void ReplaceZeroMipmaps();
 
     //ViewOptions
     void MenuViewOptionsWillShow();
