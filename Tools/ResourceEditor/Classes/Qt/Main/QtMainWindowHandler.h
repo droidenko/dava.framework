@@ -220,6 +220,7 @@ private:
 	void SaveParticleEmitterNodes(Scene* scene);
 	void SaveParticleEmitterNodeRecursive(Entity* parentNode);
 
+	void ExecuteModifyBatchStateCommand(bool isBatch);
 
 private:
 	//set switch index

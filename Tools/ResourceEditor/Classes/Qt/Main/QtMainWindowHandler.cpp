@@ -284,7 +284,8 @@ void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 	// Yuri Coder, 2013/06/12. Current Tab Proxy might be NULL in case new QT
 	// scene editor isn't active.
 	FilePath pathToCurrentScene;
-	SceneEditor2* currentSceneEditor = sceneTabWidget->GetSceneEditorForCurrentTab();
+	SceneEditor2 *currentSceneEditor = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+
 	if (currentSceneEditor)
 	{
 		pathToCurrentScene = currentSceneEditor->GetScenePath();
@@ -996,18 +997,13 @@ void QtMainWindowHandler::ModificationCleanupBatchFlag()
 void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
 {
 	// Get the list of selected entities.
-	if (!sceneTabWidget)
+	SceneEditor2* curScene = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+	if (!curScene || !curScene->selectionSystem)
 	{
 		return;
 	}
-	
-	SceneEditor2* currentSceneEditor = sceneTabWidget->GetSceneEditorForCurrentTab();
-	if (!currentSceneEditor || !currentSceneEditor->selectionSystem)
-	{
-		return;
-	}
-	
-	const EntityGroup *selectedEntities = currentSceneEditor->selectionSystem->GetSelection();
+
+	const EntityGroup *selectedEntities = curScene->selectionSystem->GetSelection();
 	if (!selectedEntities || selectedEntities->Size() == 0)
 	{
 		QMessageBox msgBox(QMessageBox::Warning, "Warning", "No entities selected to group");
@@ -1018,12 +1014,12 @@ void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
 	if (isBatch)
 	{
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities),
-													   currentSceneEditor);
+													   curScene);
 	}
 	else
 	{
 		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities),
-													   currentSceneEditor);
+													   curScene);
 	}
 }
 

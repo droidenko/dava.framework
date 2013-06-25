@@ -65,7 +65,6 @@ QtMainWindow::QtMainWindow(QWidget *parent)
 	QtMainWindowHandler::Instance()->SetDefaultFocusWidget(ui->sceneTabWidget);
 	QtMainWindowHandler::Instance()->SetResentMenu(ui->menuFile);
 	QtMainWindowHandler::Instance()->RegisterStatusBar(ui->statusBar);
-	QtMainWindowHandler::Instance()->SetSceneTabWidget(ui->sceneTabWidget);
 	QtMainWindowHandler::Instance()->RestoreDefaultFocus();
 
     RegisterBasePointerTypes();
