@@ -47,8 +47,7 @@
 #include "../Commands/FileCommands.h"
 #include "../Commands/ToolsCommands.h"
 
-
-
+#include "../CameraStateHelper.h"
 
 SceneEditorScreenMain::SceneEditorScreenMain()
 	:	UIScreen()
@@ -512,7 +511,9 @@ void SceneEditorScreenMain::SaveSceneToFile(const FilePath &pathToFile)
     sceneData->SetScenePathname(pathToFile);
 
     BodyItem *iBody = FindCurrentBody();
-    iBody->bodyControl->PushDebugCamera();
+	
+	// Push/Pop Debug Camera is performed here.
+	CameraStateHelper cameraStateHelper(iBody->bodyControl->GetScene());
     
     Scene * scene = iBody->bodyControl->GetScene();
     
@@ -523,8 +524,6 @@ void SceneEditorScreenMain::SaveSceneToFile(const FilePath &pathToFile)
     SafeRelease(file);
     uint64 endTime = SystemTimer::Instance()->AbsoluteMS();
     Logger::Info("[SAVE SCENE TIME] %d ms", (endTime - startTime));
-    
-    iBody->bodyControl->PopDebugCamera();			
 }
 
 void SceneEditorScreenMain::UpdateModificationPanel(void)
@@ -538,7 +537,9 @@ void SceneEditorScreenMain::UpdateModificationPanel(void)
 void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
 {
     BodyItem *iBody = FindCurrentBody();
-	iBody->bodyControl->PushDebugCamera();
+
+	// Push/Pop Debug Camera is performed here.
+	CameraStateHelper cameraStateHelper(iBody->bodyControl->GetScene());
     
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
     
@@ -553,16 +554,16 @@ void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
     Set<String> errorsLog;
     sceneSaver.SaveScene(iBody->bodyControl->GetScene(), sceneData->GetScenePathname(), errorsLog);
     
-	iBody->bodyControl->PopDebugCamera();
-    
     ShowErrorDialog(errorsLog);
 }
 
 void SceneEditorScreenMain::ExportAs(eGPUFamily forGPU)
 {
     BodyItem *iBody = FindCurrentBody();
-	iBody->bodyControl->PushDebugCamera();
-    
+
+	// Push/Pop Debug Camera is performed here.
+	CameraStateHelper cameraStateHelper(iBody->bodyControl->GetScene());
+
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
     
     // Get project path
@@ -579,8 +580,6 @@ void SceneEditorScreenMain::ExportAs(eGPUFamily forGPU)
     //TODO: how to be with removed nodes?
     Set<String> errorsLog;
     exporter.ExportScene(iBody->bodyControl->GetScene(), sceneData->GetScenePathname(), errorsLog);
-    
-	iBody->bodyControl->PopDebugCamera();
     
     ShowErrorDialog(errorsLog);
 }

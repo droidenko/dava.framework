@@ -85,9 +85,6 @@ EditorBodyControl::EditorBodyControl(const Rect & rect)
     scene = NULL;
     cameraController = NULL;
 
-	mainCam = 0;
-	debugCam = 0;
-	
 	modificationMode = ResourceEditor::MODIFY_NONE;
 	landscapeRelative = false;
     
@@ -196,62 +193,6 @@ FilePath EditorBodyControl::CustomColorsGetCurrentSaveFileName()
 		return FilePath();
 
 	return landscapeEditorCustomColors->GetCurrentSaveFileName();
-}
-
-void RemoveDeepCamera(Entity * curr)
-{
-	Entity * cam;
-	
-	cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
-	while (cam)
-	{
-		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
-	}
-	
-	cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	while (cam)
-	{
-		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	}	
-}
-
-void EditorBodyControl::PushDebugCamera()
-{
-	mainCam = scene->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
-	if (mainCam)
-	{
-		SafeRetain(mainCam);
-		scene->RemoveNode(mainCam);
-	}
-	
-	debugCam = scene->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	if (debugCam)
-	{
-		SafeRetain(debugCam);
-		scene->RemoveNode(debugCam);
-	}
-	
-	RemoveDeepCamera(scene);
-}
-
-void EditorBodyControl::PopDebugCamera()
-{
-	if (mainCam)
-	{
-		scene->AddNode(mainCam);
-		SafeRelease(mainCam);
-	}
-	
-	if (debugCam)
-	{
-		scene->AddNode(debugCam);
-		SafeRelease(debugCam);
-	}
-	
-	mainCam = 0;
-	debugCam = 0;
 }
 
 void EditorBodyControl::CreateModificationPanel(void)

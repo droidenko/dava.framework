@@ -33,6 +33,7 @@
 #include <QString>
 
 #include "CommandsManager.h"
+#include "../CameraStateHelper.h"
 
 using namespace DAVA;
 
@@ -222,9 +223,12 @@ void CommandExport::Execute()
 		
 		//TODO: how to be with removed nodes?
 		Set<String> errorsLog;
-
-		exporter.ExportScene(activeScene, activeScenePath, errorsLog);
 		
+		// Push/Pop Debug Camera is performed here.
+		CameraStateHelper cameraStateHelper(activeScene);
+		exporter.ExportScene(activeScene, activeScenePath, errorsLog);
+		ShowErrorDialog(errorsLog);
+
 		return;
 	}
 	

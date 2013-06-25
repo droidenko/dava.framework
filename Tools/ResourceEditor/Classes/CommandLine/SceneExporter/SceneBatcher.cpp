@@ -624,8 +624,7 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 	List<Texture*> texturesToBatch;
 	texturesToBatch.push_back(firstMaterial->GetTexture(Material::TEXTURE_DIFFUSE));
 
-	// TODO! Also check the lightmap textures!
-	// TODO! Also check the lightmap textures!
+	Texture* firstLightMapTexture = firstRenderBatch->GetMaterialInstance()->GetLightmap();
 
 	bool textureBatchingNeeded = false;
 	bool textureBatchingCanBeDone = true;
@@ -641,6 +640,19 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 		}
 		
 		Material* curMaterial = curRenderBatch->GetMaterial();
+
+		// Verify the lightmap texture.
+		Texture* curLightmapTexture = curRenderBatch->GetMaterialInstance()->GetLightmap();
+		if ((curLightmapTexture && !firstLightMapTexture) ||
+			(!curLightmapTexture && firstLightMapTexture) ||
+			(curLightmapTexture != firstLightMapTexture))
+		{
+			AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Lightmaps assigned to batch components are different",
+										   batchID));
+			textureBatchingCanBeDone = false;
+			break;
+		}
+
 		Material::eMaterialComparisonResult compareResult = firstMaterial->Compare(curMaterial, true);
 		if (compareResult == Material::MATERIALS_DIFFERENT)
 		{
