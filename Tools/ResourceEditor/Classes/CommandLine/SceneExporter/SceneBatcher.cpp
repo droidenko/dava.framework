@@ -550,7 +550,7 @@ void SceneBatcher::SelectGeometryEntitiesRecursive(Entity* rootLevelEntity, Enti
 		lodComponent->GetLodData(lodLayers);
 		if (lodLayers.size() > 0)
 		{
-			for (int32 i = 0; i < lodLayers[0]->nodes.size(); i ++)
+			for (uint32 i = 0; i < lodLayers[0]->nodes.size(); i ++)
 			{
 				Entity* lodEntity = lodLayers[0]->nodes[i];
 				if (!lodEntity)

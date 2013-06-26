@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="QtData">
@@ -1734,6 +1734,15 @@
     <ClCompile Include="Classes\Commands2\CommandAction.cpp">
       <Filter>Classes\Commands2</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\BatchEntitiesHelper.cpp">
+      <Filter>QtGenerated</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\CommandLine\SceneExporter\SceneBatcher.cpp">
+      <Filter>Classes\CommandLine\SceneExporter</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\CameraStateHelper.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h">
@@ -3055,6 +3064,15 @@
     </ClInclude>
     <ClInclude Include="Classes\Commands2\CommandAction.h">
       <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\BatchEntitiesHelper.h">
+      <Filter>QtGenerated</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\CommandLine\SceneExporter\SceneBatcher.h">
+      <Filter>Classes\CommandLine\SceneExporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\CameraStateHelper.h">
+      <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@
 #define __SCENE_BATCHER_H__
 
 #include "DAVAEngine.h"
-#include "TexturePacker.h"
+#include "TexturePacker\TexturePacker.h"
 
 namespace DAVA {
 

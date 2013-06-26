@@ -316,6 +316,7 @@
     <ClCompile Include="Classes\bullet\LinearMath\btGeometryUtil.cpp" />
     <ClCompile Include="Classes\bullet\LinearMath\btQuickprof.cpp" />
     <ClCompile Include="Classes\bullet\LinearMath\btSerializer.cpp" />
+    <ClCompile Include="Classes\CameraStateHelper.cpp" />
     <ClCompile Include="Classes\Collada\ColladaAnimatedMesh.cpp" />
     <ClCompile Include="Classes\Collada\ColladaAnimation.cpp" />
     <ClCompile Include="Classes\Collada\ColladaCamera.cpp" />
@@ -337,6 +338,7 @@
     <ClCompile Include="Classes\CommandLine\CommandLineTool.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitter.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.cpp" />
+    <ClCompile Include="Classes\CommandLine\SceneExporter\SceneBatcher.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneExporter\SceneExporter.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneExporter\SceneExporterTool.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneSaver\SceneSaver.cpp" />
@@ -871,6 +873,7 @@
     <ClInclude Include="Classes\bullet\vectormath\sse\vectormath_aos.h" />
     <ClInclude Include="Classes\bullet\vectormath\sse\vec_aos.h" />
     <ClInclude Include="Classes\bullet\vectormath\vmInclude.h" />
+    <ClInclude Include="Classes\CameraStateHelper.h" />
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h" />
     <ClInclude Include="Classes\Collada\ColladaAnimation.h" />
     <ClInclude Include="Classes\Collada\ColladaCamera.h" />
@@ -894,6 +897,7 @@
     <ClInclude Include="Classes\CommandLine\CommandLineTool.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitter.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.h" />
+    <ClInclude Include="Classes\CommandLine\SceneExporter\SceneBatcher.h" />
     <ClInclude Include="Classes\CommandLine\SceneExporter\SceneExporter.h" />
     <ClInclude Include="Classes\CommandLine\SceneExporter\SceneExporterTool.h" />
     <ClInclude Include="Classes\CommandLine\SceneSaver\SceneSaver.h" />
