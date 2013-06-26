@@ -61,7 +61,7 @@ void SceneBatcher::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 			continue;
 		}
 		
-		Set<Entity*> geometryEntitiesToBatch = SelectGeometryEntities(entitiesToBatch);
+		Map<Entity*, Entity*> geometryEntitiesToBatch = SelectGeometryEntities(entitiesToBatch);
 		
 		// A new Material is created for the batched entity - it might contain new batched texture.
 		TexturesAndMaterialData batchedTMData =
@@ -85,17 +85,17 @@ void SceneBatcher::BatchSceneNodes(Scene *scene, Set<String> &errorLog)
 			continue;
 		}
 		
-		// Add the new batched entity to the parent of the current solid entity, if any.
-		Entity* parentSolidEntity = GetSolidParentEntityIfPresent(*entitiesToBatch.begin());
-		Entity* parentEntity = (parentSolidEntity)->GetParent();
+		// Add the new batched entity to the parent of the current root entity, if any.
+		Entity* rootEntity = geometryEntitiesToBatch.begin()->first;
+		Entity* parentEntity = rootEntity->GetParent();
 		if (!parentEntity)
 		{
-			AddToErrorLog(errorLog, Format("Batching: no Parent Entity for %s", parentSolidEntity->GetName().c_str()));
+			AddToErrorLog(errorLog, Format("Batching: no Parent Entity for Root Entity %s", rootEntity->GetName().c_str()));
 			continue;
 		}
 		
 		parentEntity->AddNode(resultEntity);
-		DeleteEntities(entitiesToBatch);
+		DeleteEntities(geometryEntitiesToBatch);
 	}
 }
 
@@ -163,25 +163,8 @@ void SceneBatcher::GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 b
 	}
 }
 
-Entity* SceneBatcher::GetSolidParentEntityIfPresent(Entity* entity)
-{
-	Entity* solidEntity = entity;
-	while (NULL != solidEntity)
-	{
-		KeyedArchive *customProperties = solidEntity->GetCustomProperties();
-		if(customProperties && customProperties->IsKeyExists(String(Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME)))
-		{
-			break;
-		}
-		solidEntity = solidEntity->GetParent();
-	};
-	
-	// If no solid parent entity is present on this level - return the entity passed.
-	return solidEntity ? solidEntity : entity;
-}
-
 Entity* SceneBatcher::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
-									const Set<Entity*>& entitiesToBatch,
+									const Map<Entity*, Entity*>& entitiesToBatch,
 									const String& batchedEntityName,
 									const TexturesAndMaterialData& batchedTMData)
 {
@@ -192,7 +175,7 @@ Entity* SceneBatcher::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 		return NULL;
 	}
 	
-	Entity* firstEntity = (*entitiesToBatch.begin());
+	Entity* firstEntity = entitiesToBatch.begin()->second;
 	if (!firstEntity)
 	{
 		AddToErrorLog(errorLog, "Batching: First Entity in Batch is NULL");
@@ -252,15 +235,16 @@ Entity* SceneBatcher::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	uint32 verticesBatched = 0;
 	uint32 indicesBatched = 0;
 	
-	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end(); iter ++)
+	for (Map<Entity*, Entity*>::const_iterator iter = entitiesToBatch.begin();
+		 iter != entitiesToBatch.end(); iter ++)
 	{
 		// Batch the Vertices and Indices.
-		Entity* curEntity = (*iter);
+		Entity* curRootEntity = iter->first;
+		Entity* curEntity = iter->second;
 		
 		// The Transformation Matrix has to be taken from the upper's level "solid" entity,
 		// if it exists.
-		Entity* curSolidEntity = GetSolidParentEntityIfPresent(curEntity);
-		Matrix4 curEntityMatrix = curSolidEntity->GetLocalTransform();
+		Matrix4 curEntityMatrix = curRootEntity->GetLocalTransform();
 		RenderComponent * component = static_cast<RenderComponent*>(curEntity->GetComponent(Component::RENDER_COMPONENT));
 		
 		if(!component || !component->GetRenderObject())
@@ -353,15 +337,15 @@ Entity* SceneBatcher::BatchEntities(DAVA::Scene* scene, Set<String>& errorLog,
 	return batchedEntity;
 }
 
-void SceneBatcher::CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
+void SceneBatcher::CalculateBatchedEntityParameters(const Map<Entity*, Entity*>& entitiesToBatch,
 													uint32& vertexCount, uint32& indexCount,
 													AABBox3& batchedBoundingBox,
 													Set<String>& errorLog)
 {
-	for (Set<Entity*>::iterator iter = entitiesToBatch.begin();
+	for (Map<Entity*, Entity*>::const_iterator iter = entitiesToBatch.begin();
 		 iter != entitiesToBatch.end(); iter ++)
 	{
-		Entity* curEntity = (*iter);
+		Entity* curEntity = iter->second;
 		RenderComponent * component = static_cast<RenderComponent*>(curEntity->GetComponent(Component::RENDER_COMPONENT));
 		
 		if(!component || !component->GetRenderObject())
@@ -476,23 +460,22 @@ uint32 SceneBatcher::MergeIndices(PolygonGroup* batchedPolygonGroup, PolygonGrou
 	return indicesToBatch;
 }
 
-void SceneBatcher::DeleteEntities(const Set<Entity*>& entitiesToDelete)
+void SceneBatcher::DeleteEntities(const Map<Entity*, Entity*>& entitiesToDelete)
 {
-	for (Set<Entity*>::iterator iter = entitiesToDelete.begin(); iter != entitiesToDelete.end();
+	for (Map<Entity*, Entity*>::const_iterator iter = entitiesToDelete.begin(); iter != entitiesToDelete.end();
 		 iter ++)
 	{
-		Entity* entityToDelete = *iter;
-		if (!entityToDelete)
+		// Delete the root-level entities only.
+		Entity* rootEntityToDelete = iter->first;
+		if (!rootEntityToDelete)
 		{
 			continue;
 		}
-		
-		Entity* solidEntityToDelete = GetSolidParentEntityIfPresent(entityToDelete);
-		Entity* parentNode = solidEntityToDelete->GetParent();
+		Entity* parentNode = rootEntityToDelete->GetParent();
 		DVASSERT(parentNode);
 		
 		parentNode->Retain();
-		parentNode->RemoveNode(solidEntityToDelete);
+		parentNode->RemoveNode(rootEntityToDelete);
 		parentNode->Release();
 	}
 }
@@ -534,27 +517,31 @@ void SceneBatcher::BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNam
 	}
 }
 
-Set<Entity*> SceneBatcher::SelectGeometryEntities(Set<Entity*>& entitiesToBatch)
+Map<Entity*, Entity*> SceneBatcher::SelectGeometryEntities(Set<Entity*>& entitiesToBatch)
 {
-	Set<Entity*> resultSet;
+	Map<Entity*, Entity*> resultMap;
 	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end();
 		 iter ++)
 	{
-		SelectGeometryEntitiesRecursive((*iter), resultSet);
+		Entity* rootLevelEntity = (*iter);
+		SelectGeometryEntitiesRecursive(rootLevelEntity, rootLevelEntity, resultMap);
 	}
-	
-	return resultSet;
+
+	return resultMap;
 }
 
-void SceneBatcher::SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet)
+void SceneBatcher::SelectGeometryEntitiesRecursive(Entity* rootLevelEntity, Entity* curLevelEntity,
+												   Map<Entity*, Entity*>& resultMap)
 {
-	LodComponent* lodComponent = GetLodComponent(entity);
-	RenderObject* renderObject = GetRenerObject(entity);
+	LodComponent* lodComponent = GetLodComponent(curLevelEntity);
+	RenderObject* renderObject = GetRenerObject(curLevelEntity);
 	if (renderObject)
 	{
 		// This entity is a geometry one - add as is.
-		Logger::Debug("Adding render component %s", entity->GetName().c_str());
-		resultSet.insert(entity);
+		Logger::Debug("Adding render component %s, root %s",
+					  curLevelEntity->GetName().c_str(),
+					  rootLevelEntity->GetName().c_str());
+		resultMap[rootLevelEntity] = curLevelEntity;
 	}
 	else if (lodComponent)
 	{
@@ -572,25 +559,27 @@ void SceneBatcher::SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>&
 				}
 				
 				// TODO: Yuri Coder, 2013/06/18. Return to LOD batching later!
-				Logger::Debug("Adding render component %s from LOD", lodEntity->GetName().c_str());
-				resultSet.insert(lodEntity);
+				Logger::Debug("Adding render component %s from LOD, root %s",
+							  lodEntity->GetName().c_str(),
+							  curLevelEntity->GetName().c_str());
+				resultMap[rootLevelEntity] = lodEntity;
 			}
 		}
-		
+
 		// LOD level is the deepest one - no need to go further.
 		return;
 	}
-	
+
 	// Verify for the children.
-	int32 childrenCount = entity->GetChildrenCount();
+	int32 childrenCount = curLevelEntity->GetChildrenCount();
 	for (int32 i = 0; i < childrenCount; i ++)
 	{
-		Entity* childEntity = entity->GetChild(i);
-		SelectGeometryEntitiesRecursive(childEntity, resultSet);
+		Entity* childEntity = curLevelEntity->GetChild(i);
+		SelectGeometryEntitiesRecursive(rootLevelEntity, childEntity, resultMap);
 	}
 }
 
-SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMaterial(const Set<Entity*> entitiesToBatch,
+SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMaterial(const Map<Entity*, Entity*> entitiesToBatch,
 																					int32 batchID, Set<String> &errorLog)
 {
 	TexturesAndMaterialData resultData;
@@ -602,7 +591,7 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 		return resultData;
 	}
 
-	Entity* firstEntity = (*entitiesToBatch.begin());
+	Entity* firstEntity = entitiesToBatch.begin()->second;
 	RenderBatch* firstRenderBatch = GetFirstRenderBatch(firstEntity);
 	if (!firstEntity || !firstRenderBatch)
 	{
@@ -628,10 +617,10 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 
 	bool textureBatchingNeeded = false;
 	bool textureBatchingCanBeDone = true;
-	for (Set<Entity*>::iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end();
+	for (Map<Entity*, Entity*>::const_iterator iter = entitiesToBatch.begin(); iter != entitiesToBatch.end();
 		 iter ++)
 	{
-		Entity* curEntity = (*iter);
+		Entity* curEntity = iter->second;
 		RenderBatch* curRenderBatch = GetFirstRenderBatch(curEntity);
 		
 		if (!curEntity || !curRenderBatch)

@@ -64,17 +64,17 @@ protected:
 	void GetEntitiesForBatchIndexRecursive(Entity* rootEntity, int32 batchIndex, Set<Entity*>& resultSet);
 	
 	// Select only the entities contain geometry from the list of entities to batch.
-	Set<Entity*> SelectGeometryEntities(Set<Entity*>& entitiesToBatch);
-	void SelectGeometryEntitiesRecursive(Entity* entity, Set<Entity*>& resultSet);
-	
+	Map<Entity*, Entity*> SelectGeometryEntities(Set<Entity*>& entitiesToBatch);
+	void SelectGeometryEntitiesRecursive(Entity* rootLevelEntity, Entity* curLevelEntity, Map<Entity*, Entity*>& resultMap);
+
 	// Perform the actual batch (vertices, indexes, textures).
 	Entity* BatchEntities(Scene* scene, Set<String>& errorLog,
-						  const Set<Entity*>& entitiesToBatch,
+						  const Map<Entity*, Entity*>& entitiesToBatch,
 						  const String& batchedEntityName,
 						  const TexturesAndMaterialData& batchedTMData);
 	
 	// Calculate the paremeters for the batched entity.
-	void CalculateBatchedEntityParameters(const Set<Entity*>& entitiesToBatch,
+	void CalculateBatchedEntityParameters(const Map<Entity*, Entity*>& entitiesToBatch,
 										  uint32& vertexCount, uint32& indexCount,
 										  AABBox3& batchedBoundingBox,
 										  Set<String>& errorLog);
@@ -87,18 +87,15 @@ protected:
 						uint32 verticesBatched, uint32 indicesBatched);
 	
 	// Delete the entities.
-	void DeleteEntities(const Set<Entity*>& entitiesToDelete);
-	
-	// Get the "solid" entity for current one, if present.
-	Entity* GetSolidParentEntityIfPresent(Entity* entity);
+	void DeleteEntities(const Map<Entity*, Entity*>& entitiesToDelete);
 	
 	// Get the index for the next entity.
 	String GetNextBatchedEntityName(Scene* scene);
 	void BuildEntityNamesList(Entity* rootEntity, Set<String>& usedNames);
 	
 	// Textures batching.
-	TexturesAndMaterialData BatchTexturesAndPrepareMaterial(const Set<Entity*> entitiesToBatch, int32 batchID,
-																		  Set<String> &errorLog);
+	TexturesAndMaterialData BatchTexturesAndPrepareMaterial(const Map<Entity*, Entity*> entitiesToBatch,
+															int32 batchID, Set<String> &errorLog);
 
 	// Calculate transformation (offset/multiplication) for the batched texture.
 	void CalculateTextureTransform(Vector2 &textureMultiply, Vector2& textureOffset, const TexturesAndMaterialData& batchedTMData, const Texture* curTexture);
