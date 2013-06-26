@@ -23,6 +23,7 @@
 		02F640811745372B0053F038 /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 02E9E40F1739612300C501BC /* libfmodex.dylib */; };
 		0C6D4628EE0B0D1479A20551 /* AGL.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = C6766F86E49E9C8701C8E637 /* AGL.framework */; };
 		1714B8921774330D0014A14B /* SceneBatcher.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1714B8901774330D0014A14B /* SceneBatcher.cpp */; };
+		171E3378177B196900119403 /* CameraStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 171E3376177B196900119403 /* CameraStateHelper.cpp */; };
 		1723B4EC176709770083BC33 /* BatchEntitiesHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */; };
 		1735C427169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1735C423169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp */; };
 		1735C428169DE63D001E0468 /* ParticlesEditorSceneModelHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1735C425169DE63D001E0468 /* ParticlesEditorSceneModelHelper.cpp */; };
@@ -31,7 +32,6 @@
 		177D1A9316CB8C820021104B /* PropertyEditorStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 177D1A9116CB8C820021104B /* PropertyEditorStateHelper.cpp */; };
 		178A9B721716E584006BB1F7 /* ParticleEffectPropertiesWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178A9B701716E583006BB1F7 /* ParticleEffectPropertiesWidget.cpp */; };
 		178A9B771716EB8F006BB1F7 /* ParticleEffectPropertiesWidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178A9B761716EB8F006BB1F7 /* ParticleEffectPropertiesWidget_moc.cpp */; };
-		17C803171779CF050049B0CC /* CameraStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17C803151779CF050049B0CC /* CameraStateHelper.cpp */; };
 		493BAC5D16BFD655000E5F84 /* EditorBodyControlCommands.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 493BAC5B16BFD655000E5F84 /* EditorBodyControlCommands.cpp */; };
 		4940AF6C164C1684003E95A7 /* CustomColorCommands.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4940AF6A164C1684003E95A7 /* CustomColorCommands.cpp */; };
 		4940AF71164C16DA003E95A7 /* LandscapeEditorCustomColors.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4940AF6D164C16DA003E95A7 /* LandscapeEditorCustomColors.cpp */; };
@@ -558,6 +558,8 @@
 		02F6404B173A8F170053F038 /* SceneTreeModel_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTreeModel_moc.cpp; sourceTree = "<group>"; };
 		1714B8901774330D0014A14B /* SceneBatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneBatcher.cpp; sourceTree = "<group>"; };
 		1714B8911774330D0014A14B /* SceneBatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneBatcher.h; sourceTree = "<group>"; };
+		171E3376177B196900119403 /* CameraStateHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraStateHelper.cpp; path = Classes/CameraStateHelper.cpp; sourceTree = "<group>"; };
+		171E3377177B196900119403 /* CameraStateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraStateHelper.h; path = Classes/CameraStateHelper.h; sourceTree = "<group>"; };
 		1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchEntitiesHelper.cpp; path = Classes/BatchEntitiesHelper.cpp; sourceTree = "<group>"; };
 		1723B4EB176709770083BC33 /* BatchEntitiesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchEntitiesHelper.h; path = Classes/BatchEntitiesHelper.h; sourceTree = "<group>"; };
 		1735C423169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticlesEditorSceneDataHelper.cpp; sourceTree = "<group>"; };
@@ -574,8 +576,6 @@
 		178A9B701716E583006BB1F7 /* ParticleEffectPropertiesWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleEffectPropertiesWidget.cpp; sourceTree = "<group>"; };
 		178A9B711716E583006BB1F7 /* ParticleEffectPropertiesWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleEffectPropertiesWidget.h; sourceTree = "<group>"; };
 		178A9B761716EB8F006BB1F7 /* ParticleEffectPropertiesWidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleEffectPropertiesWidget_moc.cpp; sourceTree = "<group>"; };
-		17C803151779CF050049B0CC /* CameraStateHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraStateHelper.cpp; sourceTree = "<group>"; };
-		17C803161779CF050049B0CC /* CameraStateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraStateHelper.h; sourceTree = "<group>"; };
 		29FF4FD1BCB9408020402F99 /* theora_macos */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = theora_macos; path = ../../Libs/libs/libtheora_macos.a; sourceTree = "<group>"; };
 		2A689518AF9C22C7AA97C9EF /* ogg_macos */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = ogg_macos; path = ../../Libs/libs/libogg_macos.a; sourceTree = "<group>"; };
 		336CB11D929F5E35FA69020F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -3334,11 +3334,11 @@
 				5C7F49E415B44BB70038AF3A /* VertexOctTree.h */,
 				1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */,
 				1723B4EB176709770083BC33 /* BatchEntitiesHelper.h */,
+				171E3376177B196900119403 /* CameraStateHelper.cpp */,
+				171E3377177B196900119403 /* CameraStateHelper.h */,
 				5C7F48CD15B44B6D0038AF3A /* SceneEditor */,
 				5C7F489B15B44B320038AF3A /* ColladaExport */,
 				5C7F466115B44B020038AF3A /* bullet */,
-				17C803151779CF050049B0CC /* CameraStateHelper.cpp */,
-				17C803161779CF050049B0CC /* CameraStateHelper.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -3941,10 +3941,10 @@
 				4FFE5C9E1770C08600728624 /* EntityRemoveCommand.cpp in Build Sources */,
 				49F26F1E1771D67D008012B5 /* CommandAction.cpp in Build Sources */,
 				1714B8921774330D0014A14B /* SceneBatcher.cpp in Build Sources */,
-				17C803171779CF050049B0CC /* CameraStateHelper.cpp in Build Sources */,
 				4FFE5CAB1779DA3E00728624 /* CollisionParticleEmitter.cpp in Build Sources */,
 				4FFE5CB51779E38300728624 /* SceneTreeDelegate.cpp in Build Sources */,
 				4FFE5CB71779E60600728624 /* SceneTreeDelegate_moc.cpp in Build Sources */,
+				171E3378177B196900119403 /* CameraStateHelper.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;
