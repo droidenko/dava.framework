@@ -47,6 +47,7 @@ public:
 	{
 		SUCCESS = 0,
 		NO_TEXTURES_TO_BATCH,
+		NO_REFEENCE_TEXTURE_DESCRIPTOR,
 		TEXTURES_TOO_LARGE
 	};
 	
@@ -60,7 +61,7 @@ public:
 		Map<FilePath, BatchTexturesOutputData> outputData;
 	};
 	
-	BatchTexturesResult Batch(List<Texture*> texturesList, int32 batchID);
+	BatchTexturesResult Batch(List<Texture*> texturesList, int32 batchID, TextureDescriptor* referenceTextureDescriptor);
 
 	bool TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & defsList);
 	bool WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & textureName, DefinitionFile * defFile);
@@ -82,11 +83,13 @@ public:
 
 private:
     
-    void ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, bool forceGenerateMipmaps = false);
-    TextureDescriptor * CreateDescriptor(eGPUFamily forGPU, bool forceGenerateMipmaps = false);
+    void ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU);
+	void SaveBatchedImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, TextureDescriptor* referenceTextureDescriptor);
+
+    TextureDescriptor * CreateDescriptor(eGPUFamily forGPU);
 
 	// Batch Textures functionality.
-	BatchTexturesResult BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList, int32 batchID);
+	BatchTexturesResult BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList, int32 batchID, TextureDescriptor* referenceTextureDescriptor);
 
 	BatchTexturesResult BatchErrorResult(eBatchTexturesErrorCode errorCode);
 

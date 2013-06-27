@@ -38,8 +38,16 @@ void TextureDescriptor::TextureSettings::SetDefaultValues()
     minFilter = Texture::FILTER_LINEAR_MIPMAP_LINEAR;
     magFilter = Texture::FILTER_LINEAR;
 }
-    
-    
+
+void TextureDescriptor::Compression::Update(const Compression& compression)
+{
+	this->format = compression.format;
+	this->compressToWidth = compression.compressToWidth;
+	this->compressToHeight = compression.compressToHeight;
+
+	// Don't touch the CRCs.
+}
+
 void TextureDescriptor::Compression::Clear()
 {
     format = FORMAT_INVALID;
@@ -578,6 +586,51 @@ PixelFormat TextureDescriptor::GetPixelFormatForCompression(eGPUFamily forGPU)
     return (PixelFormat) compression[forGPU].format;
 }
 
-    
-    
+bool TextureDescriptor::CanBatchWith(const TextureDescriptor* referenceDescriptor)
+{
+	if (!referenceDescriptor)
+	{
+		return false;
+	}
+
+	if ((exportedAsGpuFamily != referenceDescriptor->exportedAsGpuFamily) ||
+		(exportedAsPixelFormat != referenceDescriptor->exportedAsPixelFormat) ||
+		(isCompressedFile != referenceDescriptor->isCompressedFile))
+	{
+		return false;
+	}
+	
+	if (settings != referenceDescriptor->settings)
+	{
+		return false;
+	}
+	
+	for(int32 i = 0; i < GPU_FAMILY_COUNT; ++i)
+    {
+		if ((compression[i].format != referenceDescriptor->compression[i].format) ||
+			(compression[i].compressToWidth != referenceDescriptor->compression[i].compressToWidth) ||
+			(compression[i].compressToHeight != referenceDescriptor->compression[i].compressToHeight) )
+		{
+			return false;
+		}
+    }
+	
+	// Can be batched.
+	return true;
+}
+
+void TextureDescriptor::Update(const TextureDescriptor* referenceDescriptor)
+{
+	// Note - not all params are updated.
+	this->settings = referenceDescriptor->settings;
+	for(int32 i = 0; i < GPU_FAMILY_COUNT; ++i)
+    {
+		this->compression[i].Update(referenceDescriptor->compression[i]);
+    }
+
+	this->exportedAsGpuFamily = referenceDescriptor->exportedAsGpuFamily;
+	this->exportedAsPixelFormat = referenceDescriptor->exportedAsPixelFormat;
+	this->isCompressedFile = referenceDescriptor->isCompressedFile;
+}
+
 };

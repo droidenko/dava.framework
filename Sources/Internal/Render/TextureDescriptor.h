@@ -53,6 +53,7 @@ public:
         int32 compressToHeight;
         mutable uint32 convertedFileCrc;
         
+		void Update(const Compression& compression);
         void Clear();
 
 		INTROSPECTION(Compression,
@@ -77,6 +78,55 @@ public:
         int8 magFilter;
 
         void SetDefaultValues();
+
+		TextureSettings& operator = (const TextureSettings& settings)
+		{
+			this->wrapModeS = settings.wrapModeS;
+			this->wrapModeT = settings.wrapModeT;
+
+			this->generateMipMaps = settings.generateMipMaps;
+
+			this->minFilter = settings.minFilter;
+			this->magFilter = settings.magFilter;
+			
+			return *this;
+		}
+		
+		inline bool operator == (const TextureSettings& settings)
+		{
+			if ((wrapModeS != settings.wrapModeS) ||
+				(wrapModeT != settings.wrapModeT) ||
+				(generateMipMaps != settings.generateMipMaps))
+			{
+				return false;
+			}
+			
+			if ((minFilter != settings.minFilter) ||
+				(magFilter != settings.magFilter))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		inline bool operator != (const TextureSettings& settings)
+		{
+			if ((wrapModeS != settings.wrapModeS) ||
+				(wrapModeT != settings.wrapModeT) ||
+				(generateMipMaps != settings.generateMipMaps))
+			{
+				return true;
+			}
+			
+			if ((minFilter != settings.minFilter) ||
+				(magFilter != settings.magFilter))
+			{
+				return true;
+			}
+			
+			return false;
+		}
 
 		INTROSPECTION(TextureSettings,
 			MEMBER(generateMipMaps, "generateMipMaps", I_VIEW | I_EDIT | I_SAVE)
@@ -120,7 +170,13 @@ public:
     static String GetDescriptorExtension();
     
     PixelFormat GetPixelFormatForCompression(eGPUFamily forGPU);
-    
+
+    // Can we batch this descriptor together with the reference one?
+	bool CanBatchWith(const TextureDescriptor* referenceDescriptor);
+	
+	// Update the Texture Descriptor params based on reference descriptor.
+	void Update(const TextureDescriptor* referenceDescriptor);
+
 protected:
     
     const Compression * GetCompressionParams(eGPUFamily forGPU) const;

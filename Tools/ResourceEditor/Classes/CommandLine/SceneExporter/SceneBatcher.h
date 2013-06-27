@@ -98,11 +98,19 @@ protected:
 															int32 batchID, Set<String> &errorLog);
 
 	// Calculate transformation (offset/multiplication) for the batched texture.
-	void CalculateTextureTransform(Vector2 &textureMultiply, Vector2& textureOffset, const TexturesAndMaterialData& batchedTMData, const Texture* curTexture);
+	void CalculateTextureTransform(Vector2 &textureMultiply, Vector2& textureOffset,
+								   const TexturesAndMaterialData& batchedTMData, const Texture* curTexture);
 
 	// Get the first render batch for the entity.
 	RenderBatch* GetFirstRenderBatch(Entity* entity);
-	
+
+	// Compare Lightmap Textures.
+	bool LightmapTexturesEqual(Texture* referenceLightmapTexture, Texture* curLightmapTexture);
+
+	// Compare Texture Descriptors.
+	bool TextureDescriptorsCanBeBatched(TextureDescriptor* firstDiffuseDescriptor,
+										TextureDescriptor*curDiffuseDescriptor);
+
 	// Add the error message to log and to console if needed.
 	void AddToErrorLog(Set<String>& errorLog, const String& message);
 };

@@ -608,10 +608,12 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 		return resultData;
 	}
 	
-	// First pass - determine whether the material can be batched, and determine the list
-	// of textures to batch, if any.
+	Texture* firstDiffuseTexture = firstMaterial->GetTexture(Material::TEXTURE_DIFFUSE);
+	TextureDescriptor* firstDiffuseDescriptor = firstDiffuseTexture->CreateDescriptor();
+
+	// Determine whether the material can be batched, and determine the list of textures to batch, if any.
 	List<Texture*> texturesToBatch;
-	texturesToBatch.push_back(firstMaterial->GetTexture(Material::TEXTURE_DIFFUSE));
+	texturesToBatch.push_back(firstDiffuseTexture);
 
 	Texture* firstLightMapTexture = firstRenderBatch->GetMaterialInstance()->GetLightmap();
 
@@ -627,20 +629,34 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 		{
 			continue;
 		}
-		
-		Material* curMaterial = curRenderBatch->GetMaterial();
 
-		// Verify the lightmap texture.
-		Texture* curLightmapTexture = curRenderBatch->GetMaterialInstance()->GetLightmap();
-		if ((curLightmapTexture && !firstLightMapTexture) ||
-			(!curLightmapTexture && firstLightMapTexture) ||
-			(curLightmapTexture != firstLightMapTexture))
+		// Lightmap textures must be identical for all entities in the batch.
+		if (!LightmapTexturesEqual(firstLightMapTexture,curRenderBatch->GetMaterialInstance()->GetLightmap()))
 		{
-			AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Lightmaps assigned to batch components are different",
-										   batchID));
+			AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Lightmaps assigned to batch components are different", batchID));
+
 			textureBatchingCanBeDone = false;
 			break;
 		}
+
+		// Verify the texture descriptors - the compression formats might be identical.
+		Material* curMaterial = curRenderBatch->GetMaterial();
+		Texture* curDiffuseTexture = curMaterial->GetTexture(Material::TEXTURE_DIFFUSE);
+		if (!curDiffuseTexture)
+		{
+			// No texture - can't batch.
+			textureBatchingCanBeDone = false;
+			break;
+		}
+
+		TextureDescriptor* curDiffuseDescriptor = curDiffuseTexture->CreateDescriptor();
+		if (!TextureDescriptorsCanBeBatched(firstDiffuseDescriptor, curDiffuseDescriptor))
+		{
+			AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Texture Descriptors of batch components are different", batchID));
+			SafeRelease(curDiffuseDescriptor);
+			break;
+		}
+		SafeRelease(curDiffuseDescriptor);
 
 		Material::eMaterialComparisonResult compareResult = firstMaterial->Compare(curMaterial, true);
 		if (compareResult == Material::MATERIALS_DIFFERENT)
@@ -659,14 +675,19 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 
 	if (!textureBatchingCanBeDone)
 	{
+		SafeRelease(firstDiffuseDescriptor);
+
 		// Cannot batch these textures at all - the materials are different.
 		AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Materials assigned to the batch components are different",
 							   batchID));
+		
 		return resultData;
 	}
 
 	if (!textureBatchingNeeded)
 	{
+		SafeRelease(firstDiffuseDescriptor);
+
 		// No textures batching is needed at all - the materials are identical. Not an error.
 		resultData.isSucceeded = true;
 		resultData.isTexturesBatchingPerformed = false;
@@ -682,9 +703,10 @@ SceneBatcher::TexturesAndMaterialData SceneBatcher::BatchTexturesAndPrepareMater
 		texturePacker.UseOnlySquareTextures();
 	}
 
-	
-	resultData.batchTexturesResult = texturePacker.Batch(texturesToBatch, batchID);
-	if (!resultData.batchTexturesResult.errorCode != TexturePacker::SUCCESS)
+	resultData.batchTexturesResult = texturePacker.Batch(texturesToBatch, batchID, firstDiffuseDescriptor);
+	SafeRelease(firstDiffuseDescriptor);
+
+	if (resultData.batchTexturesResult.errorCode != TexturePacker::SUCCESS)
 	{
 		// Cannot batch these textures at all - the materials are different.
 		AddToErrorLog(errorLog, Format("Can't batch Batch ID %i - Texture Packer returned %i",
@@ -745,6 +767,30 @@ RenderBatch* SceneBatcher::GetFirstRenderBatch(Entity* entity)
 	}
 	
 	return renderComponent->GetRenderObject()->GetRenderBatch(0);
+}
+
+bool SceneBatcher::LightmapTexturesEqual(Texture* referenceLightmapTexture, Texture* curLightmapTexture)
+{
+	if ((curLightmapTexture && !referenceLightmapTexture) ||
+		(!curLightmapTexture && referenceLightmapTexture) ||
+		(curLightmapTexture != referenceLightmapTexture))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool SceneBatcher::TextureDescriptorsCanBeBatched(TextureDescriptor* firstDiffuseDescriptor,
+												  TextureDescriptor*curDiffuseDescriptor)
+{
+	if ((firstDiffuseDescriptor && !curDiffuseDescriptor) ||
+		(!firstDiffuseDescriptor && curDiffuseDescriptor))
+	{
+		return false;
+	}
+
+	return firstDiffuseDescriptor->CanBatchWith(curDiffuseDescriptor);
 }
 
 void SceneBatcher::AddToErrorLog(Set<String>& errorLog, const String& message)

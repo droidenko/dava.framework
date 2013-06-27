@@ -386,11 +386,17 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 	}	
 }
 
-TexturePacker::BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batchID)
+TexturePacker::BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesList, int32 batchID,
+														TextureDescriptor* referenceTextureDescriptor)
 {
 	if (texturesList.empty())
 	{
 		return BatchErrorResult(TexturePacker::NO_TEXTURES_TO_BATCH);
+	}
+
+	if (!referenceTextureDescriptor)
+	{
+		return BatchErrorResult(TexturePacker::NO_REFEENCE_TEXTURE_DESCRIPTOR);
 	}
 
 	// Take the output path from the first texture in the batch.
@@ -418,7 +424,7 @@ TexturePacker::BatchTexturesResult TexturePacker::Batch(List<Texture*> texturesL
 	}
 
 	// Do the packing itself.
-	return BatchTextures(outputPath, definitionsList, batchID);
+	return BatchTextures(outputPath, definitionsList, batchID, referenceTextureDescriptor);
 }
 	
 Rect2i TexturePacker::ReduceRectToOriginalSize(const Rect2i & _input)
@@ -583,9 +589,9 @@ void TexturePacker::SetMaxTextureSize(int32 _maxTextureSize)
 	maxTextureSize = _maxTextureSize;
 }
 
-void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, bool forceGenerateMipmaps)
+void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU)
 {
-    TextureDescriptor *descriptor = CreateDescriptor(forGPU, forceGenerateMipmaps);
+    TextureDescriptor *descriptor = CreateDescriptor(forGPU);
     descriptor->pathname = TextureDescriptor::GetDescriptorPathname(exportedPathname);
     descriptor->Export(descriptor->pathname);
 
@@ -615,14 +621,29 @@ void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPath
     SafeRelease(descriptor);
 }
 
+void TexturePacker::SaveBatchedImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, TextureDescriptor* referenceTextureDescriptor)
+{
+	// Create and save the texture desctiptor. We have to SAVE it, not EXPORT, since
+	// we are creating the completely new texture.
+	TextureDescriptor *descriptor = CreateDescriptor(forGPU);
+	descriptor->Update(referenceTextureDescriptor);
 
-TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU, bool forceGenerateMipmaps)
+	descriptor->pathname = TextureDescriptor::GetDescriptorPathname(exportedPathname);
+	descriptor->Save(descriptor->pathname);
+
+	// Save the image itself
+	image->DitherAlpha();
+	image->Write(exportedPathname);
+
+	SafeRelease(descriptor);
+}
+
+TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU)
 {
     TextureDescriptor *descriptor = new TextureDescriptor();
 
     descriptor->settings.wrapModeS = descriptor->settings.wrapModeT = Texture::WRAP_CLAMP_TO_EDGE;
-    descriptor->settings.generateMipMaps = forceGenerateMipmaps ||
-		CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
+    descriptor->settings.generateMipMaps = CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
     if(descriptor->settings.generateMipMaps)
     {
         descriptor->settings.minFilter = Texture::FILTER_LINEAR_MIPMAP_LINEAR;
@@ -701,7 +722,8 @@ bool TexturePacker::DetermineBestResolution(int& bestXResolution, int& bestYReso
 
 TexturePacker::BatchTexturesResult TexturePacker::BatchTextures(const FilePath & outputPath,
 																List<DefinitionFile*> & defsList,
-																int32 batchID)
+																int32 batchID,
+																TextureDescriptor* referenceTextureDescriptor)
 {
 	lastPackedPacker = 0;
 
@@ -766,15 +788,15 @@ TexturePacker::BatchTexturesResult TexturePacker::BatchTextures(const FilePath &
 		image.Read(pngTextureName.GetAbsolutePathname());
 		finalImage.DrawImage(destRect->x, destRect->y, &image);
 
-		textureName.ReplaceExtension(".png");
-		ExportImage(&finalImage, textureName, GPU_UNKNOWN, true);
-
 		BatchTexturesOutputData curOutputData;
 		curOutputData.texturePath = defFile->filename;
 		curOutputData.offsetX = destRect->x;
 		curOutputData.offsetY = destRect->y;
 		result.outputData[curOutputData.texturePath] = curOutputData;
 	}
+
+	textureName.ReplaceExtension(".png");
+	SaveBatchedImage(&finalImage, textureName, GPU_UNKNOWN, referenceTextureDescriptor);
 
 	result.errorCode = SUCCESS;
 	return result;
