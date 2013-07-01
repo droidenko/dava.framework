@@ -648,6 +648,9 @@ Texture * Texture::CreateFromFile(const FilePath & pathName)
 
 Texture * Texture::PureCreate(const FilePath & pathName)
 {
+	if(pathName.IsEmpty() || pathName.GetType() == FilePath::PATH_IN_MEMORY)
+		return NULL;
+
     //TODO::temporary workaround to optimize old scenes loading
     FilePath descriptorPathname = TextureDescriptor::GetDescriptorPathname(pathName);
     Texture * texture = Texture::Get(descriptorPathname);

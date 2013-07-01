@@ -23,9 +23,11 @@ namespace DAVA
 
 REGISTER_CLASS(RenderObject)
 
+static const int32 DEFAULT_FLAGS = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH;
+
 RenderObject::RenderObject()
     :   type(TYPE_RENDEROBJECT)
-    ,   flags(VISIBLE | VISIBLE_LOD | VISIBLE_SWITCH)
+    ,   flags(DEFAULT_FLAGS)
     ,   removeIndex(-1)
     ,   debugFlags(0)
     ,   worldTransform(0)
@@ -161,14 +163,15 @@ void RenderObject::Load(KeyedArchive * archive, SceneFileV2 *sceneFile)
 {
 	if(NULL != archive)
 	{
-		if(archive->IsKeyExists("ro.type")) type = archive->GetUInt32("ro.type");
-		if(archive->IsKeyExists("ro.flags")) flags = archive->GetUInt32("ro.flags");
-		if(archive->IsKeyExists("ro.debugflags")) debugFlags = archive->GetUInt32("ro.debugflags");
+		type = archive->GetUInt32("ro.type", TYPE_RENDEROBJECT);
+		flags = archive->GetUInt32("ro.flags", DEFAULT_FLAGS);
+		debugFlags = archive->GetUInt32("ro.debugflags", 0);
 
-		if(archive->IsKeyExists("ro.batchCount"))
+		uint32 roBatchCount = archive->GetUInt32("ro.batchCount");
+		if(roBatchCount)
 		{
 			KeyedArchive *batchesArch = archive->GetArchive("ro.batches");
-			for(uint32 i = 0; i < archive->GetUInt32("ro.batchCount"); ++i)
+			for(uint32 i = 0; i < roBatchCount; ++i)
 			{
 				KeyedArchive *batchArch = batchesArch->GetArchive(KeyedArchive::GenKeyFromIndex(i));
 				if(NULL != batchArch)

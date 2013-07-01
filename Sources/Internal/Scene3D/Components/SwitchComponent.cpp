@@ -51,7 +51,7 @@ void SwitchComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 {
 	if(NULL != archive)
 	{
-		if(archive->IsKeyExists("sc.switchindex")) SetSwitchIndex(archive->GetInt32("sc.switchindex"));
+		SetSwitchIndex(archive->GetInt32("sc.switchindex"));
 	}
 
 	Component::Deserialize(archive, sceneFile);

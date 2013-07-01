@@ -110,10 +110,7 @@ void Component::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 {
 	if(NULL != archive)
 	{
-		uint32 type = 0xFFFFFFFF;
-
-		if(archive->IsKeyExists("comp.type")) type = archive->GetUInt32("comp.type");
-
+		uint32 type = archive->GetUInt32("comp.type", 0xFFFFFFFF);
 		DVASSERT(type == GetType());
 	}
 }

@@ -480,7 +480,8 @@ void CommandRestoreOriginalTransform::Execute()
 
 	if (node)
 	{
-		node->RestoreOriginalTransforms();
+		// DF-1326 fix - Restore local matrix to identity
+		node->SetLocalTransform(Matrix4::IDENTITY);
 	}
 	else
 		SetState(STATE_INVALID);

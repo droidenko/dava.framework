@@ -149,11 +149,10 @@ void ParticleEmitter::Load(KeyedArchive *archive, SceneFileV2 *sceneFile)
 
 	if(NULL != archive)
 	{
-		if(archive->IsKeyExists("pe.configpath"))
+		String filename = archive->GetString("pe.configpath");
+		if(!filename.empty())
 		{
-            String filename = archive->GetString("pe.configpath");
 			configPath = sceneFile->GetScenePath() + filename;
-            
 			LoadFromYaml(configPath);
 		}
 	}

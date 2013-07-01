@@ -74,6 +74,9 @@ Sprite::Sprite()
 
 Sprite* Sprite::PureCreate(const FilePath & spriteName, Sprite* forPointer)
 {
+	if(spriteName.IsEmpty() || spriteName.GetType() == FilePath::PATH_IN_MEMORY)
+		return NULL;
+
 //	Logger::Debug("pure create: %s", spriteName.c_str());
 //	Logger::Info("Sprite pure creation");
 	FilePath pathName = FilePath::CreateWithNewExtension(spriteName, ".txt");

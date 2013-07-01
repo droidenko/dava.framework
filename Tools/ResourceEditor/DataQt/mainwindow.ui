@@ -984,12 +984,12 @@
   </action>
   <action name="actionExportPVRIOS">
    <property name="text">
-    <string>PoverVR iOS</string>
+    <string>PowerVR iOS</string>
    </property>
   </action>
   <action name="actionExportPVRAndroid">
    <property name="text">
-    <string>PoverVR Android</string>
+    <string>PowerVR Android</string>
    </property>
   </action>
   <action name="actionExportTegra">
@@ -1161,12 +1161,12 @@
   </action>
   <action name="actionReloadPoverVRIOS">
    <property name="text">
-    <string>PoverVR iOS</string>
+    <string>PowerVR iOS</string>
    </property>
   </action>
   <action name="actionReloadPoverVRAndroid">
    <property name="text">
-    <string>PoverVR Android</string>
+    <string>PowerVR Android</string>
    </property>
   </action>
   <action name="actionReloadTegra">
