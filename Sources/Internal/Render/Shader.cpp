@@ -451,9 +451,132 @@ bool Shader::Recompile()
         uniformStruct->id = uniform;
         uniformStruct->type = (eUniformType)type;
         uniformStruct->size = size;
-		uniformStruct->cacheValid = false;
 		uniformStruct->cacheValueSize = GetUniformTypeSize((eUniformType)type) * size;
 		uniformStruct->cacheValue = uniformData + uniformOffsets[k] + sizeof(Uniform);
+		
+		//VI: initialize cacheValue with value from shader
+		switch(uniformStruct->type)
+		{
+			case UT_FLOAT:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_FLOAT_VEC2:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_FLOAT_VEC3:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_FLOAT_VEC4:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_INT:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_INT_VEC2:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_INT_VEC3:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_INT_VEC4:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_BOOL:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_BOOL_VEC2:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_BOOL_VEC3:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_BOOL_VEC4:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			//VI: Matrices are returned from the shader in column-major order so need to transpose the matrix.
+			case UT_FLOAT_MAT2:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				Matrix2* m = (Matrix2*)uniformStruct->cacheValue;
+				Matrix2 t;
+				for (int i = 0; i < 2; ++i)
+					for (int j = 0; j < 2; ++j)
+						t._data[i][j] = m->_data[j][i];
+				*m = t;
+
+				break;
+			}
+				
+			case UT_FLOAT_MAT3:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				Matrix3* m = (Matrix3*)uniformStruct->cacheValue;
+				Matrix3 t;
+				for (int i = 0; i < 3; ++i)
+					for (int j = 0; j < 3; ++j)
+						t._data[i][j] = m->_data[j][i];
+				*m = t;
+				
+				break;
+			}
+				
+			case UT_FLOAT_MAT4:
+			{
+				RENDER_VERIFY(glGetUniformfv(program, uniformStruct->location, (float32*)uniformStruct->cacheValue));
+				Matrix4* m = (Matrix4*)uniformStruct->cacheValue;
+				m->Transpose();
+				
+				break;
+			}
+				
+			case UT_SAMPLER_2D:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+				
+			case UT_SAMPLER_CUBE:
+			{
+				RENDER_VERIFY(glGetUniformiv(program, uniformStruct->location, (int32*)uniformStruct->cacheValue));
+				break;
+			}
+		}
     }
     
     RenderManager::Instance()->UnlockNonMain();
@@ -549,15 +672,7 @@ void Shader::SetUniformValueByIndex(int32 uniformIndex, const Matrix3 & matrix)
 		RENDER_VERIFY(glUniformMatrix3fv(currentUniform->location, 1, GL_FALSE, matrix.data));
 	}
 }
-	
-void Shader::ClearUniformsCache()
-{
-	for (int32 k = 0; k < activeUniforms; ++k)
-    {
-		GET_UNIFORM(k)->cacheValid = false;
-	}
-}
-    
+
 int32 Shader::GetAttributeCount()
 {
     return activeAttributes;
@@ -806,22 +921,11 @@ void Shader::Invalidate()
 
 bool Shader::Uniform::ValidateCache(int32 value)
 {
-	bool result = false;
+	bool result = (*(int32*)cacheValue) == value;
 	
-	if(cacheValid)
-	{
-		result = (*(int32*)cacheValue) == value;
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, &value, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, &value, cacheValueSize);
 	}
 	
@@ -830,127 +934,72 @@ bool Shader::Uniform::ValidateCache(int32 value)
 	
 bool Shader::Uniform::ValidateCache(float32 value)
 {
-	bool result = false;
+	bool result = FLOAT_EQUAL(*((float32*)cacheValue), value);
 	
-	if(cacheValid)
-	{
-		result = FLOAT_EQUAL(*((float32*)cacheValue), value);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, &value, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, &value, cacheValueSize);
 	}
 	
-	return result;	
+	return result;
 }
 
 bool Shader::Uniform::ValidateCache(const Vector2 & value)
 {
-	bool result = false;
+	Vector2& cachedVector = *(Vector2*)cacheValue;
+	bool result = (value == cachedVector);
 	
-	if(cacheValid)
-	{
-		Vector2& cachedVector = *(Vector2*)cacheValue;
-		result = (value == cachedVector);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, value.data, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, value.data, cacheValueSize);
 	}
 	
-	return result;	
+	return result;
 }
 
 bool Shader::Uniform::ValidateCache(const Vector3 & value)
 {
-	bool result = false;
+	Vector3& cachedVector = *(Vector3*)cacheValue;
+	bool result = (value == cachedVector);
 	
-	if(cacheValid)
-	{
-		Vector3& cachedVector = *(Vector3*)cacheValue;
-		result = (value == cachedVector);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, value.data, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, value.data, cacheValueSize);
 	}
 	
-	return result;	
+	return result;
 }
 	
 bool Shader::Uniform::ValidateCacheColor3(const Color & value)
 {
-	bool result = false;
+	Color& cachedColor = *(Color*)cacheValue;
+	bool result = (FLOAT_EQUAL(cachedColor.r, value.r) &&
+				   FLOAT_EQUAL(cachedColor.g, value.g) &&
+				   FLOAT_EQUAL(cachedColor.b, value.b));
 	
-	if(cacheValid)
-	{
-		Color& cachedColor = *(Color*)cacheValue;
-		result = (FLOAT_EQUAL(cachedColor.r, value.r) &&
-				  FLOAT_EQUAL(cachedColor.g, value.g) &&
-				  FLOAT_EQUAL(cachedColor.b, value.b));
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) - sizeof(float32) == cacheValueSize);
-			memcpy(cacheValue, &value, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) - sizeof(float32) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, &value, cacheValueSize);
 	}
 	
-	return result;	
+	return result;
 }
 	
 bool Shader::Uniform::ValidateCacheColor4(const Color & value)
 {
-	bool result = false;
+	Color& cachedColor = *(Color*)cacheValue;
+	bool result = (FLOAT_EQUAL(cachedColor.r, value.r) &&
+				   FLOAT_EQUAL(cachedColor.g, value.g) &&
+				   FLOAT_EQUAL(cachedColor.b, value.b) &&
+				   FLOAT_EQUAL(cachedColor.a, value.a));
 	
-	if(cacheValid)
-	{
-		Color& cachedColor = *(Color*)cacheValue;
-		result = (FLOAT_EQUAL(cachedColor.r, value.r) &&
-				  FLOAT_EQUAL(cachedColor.g, value.g) &&
-				  FLOAT_EQUAL(cachedColor.b, value.b) &&
-				  FLOAT_EQUAL(cachedColor.a, value.a));
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, &value, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, &value, cacheValueSize);
 	}
 	
@@ -959,23 +1008,12 @@ bool Shader::Uniform::ValidateCacheColor4(const Color & value)
 	
 bool Shader::Uniform::ValidateCache(const Vector4 & value)
 {
-	bool result = false;
+	Vector4& cachedVector = *(Vector4*)cacheValue;
+	bool result = (value == cachedVector);
 	
-	if(cacheValid)
-	{
-		Vector4& cachedVector = *(Vector4*)cacheValue;
-		result = (value == cachedVector);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, value.data, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, value.data, cacheValueSize);
 	}
 	
@@ -984,23 +1022,12 @@ bool Shader::Uniform::ValidateCache(const Vector4 & value)
 	
 bool Shader::Uniform::ValidateCache(const Matrix4 & value)
 {
-	bool result = false;
+	Matrix4& cachedVector = *(Matrix4*)cacheValue;
+	bool result = (value == cachedVector);
 	
-	if(cacheValid)
-	{
-		Matrix4& cachedVector = *(Matrix4*)cacheValue;
-		result = (value == cachedVector);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, value.data, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, value.data, cacheValueSize);
 	}
 	
@@ -1009,23 +1036,12 @@ bool Shader::Uniform::ValidateCache(const Matrix4 & value)
 	
 bool Shader::Uniform::ValidateCache(const Matrix3 & value)
 {
-	bool result = false;
+	Matrix3& cachedVector = *(Matrix3*)cacheValue;
+	bool result = (value == cachedVector);
 	
-	if(cacheValid)
-	{
-		Matrix3& cachedVector = *(Matrix3*)cacheValue;
-		result = (value == cachedVector);
-		
-		if(!result)
-		{
-			DVASSERT(sizeof(value) == cacheValueSize);
-			memcpy(cacheValue, value.data, cacheValueSize);
-		}
-	}
-	else
+	if(!result)
 	{
 		DVASSERT(sizeof(value) == cacheValueSize);
-		cacheValid = true;
 		memcpy(cacheValue, value.data, cacheValueSize);
 	}
 	

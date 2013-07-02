@@ -133,8 +133,6 @@ public:
     void SetUniformValueByIndex(int32 uniformIndex, const Vector4 & vector);
     void SetUniformValueByIndex(int32 uniformIndex, const Matrix4 & matrix);
 	void SetUniformValueByIndex(int32 uniformIndex, const Matrix3 & matrix);
-
-	void ClearUniformsCache();
     
     void Dump();
     
@@ -185,7 +183,6 @@ private:
         GLint           location;
         GLint           size;
         eUniformType    type;
-		bool			cacheValid;
 		void*			cacheValue;
 		uint16			cacheValueSize;
 		
