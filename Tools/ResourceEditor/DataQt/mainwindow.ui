@@ -512,6 +512,9 @@
     <addaction name="actionModifyRotate"/>
     <addaction name="actionModifyScale"/>
     <addaction name="separator"/>
+    <addaction name="actionBatch"/>
+    <addaction name="actionUnbatch"/>
+    <addaction name="separator"/>
     <addaction name="actionModifyPlaceOnLandscape"/>
     <addaction name="actionModifySnapToLandscape"/>
     <addaction name="separator"/>
@@ -1437,6 +1440,16 @@
   <action name="actionReloadPNG">
    <property name="text">
     <string>PNG</string>
+   </property>
+  </action>
+  <action name="actionBatch">
+   <property name="text">
+    <string>Batch Selected Entities</string>
+   </property>
+  </action>
+  <action name="actionUnbatch">
+   <property name="text">
+    <string>Unbatch</string>
    </property>
   </action>
   <action name="actionSquareTextures">

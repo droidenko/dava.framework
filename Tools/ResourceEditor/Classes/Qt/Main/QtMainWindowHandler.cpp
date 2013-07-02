@@ -280,8 +280,30 @@ void QtMainWindowHandler::SaveParticleEmitterNodeRecursive(Entity* parentNode)
 void QtMainWindowHandler::ExportMenuTriggered(QAction *exportAsAction)
 {
     eGPUFamily gpuFamily = (eGPUFamily)exportAsAction->data().toInt();
-    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(gpuFamily),
-												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
+
+	// Yuri Coder, 2013/06/12. Current Tab Proxy might be NULL in case new QT
+	// scene editor isn't active.
+	FilePath pathToCurrentScene;
+	SceneEditor2 *currentSceneEditor = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+
+	if (currentSceneEditor)
+	{
+		pathToCurrentScene = currentSceneEditor->GetScenePath();
+	}
+
+	Scene* sceneForCommandsManager = currentSceneEditor ? currentSceneEditor->GetScene() :
+		SceneDataManager::Instance()->SceneGetActive()->GetScene();
+    CommandsManager::Instance()->ExecuteAndRelease(new CommandExport(currentSceneEditor, pathToCurrentScene, gpuFamily),
+												   sceneForCommandsManager);
+
+	// Have to reset the selection otherwise batched and already deleted items which might be
+	// currently selected will cause crash.
+	if (currentSceneEditor)
+	{
+		currentSceneEditor->selectionSystem->SetSelection(NULL);
+	}
+
+	// TODO: Yuri Coder, 2012/06/13. Have to refresh new scene graph here!
 }
 
 
@@ -966,6 +988,45 @@ void QtMainWindowHandler::ModificationScale()
 {
 	SetModificationMode(ResourceEditor::MODIFY_SCALE);
 	UpdateModificationActions();
+}
+
+void QtMainWindowHandler::ModificationSetBatchFlag()
+{
+	ExecuteModifyBatchStateCommand(true);
+}
+
+void QtMainWindowHandler::ModificationCleanupBatchFlag()
+{
+	ExecuteModifyBatchStateCommand(false);
+}
+
+void QtMainWindowHandler::ExecuteModifyBatchStateCommand(bool isBatch)
+{
+	// Get the list of selected entities.
+	SceneEditor2* curScene = QtMainWindow::Instance()->GetUI()->sceneTabWidget->GetCurrentScene();
+	if (!curScene || !curScene->selectionSystem)
+	{
+		return;
+	}
+
+	const EntityGroup *selectedEntities = curScene->selectionSystem->GetSelection();
+	if (!selectedEntities || selectedEntities->Size() == 0)
+	{
+		QMessageBox msgBox(QMessageBox::Warning, "Warning", "No entities selected to group");
+		msgBox.exec();
+		return;
+	}
+	
+	if (isBatch)
+	{
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandBatchEntities(selectedEntities),
+													   curScene);
+	}
+	else
+	{
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandUnbatchEntities(selectedEntities),
+													   curScene);
+	}
 }
 
 void QtMainWindowHandler::SetModificationMode(ResourceEditor::eModificationActions mode)

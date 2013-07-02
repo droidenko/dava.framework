@@ -27,10 +27,13 @@
 #include "../Qt/Scene/SceneData.h"
 #include "../Qt/Scene/SceneDataManager.h"
 
+#include "CommandLine/SceneExporter/SceneExporter.h"
+
 #include <QFileDialog>
 #include <QString>
 
 #include "CommandsManager.h"
+#include "../CameraStateHelper.h"
 
 using namespace DAVA;
 
@@ -195,15 +198,41 @@ void CommandSaveSpecifiedScene::Execute()
 }
 
 //Export
-CommandExport::CommandExport(eGPUFamily gpu)
+CommandExport::CommandExport(Scene* scene, const FilePath& scenePath, eGPUFamily gpu)
     :   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_EXPORT)
+	,	activeScene(scene)
+	,	activeScenePath(scenePath)
     ,   gpuFamily(gpu)
 {
 }
 
-
 void CommandExport::Execute()
 {
+	if (activeScene)
+	{
+		// Yuri Coder, 2013/06/12. New functionality for QT Scene Editor.
+		KeyedArchive *keyedArchieve = EditorSettings::Instance()->GetSettings();
+		FilePath projectPath(keyedArchieve->GetString(String("ProjectPath")));
+		
+		SceneExporter exporter;
+
+		exporter.SetInFolder(projectPath + String("DataSource/3d/"));
+		exporter.SetOutFolder(projectPath + String("Data/3d/"));
+		
+		exporter.SetGPUForExporting(gpuFamily);
+		
+		//TODO: how to be with removed nodes?
+		Set<String> errorsLog;
+		
+		// Push/Pop Debug Camera is performed here.
+		CameraStateHelper cameraStateHelper(activeScene);
+		exporter.ExportScene(activeScene, activeScenePath, errorsLog);
+		ShowErrorDialog(errorsLog);
+
+		return;
+	}
+	
+	// Old functionality - to be removed soon.
     SceneEditorScreenMain *screen = dynamic_cast<SceneEditorScreenMain *>(UIScreenManager::Instance()->GetScreen());
     if(screen)
     {

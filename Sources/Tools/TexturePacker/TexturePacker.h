@@ -4,6 +4,7 @@
 #include "Base/BaseTypes.h"
 #include "Render/RenderBase.h"
 #include "Math/Math2D.h"
+#include "Render/Texture.h"
 
 namespace DAVA
 {
@@ -20,11 +21,12 @@ struct SizeSortItem
 	DefinitionFile *	defFile;
 	int					frameIndex;
 };
-    
-class TexturePacker 
+
+class TexturePacker
 {
 public:
 	TexturePacker();
+
 	
 	// pack textures to single texture
 	void PackToTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList, eGPUFamily forGPU);
@@ -32,6 +34,34 @@ public:
 	void PackToTexturesSeparate(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList, eGPUFamily forGPU);
 	// pack one sprite and use several textures if more than one needed
 	void PackToMultipleTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & remainingList, eGPUFamily forGPU);
+	
+	// batch textures to one (simplified version of PackToTextures code).
+	struct BatchTexturesOutputData
+	{
+		FilePath texturePath;
+		int32 offsetX;
+		int32 offsetY;
+	};
+	
+	enum eBatchTexturesErrorCode
+	{
+		SUCCESS = 0,
+		NO_TEXTURES_TO_BATCH,
+		NO_REFEENCE_TEXTURE_DESCRIPTOR,
+		TEXTURES_TOO_LARGE
+	};
+	
+	// The result of whole Batch Textures execution.
+	struct BatchTexturesResult
+	{
+		eBatchTexturesErrorCode errorCode;
+		FilePath batchedTexturePath;
+		int32 batchedTextureWidth;
+		int32 batchedTextureHeight;
+		Map<FilePath, BatchTexturesOutputData> outputData;
+	};
+	
+	BatchTexturesResult Batch(List<Texture*> texturesList, int32 batchID, TextureDescriptor* referenceTextureDescriptor);
 
 	bool TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & defsList);
 	bool WriteDefinition(const FilePath & excludeFolder, const FilePath & outputPath, const String & textureName, DefinitionFile * defFile);
@@ -46,12 +76,23 @@ public:
 
 	void SetMaxTextureSize(int32 maxTextureSize);
 	
+	// Determine the best resolution for the single texture. Returns FALSE if the textures can't be
+	// packed to the single one.
+	bool DetermineBestResolution(int& bestXResolution, int& bestYResolution, int& bestResolution,
+								 List<DefinitionFile*> & defsList, eGPUFamily forGPU);
+
 private:
     
     void ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU);
+	void SaveBatchedImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU, TextureDescriptor* referenceTextureDescriptor);
+
     TextureDescriptor * CreateDescriptor(eGPUFamily forGPU);
-    
-    
+
+	// Batch Textures functionality.
+	BatchTexturesResult BatchTextures(const FilePath & outputPath, List<DefinitionFile*> & defsList, int32 batchID, TextureDescriptor* referenceTextureDescriptor);
+
+	BatchTexturesResult BatchErrorResult(eBatchTexturesErrorCode errorCode);
+
 	ImagePacker *			lastPackedPacker;
 	Vector<ImagePacker*> usedPackers;
 

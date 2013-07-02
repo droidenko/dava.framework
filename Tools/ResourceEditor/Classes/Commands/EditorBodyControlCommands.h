@@ -146,4 +146,48 @@ protected:
 	void RestoreTransform(DAVA::Entity* node);
 };
 
+class BaseBatchCommand : public CommandEntityModification
+{
+public:
+	BaseBatchCommand(Command::eCommandType type, CommandList::eCommandId id);
+	
+protected:
+	int32 GetBatchIndex(Entity* entity);
+	void SetBatchIndex(Entity* entity, int32 value);
+	void RestoreBatchIndex(Entity* entity, int32 value);
+	void CleanupBatchIndex(Entity* entity);
+};
+
+class CommandBatchEntities : public BaseBatchCommand
+{
+public:
+	CommandBatchEntities(const EntityGroup* entities);
+
+protected:
+	virtual void Execute();
+	virtual void Cancel();
+	
+private:
+	static int32 currentBatchIndex;
+	EntityGroup entitiesToBatch;
+	Map<Entity*, int32> prevBatchIndexes;
+};
+
+class CommandUnbatchEntities : public BaseBatchCommand
+{
+public:
+	CommandUnbatchEntities(const EntityGroup* entities);
+	
+protected:
+	virtual void Execute();
+	virtual void Cancel();
+
+	bool IsSameBatchIndex(Entity* entityA, Entity* entityB);
+	void BuildListOfEntitiesToUnbatch(Set<Entity*>& resultSet, Entity* rootNode, Entity* entityToUnbatch);
+
+private:
+	EntityGroup entitiesToUnbatch;
+	Map<Entity*, int32> prevBatchIndexes;
+};
+
 #endif /* defined(__RESOURCEEDITORQT__EDITORBODYCONTROLCOMMANDS__) */

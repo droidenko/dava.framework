@@ -5,12 +5,15 @@
 #include "FileSystem/FilePath.h"
 #include "Math/Math2D.h"
 
+#include "Render/Texture.h"
+
 namespace DAVA
 {
  
 class DefinitionFile 
 {
 public:
+	bool InitFromTexture(Texture* texture);
 	bool Load(const FilePath & filename);
 	bool LoadPNGDef(const FilePath & filename, const FilePath & pathToProcess);
 	

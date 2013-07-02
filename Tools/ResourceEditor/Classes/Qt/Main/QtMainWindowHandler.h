@@ -182,6 +182,9 @@ public slots:
 	void ModificationMove();
 	void ModificationRotate();
 	void ModificationScale();
+	void ModificationSetBatchFlag();
+	void ModificationCleanupBatchFlag();
+
 	void ModificationPlaceOnLand();
 	void ModificationSnapToLand();
 	void OnApplyModification(double x, double y, double z);
@@ -218,6 +221,7 @@ private:
 	void SaveParticleEmitterNodes(Scene* scene);
 	void SaveParticleEmitterNodeRecursive(Entity* parentNode);
 
+	void ExecuteModifyBatchStateCommand(bool isBatch);
 
 private:
 	//set switch index

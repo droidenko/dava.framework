@@ -26,6 +26,7 @@
 #include "Render/GPUFamilyDescriptor.h"
 
 #include "../StringConstants.h"
+#include "SceneBatcher.h"
 
 using namespace DAVA;
 
@@ -121,6 +122,9 @@ void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<Stri
     FilePath oldPath = SceneValidator::Instance()->SetPathForChecking(sceneUtils.dataSourceFolder);
     SceneValidator::Instance()->ValidateScene(scene, errorLog);
 	//SceneValidator::Instance()->ValidateScales(scene, errorLog);
+
+	SceneBatcher sceneBatcher;
+	sceneBatcher.BatchSceneNodes(scene, errorLog);
 
     ExportDescriptors(scene, errorLog);
 
@@ -402,4 +406,3 @@ void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, 
         }
     }
 }
-

@@ -77,6 +77,16 @@ void InstanceMaterialState::SetUVOffsetScale(const Vector2 & _uvOffset, const Ve
     uvScale = _uvScale;
 }
 
+Vector2 InstanceMaterialState::GetUVOffset()
+{
+	return uvOffset;
+}
+	
+Vector2 InstanceMaterialState::GetUVScale()
+{
+	return uvScale;
+}
+	
 int32 InstanceMaterialState::GetLightmapSize()
 {
 	return lightmapSize;
@@ -569,7 +579,12 @@ void Material::SetType(eType _type)
     type = _type;
     RebuildShader();
 }
-    
+	
+Material::eType Material::GetType()
+{
+	return (Material::eType)type;
+}
+
 void Material::Save(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
 {
     DataNode::Save(keyedArchive, sceneFile);
@@ -679,6 +694,141 @@ void Material::Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
 
 		lightingParams->transparencyColor = keyedArchive->GetByteArrayAsType("mat.staticTransparencyColor", Color(0, 0, 0, 0));
 	}
+}
+
+Material* Material::Clone()
+{
+	Material* clonedMaterial = new Material();
+	for (int32 i = 0; i < TEXTURE_COUNT; i ++)
+	{
+		eTextureLevel textureLevel = (eTextureLevel)i;
+		clonedMaterial->SetTexture(textureLevel, GetTexture(textureLevel));
+	}
+
+	clonedMaterial->SetDiffuseColor(GetDiffuseColor());
+	clonedMaterial->SetAmbientColor(GetAmbientColor());
+	clonedMaterial->SetSpecularColor(GetSpecularColor());
+	clonedMaterial->SetEmissiveColor(GetEmissiveColor());
+	clonedMaterial->SetShininess(GetShininess());
+
+	clonedMaterial->SetOpaque(GetOpaque());
+	clonedMaterial->SetTwoSided(GetTwoSided());
+
+	clonedMaterial->SetAlphablend(GetAlphablend());
+	clonedMaterial->SetBlendSrc(GetBlendSrc());
+	clonedMaterial->SetBlendDest(GetBlendDest());
+	
+	clonedMaterial->SetType(GetType());
+	
+	clonedMaterial->SetFogColor(GetFogColor());
+	clonedMaterial->SetFogDensity(GetFogDensity());
+	clonedMaterial->SetFog(IsFogEnabled());
+	
+	clonedMaterial->EnableFlatColor(IsFlatColorEnabled());
+	clonedMaterial->EnableTextureShift(IsTextureShiftEnabled());
+	
+	if (this->lightingParams)
+	{
+		StaticLightingParams* clonedLightingParams = new StaticLightingParams();
+		clonedLightingParams->transparencyColor = this->lightingParams->transparencyColor;
+		clonedMaterial->SetStaticLightingParams(clonedLightingParams);
+	}
+	
+	return clonedMaterial;
+}
+
+Material::eMaterialComparisonResult Material::Compare(Material* materialToCompare,
+													  bool compareDiffuseTextureOnly)
+{
+	// Compare Type
+	if (GetType() != materialToCompare->GetType())
+	{
+		return MATERIALS_DIFFERENT;
+	}
+
+	// Compare Colors.
+	if ((GetDiffuseColor() != materialToCompare->GetDiffuseColor())   ||
+		(GetAmbientColor() != materialToCompare->GetAmbientColor())   ||
+		(GetSpecularColor() != materialToCompare->GetSpecularColor()) ||
+		(GetEmissiveColor() != materialToCompare->GetEmissiveColor()) ||
+		(GetShininess() != materialToCompare->GetShininess()))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+
+	// Compare Opacity and two-sided
+	if ((GetOpaque() != materialToCompare->GetOpaque()) ||
+		(GetTwoSided() != materialToCompare->GetTwoSided()))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+	
+	// Compare Blending.
+	if ((GetAlphablend() != materialToCompare->GetAlphablend()) ||
+		(GetBlendSrc() != materialToCompare->GetBlendSrc())	 ||
+		(GetBlendDest() != materialToCompare->GetBlendDest()))
+	{
+		return MATERIALS_DIFFERENT;
+	};
+		
+	// Compare Fog Settings.
+	if ((GetFogColor() != materialToCompare->GetFogColor())	||
+		(GetFogDensity() != materialToCompare->GetFogDensity()) ||
+		(IsFogEnabled() != materialToCompare->IsFogEnabled()))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+	
+	// Compare Flat Colors.
+	if ((IsFlatColorEnabled() != materialToCompare->IsFlatColorEnabled()) ||
+		(IsTextureShiftEnabled() != materialToCompare->IsTextureShiftEnabled() ))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+	
+	// Compare Lighting Params.
+	StaticLightingParams* ourLightingParams = GetStaticLightingParams();
+	StaticLightingParams* compareLightingParams = materialToCompare->GetStaticLightingParams();
+	
+	if ((ourLightingParams && !compareLightingParams) ||
+		(compareLightingParams && !ourLightingParams))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+	
+	if (ourLightingParams && compareLightingParams &&
+		(ourLightingParams->transparencyColor != compareLightingParams->transparencyColor))
+	{
+		return MATERIALS_DIFFERENT;
+	}
+	
+	// Compare the textures.
+	bool texturesDifferent = false;
+	for (int32 i = 0; i < TEXTURE_COUNT; i ++)
+	{
+		eTextureLevel textureLevel = (eTextureLevel)i;
+		Texture* ourTexture = GetTexture(textureLevel);
+		Texture* compareTexture = materialToCompare->GetTexture(textureLevel);
+		
+		if ((ourTexture && !compareTexture) || (compareTexture && !ourTexture))
+		{
+			return MATERIALS_DIFFERENT;
+		}
+		
+		if (ourTexture != compareTexture)
+		{
+			texturesDifferent = true;
+			break;
+		}
+		
+		if (compareDiffuseTextureOnly)
+		{
+			// Only check the first texture.
+			break;
+		}
+	}
+	
+	return texturesDifferent ? MATERIALS_DIFFER_IN_TEXTURES_ONLY : MATERIALS_IDENTICAL;
 }
 
 void Material::SetOpaque(bool _isOpaque)

@@ -19,6 +19,7 @@
 
 #include "DAVAEngine.h"
 #include "CommandLine/SceneUtils/SceneUtils.h"
+#include "TexturePacker/TexturePacker.h"
 
 using namespace DAVA;
 
@@ -54,10 +55,6 @@ protected:
     void ExportLandscape(Scene *scene, Set<String> &errorLog);
     void ExportLandscapeFullTiledTexture(Landscape *landscape, Set<String> &errorLog);
 
-    
-    
-    
-    
 protected:
     
     SceneUtils sceneUtils;

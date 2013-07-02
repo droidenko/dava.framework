@@ -22,6 +22,9 @@
 		02F640801745372B0053F038 /* libfmodevent.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 02E9E40E1739612300C501BC /* libfmodevent.dylib */; };
 		02F640811745372B0053F038 /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 02E9E40F1739612300C501BC /* libfmodex.dylib */; };
 		0C6D4628EE0B0D1479A20551 /* AGL.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = C6766F86E49E9C8701C8E637 /* AGL.framework */; };
+		1714B8921774330D0014A14B /* SceneBatcher.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1714B8901774330D0014A14B /* SceneBatcher.cpp */; };
+		171E3378177B196900119403 /* CameraStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 171E3376177B196900119403 /* CameraStateHelper.cpp */; };
+		1723B4EC176709770083BC33 /* BatchEntitiesHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */; };
 		1735C427169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1735C423169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp */; };
 		1735C428169DE63D001E0468 /* ParticlesEditorSceneModelHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1735C425169DE63D001E0468 /* ParticlesEditorSceneModelHelper.cpp */; };
 		173B278D172FA79C006CD29E /* InnerEmitterParticleEditorNode.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 173B278B172FA79C006CD29E /* InnerEmitterParticleEditorNode.cpp */; };
@@ -490,6 +493,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1723B4F1176709770083BC33 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8BD1EF616DE40E300499E18 /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 176DEB77174B5561007A983B;
+			remoteInfo = FrameworkNPAPI;
+		};
 		5C7F49FF15B44F6E0038AF3A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5C7F49F815B44F6D0038AF3A /* FCollada.xcodeproj */;
@@ -510,13 +520,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = E898A2C416BD265400732C04;
 			remoteInfo = FrameworkQt;
-		};
-		E8D9BE301760E4500064B302 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8BD1EF616DE40E300499E18 /* Framework.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 176DEB77174B5561007A983B;
-			remoteInfo = FrameworkNPAPI;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -553,6 +556,12 @@
 		02F64049173A8F170053F038 /* SceneTree_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTree_moc.cpp; sourceTree = "<group>"; };
 		02F6404A173A8F170053F038 /* SceneTreeItem_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTreeItem_moc.cpp; sourceTree = "<group>"; };
 		02F6404B173A8F170053F038 /* SceneTreeModel_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneTreeModel_moc.cpp; sourceTree = "<group>"; };
+		1714B8901774330D0014A14B /* SceneBatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneBatcher.cpp; sourceTree = "<group>"; };
+		1714B8911774330D0014A14B /* SceneBatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneBatcher.h; sourceTree = "<group>"; };
+		171E3376177B196900119403 /* CameraStateHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraStateHelper.cpp; path = Classes/CameraStateHelper.cpp; sourceTree = "<group>"; };
+		171E3377177B196900119403 /* CameraStateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraStateHelper.h; path = Classes/CameraStateHelper.h; sourceTree = "<group>"; };
+		1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchEntitiesHelper.cpp; path = Classes/BatchEntitiesHelper.cpp; sourceTree = "<group>"; };
+		1723B4EB176709770083BC33 /* BatchEntitiesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchEntitiesHelper.h; path = Classes/BatchEntitiesHelper.h; sourceTree = "<group>"; };
 		1735C423169DE63D001E0468 /* ParticlesEditorSceneDataHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticlesEditorSceneDataHelper.cpp; sourceTree = "<group>"; };
 		1735C424169DE63D001E0468 /* ParticlesEditorSceneDataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticlesEditorSceneDataHelper.h; sourceTree = "<group>"; };
 		1735C425169DE63D001E0468 /* ParticlesEditorSceneModelHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticlesEditorSceneModelHelper.cpp; sourceTree = "<group>"; };
@@ -3109,7 +3118,7 @@
 			children = (
 				E8BD1EFD16DE40E300499E18 /* libFramework.a */,
 				E8BD1EFF16DE40E300499E18 /* libFrameworkQt.a */,
-				E8D9BE311760E4500064B302 /* libFrameworkNPAPI.a */,
+				1723B4F2176709770083BC33 /* libFrameworkNPAPI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3223,6 +3232,8 @@
 				E8FB1E1B172EABE700D1428F /* SceneExporter.h */,
 				E8FB1E35172EE7A100D1428F /* SceneExporterTool.cpp */,
 				E8FB1E36172EE7A100D1428F /* SceneExporterTool.h */,
+				1714B8901774330D0014A14B /* SceneBatcher.cpp */,
+				1714B8911774330D0014A14B /* SceneBatcher.h */,
 			);
 			name = SceneExporter;
 			path = Classes/CommandLine/SceneExporter;
@@ -3321,6 +3332,10 @@
 				5C7F49E215B44BB70038AF3A /* UISpriteEditor.h */,
 				5C7F49E315B44BB70038AF3A /* VertexOctTree.cpp */,
 				5C7F49E415B44BB70038AF3A /* VertexOctTree.h */,
+				1723B4EA176709770083BC33 /* BatchEntitiesHelper.cpp */,
+				1723B4EB176709770083BC33 /* BatchEntitiesHelper.h */,
+				171E3376177B196900119403 /* CameraStateHelper.cpp */,
+				171E3377177B196900119403 /* CameraStateHelper.h */,
 				5C7F48CD15B44B6D0038AF3A /* SceneEditor */,
 				5C7F489B15B44B320038AF3A /* ColladaExport */,
 				5C7F466115B44B020038AF3A /* bullet */,
@@ -3387,6 +3402,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1723B4F2176709770083BC33 /* libFrameworkNPAPI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFrameworkNPAPI.a;
+			remoteRef = 1723B4F1176709770083BC33 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5C7F4A0015B44F6E0038AF3A /* libFColladaS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3406,13 +3428,6 @@
 			fileType = archive.ar;
 			path = libFrameworkQt.a;
 			remoteRef = E8BD1EFE16DE40E300499E18 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8D9BE311760E4500064B302 /* libFrameworkNPAPI.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFrameworkNPAPI.a;
-			remoteRef = E8D9BE301760E4500064B302 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -3907,6 +3922,7 @@
 				4F3E256E174CD39C000D1187 /* ConsoleView_moc.cpp in Build Sources */,
 				8463A51F1745309E00F2398F /* EntityOwnerPropertyHelper.cpp in Build Sources */,
 				748E55931761D5EB000E24FF /* ParticlesEditorNodeNameHelper.cpp in Build Sources */,
+				1723B4EC176709770083BC33 /* BatchEntitiesHelper.cpp in Build Sources */,
 				4FFE5C75176B379600728624 /* SceneEditor2.cpp in Build Sources */,
 				4FFE5C82176B37B600728624 /* Command2.cpp in Build Sources */,
 				4FFE5C83176B37B600728624 /* CommandBatch.cpp in Build Sources */,
@@ -3924,9 +3940,11 @@
 				4FFE5C9D1770C08600728624 /* EntityMoveCommand.cpp in Build Sources */,
 				4FFE5C9E1770C08600728624 /* EntityRemoveCommand.cpp in Build Sources */,
 				49F26F1E1771D67D008012B5 /* CommandAction.cpp in Build Sources */,
+				1714B8921774330D0014A14B /* SceneBatcher.cpp in Build Sources */,
 				4FFE5CAB1779DA3E00728624 /* CollisionParticleEmitter.cpp in Build Sources */,
 				4FFE5CB51779E38300728624 /* SceneTreeDelegate.cpp in Build Sources */,
 				4FFE5CB71779E60600728624 /* SceneTreeDelegate_moc.cpp in Build Sources */,
+				171E3378177B196900119403 /* CameraStateHelper.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

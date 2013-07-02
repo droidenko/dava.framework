@@ -256,6 +256,8 @@ void QtMainWindow::SetupMainMenu()
 	connect(ui->actionModifyMove, SIGNAL(triggered()), actionHandler, SLOT(ModificationMove()));
 	connect(ui->actionModifyRotate, SIGNAL(triggered()), actionHandler, SLOT(ModificationRotate()));
 	connect(ui->actionModifyScale, SIGNAL(triggered()), actionHandler, SLOT(ModificationScale()));
+	connect(ui->actionBatch, SIGNAL(triggered()), actionHandler, SLOT(ModificationSetBatchFlag()));
+	connect(ui->actionUnbatch, SIGNAL(triggered()), actionHandler, SLOT(ModificationCleanupBatchFlag()));
 	connect(ui->actionModifyPlaceOnLandscape, SIGNAL(triggered()), actionHandler, SLOT(ModificationPlaceOnLand()));
 	connect(ui->actionModifySnapToLandscape, SIGNAL(triggered()), actionHandler, SLOT(ModificationSnapToLand()));
 	connect(ui->actionModifyReset, SIGNAL(triggered()), actionHandler, SLOT(OnResetModification()));
@@ -266,7 +268,9 @@ void QtMainWindow::SetupMainMenu()
 											   ui->actionModifyRotate,
 											   ui->actionModifyScale,
 											   ui->actionModifyPlaceOnLandscape,
-											   ui->actionModifySnapToLandscape);
+											   ui->actionModifySnapToLandscape,
+											   ui->actionBatch,
+											   ui->actionUnbatch);
 
 	//Reference
 	connect(ui->applyReferenceSuffixButton, SIGNAL(clicked()), this, SLOT(ApplyReferenceNodeSuffix()));

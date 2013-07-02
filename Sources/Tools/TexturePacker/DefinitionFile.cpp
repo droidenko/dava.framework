@@ -188,6 +188,24 @@ bool DefinitionFile::Load(const FilePath & _filename)
 	return true;
 }
 
+bool DefinitionFile::InitFromTexture(Texture* texture)
+{
+	if (!texture)
+	{
+		return false;
+	}
+
+	filename = texture->GetPathname();
+
+	frameCount = 1;
+	spriteWidth = texture->GetWidth();
+	spriteHeight = texture->GetHeight();
+
+	frameRects = new Rect2i[frameCount];
+	frameRects[0] = Rect2i(0, 0, spriteWidth, spriteHeight);
+	
+	return true;
+}
 
 };
 

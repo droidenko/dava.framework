@@ -65,6 +65,9 @@ public:
     
     void SetLightmap(Texture * texture, const FilePath & lightmapName);
     void SetUVOffsetScale(const Vector2 & uvOffset, const Vector2 uvScale);
+	
+    Vector2 GetUVOffset();
+	Vector2 GetUVScale();
 
 	int32 GetLightmapSize();
 	void SetLightmapSize(int32 size);
@@ -169,6 +172,20 @@ public:
         MATERIAL_INPUT_EMISSIVE = (1 << 7),
     };
     
+	/*
+		Material Comparison result, can be used for extended materials comparison.
+		Result codes are the following:
+			MATERIALS_IDENTICAL - both source and destination materials are identical;
+			MATERIALS_DIFFER_IN_TEXTURES_ONLY - only the textures of materials differ;
+			MATERIALS_DIFFERENT - materials are differ.
+	 */
+	enum eMaterialComparisonResult
+	{
+		MATERIALS_IDENTICAL = 0,
+		MATERIALS_DIFFER_IN_TEXTURES_ONLY,
+		MATERIALS_DIFFERENT
+	};
+
     static const char8 * GetTypeName(eType type);
 
     Material();
@@ -188,6 +205,7 @@ public:
 	virtual int32 Release();
     
     void SetType(eType _type);
+	eType GetType();
     
     void SetOpaque(bool _isOpaque);
     bool GetOpaque();
@@ -276,8 +294,8 @@ public:
 
     void Save(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile);
     void Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile);
-    
-    
+    Material* Clone();
+
     //void SetTextureSlotName(uint32 index, const String & string);
 
     uint32 GetTextureSlotCount() const;
@@ -298,7 +316,10 @@ public:
     inline eBlendMode GetBlendSrc() const;
     inline eBlendMode GetBlendDest() const;
 	inline StaticLightingParams * GetStaticLightingParams() const;
-    
+
+	eMaterialComparisonResult Compare(Material* materialToCompare,
+									  bool compareDiffuseTextureOnly);
+
 private:
     void RetrieveTextureSlotNames();
     

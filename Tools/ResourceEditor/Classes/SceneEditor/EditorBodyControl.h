@@ -88,9 +88,6 @@ public:
     void SetViewportSize(ResourceEditor::eViewportType viewportType);
     bool ControlsAreLocked();
 
-	void PushDebugCamera();
-	void PopDebugCamera();
-
     void GetCursorVectors(Vector3 * from, Vector3 * dir, const Vector2 &point);
     
     bool ToggleLandscapeEditor(int32 landscapeEditorMode);
@@ -215,9 +212,6 @@ protected:
 	
 	Matrix4 translate1, translate2;
 
-	Entity * mainCam;
-	Entity * debugCam;
-    
     struct AddedNode
     {
         Entity *nodeToAdd;

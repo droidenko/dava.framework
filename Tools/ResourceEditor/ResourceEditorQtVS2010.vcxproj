@@ -196,6 +196,7 @@
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\PngImage.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\TexturePacker.cpp" />
+    <ClCompile Include="Classes\BatchEntitiesHelper.cpp" />
     <ClCompile Include="Classes\BeastProxy.cpp" />
     <ClCompile Include="Classes\BulletObject.cpp" />
     <ClCompile Include="Classes\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
@@ -315,6 +316,7 @@
     <ClCompile Include="Classes\bullet\LinearMath\btGeometryUtil.cpp" />
     <ClCompile Include="Classes\bullet\LinearMath\btQuickprof.cpp" />
     <ClCompile Include="Classes\bullet\LinearMath\btSerializer.cpp" />
+    <ClCompile Include="Classes\CameraStateHelper.cpp" />
     <ClCompile Include="Classes\Collada\ColladaAnimatedMesh.cpp" />
     <ClCompile Include="Classes\Collada\ColladaAnimation.cpp" />
     <ClCompile Include="Classes\Collada\ColladaCamera.cpp" />
@@ -336,6 +338,7 @@
     <ClCompile Include="Classes\CommandLine\CommandLineTool.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitter.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.cpp" />
+    <ClCompile Include="Classes\CommandLine\SceneExporter\SceneBatcher.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneExporter\SceneExporter.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneExporter\SceneExporterTool.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneSaver\SceneSaver.cpp" />
@@ -677,6 +680,7 @@
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\TexturePacker.h" />
     <ClInclude Include="Classes\AppScreens.h" />
+    <ClInclude Include="Classes\BatchEntitiesHelper.h" />
     <ClInclude Include="Classes\BeastProxy.h" />
     <ClInclude Include="Classes\BulletObject.h" />
     <ClInclude Include="Classes\bullet\btBulletCollisionCommon.h" />
@@ -869,6 +873,7 @@
     <ClInclude Include="Classes\bullet\vectormath\sse\vectormath_aos.h" />
     <ClInclude Include="Classes\bullet\vectormath\sse\vec_aos.h" />
     <ClInclude Include="Classes\bullet\vectormath\vmInclude.h" />
+    <ClInclude Include="Classes\CameraStateHelper.h" />
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h" />
     <ClInclude Include="Classes\Collada\ColladaAnimation.h" />
     <ClInclude Include="Classes\Collada\ColladaCamera.h" />
@@ -892,6 +897,7 @@
     <ClInclude Include="Classes\CommandLine\CommandLineTool.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitter.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.h" />
+    <ClInclude Include="Classes\CommandLine\SceneExporter\SceneBatcher.h" />
     <ClInclude Include="Classes\CommandLine\SceneExporter\SceneExporter.h" />
     <ClInclude Include="Classes\CommandLine\SceneExporter\SceneExporterTool.h" />
     <ClInclude Include="Classes\CommandLine\SceneSaver\SceneSaver.h" />
