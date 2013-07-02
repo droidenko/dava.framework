@@ -534,7 +534,7 @@ void SceneBatcher::SelectGeometryEntitiesRecursive(Entity* rootLevelEntity, Enti
 												   Map<Entity*, Entity*>& resultMap)
 {
 	LodComponent* lodComponent = GetLodComponent(curLevelEntity);
-	RenderObject* renderObject = GetRenerObject(curLevelEntity);
+	RenderObject* renderObject = GetRenderObject(curLevelEntity);
 	if (renderObject)
 	{
 		// This entity is a geometry one - add as is.
