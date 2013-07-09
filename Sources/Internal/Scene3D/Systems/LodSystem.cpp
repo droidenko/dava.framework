@@ -241,7 +241,8 @@ void LodSystem::LodMerger::MergeChildLods()
 				toData->nodes.clear();
 				toData->indexes.clear(); //indeces will not have any sense after lod merge
 
-				toLod->lodLayersArray = fromLod->lodLayersArray;
+				toLod->lodLayersArrayOriginal = fromLod->lodLayersArrayOriginal;
+                toLod->lodLayersArrayWorking = fromLod->lodLayersArrayWorking;
 			}
 			else
 			{

@@ -183,7 +183,7 @@ void SceneValidator::ValidateLodComponent(Entity *ownerNode, Set<String> &errors
     int32 layersCount = lodComponent->GetLodLayersCount();
     for(int32 layer = 0; layer < layersCount; ++layer)
     {
-        float32 distance = lodComponent->GetLodLayerDistance(layer);
+        float32 distance = lodComponent->GetLodLayerDistanceOriginal(layer);
         if(LodComponent::INVALID_DISTANCE == distance)
         {
             //TODO: why this function isn't realized for lodcomponent?

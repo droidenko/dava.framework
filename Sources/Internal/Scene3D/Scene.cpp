@@ -53,13 +53,21 @@
 #include "Scene3D/Systems/SwitchSystem.h"
 #include "Scene3D/Systems/SoundUpdateSystem.h"
 
-//#include "Entity/Entity.h"
+#include "Scene3D/Components/LodComponent.h"
+#include "Scene3D/Components/ComponentHelpers.h"
+
+#include "Scene3D/Entity.h"
+
+#include "Utils/StringFormat.h"
+
 //#include "Entity/EntityManager.h"
 //#include "Entity/Components.h"
 //
 //#include "Entity/VisibilityAABBoxSystem.h"
 //#include "Entity/MeshInstanceDrawSystem.h"
 //#include "Entity/LandscapeGeometrySystem.h"
+
+#define SCENE_SETTINGS_NAME (String("Global.Scene.Settings"))
 
 namespace DAVA 
 {
@@ -78,6 +86,8 @@ Scene::Scene()
 
 //	entityManager = new EntityManager();
 
+    globalSceneSettings = NULL;
+    
 	CreateComponents();
 	CreateSystems();
 }
@@ -817,6 +827,98 @@ void Scene::Load(KeyedArchive * archive)
 }*/
     
 
+const Vector<float32> Scene::GetLodLayersCorrection()
+{
+    KeyedArchive *customProperties = GetSceneSettings()->GetCustomProperties();
+
+    Vector<float32> lodLayersCorrection;
+    lodLayersCorrection.resize(LodComponent::MAX_LOD_LAYERS, 0.f);
+    for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS; ++i)
+    {
+        lodLayersCorrection[i] = customProperties->GetFloat(Format("lodCorrection_%d", i), 0.f);
+    }
+    
+    return lodLayersCorrection;
+}
+    
+void Scene::SetLodLayersCorrection(float32 correction, uint32 layerNum)
+{
+    DVASSERT(layerNum < LodComponent::MAX_LOD_LAYERS);
+
+    KeyedArchive *customProperties = GetSceneSettings()->GetCustomProperties();
+    customProperties->SetFloat(Format("lodCorrection_%d", layerNum), correction);
+}
+    
+void Scene::ApplyLodLayerCorrection()
+{
+    int32 count = GetChildrenCount();
+    for(int32 i = 0; i < count; ++i)
+    {
+        ApplyLodLayerCorrectionRecursive(GetChild(i));
+    }
+}
+
+void Scene::ApplyLodLayerCorrectionRecursive(Entity *entity)
+{
+    LodComponent *lc = GetLodComponent(entity);
+    if(lc)
+    {
+        lc->RecalcWorkingDistances();
+        return;
+    }
+    
+    int32 count = entity->GetChildrenCount();
+    for(int32 i = 0; i < count; ++i)
+    {
+        ApplyLodLayerCorrectionRecursive(entity->GetChild(i));
+    }
+}
+
+Entity * Scene::GetSceneSettings()
+{
+    if(!globalSceneSettings)
+    {
+        globalSceneSettings = new Entity();
+//        globalSceneSettings->RemoveComponent(Component::TRANSFORM_COMPONENT);
+        globalSceneSettings->SetScene(this);
+        globalSceneSettings->SetName(SCENE_SETTINGS_NAME);
+        
+        if(GetChildrenCount())
+        {
+            InsertBeforeNode(globalSceneSettings, GetChild(0));
+        }
+        else
+        {
+            AddNode(globalSceneSettings);
+        }
+        
+        globalSceneSettings->Release();
+    }
+    
+    return globalSceneSettings;
+}
+
+void Scene::FindSceneSettings()
+{
+    globalSceneSettings = FindByName(SCENE_SETTINGS_NAME);
+}
+
+void Scene::RemoveNode(Entity * node)
+{
+    if(globalSceneSettings == node)
+    {
+        globalSceneSettings = NULL;
+    }
+    
+    Entity::RemoveNode(node);
+}
+    
+void Scene::RemoveAllChildren()
+{
+    globalSceneSettings = NULL;
+    
+    Entity::RemoveAllChildren();
+}
 
 
 };

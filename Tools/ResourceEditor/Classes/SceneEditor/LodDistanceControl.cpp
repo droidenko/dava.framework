@@ -235,6 +235,7 @@ void LodDistanceControl::SetDistances(float32 *newDistances, int32 *newTriangles
         }
     }
     
+
     float32 x = GetRect().dx / 2.f;
     for(int32 iDist = 0; iDist < LodComponent::MAX_LOD_LAYERS; ++iDist)
     {
@@ -249,8 +250,8 @@ void LodDistanceControl::SetDistances(float32 *newDistances, int32 *newTriangles
             distanceText[iDist]->SetText(Format(L"Distance_%d:", iDist));
 
             AddControl(distanceTextValues[iDist]);
-            distanceTextValues[iDist]->SetText(Format(L"%.0f", distances[iDist]));
-            
+
+            distanceTextValues[iDist]->SetText(GetDistanceText(distances[iDist], iDist));
             
             float32 y = (float32)(count + iDist + 1) * (float32)ControlsFactory::BUTTON_HEIGHT;
             trianglesText[iDist]->SetPosition(Vector2(0, y));
@@ -370,7 +371,7 @@ void LodDistanceControl::UpdateSliderPos()
         }
         
         distances[activeLodIndex] = newDistance;
-        distanceTextValues[activeLodIndex]->SetText(Format(L"%.0f", newDistance));
+        distanceTextValues[activeLodIndex]->SetText(GetDistanceText(distances[activeLodIndex], activeLodIndex));
     }
 }
 
@@ -422,7 +423,8 @@ void LodDistanceControl::TextFieldLostFocus(UITextField * textField)
             r.dx -= deltaX;
             zones[iText]->SetRect(r);
 
-            textField->SetText(Format(L"%.0f", newDistance));
+//            textField->SetText(Format(L"%.0f", newDistance));
+            textField->SetText(GetDistanceText(newDistance, iText));
             distances[iText] = newDistance;
             if(delegate)
             {
@@ -472,5 +474,31 @@ bool LodDistanceControl::TextFieldKeyPressed(UITextField * textField, int32 repl
 const float32 LodDistanceControl::GetControlHeightForLodCount(int32 lodCount)
 {
     return (lodCount * 2.0f + 2.0f) * (float32)ControlsFactory::BUTTON_HEIGHT;
+}
+
+Scene * LodDistanceControl::GetSceneIfLevelIsActive()
+{
+    SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
+    SceneData *levelScene = SceneDataManager::Instance()->SceneGetActive();
+    if(activeScene == levelScene)
+    {
+        return levelScene->GetScene();
+    }
+    
+    return NULL;
+}
+
+WideString LodDistanceControl::GetDistanceText(float32 distance, int32 lodLevel)
+{
+    Scene *scene = GetSceneIfLevelIsActive();
+    if(scene)
+    {
+        const Vector<float32> &correction = scene->GetLodLayersCorrection();
+        return Format(L"%.0f + %.0f = %0.f (%d%%)",
+                                                  distance, distance * correction[lodLevel],
+                                                  distance * (1 + correction[lodLevel]), int32(correction[lodLevel] * 100));
+    }
+
+    return Format(L"%.0f", distance);
 }
 

@@ -150,6 +150,9 @@ void QtMainWindow::SetupActions()
     ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
 	connect(ui->actionEnableCameraLight, SIGNAL(triggered()), actionHandler, SLOT(CameraLightTrigerred()));
 
+	connect(ui->actionSetLODCorrection, SIGNAL(triggered()), actionHandler, SLOT(ShowLODCorrectionDialog()));
+
+    
     //Help
     connect(ui->actionHelp, SIGNAL(triggered()), actionHandler, SLOT(OpenHelp()));
 }

@@ -339,9 +339,9 @@ void NodesPropertyControl::AddChildLodSection()
                 lodInfo[iLod].triangles += GetTrianglesForLodLayer(layer);
                 ++lodLayerIt;
 
-                distances[iLod] = childLodComponents[i]->GetLodLayerDistance(iLod);
+                distances[iLod] = childLodComponents[i]->GetLodLayerDistanceOriginal(iLod);
                 
-                lodInfo[iLod].distance += childLodComponents[i]->GetLodLayerDistance(iLod);
+                lodInfo[iLod].distance += distances[iLod];
                 lodInfo[iLod].count++;
             }
             
@@ -914,7 +914,7 @@ void NodesPropertyControl::OnSetDistancesForLodNodes(BaseObject * , void * , voi
     {
         for(int32 iLod = 0; iLod < childLodComponents[i]->GetLodLayersCount(); ++iLod)
         {
-            childDistances[i][iLod] = childLodComponents[i]->GetLodLayerDistance(iLod);
+            childDistances[i][iLod] = childLodComponents[i]->GetLodLayerDistanceOriginal(iLod);
         }
     }
 

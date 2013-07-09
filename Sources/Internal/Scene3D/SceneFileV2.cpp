@@ -259,6 +259,7 @@ SceneFileV2::eError SceneFileV2::LoadScene(const FilePath & filename, Scene * _s
     {
         // TODO: Check do we need to releae root node here
         _scene->AddRootNode(rootNode, rootNodePathName.GetAbsolutePathname());
+        _scene->FindSceneSettings();
     }
     else
     {
@@ -814,12 +815,13 @@ bool SceneFileV2::ReplaceNodeAfterLoad(Entity * node)
 
 		for(int32 iLayer = 0; iLayer < LodComponent::MAX_LOD_LAYERS; ++iLayer)
 		{
-			lc->lodLayersArray[iLayer].distance = lod->GetLodLayerDistance(iLayer);
-			lc->lodLayersArray[iLayer].nearDistance = lod->GetLodLayerNear(iLayer);
-			lc->lodLayersArray[iLayer].nearDistanceSq = lod->GetLodLayerNearSquare(iLayer);
-			lc->lodLayersArray[iLayer].farDistance = lod->GetLodLayerFar(iLayer);
-			lc->lodLayersArray[iLayer].farDistanceSq = lod->GetLodLayerFarSquare(iLayer);
+			lc->lodLayersArrayOriginal[iLayer].distance = lod->GetLodLayerDistance(iLayer);
+			lc->lodLayersArrayOriginal[iLayer].nearDistance = lod->GetLodLayerNear(iLayer);
+			lc->lodLayersArrayOriginal[iLayer].nearDistanceSq = lod->GetLodLayerNearSquare(iLayer);
+			lc->lodLayersArrayOriginal[iLayer].farDistance = lod->GetLodLayerFar(iLayer);
+			lc->lodLayersArrayOriginal[iLayer].farDistanceSq = lod->GetLodLayerFarSquare(iLayer);
 		}
+        lc->RecalcWorkingDistances();
 
 		List<LodNode::LodData*> oldLodData;
 		lod->GetLodData(oldLodData);

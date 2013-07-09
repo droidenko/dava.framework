@@ -47,6 +47,8 @@
 #include "SceneEditor/EntityOwnerPropertyHelper.h"
 #include "StringConstants.h"
 
+#include "../Tools/LodCorrection/LodCorrectionDialog.h"
+
 #include <QPoint>
 #include <QMenu>
 #include <QAction>
@@ -1169,4 +1171,12 @@ void QtMainWindowHandler::OpenHelp()
     FilePath docsPath = ResourceEditor::DOCUMENTATION_PATH + "index.html";
     QString docsFile = QString::fromStdString("file:///" + docsPath.GetAbsolutePathname());
     QDesktopServices::openUrl(QUrl(docsFile));
+}
+
+void QtMainWindowHandler::ShowLODCorrectionDialog()
+{
+    SceneData *sceneData = SceneDataManager::Instance()->SceneGetLevel();
+    
+    LodCorrectionDialog dlg(sceneData->GetScene());
+    dlg.exec();
 }

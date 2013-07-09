@@ -16,6 +16,7 @@
 
 #include "Scene3D/Components/LodComponent.h"
 #include "Scene3D/Entity.h"
+#include "Scene3D/Scene.h"
 
 namespace DAVA
 {
@@ -58,47 +59,12 @@ Component * LodComponent::Clone(Entity * toEntity)
 		LodData & ld = *it;
 		ld.nodes.clear();
 	}
-	//if(!newLod->lodLayers.empty())
-	//{
-	//	const List<LodData>::const_iterator endLod = newLod->lodLayers.end();
-	//	newLod->currentLod = &(*newLod->lodLayers.begin());
-	//	for (List<LodData>::iterator it = newLod->lodLayers.begin(); it != endLod; ++it)
-	//	{
-	//		LodData & ld = *it;
-	//		uint32 size = ld.nodes.size();
-	//		for (uint32 idx = 0; idx < size; ++idx)
-	//		{
-	//			int32 count = entity->GetChildrenCount();
-	//			for (int32 i = 0; i < count; i++) 
-	//			{
-	//				Entity * child = entity->GetChild(i);
-	//				if(child == ld.nodes[idx])
-	//				{
-	//					ld.nodes[idx] = toEntity->GetChild(i);
-	//					if (newLod->currentLod != &ld) 
-	//					{
-	//						ld.nodes[idx]->SetUpdatable(false);
-	//					}
-	//					else 
-	//					{
-	//						ld.nodes[idx]->SetUpdatable(true);
-	//					}
-
-	//					break;
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 
 	//Lod values
 	for(int32 iLayer = 0; iLayer < MAX_LOD_LAYERS; ++iLayer)
 	{
-		newLod->lodLayersArray[iLayer].distance = lodLayersArray[iLayer].distance;
-		newLod->lodLayersArray[iLayer].nearDistance = lodLayersArray[iLayer].nearDistance;
-		newLod->lodLayersArray[iLayer].nearDistanceSq = lodLayersArray[iLayer].nearDistanceSq;
-		newLod->lodLayersArray[iLayer].farDistance = lodLayersArray[iLayer].farDistance;
-		newLod->lodLayersArray[iLayer].farDistanceSq = lodLayersArray[iLayer].farDistanceSq;
+        newLod->lodLayersArrayOriginal[iLayer] = lodLayersArrayOriginal[iLayer];
+        newLod->lodLayersArrayWorking[iLayer] = lodLayersArrayWorking[iLayer];
 	}
 
 	newLod->forceDistance = forceDistance;
@@ -118,18 +84,15 @@ void LodComponent::Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 
 		archive->SetUInt32("lc.flags", flags);
 		archive->SetFloat("lc.forceDistance", forceDistance);
-		archive->SetFloat("lc.forceDistanceSq", forceDistanceSq);
 		archive->SetInt32("lc.forceLodLayer", forceLodLayer);
 
 		KeyedArchive *lodDistArch = new KeyedArchive();
 		for (i = 0; i < MAX_LOD_LAYERS; ++i)
 		{
 			KeyedArchive *lodDistValuesArch = new KeyedArchive();
-			lodDistValuesArch->SetFloat("ld.distance", lodLayersArray[i].distance);
-			lodDistValuesArch->SetFloat("ld.neardist", lodLayersArray[i].nearDistance);
-			lodDistValuesArch->SetFloat("ld.fardist", lodLayersArray[i].farDistance);
-			lodDistValuesArch->SetFloat("ld.neardistsq", lodLayersArray[i].nearDistanceSq);
-			lodDistValuesArch->SetFloat("ld.fardistsq", lodLayersArray[i].farDistanceSq);
+			lodDistValuesArch->SetFloat("ld.distance", lodLayersArrayOriginal[i].distance);
+			lodDistValuesArch->SetFloat("ld.neardist", lodLayersArrayOriginal[i].nearDistance);
+			lodDistValuesArch->SetFloat("ld.fardist", lodLayersArrayOriginal[i].farDistance);
 
 			lodDistArch->SetArchive(KeyedArchive::GenKeyFromIndex(i), lodDistValuesArch);
 			lodDistValuesArch->Release();
@@ -171,12 +134,13 @@ void LodComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 {
 	if(NULL != archive)
 	{
-		if(archive->IsKeyExists("lc.flags")) flags = archive->GetUInt32("lc.flags");
-		if(archive->IsKeyExists("lc.forceDistance")) forceDistance = archive->GetFloat("lc.forceDistance");
-		if(archive->IsKeyExists("lc.forceDistanceSq")) forceDistanceSq = archive->GetFloat("lc.forceDistanceSq");
-		if(archive->IsKeyExists("lc.forceLodLayer")) forceLodLayer = archive->GetInt32("lc.forceLodLayer");
+        flags = archive->GetUInt32("lc.flags", 0);
+        
+        forceDistance = archive->GetFloat("lc.forceDistance", (float32)INVALID_DISTANCE);
+        forceDistanceSq = forceDistance * forceDistance;
+        forceLodLayer = archive->GetInt32("lc.forceLodLayer", INVALID_LOD_LAYER);
 
-		KeyedArchive *lodDistArch = archive->GetArchive("lc.loddist");
+        KeyedArchive *lodDistArch = archive->GetArchive("lc.loddist");
 		if(NULL != lodDistArch)
 		{
 			for(uint32 i = 0; i < MAX_LOD_LAYERS; ++i)
@@ -184,32 +148,37 @@ void LodComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 				KeyedArchive *lodDistValuesArch = lodDistArch->GetArchive(KeyedArchive::GenKeyFromIndex(i));
 				if(NULL != lodDistValuesArch)
 				{
-					lodLayersArray[i].distance = lodDistValuesArch->GetFloat("ld.distance");
-					lodLayersArray[i].nearDistance = lodDistValuesArch->GetFloat("ld.neardist");
-					lodLayersArray[i].farDistance = lodDistValuesArch->GetFloat("ld.fardist");
-					lodLayersArray[i].nearDistanceSq = lodDistValuesArch->GetFloat("ld.neardistsq");
-					lodLayersArray[i].farDistanceSq = lodDistValuesArch->GetFloat("ld.fardistsq");
+					lodLayersArrayOriginal[i].distance = lodDistValuesArch->GetFloat("ld.distance");
+					lodLayersArrayOriginal[i].nearDistance = lodDistValuesArch->GetFloat("ld.neardist");
+					lodLayersArrayOriginal[i].farDistance = lodDistValuesArch->GetFloat("ld.fardist");
+
+					lodLayersArrayOriginal[i].nearDistanceSq = lodLayersArrayOriginal[i].nearDistance * lodLayersArrayOriginal[i].nearDistance;
+					lodLayersArrayOriginal[i].farDistanceSq = lodLayersArrayOriginal[i].farDistance * lodLayersArrayOriginal[i].farDistance;
 				}
 			}
+            
+            RecalcWorkingDistances();
 		}
 
 		KeyedArchive *lodDataArch = archive->GetArchive("lc.loddata");
 		if(NULL != lodDataArch)
 		{
-			for(uint32 i = 0; i < archive->GetUInt32("lc.loddatacount"); ++i)
+            uint32 lodDataCount = archive->GetUInt32("lc.loddatacount");
+			for(uint32 i = 0; i < lodDataCount; ++i)
 			{
 				KeyedArchive *lodDataValuesArch = lodDataArch->GetArchive(KeyedArchive::GenKeyFromIndex(i));
 				if(NULL != lodDataValuesArch)
 				{
 					LodData data;
 
-					if(lodDataValuesArch->IsKeyExists("layer")) data.layer = lodDataValuesArch->GetInt32("layer");
-					if(lodDataValuesArch->IsKeyExists("isdummy")) data.isDummy = lodDataValuesArch->GetBool("isdummy");
+					data.layer = lodDataValuesArch->GetInt32("layer", INVALID_LOD_LAYER);
+                    data.isDummy = lodDataValuesArch->GetBool("isdummy", false);
 
 					KeyedArchive *lodDataIndexesArch = lodDataValuesArch->GetArchive("indexes");
 					if(NULL != lodDataIndexesArch)
 					{
-						for(uint32 j = 0; j < lodDataValuesArch->GetUInt32("indexescount"); ++j)
+                        uint32 indexesCount = lodDataValuesArch->GetUInt32("indexescount");
+						for(uint32 j = 0; j < indexesCount; ++j)
 						{
 							data.indexes.push_back(lodDataIndexesArch->GetInt32(KeyedArchive::GenKeyFromIndex(j)));
 						}
@@ -230,17 +199,21 @@ LodComponent::LodComponent()
 	forceDistance(INVALID_DISTANCE),
 	forceDistanceSq(INVALID_DISTANCE)
 {
-	lodLayersArray.resize(MAX_LOD_LAYERS);
-
-	flags = NEED_UPDATE_AFTER_LOAD;
+    lodLayersArrayOriginal.resize(MAX_LOD_LAYERS);
+	lodLayersArrayWorking.resize(MAX_LOD_LAYERS);
 
 	for(int32 iLayer = 0; iLayer < MAX_LOD_LAYERS; ++iLayer)
 	{
-		lodLayersArray[iLayer].SetDistance(GetDefaultDistance(iLayer));
-		lodLayersArray[iLayer].SetFarDistance(MAX_LOD_DISTANCE * 2);
+		lodLayersArrayOriginal[iLayer].SetDistance(GetDefaultDistance(iLayer));
+		lodLayersArrayOriginal[iLayer].SetFarDistance(MAX_LOD_DISTANCE * 2);
+        
+        lodLayersArrayWorking[iLayer] = lodLayersArrayOriginal[iLayer];
 	}
 
-	lodLayersArray[0].SetNearDistance(0.0f);
+	lodLayersArrayOriginal[0].SetNearDistance(0.0f);
+	lodLayersArrayWorking[0].SetNearDistance(0.0f);
+    
+    flags = NEED_UPDATE_AFTER_LOAD;
 }
 
 float32 LodComponent::GetDefaultDistance(int32 layer)
@@ -304,20 +277,22 @@ void LodComponent::SetLodLayerDistance(int32 layerNum, float32 distance)
         
         if(GetLodLayersCount() - 1 == layerNum)
         {
-            lodLayersArray[layerNum].SetFarDistance(MAX_LOD_DISTANCE * 2);
+            lodLayersArrayOriginal[layerNum].SetFarDistance(MAX_LOD_DISTANCE * 2);
         }
         if(layerNum)
         {
-            lodLayersArray[layerNum-1].SetFarDistance(farDistance);
+            lodLayersArrayOriginal[layerNum-1].SetFarDistance(farDistance);
         }
         
-        lodLayersArray[layerNum].SetDistance(distance);
-        lodLayersArray[layerNum].SetNearDistance(nearDistance);
+        lodLayersArrayOriginal[layerNum].SetDistance(distance);
+        lodLayersArrayOriginal[layerNum].SetNearDistance(nearDistance);
     }
     else 
     {
-        lodLayersArray[layerNum].SetDistance(distance);
+        lodLayersArrayOriginal[layerNum].SetDistance(distance);
     }
+    
+    RecalcWorkingDistance(layerNum);
 }
 
 void LodComponent::SetForceLodLayer(int32 layer)
@@ -332,7 +307,7 @@ int32 LodComponent::GetForceLodLayer()
 
 int32 LodComponent::GetMaxLodLayer()
 {
-	int32 ret = -1;
+	int32 ret = INVALID_LOD_LAYER;
 	const Vector<LodData>::const_iterator &end = lodLayers.end();
 	for (Vector<LodData>::iterator it = lodLayers.begin(); it != end; ++it)
 	{
@@ -344,6 +319,55 @@ int32 LodComponent::GetMaxLodLayer()
 	}
 
 	return ret;
+}
+
+void LodComponent::RecalcWorkingDistances()
+{
+    for(uint32 i = 0; i < lodLayersArrayWorking.size(); ++i)
+    {
+        RecalcWorkingDistance(i);
+    }
+}
+
+void LodComponent::RecalcWorkingDistance(int32 forLayer)
+{
+    DVASSERT(0 <= forLayer && forLayer < MAX_LOD_LAYERS);
+    
+    float32 persentage = GetPersentage(forLayer);
+    
+    lodLayersArrayWorking[forLayer].distance = RecalcDistance(lodLayersArrayOriginal[forLayer].distance, persentage);
+    lodLayersArrayWorking[forLayer].nearDistance = RecalcDistance(lodLayersArrayOriginal[forLayer].nearDistance, persentage);
+    lodLayersArrayWorking[forLayer].farDistance = RecalcDistance(lodLayersArrayOriginal[forLayer].farDistance, persentage);
+    
+    lodLayersArrayWorking[forLayer].nearDistanceSq = lodLayersArrayWorking[forLayer].nearDistance * lodLayersArrayWorking[forLayer].nearDistance;
+    lodLayersArrayWorking[forLayer].farDistanceSq = lodLayersArrayWorking[forLayer].farDistance * lodLayersArrayWorking[forLayer].farDistance;
+    
+    flags |= NEED_UPDATE_AFTER_LOAD;
+}
+    
+float32 LodComponent::RecalcDistance(float32 originalDistance, float32 persentage)
+{
+    if(originalDistance == INVALID_DISTANCE)
+        return INVALID_DISTANCE;
+    
+    return originalDistance * persentage;
+}
+
+float32 LodComponent::GetPersentage(uint32 forLayer)
+{
+    if(entity)
+    {
+        Scene *scene = entity->GetScene();
+        if(scene)
+        {
+            const Vector<float32> &shifts = scene->GetLodLayersCorrection();
+            DVASSERT(forLayer < shifts.size())
+            
+            return (1.f + shifts[forLayer]); //TODO: need real multiplier from scene
+        }
+    }
+    
+    return 1.f;
 }
 
     

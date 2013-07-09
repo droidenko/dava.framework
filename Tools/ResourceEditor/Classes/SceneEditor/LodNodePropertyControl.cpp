@@ -56,7 +56,7 @@ void LodNodePropertyControl::ReadFrom(Entity * sceneNode)
         Vector<LodComponent::LodData*>::const_iterator lodLayerIt = lodLayers.begin();
         for(int32 i = 0; i < lodComponent->GetLodLayersCount(); ++i)
         {
-            distances[i] = lodComponent->GetLodLayerDistance(i);
+            distances[i] = lodComponent->GetLodLayerDistanceOriginal(i);
             
             LodComponent::LodData *layer = *lodLayerIt;
             triangles[i] = GetTrianglesForLodLayer(layer);

@@ -56,6 +56,10 @@ public:
     
 private:
 
+    Scene * GetSceneIfLevelIsActive();
+    WideString GetDistanceText(float32 distance, int32 lodLevel);
+    
+    
     void ReleaseControls();
     void UpdateDistanceToCamera();
     

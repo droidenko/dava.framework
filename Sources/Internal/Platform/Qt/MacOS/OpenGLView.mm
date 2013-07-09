@@ -371,7 +371,7 @@ void MoveTouchsToVector(NSEvent *curEvent, int touchPhase, Vector<UIEvent> *outT
 - (void)mouseDown:(NSEvent *)theEvent
 {
     NSPoint p = theEvent.locationInWindow;
-    printf("click [%f, %f]\n", p.x, p.y);
+//    printf("click [%f, %f]\n", p.x, p.y);
     
     [self CalcOffset:theEvent];
 	[super mouseDown:theEvent];

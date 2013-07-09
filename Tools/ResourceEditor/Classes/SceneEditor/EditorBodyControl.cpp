@@ -242,13 +242,13 @@ void EditorBodyControl::PopDebugCamera()
 {
 	if (mainCam)
 	{
-		scene->AddNode(mainCam);
+        scene->AddEditorEntity(mainCam);
 		SafeRelease(mainCam);
 	}
 	
 	if (debugCam)
 	{
-		scene->AddNode(debugCam);
+        scene->AddEditorEntity(debugCam);
 		SafeRelease(debugCam);
 	}
 	

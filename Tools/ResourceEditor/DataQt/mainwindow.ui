@@ -398,7 +398,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -468,6 +468,7 @@
     <addaction name="actionShowSettings"/>
     <addaction name="actionEnableCameraLight"/>
     <addaction name="actionShowMipmapLevel"/>
+    <addaction name="actionSetLODCorrection"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1481,6 +1482,11 @@
    </property>
    <property name="toolTip">
     <string>Show Zero Mipmap Level</string>
+   </property>
+  </action>
+  <action name="actionSetLODCorrection">
+   <property name="text">
+    <string>Set LOD Correction</string>
    </property>
   </action>
  </widget>

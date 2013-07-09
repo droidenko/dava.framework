@@ -108,17 +108,6 @@ public:
     virtual Scene * GetScene();
 
     
-//  DataNode * GetMaterials();
-//	Material * GetMaterial(int32 index);
-//	int32	GetMaterialCount();
-	
-//    DataNode * GetStaticMeshes();
-//	StaticMesh * GetStaticMesh(int32 index);
-//	int32	GetStaticMeshCount();
-    
-    
-//    DataNode * GetScenes();
-    
 	void AddAnimatedMesh(AnimatedMesh * mesh);
 	void RemoveAnimatedMesh(AnimatedMesh * mesh);
 	AnimatedMesh * GetAnimatedMesh(int32 index);
@@ -184,38 +173,6 @@ public:
     void SetClipCamera(Camera * clipCamera);
     Camera * GetClipCamera() const;
     
-//    /**
-//        \brief Registers LOD layer into the scene.
-//        \param[in] nearDistance near view distance fro the layer
-//        \param[in] farDistance far view distance fro the layer
-//        \returns Serial number of the layer
-//	 */
-//    int32 RegisterLodLayer(float32 nearDistance, float32 farDistance);
-//    /**
-//        \brief Sets lod layer thet would be forcely used in the whole scene.
-//        \param[in] layer layer to set on the for the scene. Use -1 to disable forced lod layer.
-//	 */
-//    void SetForceLodLayer(int32 layer);
-//    int32 GetForceLodLayer();
-//
-//    /**
-//     \brief Registers LOD layer into the scene.
-//     \param[in] nearDistance near view distance fro the layer
-//     \param[in] farDistance far view distance fro the layer
-//     \returns Serial number of the layer
-//	 */
-//    void ReplaceLodLayer(int32 layerNum, float32 nearDistance, float32 farDistance);
-//
-//    
-//    inline int32 GetLodLayersCount();
-//    inline float32 GetLodLayerNear(int32 layerNum);
-//    inline float32 GetLodLayerFar(int32 layerNum);
-//    inline float32 GetLodLayerNearSquare(int32 layerNum);
-//    inline float32 GetLodLayerFarSquare(int32 layerNum);
-
-    //void Save(KeyedArchive * archive);
-    //void Load(KeyedArchive * archive);
-
 	void AddDrawTimeShadowVolume(ShadowVolumeNode * shadowVolume);
     
     Set<Light*> & GetLights();
@@ -236,9 +193,26 @@ public:
 	EventSystem * GetEventSystem();
 	RenderSystem * GetRenderSystem();
     
-protected:	
+
+    const Vector<float32> GetLodLayersCorrection();
+    void SetLodLayersCorrection(float32 shift, uint32 layerNum);
+    
+    void ApplyLodLayerCorrection();
+    
+    
+    void FindSceneSettings();
+
+    virtual void	RemoveNode(Entity * node);
+	virtual void	RemoveAllChildren();
+
+protected:
+    
+    void ApplyLodLayerCorrectionRecursive(Entity *entity);
     
     void UpdateLights();
+    
+    Entity *GetSceneSettings();
+    Entity *globalSceneSettings;
     
     
     uint64 updateTime;
@@ -253,10 +227,6 @@ protected:
     
     Map<String, ProxyNode*> rootNodes;
     
-//    // TODO: move to nodes
-//    Vector<LodLayer> lodLayers;
-//    int32 forceLodLayer;
-
     
     Camera * currentCamera;
     Camera * clipCamera;

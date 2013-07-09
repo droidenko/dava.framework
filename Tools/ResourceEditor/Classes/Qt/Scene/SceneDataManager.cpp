@@ -117,6 +117,8 @@ Entity* SceneDataManager::AddScene(const FilePath &scenePathname)
 	{
 		sceneData->SetLandscapesControllerScene(scene);
 	}
+    
+    sceneData->GetScene()->ApplyLodLayerCorrection();
 
     sceneData->GetScene()->UpdateCameraLightOnScene();
     SceneHidePreview();

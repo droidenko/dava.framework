@@ -315,6 +315,8 @@
 		C18521B916831F84003D4A6F /* LayerParticleEditorNode.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = C18521B116831F84003D4A6F /* LayerParticleEditorNode.cpp */; };
 		C786218A1602175100C96AA8 /* EditorConfig.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = C78621881602175100C96AA8 /* EditorConfig.cpp */; };
 		CCC7A49216F1D7680061EA5D /* EditorLandscape.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = CCC7A49016F1D7680061EA5D /* EditorLandscape.cpp */; };
+		E8040A4A1781BF1A000C49EC /* LodCorrectionDialog.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8040A461781BF1A000C49EC /* LodCorrectionDialog.cpp */; };
+		E8040A501781BFD9000C49EC /* LodCorrectionDialog_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8040A4E1781BFD9000C49EC /* LodCorrectionDialog_moc.cpp */; };
 		E80842DC1639277D002A6A77 /* TextureOptionsCommands.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E80842DA1639277D002A6A77 /* TextureOptionsCommands.cpp */; };
 		E81895C2170F192E009A815A /* CommandLineParser.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E81895B6170F192E009A815A /* CommandLineParser.cpp */; };
 		E81895C3170F192E009A815A /* DefinitionFile.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E81895B8170F192E009A815A /* DefinitionFile.cpp */; };
@@ -1212,6 +1214,9 @@
 		CCC7A4FE17579CAF0061EA5D /* QtPropertyDataMetaObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtPropertyDataMetaObject.cpp; sourceTree = "<group>"; };
 		CCC7A4FF17579CAF0061EA5D /* QtPropertyDataMetaObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QtPropertyDataMetaObject.h; sourceTree = "<group>"; };
 		DA18A6831232F53228631AD1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		E8040A461781BF1A000C49EC /* LodCorrectionDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LodCorrectionDialog.cpp; sourceTree = "<group>"; };
+		E8040A471781BF1A000C49EC /* LodCorrectionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LodCorrectionDialog.h; sourceTree = "<group>"; };
+		E8040A4E1781BFD9000C49EC /* LodCorrectionDialog_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LodCorrectionDialog_moc.cpp; sourceTree = "<group>"; };
 		E80842DA1639277D002A6A77 /* TextureOptionsCommands.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureOptionsCommands.cpp; path = Classes/Commands/TextureOptionsCommands.cpp; sourceTree = "<group>"; };
 		E80842DB1639277D002A6A77 /* TextureOptionsCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureOptionsCommands.h; path = Classes/Commands/TextureOptionsCommands.h; sourceTree = "<group>"; };
 		E81895B6170F192E009A815A /* CommandLineParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineParser.cpp; sourceTree = "<group>"; };
@@ -1399,6 +1404,7 @@
 		E83AB8F91779AF1E0037561B /* ScenePreviewControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScenePreviewControl.h; path = Classes/Deprecated/ScenePreviewControl.h; sourceTree = "<group>"; };
 		E83AB8FB1779B6CF0037561B /* ScenePreviewDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScenePreviewDialog.cpp; path = Classes/Deprecated/ScenePreviewDialog.cpp; sourceTree = "<group>"; };
 		E83AB8FC1779B6CF0037561B /* ScenePreviewDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScenePreviewDialog.h; path = Classes/Deprecated/ScenePreviewDialog.h; sourceTree = "<group>"; };
+		E83AB921177AEF9C0037561B /* ui_LodCorrectionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ui_LodCorrectionDialog.h; path = _GeneratedQt/ui_LodCorrectionDialog.h; sourceTree = "<group>"; };
 		E84779AF1669009B004CD20A /* ParticleEffectPropertyControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleEffectPropertyControl.cpp; path = Classes/SceneEditor/ParticleEffectPropertyControl.cpp; sourceTree = "<group>"; };
 		E84779B01669009B004CD20A /* ParticleEffectPropertyControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleEffectPropertyControl.h; path = Classes/SceneEditor/ParticleEffectPropertyControl.h; sourceTree = "<group>"; };
 		E88F2FFA171C801600510B78 /* SceneInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneInfo.cpp; sourceTree = "<group>"; };
@@ -1704,6 +1710,7 @@
 		5C2763A415B82BDF0030A8FD /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				E8040A441781BF1A000C49EC /* Tools */,
 				74A94C95176B61CF00DE03E4 /* CustomControls */,
 				4F3E2560174CD38E000D1187 /* DockConsole */,
 				02E9E43B173965B800C501BC /* DockSceneTree */,
@@ -2550,6 +2557,41 @@
 			path = Nodes;
 			sourceTree = "<group>";
 		};
+		E8040A441781BF1A000C49EC /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				E8040A451781BF1A000C49EC /* LodCorrection */,
+			);
+			name = Tools;
+			path = Classes/Qt/Tools;
+			sourceTree = "<group>";
+		};
+		E8040A451781BF1A000C49EC /* LodCorrection */ = {
+			isa = PBXGroup;
+			children = (
+				E8040A461781BF1A000C49EC /* LodCorrectionDialog.cpp */,
+				E8040A471781BF1A000C49EC /* LodCorrectionDialog.h */,
+			);
+			path = LodCorrection;
+			sourceTree = "<group>";
+		};
+		E8040A4C1781BFD9000C49EC /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				E8040A4D1781BFD9000C49EC /* LodCorrection */,
+			);
+			name = Tools;
+			path = _GeneratedQt/Tools;
+			sourceTree = "<group>";
+		};
+		E8040A4D1781BFD9000C49EC /* LodCorrection */ = {
+			isa = PBXGroup;
+			children = (
+				E8040A4E1781BFD9000C49EC /* LodCorrectionDialog_moc.cpp */,
+			);
+			path = LodCorrection;
+			sourceTree = "<group>";
+		};
 		E81895AD170F1922009A815A /* Tools */ = {
 			isa = PBXGroup;
 			children = (
@@ -3075,6 +3117,7 @@
 		E89DFBE4163ECBB800B51706 /* GeneratedQt */ = {
 			isa = PBXGroup;
 			children = (
+				E8040A4C1781BFD9000C49EC /* Tools */,
 				74A94C9A176B6BC000DE03E4 /* CustomControls */,
 				4F3E256A174CD39C000D1187 /* DockConsole */,
 				02F64048173A8F170053F038 /* DockSceneTree */,
@@ -3101,6 +3144,7 @@
 				E838D7CB16B00511006F1721 /* Scene */,
 				E838D7CE16B00511006F1721 /* TextureBrowser */,
 				E838D7D816B00511006F1721 /* ui_CustomColorsView.h */,
+				E83AB921177AEF9C0037561B /* ui_LodCorrectionDialog.h */,
 				E838D7D916B00511006F1721 /* ui_davaglwidget.h */,
 				E838D7DA16B00511006F1721 /* ui_mainwindow.h */,
 				E838D7DB16B00511006F1721 /* ui_materialbrowser.h */,
@@ -3947,6 +3991,8 @@
 				4FFE5CB71779E60600728624 /* SceneTreeDelegate_moc.cpp in Build Sources */,
 				E83AB8FA1779AF1E0037561B /* ScenePreviewControl.cpp in Build Sources */,
 				E83AB8FD1779B6CF0037561B /* ScenePreviewDialog.cpp in Build Sources */,
+				E8040A4A1781BF1A000C49EC /* LodCorrectionDialog.cpp in Build Sources */,
+				E8040A501781BFD9000C49EC /* LodCorrectionDialog_moc.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

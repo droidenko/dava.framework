@@ -91,6 +91,7 @@ public:
 
 	inline int32 GetLodLayersCount();
 	inline float32 GetLodLayerDistance(int32 layerNum);
+	inline float32 GetLodLayerDistanceOriginal(int32 layerNum);
 	inline float32 GetLodLayerNear(int32 layerNum);
 	inline float32 GetLodLayerFar(int32 layerNum);
 	inline float32 GetLodLayerNearSquare(int32 layerNum);
@@ -100,7 +101,8 @@ public:
 
 	LodData *currentLod;
 	Vector<LodData> lodLayers;
-	Vector<LodDistance> lodLayersArray;
+	Vector<LodDistance> lodLayersArrayOriginal; // stored at *.sc2 data
+	Vector<LodDistance> lodLayersArrayWorking; // lodLayersArrayOriginal + Scene lod correction
 	int32 forceLodLayer;
 
     void SetForceDistance(const float32 &newDistance);
@@ -127,42 +129,25 @@ public:
 
 	int32 GetMaxLodLayer();
 
+    void RecalcWorkingDistances();
+
+protected:
+    
+    void RecalcWorkingDistance(int32 forLayer);
+    float32 RecalcDistance(float32 originalDistance, float32 persentage);
+    float32 GetPersentage(uint32 forLayer);
+    
+    
+    
 public:
     
     INTROSPECTION_EXTEND(LodComponent, Component,
-        COLLECTION(lodLayersArray, "Lod Layers Array", I_SAVE | I_VIEW | I_EDIT)
+        COLLECTION(lodLayersArrayWorking, "Lod Layers Array. Current Values", I_SAVE | I_VIEW | I_EDIT)
+        COLLECTION(lodLayersArrayOriginal, "Lod Layers Array. Original Values", I_SAVE | I_VIEW | I_EDIT)
         MEMBER(forceLodLayer, "Force Lod Layer", I_SAVE | I_VIEW | I_EDIT)
         PROPERTY("forceDistance", "Force Distance", GetForceDistance, SetForceDistance, I_SAVE | I_VIEW | I_EDIT)
         MEMBER(flags, "Flags", I_SAVE | I_VIEW | I_EDIT)
     );
-    
-//    Entity::Save(archive, sceneFile);
-//    archive->SetInt32("lodCount", (int32)lodLayers.size());
-//    
-//    int32 lodIdx = 0;
-//    const List<LodData>::const_iterator &end = lodLayers.end();
-//    for (List<LodData>::iterator it = lodLayers.begin(); it != end; ++it)
-//    {
-//        LodData & ld = *it;
-//        archive->SetInt32(Format("lod%d_layer", lodIdx), (int32)ld.layer);
-//        size_t size = ld.nodes.size();
-//        archive->SetInt32(Format("lod%d_cnt", lodIdx), (int32)size);
-//        for (size_t idx = 0; idx < size; ++idx)
-//        {
-//            for (int32 i = 0; i < (int32)children.size(); i++)
-//            {
-//                if(children[i] == ld.nodes[idx])
-//                {
-//                    archive->SetInt32(Format("l%d_%d_ni", lodIdx, idx), i);
-//                    break;
-//                }
-//            }
-//        }
-//        
-//        archive->SetFloat(Format("lod%d_dist", lodIdx), GetLodLayerDistance(lodIdx));
-//        lodIdx++;
-//    }
-
 };
 
 int32 LodComponent::GetLodLayersCount()
@@ -173,31 +158,38 @@ int32 LodComponent::GetLodLayersCount()
 float32 LodComponent::GetLodLayerDistance(int32 layerNum)
 {
 	DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
-	return lodLayersArray[layerNum].distance;
+	return lodLayersArrayWorking[layerNum].distance;
 }
+    
+float32 LodComponent::GetLodLayerDistanceOriginal(int32 layerNum)
+{
+    DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
+    return lodLayersArrayOriginal[layerNum].distance;
+}
+
 
 float32 LodComponent::GetLodLayerNear(int32 layerNum)
 {
 	DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
-	return lodLayersArray[layerNum].nearDistance;
+	return lodLayersArrayWorking[layerNum].nearDistance;
 }
 
 float32 LodComponent::GetLodLayerFar(int32 layerNum)
 {
 	DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
-	return lodLayersArray[layerNum].farDistance;
+	return lodLayersArrayWorking[layerNum].farDistance;
 }
 
 float32 LodComponent::GetLodLayerNearSquare(int32 layerNum)
 {
 	DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
-	return lodLayersArray[layerNum].nearDistanceSq;
+	return lodLayersArrayWorking[layerNum].nearDistanceSq;
 }
 
 float32 LodComponent::GetLodLayerFarSquare(int32 layerNum)
 {
 	DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
-	return lodLayersArray[layerNum].farDistanceSq;
+	return lodLayersArrayWorking[layerNum].farDistanceSq;
 }
 
 };

@@ -198,6 +198,8 @@ public slots:
 
     void CameraLightTrigerred();
 
+    void ShowLODCorrectionDialog();
+
     
 signals:
 	void ProjectChanged();
