@@ -507,7 +507,7 @@ inline bool	Matrix4::Inverse()
     
 inline Matrix4 Matrix4::operator *(const Matrix4 & m) const
 {
-#ifdef _ARM_ARCH_7
+#ifdef __DAVAENGINE_ARM_7__
     Matrix4 res;
     NEON_Matrix4Mul(this->data, m.data, res.data);
     return res;

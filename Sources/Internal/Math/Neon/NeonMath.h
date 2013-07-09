@@ -36,7 +36,7 @@
 
     #if defined(__DAVAENGINE_ANDROID__)
         #include <machine/cpu-features.h>
-        #if _ARM_ARCH_ == 7
+        #if __ARM_ARCH__ == 7
             #define __DAVAENGINE_ARM_7__
         #endif //#if _ARM_ARCH_ == 7
     #endif //#if defined(__DAVAENGINE_ANDROID__)
