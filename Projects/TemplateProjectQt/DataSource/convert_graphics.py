@@ -26,11 +26,13 @@ print "*** DAVA SDK Launching command line packer - data directory:" + dataDir
 
 
 params = filter(lambda x: x[0] != '-', sys.argv[1:]);
-flags = filter(lambda x: x[0] == '-', sys.argv[1:]);
+#print params
+
+flags = sys.argv[1:];
+#print flags
 
 gfxDirs = filter(lambda x: x[0:3] == "Gfx", os.listdir(currentDir));
-gfxDirs.extend(params);
-# print gfxDirs
+#print gfxDirs
 
 pvrTexToolPathname = framework_path[platform.system()] + "/Tools/Bin/"
 if (framework_path[platform.system()] != ""):

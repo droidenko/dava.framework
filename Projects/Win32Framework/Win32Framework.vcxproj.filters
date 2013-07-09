@@ -1269,6 +1269,15 @@
     <ClInclude Include="..\..\Sources\Internal\DAVAVersion.h">
       <Filter>Internal</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Base\EnumMap.h">
+      <Filter>Internal\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Render\GPUFamilyDescriptor.h">
+      <Filter>Internal\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Render\MipmapReplacer.h">
+      <Filter>Internal\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Sources\External\Box2D\Collision\b2BroadPhase.cpp">
@@ -2228,8 +2237,17 @@
     <ClCompile Include="..\..\Sources\Internal\Base\GlobalEnum.cpp">
       <Filter>Internal\Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Base\EnumMap.cpp">
+      <Filter>Internal\Base</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Sources\Internal\FileSystem\LoggerWin.cpp">
       <Filter>Internal\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Render\GPUFamilyDescriptor.cpp">
+      <Filter>Internal\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Render\MipmapReplacer.cpp">
+      <Filter>Internal\Render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

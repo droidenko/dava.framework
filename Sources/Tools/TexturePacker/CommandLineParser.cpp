@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "CommandLineParser.h"
+#include "Core/Core.h"
+
 #include <cerrno>
 
 namespace DAVA
@@ -10,28 +12,71 @@ CommandLineParser::CommandLineParser()
 	isVerbose = false;
 }
 
+void CommandLineParser::SetArguments(const Vector<String> &arguments)
+{
+    Clear();
+    
+    bool prevIsFlag = false;
+	for (int i = 0; i < (int)arguments.size(); ++i)
+	{
+		String arg = arguments[i];
+        String::size_type argLen = arg.length();
+        
+		if ((argLen >= 1) && (arg[0] == '-'))
+        {
+            if(prevIsFlag)
+                params.push_back(String());
+            
+			flags.push_back(arg);
+            prevIsFlag = true;
+        }
+		else
+        {
+            params.push_back(arg);
+            prevIsFlag = false;
+        }
+	}
+    
+    if(prevIsFlag)
+        params.push_back(String());
+}
+
+    
 void CommandLineParser::SetArguments(int argc, char * argv[])
 {
+    Clear();
+
+    bool prevIsFlag = false;
 	for (int i = 0; i < argc; ++i)
 	{
 		char * arg = argv[i];
 		size_t argLen = strlen(arg);
+        
 		if ((argLen >= 1) && (arg[0] == '-'))
+        {
+            if(prevIsFlag)
+                params.push_back(String());
+            
 			flags.push_back(String(arg));
-		else params.push_back(String(arg));
+            prevIsFlag = true;
+        }
+		else
+        {
+            params.push_back(String(arg));
+            prevIsFlag = false;
+        }
 	}
+    
+    if(prevIsFlag)
+        params.push_back(String());
 }
 
-void CommandLineParser::ClearFlags()
+void CommandLineParser::Clear()
 {	
 	flags.clear();
+    params.clear();
 }
 
-void CommandLineParser::SetFlags(const Vector<String> & _flags)
-{
-	flags.clear();
-	flags = _flags;
-}
 
 void CommandLineParser::SetVerbose(bool _isVerbose)
 {
@@ -66,108 +111,82 @@ bool CommandLineParser::IsFlagSet(const String & s)
 	return false;
 }
 
-String CommandLineParser::GetParam(int index)
+    
+String	CommandLineParser::GetParamForFlag(const String & flag)
 {
-	return params[index];
+    DVASSERT(flags.size() == params.size());
+    
+	for (uint32 k = 0; k < flags.size(); ++k)
+    {
+		if (flags[k] == flag)
+        {
+            return params[k];
+        }
+    }
+
+	return String();
+}
+    
+
+bool CommandLineParser::CommandIsFound(const DAVA::String &command)
+{
+    return (INVALID_POSITION != GetCommandPosition(command));
+}
+
+DAVA::String CommandLineParser::GetCommand(DAVA::uint32 commandPosition)
+{
+    Vector<String> & commandLine = Core::Instance()->GetCommandLine();
+    DVASSERT(commandPosition < commandLine.size());
+    
+    return commandLine[commandPosition];
 }
 
 
-
-//! \brief Return canonical path name of \a path.
-//
-// realpath expands all symbolic links and resolves references to '/./', '/../' and extra '/' characters in
-// the string named by path and returns the canonicalized absolute pathname.
-// The resulting path will have no symbolic link, '/./' or '/../' components, also no trailing ones.
-// Nor will it  end on a slash: if the result is the root then the returned path is empty,
-// and unless the result is empty, it will always start with a slash.
-//
-
-String realpath(String const& _path)
+DAVA::int32 CommandLineParser::GetCommandPosition(const DAVA::String &command)
 {
+    int32 position = INVALID_POSITION;
+    
+    Vector<String> & commandLine = Core::Instance()->GetCommandLine();
+    for(int32 i = 0; i < (int32)commandLine.size(); ++i)
+    {
+        if(command == commandLine[i])
+        {
+            position = i;
+            break;
+        }
+    }
+    
+    return position;
+}
 
-	String path = (_path);
-	std::replace(path.begin(), path.end(),'\\','/');
-	
-	const String & delims="/";
-
-	// Skip delims at beginning, find start of first token
-	String::size_type lastPos = path.find_first_not_of(delims, 0);
-	// Find next delimiter @ end of token
-	String::size_type pos     = path.find_first_of(delims, lastPos);
-
-	// output vector
-	Vector<String> tokens;
-	
-	
-	while (String::npos != pos || String::npos != lastPos)
-	{
-		// Found a token, add it to the vector.
-		tokens.push_back(path.substr(lastPos, pos - lastPos));
-		// Skip delims.  Note the "not_of". this is beginning of token
-		lastPos = path.find_first_not_of(delims, pos);
-		// Find next delimiter at end of token.
-		pos     = path.find_first_of(delims, lastPos);
-	}
-
-	String result;
-	
-	for (int i = 0; i < (int)tokens.size(); ++i)
-	{
-		if (tokens[i] == String("."))
-		{		
-			for (int k = i + 1; k < (int)tokens.size(); ++k)
-			{
-				tokens[k - 1] = tokens[k];
-			}
-			i--;
-			tokens.pop_back();
-		}
-		if (tokens[i] == String(".."))
-		{		
-			for (int k = i + 1; k < (int)tokens.size(); ++k)
-			{
-				tokens[k - 2] = tokens[k];
-			}
-			i-=2;
-			tokens.pop_back();
-			tokens.pop_back();
-		}	
-	}
-#ifndef _WIN32
-	result = "/";
-#endif
-	for (int k = 0; k < (int)tokens.size(); ++k)
-	{
-		result += tokens[k];
-		if (k + 1 != (int)tokens.size())
-			result += String("/");
-	}
-	return result;
+DAVA::String CommandLineParser::GetCommandParam(const DAVA::String &command)
+{
+    int32 commandPosition = GetCommandPosition(command);
+    if(CheckPosition(commandPosition))
+    {
+        return GetCommand(commandPosition + 1);
+    }
+    
+    return String();
 }
 
 
-String CommandLineParser::RealPath( String path )
+int32 CommandLineParser::GetCommandsCount()
 {
-	return realpath(path);
-	//char tmp[1024];
-	//_realpath(path.c_str(), tmp);
-	//return String(tmp);
-}
-	
-	
-void replace(std::string & repString,const std::string & needle, const std::string & s)
-{
-	std::string::size_type lastpos = 0, thispos;
-	while ((thispos = repString.find(needle, lastpos)) != std::string::npos)
-	{
-		repString.replace(thispos, needle.length(), s);
-		lastpos = thispos + 1;
-	}
+    Vector<String> & commandLine = Core::Instance()->GetCommandLine();
+    return commandLine.size();
 }
 
-void	CommandLineParser::RemoveFromPath(String & path, const String & removePart)
+bool CommandLineParser::CheckPosition(int32 commandPosition)
 {
-	replace(path, removePart, std::string(""));
+    if(     (INVALID_POSITION == commandPosition)
+       ||   (GetCommandsCount() < commandPosition + 2))
+    {
+        return false;
+    }
+    
+    return true;
 }
+
 
 };

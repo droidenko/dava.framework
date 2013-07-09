@@ -1,9 +1,25 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "Scene/System/HoodSystem.h"
 #include "Scene/System/ModifSystem.h"
 #include "Scene/System/CollisionSystem.h"
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 
 HoodSystem::HoodSystem(DAVA::Scene * scene, SceneCameraSystem *camSys)
 	: DAVA::SceneSystem(scene)
@@ -12,7 +28,8 @@ HoodSystem::HoodSystem(DAVA::Scene * scene, SceneCameraSystem *camSys)
 	, moseOverAxis(ST_AXIS_NONE)
 	, curHood(NULL)
 	, moveHood()
-	, locked(false)
+	, lockedScale(false)
+	, lockedModif(false)
 	, visible(false)
 {
 	btVector3 worldMin(-1000,-1000,-1000);
@@ -44,10 +61,10 @@ HoodSystem::HoodSystem(DAVA::Scene * scene, SceneCameraSystem *camSys)
 	scaleHood.colorZ = DAVA::Color(0, 0, 1, 1);
 	scaleHood.colorS = DAVA::Color(1, 1, 0, 1);
 
-	normalHood.colorX = DAVA::Color(0, 0, 0, 0.3f);
-	normalHood.colorY = DAVA::Color(0, 0, 0, 0.3f);
-	normalHood.colorZ = DAVA::Color(0, 0, 0, 0.3f);
-	normalHood.colorS = DAVA::Color(1, 0, 0, 0.3f);
+	normalHood.colorX = DAVA::Color(0.7f, 0.3f, 0.3f, 1);
+	normalHood.colorY = DAVA::Color(0.3f, 0.7f, 0.3f, 1);
+	normalHood.colorZ = DAVA::Color(0.3f, 0.3f, 0.7f, 1);
+	normalHood.colorS = DAVA::Color(0, 0, 0, 1);
 }
 
 HoodSystem::~HoodSystem()
@@ -66,7 +83,7 @@ DAVA::Vector3 HoodSystem::GetPosition() const
 
 void HoodSystem::SetPosition(const DAVA::Vector3 &pos)
 {
-	if(!locked)
+	if(!lockedScale)
 	{
 		if(curPos != pos)
 		{
@@ -76,6 +93,7 @@ void HoodSystem::SetPosition(const DAVA::Vector3 &pos)
 			if(NULL != curHood)
 			{
 				curHood->UpdatePos(curPos);
+				normalHood.UpdatePos(curPos);
 			}
 		}
 	}
@@ -90,6 +108,7 @@ void HoodSystem::MovePosition(const DAVA::Vector3 &offset)
 		if(NULL != curHood)
 		{
 			curHood->UpdatePos(curPos + curOffset);
+			normalHood.UpdatePos(curPos + curOffset);
 		}
 	}
 }
@@ -103,6 +122,8 @@ void HoodSystem::SetScale(DAVA::float32 scale)
 		if(NULL != curHood)
 		{
 			curHood->UpdateScale(curScale);
+			normalHood.UpdateScale(curScale);
+
 			collWorld->updateAabbs();
 		}
 	}
@@ -148,6 +169,11 @@ void HoodSystem::SetModifMode(ST_ModifMode mode)
 
 ST_ModifMode HoodSystem::GetModifMode() const
 {
+	if(lockedModif)
+	{
+		return ST_MODIF_OFF;
+	}
+
 	return curMode;
 }
 
@@ -176,7 +202,7 @@ void HoodSystem::RemCollObjects(const DAVA::Vector<HoodCollObject*>* objects)
 
 void HoodSystem::Update(float timeElapsed)
 {
-	if(visible && !locked)
+	if(visible && !lockedScale)
 	{
 		// scale hood depending on current camera position
 		DAVA::Vector3 camPosition = cameraSystem->GetCameraPosition();
@@ -187,13 +213,13 @@ void HoodSystem::Update(float timeElapsed)
 void HoodSystem::ProcessUIEvent(DAVA::UIEvent *event)
 {
 	// before checking result mark that there is no hood axis under mouse
-	if(!locked)
+	if(!lockedScale)
 	{
 		moseOverAxis = ST_AXIS_NONE;
 	}
 	
 	// if is visible and not locked check mouse over status
-	if(visible && !locked && NULL != curHood)
+	if(visible && !lockedScale && !lockedModif && NULL != curHood)
 	{
 		// get intersected items in the line from camera to current mouse position
 		DAVA::Vector3 camPosition = cameraSystem->GetCameraPosition();
@@ -228,21 +254,33 @@ void HoodSystem::Draw()
 {
 	if(visible && NULL != curHood)
 	{
-		ST_Axis showAsSelected = curAxis;
-
-		if(curMode != ST_MODIF_OFF)
+		if(!lockedModif)
 		{
-			if(ST_AXIS_NONE != moseOverAxis)
+			ST_Axis showAsSelected = curAxis;
+
+			if(curMode != ST_MODIF_OFF)
 			{
-				showAsSelected = moseOverAxis;
+				if(ST_AXIS_NONE != moseOverAxis)
+				{
+					showAsSelected = moseOverAxis;
+				}
 			}
+
+			curHood->Draw(showAsSelected, moseOverAxis);
+
+			// debug draw axis collision word
+			//collWorld->debugDrawWorld();
 		}
-
-		curHood->Draw(showAsSelected, moseOverAxis);
-
-		// debug draw axis collision word
-		//collWorld->debugDrawWorld();
+		else
+		{
+			normalHood.Draw(curAxis, ST_AXIS_NONE);
+		}
 	}
+}
+
+void HoodSystem::ProcessCommand(const Command2 *command, bool redo)
+{
+
 }
 
 void HoodSystem::SetModifAxis(ST_Axis axis)
@@ -263,22 +301,17 @@ ST_Axis HoodSystem::GetPassingAxis() const
 	return moseOverAxis;
 }
 
-void HoodSystem::Lock()
+void HoodSystem::LockScale(bool lock)
 {
-	locked = true;
+	lockedScale = lock;
 }
 
-void HoodSystem::Unlock()
+void HoodSystem::LockModif(bool lock)
 {
-	locked = false;
+	lockedModif = lock;
 }
 
-void HoodSystem::Show()
+void HoodSystem::Show(bool show)
 {
-	visible = true;
-}
-
-void HoodSystem::Hide()
-{
-	visible = false;
+	visible = show;
 }

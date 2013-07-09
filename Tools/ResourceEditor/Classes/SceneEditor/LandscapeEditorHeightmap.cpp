@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "LandscapeEditorHeightmap.h"
 
 #include "LandscapeTool.h"
@@ -434,7 +450,7 @@ void LandscapeEditorHeightmap::HideAction()
 		tilemaskWasChanged = false;
 		workingLandscape->UpdateFullTiledTexture();
 		Image* image = tilemaskTexture->CreateImageFromMemory();
-		ImageLoader::Save(image, TextureDescriptor::GetPathnameForFormat(tilemaskPathname, PNG_FILE));
+		ImageLoader::Save(image, GPUFamilyDescriptor::CreatePathnameForGPU(tilemaskPathname, GPU_UNKNOWN, FORMAT_RGBA8888));
 		SafeRelease(image);
 	}
 
@@ -487,8 +503,15 @@ void LandscapeEditorHeightmap::CreateTilemaskImage()
     if(mask)
     {
         tilemaskPathname = mask->GetPathname();
-        tilemaskImage = CreateTopLevelImage(TextureDescriptor::GetPathnameForFormat(tilemaskPathname, (ImageFileFormat)EditorSettings::Instance()->GetTextureViewFileFormat()));
-        tilemaskTexture = Texture::CreateFromData(tilemaskImage->format, tilemaskImage->GetData(), tilemaskImage->GetWidth(), tilemaskImage->GetHeight(), false);
+        
+        TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(tilemaskPathname);
+        if(descriptor)
+        {
+            tilemaskImage = CreateTopLevelImage(GPUFamilyDescriptor::CreatePathnameForGPU(descriptor, EditorSettings::Instance()->GetTextureViewGPU()));
+            tilemaskTexture = Texture::CreateFromData(tilemaskImage->format, tilemaskImage->GetData(), tilemaskImage->GetWidth(), tilemaskImage->GetHeight(), false);
+            
+            SafeRelease(descriptor);
+        }
     }
     
     workingLandscape->SetTexture(Landscape::TEXTURE_TILE_MASK, tilemaskTexture);
@@ -633,7 +656,8 @@ void LandscapeEditorHeightmap::CreateHeightmapUndo()
 		Rect updatedRect = GetUpdatedRect();
 		if(!((updatedRect.x > GetHeightmap()->Size()) || (updatedRect.y > GetHeightmap()->Size())))
 		{
-			CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawHeightmap(oldHeightmap, GetHeightmap(), GetUpdatedRect()));
+			CommandsManager::Instance()->ExecuteAndRelease(new CommandDrawHeightmap(oldHeightmap, GetHeightmap(), GetUpdatedRect()),
+														   workingScene);
 		}
 		SafeRelease(oldHeightmap);
 	}
@@ -654,7 +678,8 @@ void LandscapeEditorHeightmap::CreateCopyPasteUndo()
 																					 oldTilemap,
 																					 image,
 																					 tilemaskPathname,
-																					 GetUpdatedRect()));
+																					 GetUpdatedRect()),
+													   workingScene);
 		SafeRelease(oldHeightmap);
 		SafeRelease(oldTilemap);
 		SafeRelease(image);

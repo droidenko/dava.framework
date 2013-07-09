@@ -206,21 +206,26 @@ void ColladaDocument::Render()
     
 String ColladaDocument::GetTextureName(const FilePath & scenePath, ColladaTexture * texture)
 {
-    String textureRelativePathName = String(texture->texturePathName.c_str());
-    printf("+ get texture name: %s", textureRelativePathName.c_str());
-    CommandLineParser::RemoveFromPath(textureRelativePathName, scenePath.GetAbsolutePathname());
+    FilePath texPathname(texture->texturePathName.c_str());
+    printf("+ get texture name: %s", texPathname.GetAbsolutePathname().c_str());
+    String textureRelativePathName = texPathname.GetRelativePathname(scenePath);
     
     if (textureRelativePathName.c_str()[0] == '/')
+    {
+        DVASSERT(false);    //this situation is wrong
         textureRelativePathName.erase(0, 1);
+    }
     
     if (textureRelativePathName.substr(0, 2) == "./")
+    {
+        DVASSERT(false);    //this situation is wrong
         textureRelativePathName.erase(0,2);
+    }
     
     int32 pos = textureRelativePathName.find(".");
     if(-1 != pos)
     {
-        String extension = FilePath(textureRelativePathName).GetExtension();
-        if((0 != CompareCaseInsensitive(extension, ".png")) && (0 != CompareCaseInsensitive(extension, ".pvr")))
+        if(!texPathname.IsEqualToExtension(".png") && !texPathname.IsEqualToExtension(".pvr"))
         {
             textureRelativePathName.replace(pos, 4, ".png");
         }

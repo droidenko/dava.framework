@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>830</height>
+    <height>796</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -322,6 +322,8 @@
    <addaction name="separator"/>
    <addaction name="actionMaterialEditor"/>
    <addaction name="actionTextureConverter"/>
+   <addaction name="actionEnableCameraLight"/>
+   <addaction name="actionShowMipmapLevel"/>
    <addaction name="separator"/>
    <addaction name="actionHeightMapEditor"/>
    <addaction name="actionTileMapEditor"/>
@@ -407,9 +409,13 @@
      <property name="title">
       <string>Export</string>
      </property>
-     <addaction name="actionPNG"/>
-     <addaction name="actionPVR"/>
-     <addaction name="actionDXT"/>
+     <addaction name="actionExportPVRIOS"/>
+     <addaction name="actionExportPVRAndroid"/>
+     <addaction name="actionExportTegra"/>
+     <addaction name="actionExportMali"/>
+     <addaction name="actionExportAdreno"/>
+     <addaction name="separator"/>
+     <addaction name="actionExportPNG"/>
     </widget>
     <addaction name="actionNewScene"/>
     <addaction name="separator"/>
@@ -427,7 +433,7 @@
     </property>
     <widget class="QMenu" name="menuAdd">
      <property name="title">
-      <string>Add entity</string>
+      <string>Add Entity</string>
      </property>
      <addaction name="actionLandscape"/>
      <addaction name="actionLight"/>
@@ -457,19 +463,27 @@
     <addaction name="separator"/>
     <addaction name="actionBeast"/>
     <addaction name="separator"/>
+    <addaction name="actionSquareTextures"/>
+    <addaction name="separator"/>
     <addaction name="actionShowSettings"/>
+    <addaction name="actionEnableCameraLight"/>
+    <addaction name="actionShowMipmapLevel"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
     </property>
-    <widget class="QMenu" name="menuTextureFromat">
+    <widget class="QMenu" name="menuTexturesForGPU">
      <property name="title">
-      <string>Texture Format</string>
+      <string>Textures for GPU</string>
      </property>
-     <addaction name="actionReloadAsPNG"/>
-     <addaction name="actionReloadAsPVR"/>
-     <addaction name="actionReloadAsDXT"/>
+     <addaction name="actionReloadPoverVRIOS"/>
+     <addaction name="actionReloadPoverVRAndroid"/>
+     <addaction name="actionReloadTegra"/>
+     <addaction name="actionReloadMali"/>
+     <addaction name="actionReloadAdreno"/>
+     <addaction name="separator"/>
+     <addaction name="actionReloadPNG"/>
     </widget>
     <widget class="QMenu" name="menuViewPort">
      <property name="title">
@@ -481,7 +495,7 @@
      <addaction name="actionDefault"/>
     </widget>
     <addaction name="menuViewPort"/>
-    <addaction name="menuTextureFromat"/>
+    <addaction name="menuTexturesForGPU"/>
     <addaction name="separator"/>
     <addaction name="actionRestoreViews"/>
     <addaction name="separator"/>
@@ -510,12 +524,19 @@
     <addaction name="actionAddNewComponent"/>
     <addaction name="actionRemoveComponent"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuCreateNode"/>
    <addaction name="menuComponent"/>
    <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QDockWidget" name="dockCustomColors">
    <property name="floating">
@@ -619,7 +640,7 @@
   </widget>
   <widget class="QDockWidget" name="dockParticleEditorTimeLine">
    <property name="windowTitle">
-    <string>Particle time line</string>
+    <string>Particle Time Line</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -663,7 +684,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>Hanging objects</string>
+    <string>Hanging Objects</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -946,7 +967,7 @@
      <normaloff>:/QtIcons/savescenetofolder.png</normaloff>:/QtIcons/savescenetofolder.png</iconset>
    </property>
    <property name="text">
-    <string>Save To Folder with Children</string>
+    <string>Save To Folder With Children</string>
    </property>
   </action>
   <action name="actionOpenProject">
@@ -958,19 +979,19 @@
     <string>Open Project</string>
    </property>
   </action>
-  <action name="actionPNG">
+  <action name="actionExportPVRIOS">
    <property name="text">
-    <string>PNG</string>
+    <string>PowerVR iOS</string>
    </property>
   </action>
-  <action name="actionPVR">
+  <action name="actionExportPVRAndroid">
    <property name="text">
-    <string>PVR</string>
+    <string>PowerVR Android</string>
    </property>
   </action>
-  <action name="actionDXT">
+  <action name="actionExportTegra">
    <property name="text">
-    <string>DXT</string>
+    <string>Tegra</string>
    </property>
   </action>
   <action name="actionLandscape">
@@ -1053,6 +1074,9 @@
    <property name="text">
     <string>Texture Converter</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+T</string>
+   </property>
   </action>
   <action name="actionIPhone">
    <property name="text">
@@ -1132,19 +1156,19 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionReloadAsPNG">
+  <action name="actionReloadPoverVRIOS">
    <property name="text">
-    <string>As PNG</string>
+    <string>PowerVR iOS</string>
    </property>
   </action>
-  <action name="actionReloadAsPVR">
+  <action name="actionReloadPoverVRAndroid">
    <property name="text">
-    <string>As PVR</string>
+    <string>PowerVR Android</string>
    </property>
   </action>
-  <action name="actionReloadAsDXT">
+  <action name="actionReloadTegra">
    <property name="text">
-    <string>As DXT</string>
+    <string>Tegra</string>
    </property>
   </action>
   <action name="actionParticleEffectNode">
@@ -1292,7 +1316,7 @@
      <normaloff>:/QtIcons/advanced.png</normaloff>:/QtIcons/advanced.png</iconset>
    </property>
    <property name="text">
-    <string>Advanced view</string>
+    <string>Advanced View</string>
    </property>
   </action>
   <action name="actionRefreshSceneGraph">
@@ -1331,7 +1355,7 @@
      <normaloff>:/QtIcons/addcomponent.png</normaloff>:/QtIcons/addcomponent.png</iconset>
    </property>
    <property name="text">
-    <string>Add component</string>
+    <string>Add Component</string>
    </property>
    <property name="toolTip">
     <string>Add new component</string>
@@ -1343,7 +1367,7 @@
      <normaloff>:/QtIcons/add_green.png</normaloff>:/QtIcons/add_green.png</iconset>
    </property>
    <property name="text">
-    <string>Add entity</string>
+    <string>Add Entity</string>
    </property>
    <property name="toolTip">
     <string>Add new entity</string>
@@ -1355,7 +1379,7 @@
      <normaloff>:/QtIcons/remove.png</normaloff>:/QtIcons/remove.png</iconset>
    </property>
    <property name="text">
-    <string>Remove entity</string>
+    <string>Remove Entity</string>
    </property>
    <property name="toolTip">
     <string>Remove entity</string>
@@ -1367,7 +1391,7 @@
      <normaloff>:/QtIcons/removecomponent.png</normaloff>:/QtIcons/removecomponent.png</iconset>
    </property>
    <property name="text">
-    <string>Remove component</string>
+    <string>Remove Component</string>
    </property>
    <property name="toolTip">
     <string>Remove component</string>
@@ -1379,10 +1403,84 @@
      <normaloff>:/QtIcons/shadow.png</normaloff>:/QtIcons/shadow.png</iconset>
    </property>
    <property name="text">
-    <string>Convert to shadow</string>
+    <string>Convert To Shadow</string>
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionExportMali">
+   <property name="text">
+    <string>Mali</string>
+   </property>
+  </action>
+  <action name="actionExportAdreno">
+   <property name="text">
+    <string>Adreno</string>
+   </property>
+  </action>
+  <action name="actionReloadMali">
+   <property name="text">
+    <string>Mali</string>
+   </property>
+  </action>
+  <action name="actionReloadAdreno">
+   <property name="text">
+    <string>Adreno</string>
+   </property>
+  </action>
+  <action name="actionExportPNG">
+   <property name="text">
+    <string>PNG</string>
+   </property>
+  </action>
+  <action name="actionReloadPNG">
+   <property name="text">
+    <string>PNG</string>
+   </property>
+  </action>
+  <action name="actionSquareTextures">
+   <property name="text">
+    <string>Square Textures</string>
+   </property>
+  </action>
+  <action name="actionEnableCameraLight">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/light.png</normaloff>:/QtIcons/light.png</iconset>
+   </property>
+   <property name="text">
+    <string>Enable Camera Light</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+L</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/help.png</normaloff>:/QtIcons/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Resource Editor Help</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionShowMipmapLevel">
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/mipmap.png</normaloff>:/QtIcons/mipmap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Zero Mipmap Level</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Zero Mipmap Level</string>
    </property>
   </action>
  </widget>

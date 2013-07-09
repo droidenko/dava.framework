@@ -16,7 +16,7 @@
 
 #include "BeastCommandLineTool.h"
 
-#include "CommandLine/EditorCommandLineParser.h"
+#include "TexturePacker/CommandLineParser.h"
 
 using namespace DAVA;
 
@@ -47,7 +47,7 @@ DAVA::String BeastCommandLineTool::GetCommandLineKey()
 
 bool BeastCommandLineTool::InitializeFromCommandLine()
 {
-    scenePathname = EditorCommandLineParser::GetCommandParam(String("-file"));
+    scenePathname = CommandLineParser::GetCommandParam(String("-file"));
     if(scenePathname.IsEmpty())
     {
         errors.insert(String("Incorrect params for beasting of the scene"));

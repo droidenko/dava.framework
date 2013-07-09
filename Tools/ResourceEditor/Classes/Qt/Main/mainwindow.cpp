@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "mainwindow.h"
 
 #include "DAVAEngine.h"
@@ -17,8 +33,8 @@
 #include "../SceneEditor/SceneEditorScreenMain.h"
 #include "../SceneEditor/EditorBodyControl.h"
 #include "../SceneEditor/EditorConfig.h"
-#include "Classes/QT/SpritesPacker/SpritePackerHelper.h"
-#include "Classes/QT/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
+#include "SpritesPacker/SpritePackerHelper.h"
+#include "Tools/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
 
 #include <QApplication>
 #include <QPixmap>
@@ -29,7 +45,6 @@
 QtMainWindow::QtMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-	, convertWaitDialog(NULL)
 	, oldDockSceneGraphMinSize(-1, -1)
 	, oldDockSceneGraphMaxSize(-1, -1)
 	, repackSpritesWaitDialog(NULL)
@@ -63,7 +78,7 @@ QtMainWindow::QtMainWindow(QWidget *parent)
 	posSaver.LoadState(this);
 	
 	ui->dockParticleEditor->installEventFilter(this);
-	ChangeParticleDockVisible(false); //hide particle editor dock on start up
+	ChangeParticleDockVisible(false, true); //hide particle editor dock on start up
 	ui->dockParticleEditorTimeLine->hide();
 
 	// Open last project
@@ -98,9 +113,16 @@ void QtMainWindow::SetupActions()
 	connect(ui->actionOpenProject, SIGNAL(triggered()), actionHandler, SLOT(OpenProject()));
 	connect(ui->actionSaveScene, SIGNAL(triggered()), actionHandler, SLOT(SaveScene()));
 	connect(ui->actionSaveToFolder, SIGNAL(triggered()), actionHandler, SLOT(SaveToFolderWithChilds()));
-	connect(ui->actionPNG, SIGNAL(triggered()), actionHandler, SLOT(ExportAsPNG()));
-	connect(ui->actionPVR, SIGNAL(triggered()), actionHandler, SLOT(ExportAsPVR()));
-	connect(ui->actionDXT, SIGNAL(triggered()), actionHandler, SLOT(ExportAsDXT()));
+    
+    ui->actionExportPVRIOS->setData(GPU_POWERVR_IOS);
+    ui->actionExportPVRAndroid->setData(GPU_POWERVR_ANDROID);
+    ui->actionExportTegra->setData(GPU_TEGRA);
+    ui->actionExportMali->setData(GPU_MALI);
+    ui->actionExportAdreno->setData(GPU_ADRENO);
+    ui->actionExportPNG->setData(GPU_UNKNOWN);
+	connect(ui->menuExport, SIGNAL(triggered(QAction *)), actionHandler, SLOT(ExportMenuTriggered(QAction *)));
+    
+    
 	connect(ui->actionReloadAll, SIGNAL(triggered()), actionHandler, SLOT(RepackAndReloadTextures()));
 
 	//View
@@ -113,6 +135,8 @@ void QtMainWindow::SetupActions()
 	connect(ui->actionTileMapEditor, SIGNAL(triggered()), actionHandler, SLOT(TilemapEditor()));
 	connect(ui->actionRulerTool, SIGNAL(triggered()), actionHandler, SLOT(RulerTool()));
 	connect(ui->actionShowSettings, SIGNAL(triggered()), actionHandler, SLOT(ShowSettings()));
+    connect(ui->actionSquareTextures, SIGNAL(triggered()), actionHandler, SLOT(SquareTextures()));
+    connect(ui->actionShowMipmapLevel, SIGNAL(triggered()), actionHandler, SLOT(ReplaceZeroMipmaps()));
     
 #if defined (__DAVAENGINE_MACOS__)
     ui->menuTools->removeAction(ui->actionBeast);
@@ -122,6 +146,12 @@ void QtMainWindow::SetupActions()
     
 	//Edit
 	connect(ui->actionConvertToShadow, SIGNAL(triggered()), actionHandler, SLOT(ConvertToShadow()));
+    
+    ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
+	connect(ui->actionEnableCameraLight, SIGNAL(triggered()), actionHandler, SLOT(CameraLightTrigerred()));
+
+    //Help
+    connect(ui->actionHelp, SIGNAL(triggered()), actionHandler, SLOT(OpenHelp()));
 }
 
 void QtMainWindow::SetupMainMenu()
@@ -210,10 +240,16 @@ void QtMainWindow::SetupMainMenu()
 
     //View Options
     connect(ui->actionShowNotPassableLandscape, SIGNAL(triggered()), actionHandler, SLOT(ToggleNotPassableTerrain()));
-    connect(ui->actionReloadAsPNG, SIGNAL(triggered()), actionHandler, SLOT(ReloadAsPNG()));
-    connect(ui->actionReloadAsPVR, SIGNAL(triggered()), actionHandler, SLOT(ReloadAsPVR()));
-    connect(ui->actionReloadAsDXT, SIGNAL(triggered()), actionHandler, SLOT(ReloadAsDXT()));
-    actionHandler->RegisterTextureFormatActions(FILE_FORMAT_COUNT, ui->actionReloadAsPNG, ui->actionReloadAsPVR, ui->actionReloadAsDXT);
+
+    ui->actionReloadPoverVRIOS->setData(GPU_POWERVR_IOS);
+    ui->actionReloadPoverVRAndroid->setData(GPU_POWERVR_ANDROID);
+    ui->actionReloadTegra->setData(GPU_TEGRA);
+    ui->actionReloadMali->setData(GPU_MALI);
+    ui->actionReloadAdreno->setData(GPU_ADRENO);
+    ui->actionReloadPNG->setData(GPU_UNKNOWN);
+	connect(ui->menuTexturesForGPU, SIGNAL(triggered(QAction *)), actionHandler, SLOT(ReloadMenuTriggered(QAction *)));
+    actionHandler->RegisterTextureGPUActions(GPU_FAMILY_COUNT + 1, ui->actionReloadPoverVRIOS, ui->actionReloadPoverVRAndroid,
+                                             ui->actionReloadTegra, ui->actionReloadMali, ui->actionReloadAdreno, ui->actionReloadPNG);
 
 	//Modifications Options
 	connect(ui->actionModifySelect, SIGNAL(triggered()), actionHandler, SLOT(ModificationSelect()));
@@ -286,6 +322,15 @@ void QtMainWindow::SetupToolBars()
 	ui->actionAddNewComponent->setEnabled(false);
 	ui->actionRemoveComponent->setEnabled(false);
 
+	QAction *undoSceneEditor2 = new QAction("Undo2", this);
+	QAction *redoSceneEditor2 = new QAction("Redo2", this);
+
+	QObject::connect(undoSceneEditor2, SIGNAL(triggered()), this, SLOT(Undo2()));
+	QObject::connect(redoSceneEditor2, SIGNAL(triggered()), this, SLOT(Redo2()));
+	ui->viewModeToolBar->addAction(undoSceneEditor2);
+	ui->viewModeToolBar->addAction(redoSceneEditor2);
+
+
 	// <-
 }
 
@@ -314,7 +359,11 @@ void QtMainWindow::OpenLastProject()
 void QtMainWindow::SetupDocks()
 {
     connect(ui->actionRefreshSceneGraph, SIGNAL(triggered()), QtMainWindowHandler::Instance(), SLOT(RefreshSceneGraph()));
-	connect(ui->dockParticleEditor->widget(), SIGNAL(ChangeVisible(bool)), this, SLOT(ChangeParticleDockVisible(bool)));
+	
+	// Yuri Coder. Automatic show/hide of the Particles Timeline
+	// is disabled due to DF-1421.
+	//connect(ui->dockParticleEditor->widget(), SIGNAL(ChangeVisible(bool)), this, SLOT(ChangeParticleDockVisible(bool)));
+
 	connect(ui->dockParticleEditorTimeLine->widget(), SIGNAL(ChangeVisible(bool)), this, SLOT(ChangeParticleDockTimeLineVisible(bool)));
 	connect(ui->dockParticleEditorTimeLine->widget(), SIGNAL(ValueChanged()), ui->dockParticleEditor->widget(), SLOT(OnUpdate()));
 	connect(ui->dockParticleEditor->widget(), SIGNAL(ValueChanged()), ui->dockParticleEditorTimeLine->widget(), SLOT(OnUpdate()));
@@ -325,9 +374,9 @@ void QtMainWindow::SetupDocks()
 	connect(this, SIGNAL(LibraryFileTypesChanged(bool, bool)), ui->libraryView, SLOT(LibraryFileTypesChanged(bool, bool)));
 }
 
-void QtMainWindow::ChangeParticleDockVisible(bool visible)
+void QtMainWindow::ChangeParticleDockVisible(bool visible, bool forceUpdate)
 {
-	if (ui->dockParticleEditor->isVisible() == visible)
+	if (!forceUpdate && (ui->dockParticleEditor->isVisible() == visible))
 		return;
 
 	// ui magic :)
@@ -458,29 +507,6 @@ void QtMainWindow::ProjectOpened(const QString &path)
 	UpdateParticleSprites();
 }
 
-bool QtMainWindow::TextureCheckConvetAndWait(bool forceConvertAll)
-{
-	bool ret = false;
-	if(CommandLineManager::Instance() && !CommandLineManager::Instance()->IsCommandLineModeEnabled() && NULL == convertWaitDialog)
-	{
-		// check if we have textures to convert - 
-		// if we have function will return true and conversion will start in new thread
-		// signal 'readyAll' will be emited when convention finishes
-		if(TextureConvertor::Instance()->checkAndCompressAll(forceConvertAll))
-		{
-			ret = true;
-			convertWaitDialog = new QProgressDialog(this);
-			QObject::connect(TextureConvertor::Instance(), SIGNAL(convertStatus(const QString &, int, int)), this, SLOT(ConvertWaitStatus(const QString &, int, int)));
-			QObject::connect(TextureConvertor::Instance(), SIGNAL(readyAll()), this, SLOT(ConvertReadyAll()));
-			convertWaitDialog->setModal(true);
-			convertWaitDialog->setCancelButton(NULL);
-			convertWaitDialog->setAttribute(Qt::WA_DeleteOnClose);
-			convertWaitDialog->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint);
-			convertWaitDialog->show();
-		}
-	}
-	return ret;
-}
 
 void QtMainWindow::UpdateParticleSprites()
 {
@@ -509,36 +535,7 @@ void QtMainWindow::UpdateParticleSprites()
 void QtMainWindow::RepackAndReloadScene()
 {
 	emitRepackAndReloadFinished = true;
-	if(!TextureCheckConvetAndWait())
-	{
-		// conversion hasn't been started, run repack immediately 
-		// in another case repack will be invoked in finishing callback (ConvertWaitDone)
-		UpdateParticleSprites();
-	}
-}
-
-void QtMainWindow::ConvertReadyAll()
-{
-	if(NULL != convertWaitDialog)
-	{
-		QObject::disconnect(this, SLOT(ConvertWaitStatus(const QString &, int, int)));
-		QObject::disconnect(this, SLOT(ConvertReadyAll()));
-
-		convertWaitDialog->deleteLater();
-		convertWaitDialog = NULL;
-	}
-
 	UpdateParticleSprites();
-}
-
-void QtMainWindow::ConvertWaitStatus(const QString &curPath, int curJob, int jobCount)
-{
-	if(NULL != convertWaitDialog)
-	{
-		convertWaitDialog->setRange(0, jobCount);
-		convertWaitDialog->setValue(curJob);
-		convertWaitDialog->setLabelText(curPath);
-	}
 }
 
 void QtMainWindow::RepackSpritesWaitDone(QObject *destroyed)
@@ -567,3 +564,20 @@ void QtMainWindow::UpdateLibraryFileTypes(bool showDAEFiles, bool showSC2Files)
 	emit LibraryFileTypesChanged(showDAEFiles, showSC2Files);
 }
 
+void QtMainWindow::Undo2()
+{
+	SceneEditor2* sceneEditor = ui->sceneTabWidget->GetCurrentScene();
+	if(NULL != sceneEditor)
+	{
+		sceneEditor->Undo();
+	}
+}
+
+void QtMainWindow::Redo2()
+{
+	SceneEditor2* sceneEditor = ui->sceneTabWidget->GetCurrentScene();
+	if(NULL != sceneEditor)
+	{
+		sceneEditor->Redo();
+	}
+}

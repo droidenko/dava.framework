@@ -1,3 +1,18 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
 #include "Classes/UI/hierarchytreewidget.h"
 #include "ui_hierarchytreewidget.h"
 #include "HierarchyTreeController.h"
@@ -443,13 +458,30 @@ void HierarchyTreeWidget::OnDeleteControlAction()
 	bool needConfirm = false;
 	bool needDeleteFiles = false;
 
-	HierarchyTreeNode::HIERARCHYTREENODESLIST nodes;
+	// DF-1273 - Remove all child nodes. We don't have to remove them here.
+	QList<QTreeWidgetItem*> parentItems(items);
 	for (QList<QTreeWidgetItem*>::iterator iter = items.begin(); iter != items.end(); ++iter)
 	{
-		QTreeWidgetItem* item = (*iter);
-		QVariant data = item->data(ITEM_ID);
-		HierarchyTreeNode::HIERARCHYTREENODEID id = data.toInt();
-		HierarchyTreeNode* node = HierarchyTreeController::Instance()->GetTree().GetNode(id);
+		HierarchyTreeNode* node = GetNodeFromTreeItem(*iter);
+		
+		if (!node)
+			continue;
+				
+		for (QList<QTreeWidgetItem*>::iterator innerIter = items.begin(); innerIter != items.end(); ++innerIter)
+		{
+			HierarchyTreeNode* innerNode = GetNodeFromTreeItem(*innerIter);
+				
+			if (node->IsHasChild(innerNode))
+			{
+				parentItems.removeOne(*innerIter);
+			}
+		}
+	}	
+
+	HierarchyTreeNode::HIERARCHYTREENODESLIST nodes;
+	for (QList<QTreeWidgetItem*>::iterator iter = parentItems.begin(); iter != parentItems.end(); ++iter)
+	{
+		HierarchyTreeNode* node = GetNodeFromTreeItem(*iter);
 		
 		HierarchyTreeAggregatorNode* aggregatorNode = dynamic_cast<HierarchyTreeAggregatorNode*>(node);
 		if (aggregatorNode)
@@ -592,4 +624,11 @@ bool HierarchyTreeWidget::IsDeleteNodeAllowed(HierarchyTreeControlNode* selected
 
 	// Subcontrols cannot be deleted.
 	return !uiControl->IsSubcontrol();
+}
+
+HierarchyTreeNode* HierarchyTreeWidget::GetNodeFromTreeItem(QTreeWidgetItem* item)
+{
+	QVariant data = item->data(ITEM_ID);
+	HierarchyTreeNode::HIERARCHYTREENODEID id = data.toInt();
+	return HierarchyTreeController::Instance()->GetTree().GetNode(id);
 }

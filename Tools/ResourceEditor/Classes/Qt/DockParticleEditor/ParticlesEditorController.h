@@ -1,10 +1,18 @@
-//
-//  ParticlesEditorController.h
-//  ResourceEditorQt
-//
-//  Created by Yuri Coder on 11/26/12.
-//
-//
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
 
 #ifndef __ResourceEditorQt__ParticlesEditorController__
 #define __ResourceEditorQt__ParticlesEditorController__
@@ -71,7 +79,7 @@ public:
 	bool MoveEmitter(EmitterParticleEditorNode* movedItemEmitterNode, EffectParticleEditorNode* newEffectParentNode);
 	
 	// Move the Layer between Emitters or inside the same Emitter.
-	bool MoveLayer(LayerParticleEditorNode* movedItemNode, LayerParticleEditorNode* moveAboveNode);
+	bool MoveLayer(LayerParticleEditorNode* movedItemNode, LayerParticleEditorNode* beforeNode);
 
 	// Move the Layer to the end of another Emitter.
 	bool MoveLayer(LayerParticleEditorNode* moveItemNode, EmitterParticleEditorNode* newEmitterNode);
@@ -104,16 +112,16 @@ protected:
 
 	// Change the layers order for the same Particle Emitter node.
 	// Move the layer in same or different Emitter Nodes.
-	bool ChangeLayersOrderInSameEmitter(LayerParticleEditorNode* movedItemNode, LayerParticleEditorNode* moveAboveNode);
+	bool ChangeLayersOrderInSameEmitter(LayerParticleEditorNode* movedItemNode, LayerParticleEditorNode* beforeNode);
 	
-	bool ChangeLayersOrderInDifferentEmitters(LayerParticleEditorNode* moveItemNode, LayerParticleEditorNode* moveAboveNode);
+	bool ChangeLayersOrderInDifferentEmitters(LayerParticleEditorNode* moveItemNode, LayerParticleEditorNode* beforeNode);
 
 	// Move the layer to the end of the new emitter node.
 	bool MoveLayerToEmitter(LayerParticleEditorNode* moveItemNode, EmitterParticleEditorNode* newEmitterNode);
 
 	// Common function to move layer between emitters.
 	bool PerformMoveBetweenEmitters(EmitterParticleEditorNode* oldEmitterNode, EmitterParticleEditorNode* newEmitterNode,
-									LayerParticleEditorNode* layerToMove,LayerParticleEditorNode* layerToInsertAbove);
+									LayerParticleEditorNode* layerToMove,LayerParticleEditorNode* layerToInsertBefore);
 
 	// Cleanup the selected node in case it is one to be deleted.
 	void CleanupSelectedNodeIfDeleting(BaseParticleEditorNode* nodeToBeDeleted);

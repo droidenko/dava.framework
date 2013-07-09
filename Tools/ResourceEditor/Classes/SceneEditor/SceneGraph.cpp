@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "SceneGraph.h"
 #include "ControlsFactory.h"
 
@@ -14,6 +30,7 @@
 
 #include "../Commands/CommandsManager.h"
 #include "../Commands/SceneGraphCommands.h"
+#include "../StringConstants.h"
 
 SceneGraph::SceneGraph(GraphBaseDelegate *newDelegate, const Rect &rect)
     :   GraphBase(newDelegate, rect)
@@ -96,7 +113,7 @@ void SceneGraph::FillCell(UIHierarchyCell *cell, void *node)
     //Temporary fix for loading of UI Interface to avoid reloading of texrures to different formates.
     // 1. Reset default format before loading of UI
     // 2. Restore default format after loading of UI from stored settings.
-    Texture::SetDefaultFileFormat(NOT_FILE);
+    Texture::SetDefaultGPU(GPU_UNKNOWN);
 
     Entity *n = (Entity *)node;
     UIStaticText *text =  (UIStaticText *)cell->FindByName("_Text_");
@@ -126,7 +143,7 @@ void SceneGraph::FillCell(UIHierarchyCell *cell, void *node)
         cell->SetSelected(false, false);
     }
     
-    Texture::SetDefaultFileFormat((ImageFileFormat)EditorSettings::Instance()->GetTextureViewFileFormat());
+    Texture::SetDefaultGPU(EditorSettings::Instance()->GetTextureViewGPU());
 }
 
 void SceneGraph::SelectHierarchyNode(UIHierarchyNode * node)
@@ -276,7 +293,8 @@ void SceneGraph::RemoveWorkingNode()
 {
 	if (workingNode)
 	{
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandInternalRemoveSceneNode(workingNode));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandInternalRemoveSceneNode(workingNode),
+													   workingNode->GetScene());
     }
 }
 
@@ -289,9 +307,9 @@ void SceneGraph::RemoveRootNodes()
             String referenceToOwner;
             
             KeyedArchive *customProperties = workingNode->GetCustomProperties();
-            if(customProperties && customProperties->IsKeyExists("editor.referenceToOwner"))
+            if(customProperties && customProperties->IsKeyExists(ResourceEditor::EDITOR_REFERENCE_TO_OWNER))
             {
-                referenceToOwner = customProperties->GetString("editor.referenceToOwner");
+                referenceToOwner = customProperties->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER);
             }
 
             
@@ -303,9 +321,9 @@ void SceneGraph::RemoveRootNodes()
                 Entity *node = workingScene->GetChild(i);
 
                 customProperties = node->GetCustomProperties();
-                if(customProperties && customProperties->IsKeyExists("editor.referenceToOwner"))
+                if(customProperties && customProperties->IsKeyExists(ResourceEditor::EDITOR_REFERENCE_TO_OWNER))
                 {
-                    if(customProperties->GetString("editor.referenceToOwner") == referenceToOwner)
+                    if(customProperties->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER) == referenceToOwner)
                     {
                         nodesForDeletion.push_back(SafeRetain(node));
                     }
@@ -327,7 +345,7 @@ void SceneGraph::RemoveRootNodes()
             
             UpdatePropertyPanel();
             graphTree->Refresh();
-            SceneValidator::Instance()->EnumerateSceneTextures();
+//            SceneValidator::Instance()->EnumerateSceneTextures();
         }
     }
 }

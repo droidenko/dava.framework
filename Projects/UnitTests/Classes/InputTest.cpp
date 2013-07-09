@@ -162,6 +162,13 @@ void InputTest::LoadResources()
     
     SafeRelease(spr);
     SafeRelease(texture);
+	
+	staticText->SetShadowColor(DAVA::Color(0xFF/255.f, 0xC4/255.f, 0xC3/255.f, 1.f));
+	staticText->SetShadowOffset(DAVA::Vector2(4.0f, 4.0f));
+	Color faded = staticText->GetBackground()->color;
+	faded.a = 0.1f;
+	staticText->ColorAnimation(faded, 2.0f, Interpolation::LINEAR);
+	staticText->ShadowColorAnimation(faded, 2.0f, Interpolation::LINEAR);
 }
 
 void InputTest::UnloadResources()

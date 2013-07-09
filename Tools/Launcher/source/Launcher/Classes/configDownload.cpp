@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA CONSULTING, LLC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA CONSULTING, LLC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include <QVariant>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -9,9 +25,11 @@
 #define URL_launcher "URL_launcher"
 #define launcher_ver "launcher_ver"
 #define URL_stable "URL_stable"
+#define URL_to_master "URL_to_master"
 #define URL_test "URL_qa"
 #define URL_development "URL_development"
 #define URL_dependencies "URL_dependencies"
+#define URL_page "URL_page"
 
 #define setString(a, b) {std::string c; b->GetScalar(c); a = c.c_str();}
 
@@ -31,6 +49,7 @@ void ConfigDownloader::UpdateConfig()
 {
     m_UpdatedConfig.Clear();
     m_StableUrl.clear();
+    m_ToMasterUrl.clear();
     m_TestUrl.clear();
     m_DevelopmentUrl.clear();
     m_DependenciesUrl.clear();
@@ -69,12 +88,16 @@ void ConfigDownloader::ConfigDownloaded()
             if (launcher_verNode) setString(m_UpdatedConfig.m_Launcher.m_Version, launcher_verNode);
             const YAML::Node* URL_stableNode = doc.FindValue(URL_stable);
             if (URL_stableNode)  setString(m_StableUrl, URL_stableNode);
+            const YAML::Node* URL_to_masterNode = doc.FindValue(URL_to_master);
+            if (URL_to_masterNode)  setString(m_ToMasterUrl, URL_to_masterNode);
             const YAML::Node* URL_testNode = doc.FindValue(URL_test);
             if (URL_testNode)  setString(m_TestUrl, URL_testNode);
             const YAML::Node* URL_developmentNode = doc.FindValue(URL_development);
             if (URL_developmentNode)  setString(m_DevelopmentUrl, URL_developmentNode);
             const YAML::Node* URL_dependenciesNode = doc.FindValue(URL_dependencies);
             if (URL_dependenciesNode)  setString(m_DependenciesUrl, URL_dependenciesNode);
+            const YAML::Node* URL_pageNode = doc.FindValue(URL_page);
+            if (URL_pageNode)  setString(m_UpdatedConfig.m_pageUrl, URL_pageNode);
         }
 
         SetState(eDownloadStateStable);
@@ -84,6 +107,15 @@ void ConfigDownloader::ConfigDownloaded()
             Logger::GetInstance()->AddLog(tr("Error parse stable config"));
         } else {
             ParseAppData(m_UpdatedConfig.m_Stable, &doc);
+        }
+
+        SetState(eDownloadStateToMaster);
+    }break;
+    case eDownloadStateToMaster: {
+        if (!parser.GetNextDocument(doc)) {
+            Logger::GetInstance()->AddLog(tr("Error parse to_master config"));
+        } else {
+            ParseAppData(m_UpdatedConfig.m_toMaster, &doc);
         }
 
         SetState(eDownloadStateTest);
@@ -131,6 +163,9 @@ void ConfigDownloader::SetState(eDownloadState newState) {
     }break;
     case eDownloadStateStable: {
         m_pReply = m_pManager->get(QNetworkRequest(m_StableUrl));
+    }break;
+    case eDownloadStateToMaster: {
+        m_pReply = m_pManager->get(QNetworkRequest(m_ToMasterUrl));
     }break;
     case eDownloadStateTest: {
         m_pReply = m_pManager->get(QNetworkRequest(m_TestUrl));
@@ -183,6 +218,7 @@ void ConfigDownloader::ParseAppData(AppsConfig::AppMap &appMap, const YAML::Node
 void AppsConfig::Clear() {
     m_Launcher.Clear();
     m_Stable.clear();
+    m_toMaster.clear();
     m_Test.clear();
     m_Development.clear();
     m_Dependencies.clear();

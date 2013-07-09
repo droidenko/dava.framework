@@ -4,10 +4,12 @@ ConsoleView::ConsoleView(QWidget *parent /*= 0*/)
 	: QPlainTextEdit(parent)
 	, lineCount(0)
 {
+	/*
 	QPalette p = palette();
 	p.setColor(QPalette::Base, Qt::black);
 	p.setColor(QPalette::Text, Qt::gray);
 	setPalette(p);
+	*/
 
 	for(size_t i = 0; i < Console::Instance()->GetLineCount(); ++i)
 	{

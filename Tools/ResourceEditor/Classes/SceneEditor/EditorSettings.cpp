@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "EditorSettings.h"
 
 #include "ControlsFactory.h"
@@ -112,15 +128,6 @@ void EditorSettings::SetScreenHeight(int32 height)
     settings->SetInt32("ScreenHeight", height);
 }
 
-float32 EditorSettings::GetAutosaveTime()
-{
-    return settings->GetFloat("AutoSaveTime", 5.0f);
-}
-void EditorSettings::SetAutosaveTime(float32 time)
-{
-    settings->SetFloat("AutoSaveTime", time);
-}
-
 String EditorSettings::GetLanguage()
 {
     return settings->GetString("Language", "en");
@@ -231,13 +238,13 @@ bool EditorSettings::GetEnableImposters()
 	return settings->GetBool("enableImposters", true);
 }
 
-int32 EditorSettings::GetTextureViewFileFormat()
+eGPUFamily EditorSettings::GetTextureViewGPU()
 {
-    return settings->GetInt32(String("TextureViewFileFormat"), PNG_FILE);
+    return (eGPUFamily)settings->GetInt32(String("TextureViewGPU"), GPU_UNKNOWN);
 }
-void EditorSettings::SetTextureViewFileFormat(int32 format)
+void EditorSettings::SetTextureViewGPU(int32 gpu)
 {
-    settings->SetInt32(String("TextureViewFileFormat"), format);
+    settings->SetInt32(String("TextureViewGPU"), gpu);
 }
 
 
@@ -290,9 +297,21 @@ void EditorSettings::SetDesignerName(const String &userName)
     settings->SetString("DesignerName", userName);
 }
 
+bool EditorSettings::GetShowEditorCamerLight()
+{
+    return settings->GetBool("ShowEditorCamerLight", true);
+}
+
+void EditorSettings::SetShowEditorCamerLight(bool show)
+{
+    settings->SetBool("ShowEditorCamerLight", show);
+    Save();
+}
+
 void EditorSettings::SetPreviewDialogEnabled(bool enabled)
 {
     settings->SetBool("PreviewDialogEnabled", enabled);
+	Save();
 }
 
 bool EditorSettings::GetPreviewDialogEnabled()

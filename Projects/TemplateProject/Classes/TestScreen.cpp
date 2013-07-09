@@ -72,10 +72,10 @@ void TestScreen::LoadResources()
 //	manager->AddObject(bigBoxEmitterClone);
 
 
-	sndClick = Sound::CreateFX(FilePath("~res:/Sounds/click.wav"), Sound::TYPE_STATIC);
+	sndClick = Sound::Create(FilePath("~res:/Sounds/click.wav"), Sound::TYPE_STATIC, "FX");
 
-	music = Sound::CreateMusic(FilePath("~res:/Sounds/final.ogg"), Sound::TYPE_STREAMED);
-	music->SetLooping(true);
+	music = Sound::Create(FilePath("~res:/Sounds/final.ogg"), Sound::TYPE_STREAMED, "MUSIC");
+	music->SetLoopCount(-1);
 
 	isPlaying = false;
 }

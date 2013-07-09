@@ -14,8 +14,8 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef __ResourceEditorQt__ParticlesEditorNodeNameHelper__
-#define __ResourceEditorQt__ParticlesEditorNodeNameHelper__
+#ifndef __PARTICLES_EDITOR_NODE_NAME_HELPER_H__
+#define __PARTICLES_EDITOR_NODE_NAME_HELPER_H__
 
 #include "DAVAEngine.h"
 
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif /* defined(__ResourceEditorQt__ParticlesEditorNodeNameHelper__) */
+#endif /* defined(__PARTICLES_EDITOR_NODE_NAME_HELPER_H__) */

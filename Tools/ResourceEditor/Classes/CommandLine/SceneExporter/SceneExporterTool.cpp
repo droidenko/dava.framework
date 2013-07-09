@@ -1,37 +1,23 @@
 /*==================================================================================
-    Copyright (c) 2008, DAVA Consulting, LLC
+    Copyright (c) 2008, DAVA, INC
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-    * Neither the name of the DAVA Consulting, LLC nor the
-    names of its contributors may be used to endorse or promote products
-    derived from this software without specific prior written permission.
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE DAVA CONSULTING, LLC AND CONTRIBUTORS "AS IS" AND
-    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL DAVA CONSULTING, LLC BE LIABLE FOR ANY
-    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-    Revision History:
-        * Created by Ivan "Dizz" Petrochenko
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
 #include "SceneExporterTool.h"
 #include "SceneExporter.h"
 
-#include "CommandLine/EditorCommandLineParser.h"
+#include "TexturePacker/CommandLineParser.h"
 
 using namespace DAVA;
 
@@ -45,7 +31,7 @@ void SceneExporterTool::PrintUsage()
     printf("\t-outdir - path for Poject/Data/3d/ folder\n");
     printf("\t-processdir - foldername from DataSource/3d/ for exporting\n");
     printf("\t-processfile - filename from DataSource/3d/ for exporting\n");
-    printf("\t-format - png, pvr, dxt\n");
+    printf("\t-gpu - PoverVR_iOS, PoverVR_Android, tegra, mali, adreno\n");
     
     printf("\n");
     printf("Samples:\n");
@@ -63,8 +49,8 @@ bool SceneExporterTool::InitializeFromCommandLine()
 {
     commandAction = ACTION_NONE;
     
-    inFolder = EditorCommandLineParser::GetCommandParam(String("-indir"));
-    outFolder = EditorCommandLineParser::GetCommandParam(String("-outdir"));
+    inFolder = CommandLineParser::GetCommandParam(String("-indir"));
+    outFolder = CommandLineParser::GetCommandParam(String("-outdir"));
     if(inFolder.IsEmpty() && outFolder.IsEmpty())
     {
         errors.insert(Format("Incorrect indir (%s) or outdir (%s) parameter",inFolder.GetAbsolutePathname().c_str(), outFolder.GetAbsolutePathname().c_str()));
@@ -74,15 +60,15 @@ bool SceneExporterTool::InitializeFromCommandLine()
     inFolder.MakeDirectoryPathname();
     outFolder.MakeDirectoryPathname();
     
-    format = EditorCommandLineParser::GetCommandParam(String("-format"));
-    if(format.empty())
+    gpu = CommandLineParser::GetCommandParam(String("-gpu"));
+    if(gpu.empty())
     {
         errors.insert("Format for export is not set");
         return false;
     }
     
-    filename = EditorCommandLineParser::GetCommandParam(String("-processfile"));
-    foldername = EditorCommandLineParser::GetCommandParam(String("-processdir"));
+    filename = CommandLineParser::GetCommandParam(String("-processfile"));
+    foldername = CommandLineParser::GetCommandParam(String("-processdir"));
 
     if(!filename.empty())
     {
@@ -108,7 +94,7 @@ void SceneExporterTool::Process()
 
     exporter.SetOutFolder(outFolder);
     exporter.SetInFolder(inFolder);
-    exporter.SetExportingFormat(format);
+    exporter.SetGPUForExporting(gpu);
     
     if(commandAction == ACTION_EXPORT_FILE)
     {

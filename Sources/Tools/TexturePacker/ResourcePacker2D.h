@@ -2,6 +2,7 @@
 #define __DAVAENGINE_RESOURCEPACKER2D_H__
 
 #include "Base/BaseTypes.h"
+#include "Render/RenderBase.h"
 #include "FileSystem/FilePath.h"
 
 namespace DAVA
@@ -15,8 +16,8 @@ public:
 
 	// Packing of resources section
 	void InitFolders(const FilePath & inputPath,const FilePath & outputPath);
-	void PackResources();
-	
+	void PackResources(eGPUFamily forGPU);
+    
 	void RecursiveTreeWalk(const FilePath & inputPath,const FilePath & outputPath);
 
 	bool IsMD5ChangedDir(const FilePath & processDirectoryPath, const FilePath & pathname, const String & psdName, bool isRecursive);
@@ -39,6 +40,8 @@ public:
     
 	bool isLightmapsPacking;
 	bool clearProcessDirectory;
+    
+    eGPUFamily requestedGPUFamily;
 };
 
 };

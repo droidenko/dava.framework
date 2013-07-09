@@ -13,6 +13,8 @@
 #include <magick/MagickCore.h>
 #include <magick/property.h>
 
+#include "Render/GPUFamilyDescriptor.h"
+
 namespace DAVA
 {
 
@@ -36,13 +38,19 @@ void ResourcePacker2D::InitFolders(const FilePath & inputPath,const FilePath & o
 	excludeDirectory = inputPath + "../";
 }
     
-void ResourcePacker2D::PackResources()
+void ResourcePacker2D::PackResources(eGPUFamily forGPU)
 {
-	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s",
+	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s\n",
                   inputGfxDirectory.GetAbsolutePathname().c_str(),
                   outputGfxDirectory.GetAbsolutePathname().c_str(),
                   excludeDirectory.GetAbsolutePathname().c_str());
-	
+
+    if(CommandLineParser::Instance()->GetVerbose())
+        printf("For GPU: %s \n", GPUFamilyDescriptor::GetGPUName(forGPU).c_str());
+
+    
+	requestedGPUFamily = forGPU;
+    
 	isGfxModified = false;
 
     gfxDirName = inputGfxDirectory.GetLastDirectoryName();
@@ -341,17 +349,17 @@ void ResourcePacker2D::ProcessFlags(const FilePath & flagsPathname)
 			Logger::Debug("Token: %s", tokens[k].c_str());
 		}
 
-	if (Core::Instance()->IsConsoleMode())
-	{
-		for (int k = 0; k < (int) tokens.size(); ++k)
-		{
-			String sub = tokens[k].substr(0, 2);
-			if (sub != "--")
-				printf("\n[WARNING: flag %s incorrect]\n", tokens[k].c_str());
-		}
-	}
+//	if (Core::Instance()->IsConsoleMode())
+//	{
+//		for (int k = 0; k < (int) tokens.size(); ++k)
+//		{
+//			String sub = tokens[k].substr(0, 2);
+//			if (sub != "--")
+//				printf("\n[WARNING: flag %s incorrect]\n", tokens[k].c_str());
+//		}
+//	}
 	
-	CommandLineParser::Instance()->SetFlags(tokens);
+	CommandLineParser::Instance()->SetArguments(tokens);
 	
 	SafeRelease(file);
 }
@@ -383,7 +391,7 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 		//Logger::Error("Can't create directory: %s", outputPath.c_str());
 	}
 	
-	CommandLineParser::Instance()->ClearFlags();
+	CommandLineParser::Instance()->Clear();
 	List<DefinitionFile *> definitionFileList;
 
 	// Find flags and setup them
@@ -466,11 +474,11 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 
 			if (CommandLineParser::Instance()->IsFlagSet("--split"))
 			{
-				packer.PackToTexturesSeparate(excludeDirectory, outputPath, definitionFileList);
+				packer.PackToTexturesSeparate(excludeDirectory, outputPath, definitionFileList, requestedGPUFamily);
 			}
 			else
 			{
-				packer.PackToTextures(excludeDirectory, outputPath, definitionFileList);
+				packer.PackToTextures(excludeDirectory, outputPath, definitionFileList, requestedGPUFamily);
 			}
 		}
 	}	

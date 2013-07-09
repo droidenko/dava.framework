@@ -1,11 +1,19 @@
-/*
- *  EditorScene.cpp
- *  SceneEditor
- *
- *  Created by Yury Danilov on 14.12.11
- *  Copyright 2011 DAVA. All rights reserved.
- *
- */
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 
 #include "EditorScene.h"
 #include "SceneNodeUserData.h"
@@ -17,6 +25,7 @@
 #include "Scene3D/Components/BulletComponent.h"
 #include "Render/Highlevel/RenderObject.h"
 
+#include "StringConstants.h"
 
 /*
     This means that if we'll call GameScene->GetClassName() it'll return "Scene"
@@ -27,6 +36,7 @@ REGISTER_CLASS_WITH_ALIAS(EditorScene, "Scene");
 EditorScene::EditorScene()
 :Scene()
 {
+    cameraLight = NULL;
     selectedEntity = NULL;
     originalHandler = NULL;
 	selection = 0;
@@ -48,10 +58,14 @@ EditorScene::EditorScene()
 	renderSystem->AddRenderLayer(LAYER_ARROWS, PASS_FORWARD, LAST_LAYER);
 
     SetDrawGrid(true);
+    
+    CreateCameraLight();
 }
 
 EditorScene::~EditorScene()
 {
+    SafeRelease(cameraLight);
+    
 	ReleaseUserData(this);
 	SafeDelete(collisionWorld);
 	SafeDelete(broadphase);
@@ -66,6 +80,8 @@ EditorScene::~EditorScene()
 
 void EditorScene::Update(float32 timeElapsed)
 {    
+    UpdateCameraLight();
+
 	Scene::Update(timeElapsed);
 
 	CheckNodes(this);
@@ -659,3 +675,88 @@ const RenderManager::Stats & EditorScene::GetRenderStats() const
 {
     return renderStats;
 }
+
+void EditorScene::CreateCameraLight()
+{
+    SafeRelease(cameraLight);
+    
+    Light *light = new Light();
+    light->SetType(Light::TYPE_DIRECTIONAL);
+
+    cameraLight = new Entity();
+    cameraLight->SetName(ResourceEditor::EDITOR_CAMERA_LIGHT);
+    cameraLight->AddComponent(new LightComponent(light));
+    light->Release();
+    
+    UpdateCameraLightOnScene();
+}
+
+void EditorScene::UpdateCameraLight()
+{
+    Camera *camera = GetCurrentCamera();
+    if(!camera || !cameraLight || !cameraLight->GetParent()) return;
+    
+    
+    Matrix4 m = Matrix4::MakeTranslation(camera->GetPosition() + camera->GetLeft() * 20.f + camera->GetUp() * 20.f);
+    cameraLight->SetLocalTransform(m);
+}
+
+void EditorScene::UpdateCameraLightOnScene()
+{
+    UpdateCameraLightOnScene(EditorSettings::Instance()->GetShowEditorCamerLight());
+}
+
+void EditorScene::UpdateCameraLightOnScene(bool show)
+{
+    if(show)
+    {
+        bool foundLight = IsLightOnSceneRecursive(this);
+        if(!foundLight)
+        {   //only one case for showing camera relative light
+            AddEditorEntity(cameraLight);
+            return;
+        }
+    }
+
+    //Need to hide camera
+    HideCameraLight();
+}
+
+void EditorScene::AddEditorEntity(Entity *editorEntity)
+{
+    if(GetChildrenCount())
+    {
+        InsertBeforeNode(editorEntity, GetChild(0));
+    }
+    else
+    {
+        AddNode(editorEntity);
+    }
+}
+
+
+void EditorScene::HideCameraLight()
+{
+    if(cameraLight->GetParent())
+    {
+        cameraLight->GetParent()->RemoveNode(cameraLight);
+    }
+}
+
+bool EditorScene::IsLightOnSceneRecursive(Entity *entity)
+{
+    if(entity->GetComponent(Component::LIGHT_COMPONENT) && entity != cameraLight)
+        return true;
+    
+    int32 count = entity->GetChildrenCount();
+    for(int32 i = 0; i < count; ++i)
+    {
+        if(IsLightOnSceneRecursive(entity->GetChild(i)))
+            return true;
+    }
+    
+    return false;
+}
+
+
+

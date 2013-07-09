@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA CONSULTING, LLC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA CONSULTING, LLC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "logger.h"
@@ -7,16 +23,17 @@
 #include "processhelper.h"
 #include "settings.h"
 
-#define LAUNCER_VER "0.85"
+#define LAUNCER_VER "0.87.5"
 
 #define COLUMN_NAME 0
 #define COLUMN_CUR_VER 1
 #define COLUMN_NEW_VER 2
 
 #define ST_TAB 0
-#define QA_TAB 1
-#define DEV_TAB 2
-#define DEP_TAB 3
+#define TM_TAB 1
+#define QA_TAB 2
+#define DEV_TAB 3
+#define DEP_TAB 4
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,23 +48,41 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_pInstaller, SIGNAL(StartDownload()), this, SLOT(OnDownloadStarted()));
     connect(m_pInstaller, SIGNAL(DownloadFinished()), this, SLOT(OnDownloadFinished()));
     connect(m_pInstaller, SIGNAL(DownloadProgress(int)), this, SLOT(OnDownloadProgress(int)));
+    connect(m_pInstaller, SIGNAL(WebPageUpdated(QString)), this, SLOT(UpdateWebPage(QString)));
 
     m_pUpdateTimer = new QTimer(this);
     connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(on_btnRefresh_clicked()));
     m_pUpdateTimer->start(Settings::GetInstance()->GetUpdateTimerInterval());
 
     ui->stableTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->toMasterTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->testTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->developmentTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->dependenciesTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->stableTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->toMasterTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->testTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->developmentTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->dependenciesTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     connect(ui->stableTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
+    connect(ui->toMasterTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
     connect(ui->testTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
     connect(ui->dependenciesTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
     connect(ui->developmentTable, SIGNAL(itemSelectionChanged()), this, SLOT(UpdateBtn()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(UpdateBtn()));
 
+    connect(ui->stableTable, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(tableItemClicked(QTableWidgetItem *)));
+    connect(ui->stableTable, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(tableItemChanged(QTableWidgetItem *)));
+    connect(ui->toMasterTable, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(tableItemClicked(QTableWidgetItem *)));
+    connect(ui->toMasterTable, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(tableItemChanged(QTableWidgetItem *)));
+    connect(ui->testTable, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(tableItemClicked(QTableWidgetItem *)));
+    connect(ui->testTable, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(tableItemChanged(QTableWidgetItem *)));
+    connect(ui->developmentTable, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(tableItemClicked(QTableWidgetItem *)));
+    connect(ui->developmentTable, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(tableItemChanged(QTableWidgetItem *)));
+
     connect(ui->stableTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_btnRun_clicked()));
+    connect(ui->toMasterTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_btnRun_clicked()));
     connect(ui->testTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_btnRun_clicked()));
     connect(ui->developmentTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_btnRun_clicked()));
 
@@ -56,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->downloadProgress->setVisible(false);
     ui->downloadProgress->setRange(0, 100);
 
+    isTablesFilling = false;
     m_bBusy = false;
     UpdateBtn();
     m_pInstaller->Init();
@@ -65,12 +101,27 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::tableItemClicked(QTableWidgetItem * item)
+{
+    if(!isTablesFilling)
+        lastSelectedValue = item->text();
+}
+
+void MainWindow::tableItemChanged(QTableWidgetItem * item)
+{
+    if(!isTablesFilling)
+        item->setText(lastSelectedValue);
+}
+
 void MainWindow::AvailableSoftWareUpdated(const AvailableSoftWare& software) {
+    isTablesFilling = true;
     m_SoftWare = software;
     FillTableSoft(ui->stableTable, software.m_Stable);
+    FillTableSoft(ui->toMasterTable, software.m_toMaster);
     FillTableSoft(ui->testTable, software.m_Test);
     FillTableSoft(ui->developmentTable, software.m_Development);
     FillTableDependencies(ui->dependenciesTable, software.m_Dependencies);
+    isTablesFilling = false;
 }
 
 void MainWindow::OnComboBoxValueChanged(const QString& value) {
@@ -176,6 +227,11 @@ void MainWindow::UpdateBtn() {
         m_SelectedAppType = eAppTypeStable;
         UpdateSelectedApp(ui->stableTable);
     }break;
+    case TM_TAB: {
+        pSelectedMap = &m_SoftWare.m_toMaster;
+        m_SelectedAppType = eAppTypeToMaster;
+        UpdateSelectedApp(ui->toMasterTable);
+    }break;
     case QA_TAB: {
         pSelectedMap = &m_SoftWare.m_Test;
         m_SelectedAppType = eAppTypeTest;
@@ -215,14 +271,18 @@ void MainWindow::UpdateBtn() {
                 ui->btnInstall->setVisible(true);
             }
         };
-        case ST_TAB: {
-            ui->btnRun->setVisible(true);
-        } break;
+        case ST_TAB:
+        case TM_TAB:
         case QA_TAB: {
             ui->btnRun->setVisible(true);
         } break;
+
         case DEP_TAB: {
-            ui->btnReinstall->setVisible(true);
+            ui->btnRemove->setEnabled(false);
+            ui->btnInstall->setVisible(false);
+            ui->btnRun->setVisible(false);
+            ui->btnReinstall->setVisible(false);
+            ui->btnCancel->setVisible(false);
         }break;
         }
 
@@ -256,7 +316,7 @@ void MainWindow::on_btnRemove_clicked() {
     if (0 == QMessageBox::information(this,
                                      tr("Confirmation"),
                                      tr("Are you sure you want to remove %1.").arg(m_SelectedApp),
-                                     tr("ok"),
+                                     tr("OK"),
                                      tr("Cancel"))) {
         m_pInstaller->Delete(m_SelectedApp, m_SelectedAppType);
     }
@@ -292,4 +352,8 @@ void MainWindow::OnDownloadFinished() {
     m_bBusy = false;
     ui->downloadProgress->setVisible(false);
     UpdateBtn();
+}
+
+void MainWindow::UpdateWebPage(const QString& url) {
+    ui->webView->setUrl(url);
 }

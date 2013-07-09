@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "SceneEditorScreenMain.h"
 
 #include "EditorBodyControl.h"
@@ -79,7 +95,6 @@ void SceneEditorScreenMain::LoadResources()
 	    InitControls();
     
 	    InitializeBodyList();
-	    SetupAnimation();
 	}
 }
 
@@ -115,7 +130,10 @@ void SceneEditorScreenMain::WillAppear()
 			EditorSettings::Instance()->SetDataSourcePath(path.substr(0, pos + dataSourceFolder.length()));
 		}
 
-        CommandsManager::Instance()->ExecuteAndRelease(new CommandOpenScene(scenePathname));
+		SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
+		DVASSERT(levelScene);
+
+        CommandsManager::Instance()->ExecuteAndRelease(new CommandOpenScene(scenePathname), levelScene->GetScene());
     }
 #endif //#if defined (__DAVAENGINE_WIN32__)
 }
@@ -127,7 +145,11 @@ void SceneEditorScreenMain::DidAppear()
 	if(beastTool && (0 == CommandLineManager::Instance()->GetErrorsCount()))
     {
         Update(0.1f);
-        CommandsManager::Instance()->ExecuteAndRelease(new CommandBeast());
+
+		SceneData *levelScene = SceneDataManager::Instance()->SceneGetLevel();
+		DVASSERT(levelScene);
+
+        CommandsManager::Instance()->ExecuteAndRelease(new CommandBeast(), levelScene->GetScene());
     }
 #endif //#if defined (__DAVAENGINE_WIN32__)
 }
@@ -350,7 +372,8 @@ void SceneEditorScreenMain::DialogClosed(int32 retCode)
     
     if(CreateNodesDialog::RCODE_OK == retCode)
     {
-		CommandsManager::Instance()->ExecuteAndRelease(new CommandCreateNodeSceneEditor(nodeDialog->GetSceneNode()));
+		CommandsManager::Instance()->ExecuteAndRelease(new CommandCreateNodeSceneEditor(nodeDialog->GetSceneNode()),
+													   SceneDataManager::Instance()->SceneGetActive()->GetScene());
     }
 }
 
@@ -387,43 +410,6 @@ void SceneEditorScreenMain::EditMaterial(Material *material)
         AddControl(materialEditor);
     }
 }
-
-
-void SceneEditorScreenMain::AutoSaveLevel(BaseObject *, void *, void *)
-{
-    time_t now = time(0);
-    tm* utcTime = localtime(&now);
-    
-    FilePath folderPath = EditorSettings::Instance()->GetDataSourcePath() + "Autosave/";
-    bool folderExcists = FileSystem::Instance()->IsDirectory(folderPath);
-    if(!folderExcists)
-    {
-        FileSystem::Instance()->CreateDirectory(folderPath);
-    }
-
-    
-    
-    FilePath pathToFile = folderPath + String(Format("AutoSave_%04d.%02d.%02d_%02d_%02d.sc2",
-                                            utcTime->tm_year + 1900, utcTime->tm_mon + 1, utcTime->tm_mday, 
-                                            utcTime->tm_hour, utcTime->tm_min));
-    
-    BodyItem *iBody = bodies[0];
-    Scene * scene = iBody->bodyControl->GetScene();
-    SceneFileV2 * file = new SceneFileV2();
-    file->EnableDebugLog(false);
-    file->SaveScene(pathToFile, scene);
-    SafeRelease(file);
-    
-    SetupAnimation();
-}
-
-void SceneEditorScreenMain::SetupAnimation()
-{
-    float32 minutes = EditorSettings::Instance()->GetAutosaveTime();
-    Animation * anim = WaitAnimation(minutes * 60.f); 
-    anim->AddEvent(Animation::EVENT_ANIMATION_END, Message(this, &SceneEditorScreenMain::AutoSaveLevel));
-}
-
 
 
 void SceneEditorScreenMain::SettingsChanged()
@@ -576,29 +562,8 @@ void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
     ShowErrorDialog(errorsLog);
 }
 
-void SceneEditorScreenMain::ExportAs(ImageFileFormat format)
+void SceneEditorScreenMain::ExportAs(eGPUFamily forGPU)
 {
-    String formatStr;
-    switch (format) 
-    {
-        case DAVA::PNG_FILE:
-            formatStr = String("png");
-            break;
-            
-        case DAVA::PVR_FILE:
-            formatStr = String("pvr");
-            break;
-            
-        case DAVA::DXT_FILE:
-            formatStr = String("dds");
-            break;
-            
-        default:
-			DVASSERT(0);
-            return;
-    }
-    
-    
     BodyItem *iBody = FindCurrentBody();
 	iBody->bodyControl->PushDebugCamera();
     
@@ -613,7 +578,7 @@ void SceneEditorScreenMain::ExportAs(ImageFileFormat format)
     exporter.SetInFolder(projectPath + String("DataSource/3d/"));
     exporter.SetOutFolder(projectPath + String("Data/3d/"));
     
-    exporter.SetExportingFormat(formatStr);
+    exporter.SetGPUForExporting(forGPU);
     
     //TODO: how to be with removed nodes?
     Set<String> errorsLog;
@@ -671,7 +636,7 @@ void SceneEditorScreenMain::MaterialsTriggered()
     else 
     {
         RemoveControl(materialEditor);
-        SceneValidator::Instance()->EnumerateSceneTextures();
+//        SceneValidator::Instance()->EnumerateSceneTextures();
     }
 }
 

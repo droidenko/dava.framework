@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "EditorBodyControlCommands.h"
 #include "../SceneEditor/EditorBodyControl.h"
 #include "../SceneEditor/SceneEditorScreenMain.h"
@@ -5,7 +21,7 @@
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Scene/SceneData.h"
 
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 #include "Scene/System/CollisionSystem.h"
 
 CommandEntityModification::CommandEntityModification(Command::eCommandType type, CommandList::eCommandId id)
@@ -16,6 +32,180 @@ CommandEntityModification::CommandEntityModification(Command::eCommandType type,
 DAVA::Set<DAVA::Entity*> CommandEntityModification::GetAffectedEntities()
 {
 	return entities;
+}
+
+CommandGroupEntitiesForMultiselect::CommandGroupEntitiesForMultiselect(const EntityGroup* entities)
+:	CommandEntityModification(COMMAND_UNDO_REDO, CommandList::ID_COMMAND_UNITE_ENTITIES_FOR_MULTISELECT)
+{
+	commandName = "Unite entities for multiselect";
+	this->entitiesToGroup = (*entities);
+	this->resultEntity = NULL;
+	Entity* en = entitiesToGroup.GetEntity(0);
+	sep = NULL;
+	if(NULL != en)
+	{
+		sep = dynamic_cast<SceneEditor2 *>(en->GetScene());
+	}
+}
+
+void CommandGroupEntitiesForMultiselect::Execute()
+{
+	if(entitiesToGroup.Size() < 2)
+	{
+		return;
+	}
+
+	Vector3 originalModifEntitiesCenter = entitiesToGroup.GetCommonBbox().GetCenter();
+	Entity* solidEntityToAdd = GetEntityWithSolidProp(entitiesToGroup.GetEntity(0));
+	if(NULL == solidEntityToAdd)
+	{
+		return;
+	}
+	Entity* parent = solidEntityToAdd->GetParent();//check
+	if(NULL == parent)
+	{
+		return;
+	}
+	Entity* complexEntity = new Entity();
+	//complexEntity->SetName("textComplexEntity");
+	//complexEntity->SetDebugFlags(DebugRenderComponent::DEBUG_DRAW_ALL, true);
+
+	parent->AddNode(complexEntity);
+	MoveEntity(complexEntity, originalModifEntitiesCenter);
+
+	for(size_t i = 0; i < entitiesToGroup.Size(); ++i)
+	{
+		Entity *en = entitiesToGroup.GetEntity(i);
+		if(NULL != en )
+		{
+			solidEntityToAdd = GetEntityWithSolidProp(en);
+			originalMatrixes[en] = en->GetWorldTransform();
+			originalChildParentRelations[solidEntityToAdd] = solidEntityToAdd->GetParent();
+			complexEntity->AddNode(solidEntityToAdd);
+		}
+	}
+	
+	LodSystem::MergeChildLods(complexEntity);
+
+	for(size_t i = 0; i < entitiesToGroup.Size(); ++i)
+	{
+		Entity* en = entitiesToGroup.GetEntity(i);
+		UpdateTransformMatrixes(en, originalMatrixes[en]);
+	}
+
+	resultEntity = complexEntity;
+
+	entities.insert(resultEntity);
+	for(size_t i = 0; i < entitiesToGroup.Size(); ++i)
+	{
+		Entity *en = entitiesToGroup.GetEntity(i);
+		entities.insert(en);
+	}
+}
+
+void CommandGroupEntitiesForMultiselect::Cancel()
+{
+	for(Map<Entity*, Entity*>::iterator itParent = originalChildParentRelations.begin();
+		itParent != originalChildParentRelations.end(); ++itParent)
+	{
+		Entity* parent = (*itParent).second;
+		if(NULL != parent)
+		{
+			parent->AddNode((*itParent).first);
+		}
+	}
+	originalChildParentRelations.clear();
+	for(Map<Entity*, Matrix4>::iterator itPosition = originalMatrixes.begin();
+		itPosition != originalMatrixes.end(); ++itPosition)
+	{
+		Entity* entity = (*itPosition).first;
+		if(NULL != entity)
+		{
+			UpdateTransformMatrixes(entity, itPosition->second);
+		}
+	}
+	originalMatrixes.clear();
+	entities.erase(entities.find(resultEntity));
+	if(NULL != resultEntity)
+	{
+		resultEntity->GetParent()->RemoveNode(resultEntity);
+		SafeRelease(resultEntity);
+	}
+}
+
+Entity* CommandGroupEntitiesForMultiselect::GetEntityWithSolidProp(Entity* en)
+{
+	Entity* solidEntity = en;
+	while (NULL != solidEntity)
+	{
+		KeyedArchive *customProperties = solidEntity->GetCustomProperties();
+		if(customProperties && customProperties->IsKeyExists(String(Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME)))
+		{
+			break;
+		}
+		solidEntity = solidEntity->GetParent();
+	};
+	return solidEntity;
+}
+
+void CommandGroupEntitiesForMultiselect::UpdateTransformMatrixes(Entity* entity, Matrix4& worldMatrix)
+{
+	if(NULL == entity)
+	{
+		return;
+	}
+
+	DAVA::Matrix4 newTransform = worldMatrix;
+
+	// to move the entity directly to absolute coordinates all paretn matrixes must be multiplied
+	// and be taken into consideration beacause they are procesed  in TransformSystem (HierahicFindUpdatableTransform)
+	if(entity->GetParent() != NULL)
+	{
+		Entity* parent = entity->GetParent();
+		//Matrix4 parentMatrix = entity->GetParent()->GetWorldTransform();
+		Matrix4 parentMatrix = Matrix4::IDENTITY;
+
+		//calculate paretn matrixes through entire parent tree
+		while (parent && !(parent->GetLocalTransform() == Matrix4::IDENTITY && parent->GetWorldTransform() == Matrix4::IDENTITY))
+		{
+			Matrix4 tempMatrix = parentMatrix * parent->GetLocalTransform();
+			parentMatrix = tempMatrix;
+			parent = parent->GetParent();
+		};
+		
+		// newTransform should be devided by parentMatrix, because it would be multiplied in HierahicFindUpdatableTransform
+		// matrix operation : A / B = ( B ^ (-1) ) * A
+		Matrix4 inversedParetnMatrix;//(B ^ (-1))
+
+		bool canBeInversed = parentMatrix.GetInverse(inversedParetnMatrix);
+		if(!canBeInversed)
+		{
+			return;
+		}
+
+		Matrix4 absoluteNewTransform =  newTransform * inversedParetnMatrix ; //( B ^ (-1) ) * A
+		newTransform = absoluteNewTransform;
+	}
+	entity->SetLocalTransform(newTransform);
+}
+
+void CommandGroupEntitiesForMultiselect::MoveEntity(Entity* entity, Vector3& destPoint)
+{
+	if(NULL == sep || NULL == entity)
+	{
+		return;
+	}
+	DAVA::AABBox3 currentItemBB;
+	sep->collisionSystem->GetBoundingBox(entity).GetTransformedBox(entity->GetWorldTransform(), currentItemBB);
+
+	Vector3 centrOfEntity = currentItemBB.GetCenter();
+	DAVA::Vector3 moveOffset = destPoint - centrOfEntity;
+	DAVA::Matrix4 moveModification;
+	moveModification.CreateTranslation(moveOffset);
+	
+	DAVA::Matrix4 newTransform = entity->GetWorldTransform() * moveModification;
+
+	UpdateTransformMatrixes(entity,newTransform);
 }
 
 
@@ -58,7 +248,7 @@ void CommandTransformObject::UpdateCollision()
 {
 	Entity* node = *entities.begin();
 
-	SceneEditorProxy *sep = dynamic_cast<SceneEditorProxy *>(node->GetScene());
+	SceneEditor2 *sep = dynamic_cast<SceneEditor2 *>(node->GetScene());
 	if(NULL != sep && NULL != sep->collisionSystem)
 	{
 		// make sure that worldtransform is up to date
@@ -288,7 +478,8 @@ void CommandRestoreOriginalTransform::Execute()
 
 	if (node)
 	{
-		node->RestoreOriginalTransforms();
+		// DF-1326 fix - Restore local matrix to identity
+		node->SetLocalTransform(Matrix4::IDENTITY);
 	}
 	else
 		SetState(STATE_INVALID);

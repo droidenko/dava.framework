@@ -1,16 +1,25 @@
-//
-//  EmitterLayerWidget.cpp
-//  ResourceEditorQt
-//
-//  Created by adebt on 11/26/12.
-//
-//
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
 
 #include "EmitterLayerWidget.h"
 #include "Commands/ParticleEditorCommands.h"
 #include "Commands/CommandsManager.h"
 #include "TextureBrowser/TextureConvertor.h"
 #include "SceneEditor/EditorSettings.h"
+#include "../Scene/SceneDataManager.h"
 
 #include <QHBoxLayout>
 #include <QGraphicsWidget>
@@ -182,7 +191,7 @@ EmitterLayerWidget::EmitterLayerWidget(QWidget *parent) :
 
 	QHBoxLayout* startTimeHBox = new QHBoxLayout;
 	startTimeHBox->addWidget(new QLabel("startTime", this));
-	startTimeSpin = new QDoubleSpinBox(this);
+	startTimeSpin = new EventFilterDoubleSpinBox(this);
 	startTimeSpin->setMinimum(-std::numeric_limits<double>::infinity());
 	startTimeSpin->setMaximum(std::numeric_limits<double>::infinity());
 	startTimeHBox->addWidget(startTimeSpin);
@@ -194,13 +203,20 @@ EmitterLayerWidget::EmitterLayerWidget(QWidget *parent) :
 
 	QHBoxLayout* endTimeHBox = new QHBoxLayout;
 	endTimeHBox->addWidget(new QLabel("endTime", this));
-	endTimeSpin = new QDoubleSpinBox(this);
+	endTimeSpin = new EventFilterDoubleSpinBox(this);
 	endTimeSpin->setMinimum(-std::numeric_limits<double>::infinity());
 	endTimeSpin->setMaximum(std::numeric_limits<double>::infinity());
 	endTimeHBox->addWidget(endTimeSpin);
 	mainBox->addLayout(endTimeHBox);
 	connect(endTimeSpin,
 			SIGNAL(valueChanged(double)),
+			this,
+			SLOT(OnValueChanged()));
+			
+	isLoopedCheckBox = new QCheckBox("Loop layer");
+	mainBox->addWidget(isLoopedCheckBox);
+	connect(isLoopedCheckBox,
+			SIGNAL(stateChanged(int)),
 			this,
 			SLOT(OnValueChanged()));
 	
@@ -298,6 +314,7 @@ void EmitterLayerWidget::Init(ParticleEmitter* emitter, DAVA::ParticleLayer *lay
 	enableCheckBox->setChecked(!layer->GetDisabled());
 	additiveCheckBox->setChecked(layer->GetAdditive());
 	isLongCheckBox->setChecked(layer->IsLong());
+	isLoopedCheckBox->setChecked(layer->GetLooped());
 
 	//LAYER_SPRITE = 0,
 	sprite = layer->GetSprite();
@@ -312,7 +329,7 @@ void EmitterLayerWidget::Init(ParticleEmitter* emitter, DAVA::ParticleLayer *lay
 	RenderManager::Instance()->RestoreRenderTarget();
 	Texture* texture = renderSprite->GetTexture();
 	Image* image = texture->CreateImageFromMemory();
-	spriteLabel->setPixmap(QPixmap::fromImage(TextureConvertor::fromDavaImage(image)));
+	spriteLabel->setPixmap(QPixmap::fromImage(TextureConvertor::FromDavaImage(image)));
 	SafeRelease(image);
 	SafeRelease(renderSprite);
 
@@ -588,6 +605,7 @@ void EmitterLayerWidget::OnValueChanged()
 						 !enableCheckBox->isChecked(),
 						 additiveCheckBox->isChecked(),
 						 isLongCheckBox->isChecked(),
+						 isLoopedCheckBox->isChecked(),
 						 sprite,
 						 propLife.GetPropLine(),
 						 propLifeVariation.GetPropLine(),
@@ -616,7 +634,8 @@ void EmitterLayerWidget::OnValueChanged()
 						 (float32)pivotPointXSpinBox->value(),
 						 (float32)pivotPointYSpinBox->value());
 
-	CommandsManager::Instance()->ExecuteAndRelease(updateLayerCmd);
+	CommandsManager::Instance()->ExecuteAndRelease(updateLayerCmd,
+												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 
 	Init(this->emitter, this->layer, false);
 	emit ValueChanged();

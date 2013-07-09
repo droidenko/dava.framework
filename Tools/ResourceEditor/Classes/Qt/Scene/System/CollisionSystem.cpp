@@ -1,17 +1,39 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "Scene/System/CollisionSystem.h"
 #include "Scene/System/CollisionSystem/CollisionRenderObject.h"
 #include "Scene/System/CollisionSystem/CollisionLandscape.h"
+#include "Scene/System/CollisionSystem/CollisionParticleEmitter.h"
 #include "Scene/System/CameraSystem.h"
 #include "Scene/System/SelectionSystem.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
+
+#include "Commands2/EntityRemoveCommand.h"
+#include "Commands2/EntityMoveCommand.h"
 
 // framework
 #include "Scene3D/Components/ComponentHelpers.h"
-#include "Scene3D/Entity.h"
+#include "Scene3D/Components/TransformComponent.h"
+#include "Scene3D/Scene.h"
 
 SceneCollisionSystem::SceneCollisionSystem(DAVA::Scene * scene)
 	: DAVA::SceneSystem(scene)
 	, rayIntersectCached(false)
+	, drawMode(ST_COLL_DRAW_NOTHING)
 {
 	btVector3 worldMin(-1000,-1000,-1000);
 	btVector3 worldMax(1000,1000,1000);
@@ -113,7 +135,7 @@ const EntityGroup* SceneCollisionSystem::ObjectsRayTest(const DAVA::Vector3 &fro
 
 				if(NULL != lowestEntity)
 				{
-					rayIntersectedEntities.Add(lowestEntity, NULL, GetBoundingBox(lowestEntity));
+					rayIntersectedEntities.Add(lowestEntity, GetBoundingBox(lowestEntity));
 				}
 			}
 		}
@@ -125,7 +147,7 @@ const EntityGroup* SceneCollisionSystem::ObjectsRayTest(const DAVA::Vector3 &fro
 
 const EntityGroup* SceneCollisionSystem::ObjectsRayTestFromCamera()
 {
-	SceneCameraSystem *cameraSystem	= ((SceneEditorProxy *) GetScene())->cameraSystem;
+	SceneCameraSystem *cameraSystem	= ((SceneEditor2 *) GetScene())->cameraSystem;
 
 	DAVA::Vector3 camPos = cameraSystem->GetCameraPosition();
 	DAVA::Vector3 camDir = cameraSystem->GetPointDirection(lastMousePos);
@@ -180,7 +202,7 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const
 
 DAVA::Vector3 SceneCollisionSystem::LandRayTestFromCamera()
 {
-	SceneCameraSystem *cameraSystem	= ((SceneEditorProxy *) GetScene())->cameraSystem;
+	SceneCameraSystem *cameraSystem	= ((SceneEditor2 *) GetScene())->cameraSystem;
 
 	DAVA::Vector3 camPos = cameraSystem->GetCameraPosition();
 	DAVA::Vector3 camDir = cameraSystem->GetPointDirection(lastMousePos);
@@ -193,6 +215,15 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTestFromCamera()
 
 void SceneCollisionSystem::UpdateCollisionObject(DAVA::Entity *entity)
 {
+	if(NULL != entity)
+	{
+		// make sure that WorldTransform is up to date
+		if(NULL != entity->GetScene())
+		{
+			entity->GetScene()->transformSystem->Process();
+		}
+	}
+
 	RemoveEntity(entity);
 	AddEntity(entity);
 }
@@ -200,6 +231,7 @@ void SceneCollisionSystem::UpdateCollisionObject(DAVA::Entity *entity)
 DAVA::AABBox3 SceneCollisionSystem::GetBoundingBox(DAVA::Entity *entity)
 {
 	DAVA::AABBox3 aabox;
+
 	if(NULL != entity)
 	{
 		CollisionBaseObject* collObj = entityToCollision.value(entity, NULL);
@@ -260,14 +292,14 @@ void SceneCollisionSystem::Draw()
 	if(drawMode & ST_COLL_DRAW_OBJECTS_SELECTED)
 	{
 		// current selected entities
-		SceneSelectionSystem *selectionSystem = ((SceneEditorProxy *) GetScene())->selectionSystem;
+		SceneSelectionSystem *selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 		if(NULL != selectionSystem)
 		{
 			const EntityGroup *selectedEntities = selectionSystem->GetSelection();
 			for (size_t i = 0; i < selectedEntities->Size(); i++)
 			{
 				// get collision object for solid selected entity
-				CollisionBaseObject *cObj = entityToCollision.value(selectedEntities->GetSolidEntity(i), NULL);
+				CollisionBaseObject *cObj = entityToCollision.value(selectedEntities->GetEntity(i), NULL);
 
 				// if no collision object for solid selected entity,
 				// try to get collision object for real selected entity
@@ -276,7 +308,7 @@ void SceneCollisionSystem::Draw()
 					cObj = entityToCollision.value(selectedEntities->GetEntity(i), NULL);
 				}
 
-				if(NULL != cObj)
+				if(NULL != cObj && NULL != cObj->btObject)
 				{
 					objectsCollWorld->debugDrawObject(cObj->btObject->getWorldTransform(), cObj->btObject->getCollisionShape(), btVector3(1.0f, 0.65f, 0.0f));
 				}
@@ -285,6 +317,33 @@ void SceneCollisionSystem::Draw()
 	}
 
 	DAVA::RenderManager::Instance()->SetState(oldState);
+}
+
+void SceneCollisionSystem::PropeccCommand(const Command2 *command, bool redo)
+{
+	if(NULL != command)
+	{
+		DAVA::Entity *entity = command->GetEntity();
+		switch(command->GetId())
+		{
+		case CMDID_TRANSFORM:
+			// update bullet object
+			UpdateCollisionObject(entity);
+			break;
+		case CMDID_ENTITY_MOVE:
+			{
+				const EntityMoveCommand* moveCommand = (EntityMoveCommand*) command;
+
+				if(entityToCollision.contains(moveCommand->entity))
+				{
+					UpdateCollisionObject(moveCommand->entity);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void SceneCollisionSystem::AddEntity(DAVA::Entity * entity)
@@ -296,10 +355,10 @@ void SceneCollisionSystem::AddEntity(DAVA::Entity * entity)
 		if(NULL == cObj)
 		{
 			// build collision object for entity
-			BuildFromEntity(entity);
+			cObj = BuildFromEntity(entity);
 		}
 
-		// build collision object for entitys childs
+		// build collision object for entity childs
 		for(int i = 0; i < entity->GetChildrenCount(); ++i)
 		{
 			AddEntity(entity->GetChild(i));
@@ -322,26 +381,26 @@ void SceneCollisionSystem::RemoveEntity(DAVA::Entity * entity)
 	}
 }
 
-void SceneCollisionSystem::BuildFromEntity(DAVA::Entity * entity)
+CollisionBaseObject* SceneCollisionSystem::BuildFromEntity(DAVA::Entity * entity)
 {
 	CollisionBaseObject *collObj = NULL;
 
 	// check if this entity is landscape
 	DAVA::Landscape *landscape = DAVA::GetLandscape(entity);
+	DAVA::RenderObject *renderObject = DAVA::GetRenderObject(entity);
+	DAVA::ParticleEmitter* particleEmitter = DAVA::GetEmitter(entity);
 
 	if(NULL != landscape)
 	{
 		collObj = new CollisionLandscape(entity, landCollWorld, landscape);
 	}
-	else
+	else if(NULL != particleEmitter)
 	{
-		// check if entity has render object. if so - build bullet object
-		// from this render object
-		DAVA::RenderObject *renderObject = DAVA::GetRenerObject(entity);
-		if(NULL != renderObject && renderObject->GetType() != DAVA::RenderObject::TYPE_LANDSCAPE && entity->IsLodMain(0))
-		{
-			collObj = new CollisionRenderObject(entity, objectsCollWorld, renderObject);
-		}
+		collObj = new CollisionParticleEmitter(entity, objectsCollWorld, particleEmitter);
+	}
+	else if(NULL != renderObject && entity->IsLodMain(0))
+	{
+		collObj = new CollisionRenderObject(entity, objectsCollWorld, renderObject);
 	}
 
 	if(NULL != collObj)
@@ -349,6 +408,8 @@ void SceneCollisionSystem::BuildFromEntity(DAVA::Entity * entity)
 		entityToCollision[entity] = collObj;
 		collisionToEntity[collObj->btObject] = entity;
 	}
+
+	return collObj;
 }
 
 void SceneCollisionSystem::DestroyFromEntity(DAVA::Entity * entity)

@@ -20,17 +20,31 @@ public:
 	bool IsExtendedOutput();
 	
 	void SetArguments(int argc, char * argv[]);
-	void ClearFlags();
-	void SetFlags(const Vector<String> & flags);
-	bool	IsFlagSet(const String & s);
-    
-	uint32	GetFlagCount() { return (uint32)flags.size(); };
-	String	GetParam(int index);
-	uint32	GetParamCount() { return (uint32)params.size(); };
-	
-	static void RemoveFromPath(String & path, const String & removePart);
-	static String RealPath(String path);
+	void SetArguments(const Vector<String> & arguments);
 
+	void Clear();
+
+	bool IsFlagSet(const String & s);
+    String	GetParamForFlag(const String & flag);
+
+public:
+    
+    static const int32 INVALID_POSITION = -1;
+    
+    static int32 GetCommandsCount();
+    
+    static String GetCommand(uint32 commandPosition);
+    static String GetCommandParam(const String &command);
+    
+    static bool CommandIsFound(const String &command);
+    static bool CheckPosition(int32 commandPosition);
+    
+protected:
+    
+    static DAVA::int32 GetCommandPosition(const DAVA::String &command);
+
+    
+    
 private:
     
 	Vector<String>	params;

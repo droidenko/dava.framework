@@ -37,7 +37,7 @@
        <height>30</height>
       </size>
      </property>
-     <widget class="QDoubleSpinBox" name="doubleSpinBoxHeight">
+     <widget class="EventFilterDoubleSpinBox" name="doubleSpinBoxHeight">
       <property name="geometry">
        <rect>
         <x>118</x>
@@ -90,6 +90,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EventFilterDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header location="global">Tools/EventFilterDoubleSpinBox/EventFilterDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

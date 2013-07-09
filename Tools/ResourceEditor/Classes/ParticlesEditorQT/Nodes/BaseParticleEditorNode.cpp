@@ -1,10 +1,18 @@
-//
-//  BaseParticleEditorNode.cpp
-//  ResourceEditorQt
-//
-//  Created by Yuri Coder on 11/26/12.
-//
-//
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
 
 #include "BaseParticleEditorNode.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
@@ -44,13 +52,19 @@ void BaseParticleEditorNode::Cleanup()
 	SafeRelease(extraData);
 }
 
-void BaseParticleEditorNode::AddChildNode(BaseParticleEditorNode* childNode)
+void BaseParticleEditorNode::AddNode(BaseParticleEditorNode* childNode)
 {
     if (!childNode)
     {
         return;
     }
     
+	// The node is just changed its parent, don't physically remove it from memory.
+	if (childNode->GetParentNode())
+    {
+         childNode->GetParentNode()->RemoveNode(childNode, false);
+    }
+
 	childNode->SetParentNode(this);
     this->childNodes.push_back(childNode);
 }
@@ -62,16 +76,16 @@ ParticleEffectComponent* BaseParticleEditorNode::GetParticleEffectComponent() co
 	return effectComponent;
 }
 
-void BaseParticleEditorNode::AddChildNodeAbove(BaseParticleEditorNode* childNode, BaseParticleEditorNode* childNodeToMoveAbove)
+void BaseParticleEditorNode::InsertBeforeNode(BaseParticleEditorNode* childNode, BaseParticleEditorNode* beforeNode)
 {
-	AddChildNode(childNode);
-	if (childNodeToMoveAbove)
+	AddNode(childNode);
+	if (beforeNode)
 	{
-		MoveChildNode(childNode, childNodeToMoveAbove);
+		MoveNode(childNode, beforeNode);
 	}
 }
 
-void BaseParticleEditorNode::RemoveChildNode(BaseParticleEditorNode* childNode, bool needDeleteNode)
+void BaseParticleEditorNode::RemoveNode(BaseParticleEditorNode* childNode, bool needDeleteNode)
 {
     this->childNodes.remove(childNode);
 	
@@ -82,14 +96,14 @@ void BaseParticleEditorNode::RemoveChildNode(BaseParticleEditorNode* childNode, 
 	}
 }
 
-void BaseParticleEditorNode::MoveChildNode(BaseParticleEditorNode* childNode, BaseParticleEditorNode* childNodeToMoveAbove)
+void BaseParticleEditorNode::MoveNode(BaseParticleEditorNode* childNode, BaseParticleEditorNode* beforeNode)
 {
 	PARTICLEEDITORNODESLIST::iterator curPositionIter = std::find(this->childNodes.begin(),
 																  this->childNodes.end(),
 																  childNode);
 	PARTICLEEDITORNODESLIST::iterator newPositionIter = std::find(this->childNodes.begin(),
 																  this->childNodes.end(),
-																  childNodeToMoveAbove);
+																  beforeNode);
 
 	if (curPositionIter == this->childNodes.end() ||
 		newPositionIter == this->childNodes.end() ||
@@ -102,7 +116,7 @@ void BaseParticleEditorNode::MoveChildNode(BaseParticleEditorNode* childNode, Ba
 	childNodes.remove(childNode);
 	
 	// Re-calculate the new position iter - it might be changed during remove.
-	newPositionIter = std::find(this->childNodes.begin(), this->childNodes.end(), childNodeToMoveAbove);
+	newPositionIter = std::find(this->childNodes.begin(), this->childNodes.end(), beforeNode);
 	childNodes.insert(newPositionIter, childNode);
 }
 

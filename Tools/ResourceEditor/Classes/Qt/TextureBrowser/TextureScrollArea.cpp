@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "TextureScrollArea.h"
 
 #include <QGraphicsScene>
@@ -22,6 +38,7 @@ TextureScrollArea::TextureScrollArea(QWidget* parent /* = 0 */)
 	, textureBorder(NULL)
 	, zoomFactor(1.0)
 	, tiledBgDoDraw(false)
+	, warningVisible(false)
 {
 	// create and setup scene
 	textureScene = new QGraphicsScene();
@@ -38,16 +55,36 @@ TextureScrollArea::TextureScrollArea(QWidget* parent /* = 0 */)
 	texturePixmap = textureScene->addPixmap(QPixmap());
 	textureBorder = textureScene->addRect(0, 0, 10, 10, QPen(QColor(255, 255, 0, 255)), QBrush(Qt::NoBrush));
 
-	// add waitbar to scene
+	// add warning label
+	warningLabel = new QLabel("No image");
+	warningLabel->setAttribute(Qt::WA_NoSystemBackground, true);
+	// label color
+	QPalette palette = warningLabel->palette();
+	palette.setColor(warningLabel->foregroundRole(), Qt::gray);
+	warningLabel->setPalette(palette);
+	// label font size
+	QFont font = warningLabel->font();
+	font.setPointSize(18);
+	font.setBold(true);
+	warningLabel->setFont(font);
+	warningLabel->setAlignment(Qt::AlignCenter);
+	// add it to scene
+	warningProxy = textureScene->addWidget(warningLabel);
+	warningProxy->setGeometry(QRectF(-150, -20, 150, 20));
+	warningProxy->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
+
+	// add wait-bar to scene
 	QProgressBar *progressBar = new QProgressBar();
 	progressBar->setMinimum(0);
 	progressBar->setMaximum(0);
 	progressBar->setTextVisible(false);
 	progressBar->setAttribute(Qt::WA_NoSystemBackground, true);
+	// add to scene
 	waitBar = textureScene->addWidget(progressBar);
-	waitBar->setGeometry(QRectF(0, 0, 200, 20));
+	waitBar->setGeometry(QRectF(-120, -15, 120, 15));
+	waitBar->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
-	adjustWaitBarPos();
+	adjustWidgetsPos();
 
 	borderShow(false);
 	bgmaskShow(false);
@@ -64,7 +101,11 @@ void TextureScrollArea::setImage(const QImage &image)
 
 	applyCurrentImageToScenePixmap();
 	applyCurrentImageBorder();
-	adjustWaitBarPos();
+
+	warningVisible = currentTextureImage.isNull();
+	warningProxy->setVisible(warningVisible);
+
+	adjustWidgetsPos();
 }
 
 void TextureScrollArea::setColorChannel(int mask)
@@ -121,13 +162,16 @@ void TextureScrollArea::waitbarShow(bool show)
 {
 	if(show)
 	{
+		warningProxy->setVisible(false);
 		waitBar->show();
-		adjustWaitBarPos();
 	}
 	else
 	{
+		warningProxy->setVisible(warningVisible);
 		waitBar->hide();
 	}
+
+	adjustWidgetsPos();
 }
 
 void TextureScrollArea::setTextureZoom(const float &zoom)
@@ -141,7 +185,7 @@ void TextureScrollArea::setTextureZoom(const float &zoom)
 		scale(zoomFactor, zoomFactor);
 		emit textureZoomChanged(zoomFactor);
 
-		adjustWaitBarPos();
+		adjustWidgetsPos();
 	}
 }
 
@@ -270,17 +314,26 @@ void TextureScrollArea::applyCurrentImageBorder()
 	textureScene->setSceneRect(r);
 }
 
-void TextureScrollArea::adjustWaitBarPos()
+void TextureScrollArea::adjustWidgetsPos()
 {
 	// apply to waitBar inverted transform - so it will be always same size
-	waitBar->setTransform(transform().inverted());
+	// waitBar->setTransform(transform().inverted());
 
 	// calculate new waitBar pos
-	QRectF wbRect = waitBar->sceneBoundingRect();
+	qreal scaleX = transform().m11();
+	qreal scaleY = transform().m22();
+	QRectF rect = waitBar->sceneBoundingRect();
 	QPointF viewCenter = mapToScene(width() / 2.0, height() / 2.0);
-	qreal x = viewCenter.x() - wbRect.width() / 2.0;
-	qreal y = viewCenter.x() - wbRect.height() / 2.0;
+	qreal x = viewCenter.x() - rect.width() / 2.0 / scaleX;
+	qreal y = viewCenter.x() - rect.height() / 2.0 / scaleY;
 	waitBar->setPos(x, y);
+
+	// calculate new warning pos
+	rect = warningProxy->sceneBoundingRect();
+	viewCenter = mapToScene(width() / 2.0, height() / 2.0);
+	x = viewCenter.x() - rect.width() / 2.0 / scaleX;
+	y = viewCenter.x() - rect.height() / 2.0 / scaleY;
+	warningProxy->setPos(x, y);
 }
 
 void TextureScrollArea::drawBackground(QPainter * painter, const QRectF & rect)

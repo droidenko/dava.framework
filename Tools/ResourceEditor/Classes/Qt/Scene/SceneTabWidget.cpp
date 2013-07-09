@@ -1,7 +1,23 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "SceneEditor/SceneEditorScreenMain.h"
 
 #include "Scene/SceneTabWidget.h"
-#include "Scene/SceneEditorProxy.h"
+#include "Scene/SceneEditor2.h"
 #include "AppScreens.h"
 
 #include <QVBoxLayout>
@@ -12,14 +28,14 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	: QWidget(parent)
 	, davaUIScreenID(SCREEN_MAIN)
 	, oldScreenID(SCREEN_MAIN_OLD)
-	, dava3DViewMargin(10)
+	, dava3DViewMargin(3)
 	, newSceneCounter(0)
 	, curScene(NULL)
 	, curModifAxis(ST_AXIS_X)
 	, curModifMode(ST_MODIF_MOVE)
 	, curPivotPoint(ST_PIVOT_COMMON_CENTER)
 	, curSelDrawMode(ST_SELDRAW_DRAW_CORNERS | ST_SELDRAW_FILL_SHAPE)
-	, curColDrawMode(ST_COLL_DRAW_LAND_COLLISION)
+	, curColDrawMode(ST_COLL_DRAW_NOTHING)
 {
 	this->setMouseTracking(true);
 
@@ -40,7 +56,8 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->addWidget(tabBar);
 	layout->addWidget(davaWidget);
-	layout->setMargin(1);
+	layout->setMargin(0);
+	layout->setSpacing(1);
 	setLayout(layout);
 
 	// create DAVA UI
@@ -52,13 +69,14 @@ SceneTabWidget::SceneTabWidget(QWidget *parent)
 	/**/ SetTabScene(oldTabIndex, NULL);
 	// <--
 
-	//OpenTab("/Projects/dava.wot.art/DataSource/3d/Tanks/USSR/T-44.sc2");
+//	OpenTab("/Users/a_makovii/Documents/work/temp/39/mountain/mountain_switch.sc2");
+	OpenTab("/Users/a_makovii/Documents/work/temp/desertTrain/desert_train/desert_train.sc2");
 	//OpenTab("/Projects/dava.wot.art/DataSource/3d/Maps/dike_village/dike_village.sc2");
 	//AddTab("/Projects/dava.wot.art/DataSource/3d/Maps/desert_train/desert_train.sc2");
 
 	QObject::connect(tabBar, SIGNAL(currentChanged(int)), this, SLOT(TabBarCurrentChanged(int)));
 	QObject::connect(tabBar, SIGNAL(tabCloseRequested(int)), this, SLOT(TabBarCloseRequest(int)));
-	QObject::connect(SceneSignals::Instance(), SIGNAL(MouseOverSelection(SceneEditorProxy*, const EntityGroup*)), this, SLOT(MouseOverSelectedEntities(SceneEditorProxy*, const EntityGroup*)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(MouseOverSelection(SceneEditor2*, const EntityGroup*)), this, SLOT(MouseOverSelectedEntities(SceneEditor2*, const EntityGroup*)));
 
 	SetCurrentTab(oldTabIndex);
 }
@@ -84,7 +102,7 @@ void SceneTabWidget::ReleaseOldUI()
 void SceneTabWidget::InitDAVAUI()
 {
 	dava3DView = new DAVAUI3DView(this, DAVA::Rect(dava3DViewMargin, dava3DViewMargin, 0, 0));
-	dava3DView->SetDebugDraw(true);
+	//dava3DView->SetDebugDraw(true);
 
 	davaUIScreen = new DAVA::UIScreen();
 	davaUIScreen->AddControl(dava3DView);
@@ -101,7 +119,7 @@ void SceneTabWidget::ReleaseDAVAUI()
 
 int SceneTabWidget::OpenTab()
 {
-	SceneEditorProxy *scene = new SceneEditorProxy();
+	SceneEditor2 *scene = new SceneEditor2();
 
 	int tabIndex = tabBar->addTab("NewScene" + QString::number(++newSceneCounter));
 	SetTabScene(tabIndex, scene);
@@ -112,7 +130,7 @@ int SceneTabWidget::OpenTab()
 int SceneTabWidget::OpenTab(const DAVA::FilePath &scenePapth)
 {
 	int tabIndex = -1;
-	SceneEditorProxy *scene = new SceneEditorProxy();
+	SceneEditor2 *scene = new SceneEditor2();
 
 	if(scene->Load(scenePapth))
 	{
@@ -142,7 +160,7 @@ int SceneTabWidget::OpenTab(const DAVA::FilePath &scenePapth)
 void SceneTabWidget::CloseTab(int index)
 {
 	bool doCloseScene = false;
-	SceneEditorProxy *scene = GetTabScene(index);
+	SceneEditor2 *scene = GetTabScene(index);
 
 	if(NULL != scene)
 	{
@@ -197,7 +215,7 @@ void SceneTabWidget::SetCurrentTab(int index)
 {
 	if(index >= 0 && index < tabBar->count())
 	{
-		SceneEditorProxy *oldScene = curScene;
+		SceneEditor2 *oldScene = curScene;
 		curScene = GetTabScene(index);
 
 		if(NULL != oldScene)
@@ -229,19 +247,19 @@ void SceneTabWidget::SetCurrentTab(int index)
 	}
 }
 
-SceneEditorProxy* SceneTabWidget::GetTabScene(int index) const
+SceneEditor2* SceneTabWidget::GetTabScene(int index) const
 {
-	SceneEditorProxy *ret = NULL;
+	SceneEditor2 *ret = NULL;
 
 	if(index > 0 && index < tabBar->count())
 	{
-		ret = tabBar->tabData(index).value<SceneEditorProxy *>();
+		ret = tabBar->tabData(index).value<SceneEditor2 *>();
 	}
 
 	return ret;
 }
 
-void SceneTabWidget::SetTabScene(int index, SceneEditorProxy* scene)
+void SceneTabWidget::SetTabScene(int index, SceneEditor2* scene)
 {
 	if(index > 0 && index < tabBar->count())
 	{
@@ -253,7 +271,7 @@ void SceneTabWidget::ProcessDAVAUIEvent(DAVA::UIEvent *event)
 {
 	if(!oldInput)
 	{
-		SceneEditorProxy* scene = GetTabScene(tabBar->currentIndex());
+		SceneEditor2* scene = GetTabScene(tabBar->currentIndex());
 		if(NULL != scene)
 		{
 			scene->PostUIEvent(event);
@@ -271,7 +289,7 @@ void SceneTabWidget::TabBarCloseRequest(int index)
 	CloseTab(index);
 }
 
-void SceneTabWidget::MouseOverSelectedEntities(SceneEditorProxy* scene, const EntityGroup *entities)
+void SceneTabWidget::MouseOverSelectedEntities(SceneEditor2* scene, const EntityGroup *entities)
 {
 	if(NULL != entities)
 	{
@@ -308,7 +326,7 @@ void SceneTabWidget::resizeEvent(QResizeEvent * event)
 		dava3DView->SetSize(DAVA::Vector2(s.width() - 2 * dava3DViewMargin, s.height() - 2 * dava3DViewMargin));
 		sceneEditorScreenMain->SetSize(DAVA::Vector2(s.width(), s.height()));
 
-		SceneEditorProxy* scene = GetTabScene(tabBar->currentIndex());
+		SceneEditor2* scene = GetTabScene(tabBar->currentIndex());
 		if(NULL != scene)
 		{
 			scene->SetViewportRect(dava3DView->GetRect());
@@ -329,7 +347,7 @@ void SceneTabWidget::SetModifMode(ST_ModifMode mode)
 
 		for(int i = 0; i < tabBar->count(); ++i)
 		{
-			SceneEditorProxy *scene = GetTabScene(i);
+			SceneEditor2 *scene = GetTabScene(i);
 			if(NULL != scene)
 			{
 				scene->modifSystem->SetModifMode(curModifMode);
@@ -351,7 +369,7 @@ void SceneTabWidget::SetPivotPoint(ST_PivotPoint pivotpoint)
 
 		for(int i = 0; i < tabBar->count(); ++i)
 		{
-			SceneEditorProxy *scene = GetTabScene(i);
+			SceneEditor2 *scene = GetTabScene(i);
 			if(NULL != scene)
 			{
 				scene->selectionSystem->SetPivotPoint(curPivotPoint);
@@ -373,7 +391,7 @@ void SceneTabWidget::SetModifAxis(ST_Axis axis)
 
 		for(int i = 0; i < tabBar->count(); ++i)
 		{
-			SceneEditorProxy *scene = GetTabScene(i);
+			SceneEditor2 *scene = GetTabScene(i);
 			if(NULL != scene)
 			{
 				scene->modifSystem->SetModifAxis(curModifAxis);
@@ -395,7 +413,7 @@ void SceneTabWidget::SetSelectionDrawMode(int mode)
 
 		for(int i = 0; i < tabBar->count(); ++i)
 		{
-			SceneEditorProxy *scene = GetTabScene(i);
+			SceneEditor2 *scene = GetTabScene(i);
 			if(NULL != scene)
 			{
 				scene->selectionSystem->SetDrawMode(curSelDrawMode);
@@ -417,11 +435,16 @@ void SceneTabWidget::SetCollisionDrawMode(int mode)
 
 		for(int i = 0; i < tabBar->count(); ++i)
 		{
-			SceneEditorProxy *scene = GetTabScene(i);
+			SceneEditor2 *scene = GetTabScene(i);
 			if(NULL != scene)
 			{
 				scene->collisionSystem->SetDrawMode(curColDrawMode);
 			}
 		}
 	}
+}
+
+SceneEditor2* SceneTabWidget::GetCurrentScene() const
+{
+	return GetTabScene(GetCurrentTab());
 }

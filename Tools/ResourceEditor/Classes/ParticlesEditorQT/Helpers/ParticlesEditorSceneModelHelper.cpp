@@ -1,10 +1,18 @@
-//
-//  ParticlesEditorSceneModelHelper.cpp
-//  ResourceEditorQt
-//
-//  Created by Yuri Coder on 11/26/12.
-//
-//
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
 
 #include "ParticlesEditorSceneModelHelper.h"
 #include "DockParticleEditor/ParticlesEditorController.h"
@@ -16,6 +24,10 @@
 
 #include "Entity/Component.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
+
+#include "../StringConstants.h"
+
+#include "../../Qt/Scene/SceneDataManager.h"
 
 using namespace DAVA;
 
@@ -131,7 +143,7 @@ Entity* ParticlesEditorSceneModelHelper::PreprocessSceneNode(Entity* rawNode)
         ParticlesEditorController::Instance()->RegisterParticleEffectNode(newParentNodeParticleEffect);
         EmitterParticleEditorNode* emitterEditorNode = new EmitterParticleEditorNode(newParentNodeParticleEffect,
             rawNode, QString::fromStdString(rawNode->GetName()));
-        effectEditorNode->AddChildNode(emitterEditorNode);
+        effectEditorNode->AddNode(emitterEditorNode);
 
         return newParentNodeParticleEffect;
     }
@@ -143,7 +155,7 @@ Entity* ParticlesEditorSceneModelHelper::PreprocessSceneNode(Entity* rawNode)
 Entity* ParticlesEditorSceneModelHelper::CreateParticleEffectNode()
 {
 	Entity * newParentNodeParticleEffect = new Entity();
-	newParentNodeParticleEffect->SetName("Particle Effect");
+	newParentNodeParticleEffect->SetName(ResourceEditor::PARTICLE_EFFECT_NODE_NAME);
 	ParticleEffectComponent * newEffectComponent = new ParticleEffectComponent();
 	newParentNodeParticleEffect->AddComponent(newEffectComponent);
 
@@ -163,7 +175,7 @@ bool ParticlesEditorSceneModelHelper::AddNodeToSceneGraph(SceneGraphItem *graphI
     if (!effectEditorNode)
     {
         // Possible while loading projects - register the node in this case.
-        effectEditorNode = ParticlesEditorController::Instance()->RegisterParticleEffectNode(node);
+        effectEditorNode = ParticlesEditorController::Instance()->RegisterParticleEffectNode(node, false);
     }
     
     if (graphItem->GetExtraUserData() == NULL)
@@ -272,7 +284,7 @@ void ParticlesEditorSceneModelHelper::SynchronizeEmitterParticleEditorNode(Emitt
         {
             // Create the new node and add it to the tree.
             LayerParticleEditorNode* layerNode = new LayerParticleEditorNode(node, emitter->GetLayers()[i]);
-            node->AddChildNode(layerNode);
+            node->AddNode(layerNode);
         }
      }
 }
@@ -309,7 +321,7 @@ void ParticlesEditorSceneModelHelper::SynchronizeLayerParticleEditorNode(LayerPa
         for (int32 i = 0; i < forcesCountInLayer; i ++)
         {
             ForceParticleEditorNode* forceNode = new ForceParticleEditorNode(node, i);
-            node->AddChildNode(forceNode);
+            node->AddNode(forceNode);
         }
 
         node->UpdateForcesIndices();
@@ -344,7 +356,7 @@ void ParticlesEditorSceneModelHelper::SynchronizeInnerEmitterNode(LayerParticleE
 		// Need to add it.
 		InnerEmitterParticleEditorNode* innerEmitterEditorNode = new InnerEmitterParticleEditorNode(node);
 		
-		node->AddChildNode(innerEmitterEditorNode);
+		node->AddNode(innerEmitterEditorNode);
 
 		// Also update the Scene Graph, if requested.
 		if (layerNodeItem && sceneGraphModel)
@@ -404,7 +416,7 @@ void ParticlesEditorSceneModelHelper::SynchronizeInnerEmitterNode(LayerParticleE
 		for (BaseParticleEditorNode::PARTICLEEDITORNODESLIST::iterator removeIter = nodesToRemove.begin();
 			 removeIter != nodesToRemove.end(); removeIter ++)
 		{
-			node->RemoveChildNode(*removeIter);
+			node->RemoveNode(*removeIter);
 		}
 	}
 }
@@ -741,7 +753,8 @@ void ParticlesEditorSceneModelHelper::SetCheckableStateForGraphItem(GraphItem* g
 	}
 	
 	// Execute the appropriate command.
-	CommandsManager::Instance()->ExecuteAndRelease(new CommandUpdateParticleLayerEnabled(layerEditorNode->GetLayer(), value));
+	CommandsManager::Instance()->ExecuteAndRelease(new CommandUpdateParticleLayerEnabled(layerEditorNode->GetLayer(), value),
+												   SceneDataManager::Instance()->SceneGetActive()->GetScene());
 }
 
 LayerParticleEditorNode* ParticlesEditorSceneModelHelper::GetLayerEditorNodeByGraphItem(GraphItem* graphItem) const
@@ -812,7 +825,7 @@ void ParticlesEditorSceneModelHelper::AddNewNodesToSceneGraph(EffectParticleEdit
 		
 		EmitterParticleEditorNode* emitterEditorNode = new EmitterParticleEditorNode(effectRootNode, effectRootNode->GetChild(i),
 																					 QString::fromStdString(effectRootNode->GetChild(i)->GetName()));
-		node->AddChildNode(emitterEditorNode);
+		node->AddNode(emitterEditorNode);
 	}
 }
 

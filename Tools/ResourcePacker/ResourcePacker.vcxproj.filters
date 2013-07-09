@@ -11,9 +11,6 @@
     <Filter Include="Sources\Tools">
       <UniqueIdentifier>{a75a4ea3-2807-4598-b0a4-3a40df7ad53b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Tools\CommandLine">
-      <UniqueIdentifier>{f788cba7-cc2f-4f98-9f32-30f947fc0204}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Tools\TextureCompression">
       <UniqueIdentifier>{e7ef96ce-b945-4ecc-a943-24a11707639b}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </ClCompile>
     <ClCompile Include="Win32Specific\stdafx.cpp">
       <Filter>Win32 Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Sources\Tools\CommandLine\EditorCommandLineParser.cpp">
-      <Filter>Sources\Tools\CommandLine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Sources\Tools\TextureCompression\DXTConverter.cpp">
       <Filter>Sources\Tools\TextureCompression</Filter>
@@ -65,9 +59,6 @@
   <ItemGroup>
     <ClInclude Include="Win32Specific\stdafx.h">
       <Filter>Win32 Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Sources\Tools\CommandLine\EditorCommandLineParser.h">
-      <Filter>Sources\Tools\CommandLine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Sources\Tools\TextureCompression\DXTConverter.h">
       <Filter>Sources\Tools\TextureCompression</Filter>

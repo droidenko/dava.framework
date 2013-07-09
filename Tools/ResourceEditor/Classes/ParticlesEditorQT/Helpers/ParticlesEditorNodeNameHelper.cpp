@@ -15,8 +15,9 @@
 =====================================================================================*/
 
 #include "ParticlesEditorNodeNameHelper.h"
+#include "../StringConstants.h"
 
-using namespace DAVA;
+namespace DAVA {
 
 String  ParticlesEditorNodeNameHelper::GetBaseName(const String& name)
 {
@@ -41,7 +42,7 @@ String  ParticlesEditorNodeNameHelper::GetBaseName(const String& name)
 String ParticlesEditorNodeNameHelper::GetNewNodeName(const String &name, Entity *parentNode)
 {
 	// Don't change name for "root" nodes
-    if(String::npos !=  name.find(String("editor.")))
+    if(String::npos !=  name.find(ResourceEditor::EDITOR_BASE))
 		return name;
 		
 	// Keep unique node name
@@ -95,7 +96,7 @@ String ParticlesEditorNodeNameHelper::GetNewLayerName(const String& name, Partic
 	int i = 0;
 	while (true)
 	{
-		String newName = String(Format("%s%i", String("Layer").c_str(), ++i));
+		String newName = String(Format("%s%i", ResourceEditor::LAYER_NODE_NAME.c_str(), ++i));
 		
 		if (!IsLayerNameExist(newName, emitter))
 			return newName;
@@ -122,3 +123,5 @@ bool ParticlesEditorNodeNameHelper::IsLayerNameExist(const String &name, Particl
 	
 	return false;
 }
+
+};

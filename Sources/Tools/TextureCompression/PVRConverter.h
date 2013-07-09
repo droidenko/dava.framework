@@ -17,13 +17,13 @@ public:
 	PVRConverter();
 	virtual ~PVRConverter();
 
-	FilePath ConvertPngToPvr(const FilePath & fileToConvert, const TextureDescriptor &descriptor);
+	FilePath ConvertPngToPvr(const TextureDescriptor &descriptor, eGPUFamily gpuFamily);
 
-	String GetCommandLinePVR(const FilePath & fileToConvert, const TextureDescriptor &descriptor);
+	String GetCommandLinePVR(const TextureDescriptor &descriptor, eGPUFamily gpuFamily);
 
 	void SetPVRTexTool(const FilePath &textToolPathname);
 
-	FilePath GetPVRToolOutput(const FilePath &inputPVR);
+	FilePath GetPVRToolOutput(const TextureDescriptor &descriptor, eGPUFamily gpuFamily);
 
 protected:
 	

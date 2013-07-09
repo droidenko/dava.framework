@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "TextureListDelegate.h"
 #include "TextureListModel.h"
 #include "TextureCache.h"
@@ -23,7 +39,7 @@ TextureListDelegate::TextureListDelegate(QObject *parent /* = 0 */)
 	, nameFontMetrics(nameFont)
 	, drawRule(DRAW_PREVIEW_BIG)
 {
-	QObject::connect(TextureConvertor::Instance(), SIGNAL(readyOriginal(const DAVA::TextureDescriptor *, const QImage &)), this, SLOT(textureReadyOriginal(const DAVA::TextureDescriptor *, const QImage &)));
+	QObject::connect(TextureConvertor::Instance(), SIGNAL(ReadyOriginal(const DAVA::TextureDescriptor *, const QImage &)), this, SLOT(textureReadyOriginal(const DAVA::TextureDescriptor *, const QImage &)));
 };
 
 void TextureListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -126,7 +142,7 @@ void TextureListDelegate::drawPreviewBig(QPainter *painter, const QStyleOptionVi
 		{
 			// there is no image for this texture in cache
 			// so load it async
-			TextureConvertor::Instance()->loadOriginal(curTextureDescriptor);
+			TextureConvertor::Instance()->GetOriginal(curTextureDescriptor);
 			descriptorIndexes.insert(curTextureDescriptor, index);
 		}
 
@@ -156,16 +172,16 @@ void TextureListDelegate::drawPreviewBig(QPainter *painter, const QStyleOptionVi
 			infoText += "\nData size: ";
 			infoText += textureDataSize.toString();
 
-			if(curTextureDescriptor->pvrCompression.format != DAVA::FORMAT_INVALID)
+			if(curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
 			{
 				infoText += "\nPVR: ";
-				infoText += QString(DAVA::Texture::GetPixelFormatString(curTextureDescriptor->pvrCompression.format));
+				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format));
 			}
 
-			if(curTextureDescriptor->dxtCompression.format != DAVA::FORMAT_INVALID)
+			if(curTextureDescriptor->compression[DAVA::GPU_TEGRA].format != DAVA::FORMAT_INVALID)
 			{
 				infoText += "\nDXT: ";
-				infoText += QString(DAVA::Texture::GetPixelFormatString(curTextureDescriptor->dxtCompression.format));
+				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_TEGRA].format));
 			}
 
 			painter->drawText(textRect, infoText);
@@ -251,7 +267,7 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 		rect.setX(rect.x() + rect.width() - FORMAT_INFO_WIDTH);
 		rect.setWidth(FORMAT_INFO_WIDTH);
 
-		if(descriptor->pvrCompression.format != DAVA::FORMAT_INVALID)
+		if(descriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
 		{
 			painter->setPen(FORMAT_PVR_COLOR);
 			painter->setBrush(QBrush(FORMAT_PVR_COLOR));
@@ -260,7 +276,7 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
 		}
 
-		if(descriptor->dxtCompression.format != DAVA::FORMAT_INVALID)
+		if(descriptor->compression[DAVA::GPU_TEGRA].format != DAVA::FORMAT_INVALID)
 		{
 			painter->setPen(FORMAT_DXT_COLOR);
 			painter->setBrush(QBrush(FORMAT_DXT_COLOR));
@@ -269,7 +285,7 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
 		}
 
-		if((descriptor->pvrCompression.format == DAVA::FORMAT_PVR4 || descriptor->pvrCompression.format == DAVA::FORMAT_PVR2) &&
+		if((descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR4 || descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR2) &&
 			texture->width != texture->height)
 		{
 			QRect r = rect;

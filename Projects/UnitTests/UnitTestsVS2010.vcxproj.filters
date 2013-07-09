@@ -29,6 +29,7 @@
     <ClCompile Include="Classes\FilePathTest.cpp" />
     <ClCompile Include="Classes\FileSystemTest.cpp" />
     <ClCompile Include="Classes\UIListTest.cpp" />
+    <ClCompile Include="Classes\FormatsTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\BaseScreen.h" />
@@ -59,5 +60,6 @@
     <ClInclude Include="Classes\FilePathTest.h" />
     <ClInclude Include="Classes\FileSystemTest.h" />
     <ClInclude Include="Classes\UIListTest.h" />
+    <ClInclude Include="Classes\FormatsTest.h" />
   </ItemGroup>
 </Project>

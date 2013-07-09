@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "SceneExporter.h"
 #include "SceneEditor/SceneValidator.h"
 
@@ -7,17 +23,19 @@
 #include "Render/TextureDescriptor.h"
 #include "Qt/Scene/SceneDataManager.h"
 
+#include "Render/GPUFamilyDescriptor.h"
+
+#include "../StringConstants.h"
 
 using namespace DAVA;
 
 SceneExporter::SceneExporter()
 {
-    SetExportingFormat(String("png"));
+    exportForGPU = GPU_UNKNOWN;
 }
 
 SceneExporter::~SceneExporter()
 {
-    ReleaseTextures();
 }
 
 
@@ -44,28 +62,16 @@ void SceneExporter::SetOutFolder(const FilePath &folderPathname)
     sceneUtils.SetOutFolder(folderPathname);
 }
 
-void SceneExporter::SetExportingFormat(const String &newFormat)
+void SceneExporter::SetGPUForExporting(const String &newGPU)
 {
-    String format = newFormat;
-    if(!format.empty() && format.at(0) != '.')
-    {
-        format = "." + format;
-    }
-    
-    exportFormat = NOT_FILE;
-    if(0 == CompareCaseInsensitive(format, ".png"))
-    {
-        exportFormat = PNG_FILE;
-    }
-    else if(0 == CompareCaseInsensitive(format, ".pvr"))
-    {
-        exportFormat = PVR_FILE;
-    }
-    else if(0 == CompareCaseInsensitive(format, ".dds"))
-    {
-        exportFormat = DXT_FILE;
-    }
+    SetGPUForExporting(GPUFamilyDescriptor::GetGPUByName(newGPU));
 }
+
+void SceneExporter::SetGPUForExporting(const eGPUFamily newGPU)
+{
+    exportForGPU = newGPU;
+}
+
 
 void SceneExporter::ExportFile(const String &fileName, Set<String> &errorLog)
 {
@@ -102,8 +108,6 @@ void SceneExporter::ExportFile(const String &fileName, Set<String> &errorLog)
 
 void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<String> &errorLog)
 {
-    DVASSERT(0 == texturesForExport.size())
-    
     //Create destination folder
     String relativeFilename = fileName.GetRelativePathname(sceneUtils.dataSourceFolder);
     sceneUtils.workingFolder = fileName.GetDirectory().GetRelativePathname(sceneUtils.dataSourceFolder);
@@ -118,14 +122,10 @@ void SceneExporter::ExportScene(Scene *scene, const FilePath &fileName, Set<Stri
     SceneValidator::Instance()->ValidateScene(scene, errorLog);
 	//SceneValidator::Instance()->ValidateScales(scene, errorLog);
 
-    texturesForExport.clear();
-    SceneDataManager::EnumerateTextures(scene, texturesForExport);
+    ExportDescriptors(scene, errorLog);
 
-    ExportTextures(scene, errorLog);
     ExportLandscape(scene, errorLog);
-    
-    ReleaseTextures();
-    
+
     //save scene to new place
     FilePath tempSceneName = FilePath::CreateWithNewExtension(sceneUtils.dataSourceFolder + relativeFilename, ".exported.sc2");
     
@@ -156,7 +156,7 @@ void SceneExporter::RemoveEditorNodes(DAVA::Entity *rootNode)
     for (Vector<Entity *>::reverse_iterator it = scenenodes.rbegin(); it != endItDeletion; ++it)
     {
         Entity * node = *it;
-		String::size_type pos = node->GetName().find(String("editor."));
+		String::size_type pos = node->GetName().find(ResourceEditor::EDITOR_BASE);
         if(String::npos != pos)
         {
             node->GetParent()->RemoveNode(node);
@@ -183,22 +183,72 @@ void SceneExporter::RemoveEditorNodes(DAVA::Entity *rootNode)
     }
 }
 
-
-
-void SceneExporter::ExportTextures(DAVA::Scene *scene, Set<String> &errorLog)
+void SceneExporter::ExportDescriptors(DAVA::Scene *scene, Set<String> &errorLog)
 {
-    Map<String, Texture *>::const_iterator endIt = texturesForExport.end();
-    Map<String, Texture *>::iterator it = texturesForExport.begin();
+    Set<FilePath> descriptorsForExport;
+    SceneDataManager::EnumerateDescriptors(scene, descriptorsForExport);
+
+    Set<FilePath>::const_iterator endIt = descriptorsForExport.end();
+    Set<FilePath>::iterator it = descriptorsForExport.begin();
     for(; it != endIt; ++it)
     {
-        ExportTexture( it->first, errorLog);
+        ExportTextureDescriptor(*it, errorLog);
     }
+    
+    descriptorsForExport.clear();
 }
 
-void SceneExporter::ReleaseTextures()
+
+bool SceneExporter::ExportTextureDescriptor(const FilePath &pathname, Set<String> &errorLog)
 {
-    texturesForExport.clear();
+    TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(pathname);
+    if(!descriptor)
+    {
+        errorLog.insert(Format("Can't create descriptor for pathname %s", pathname.GetAbsolutePathname().c_str()));
+        return false;
+    }
+    
+    descriptor->exportedAsGpuFamily = exportForGPU;
+    descriptor->exportedAsPixelFormat = descriptor->GetPixelFormatForCompression(exportForGPU);
+
+    if((descriptor->exportedAsGpuFamily != GPU_UNKNOWN) && (descriptor->exportedAsPixelFormat == FORMAT_INVALID))
+    {
+        errorLog.insert(Format("Not selected export format for pathname %s", pathname.GetAbsolutePathname().c_str()));
+        
+        SafeRelease(descriptor);
+        return false;
+    }
+    
+    
+    String workingPathname = sceneUtils.RemoveFolderFromPath(descriptor->pathname, sceneUtils.dataSourceFolder);
+    sceneUtils.PrepareFolderForCopyFile(workingPathname, errorLog);
+
+    bool isExported = ExportTexture(descriptor, errorLog);
+    if(isExported)
+    {
+        descriptor->Export(sceneUtils.dataFolder + workingPathname);
+    }
+    
+    SafeRelease(descriptor);
+    
+    return isExported;
 }
+
+bool SceneExporter::ExportTexture(const TextureDescriptor * descriptor, Set<String> &errorLog)
+{
+    CompressTextureIfNeed(descriptor, errorLog);
+    
+    if(descriptor->exportedAsGpuFamily == GPU_UNKNOWN)
+    {
+        FilePath sourceTexturePathname =  FilePath::CreateWithNewExtension(descriptor->pathname, ".png");
+        return sceneUtils.CopyFile(sourceTexturePathname, errorLog);
+    }
+
+    FilePath compressedTexureName = GPUFamilyDescriptor::CreatePathnameForGPU(descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
+    return sceneUtils.CopyFile(compressedTexureName, errorLog);
+}
+
+
 
 void SceneExporter::ExportFolder(const String &folderName, Set<String> &errorLog)
 {
@@ -281,10 +331,6 @@ void SceneExporter::ExportLandscapeFullTiledTexture(Landscape *landscape, Set<St
             SafeRelease(image);
             
             TextureDescriptor *descriptor = new TextureDescriptor();
-            if(exportFormat == PVR_FILE)
-            {
-                descriptor->pvrCompression.format = FORMAT_PVR4;
-            }
             
             FilePath descriptorPathnameInData = TextureDescriptor::GetDescriptorPathname(sceneUtils.dataFolder + workingPathname);
             descriptor->Save(descriptorPathnameInData);
@@ -316,95 +362,43 @@ void SceneExporter::ExportLandscapeFullTiledTexture(Landscape *landscape, Set<St
 }
 
 
-bool SceneExporter::ExportTexture(const FilePath &texturePathname, Set<String> &errorLog)
-{
-    bool wasDescriptorExported = ExportTextureDescriptor(texturePathname, errorLog);
-    if(!wasDescriptorExported)
-        return false;
-    
-    CompressTextureIfNeed(texturePathname, errorLog);
-    
-    return sceneUtils.CopyFile(TextureDescriptor::GetPathnameForFormat(texturePathname, exportFormat), errorLog);;
-}
 
-bool SceneExporter::ExportTextureDescriptor(const FilePath &texturePathname, Set<String> &errorLog)
+void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, Set<String> &errorLog)
 {
-    TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(texturePathname);
-    if(!descriptor)
-    {
-        errorLog.insert(Format("Can't create descriptor for pathname %s", texturePathname.GetAbsolutePathname().c_str()));
-        return false;
-    }
+    if(descriptor->exportedAsGpuFamily == GPU_UNKNOWN)
+        return;
+    
+    
+    FilePath compressedTexureName = GPUFamilyDescriptor::CreatePathnameForGPU(descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
+    FilePath sourceTexturePathname =  FilePath::CreateWithNewExtension(descriptor->pathname, ".png");
 
-    if(     (exportFormat == PVR_FILE && descriptor->pvrCompression.format == FORMAT_INVALID)
-       ||   (exportFormat == DXT_FILE && descriptor->dxtCompression.format == FORMAT_INVALID))
+    bool fileExcists = FileSystem::Instance()->IsFile(compressedTexureName);
+    bool needToConvert = SceneValidator::IsTextureChanged(descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
+    
+    if(needToConvert || !fileExcists)
     {
-        errorLog.insert(Format("Not selected export format for pathname %s", texturePathname.GetAbsolutePathname().c_str()));
+        //TODO: convert to pvr/dxt
+        //TODO: do we need to convert to pvr if needToConvert is false, but *.pvr file isn't at filesystem
         
-        SafeRelease(descriptor);
-        return false;
-    }
-    
-    descriptor->textureFileFormat = exportFormat;
-    
-    String workingPathname = sceneUtils.RemoveFolderFromPath(descriptor->pathname, sceneUtils.dataSourceFolder);
-    sceneUtils.PrepareFolderForCopyFile(workingPathname, errorLog);
-
-#if defined TEXTURE_SPLICING_ENABLED
-    descriptor->ExportAndSlice(sceneUtils.dataFolder + workingPathname, GetExportedTextureName(texturePathname));
-#else //#if defined TEXTURE_SPLICING_ENABLED
-    descriptor->Export(sceneUtils.dataFolder + workingPathname);
-#endif //#if defined TEXTURE_SPLICING_ENABLED
-
-    SafeRelease(descriptor);
-    
-    return true;
-}
-
-
-void SceneExporter::CompressTextureIfNeed(const FilePath &texturePathname, Set<String> &errorLog)
-{
-    String modificationDate = File::GetModificationDate(TextureDescriptor::GetPathnameForFormat(texturePathname, exportFormat));
-    
-    FilePath sourceTexturePathname(texturePathname);
-    sourceTexturePathname.ReplaceExtension(".png");
-    
-    if(PNG_FILE != exportFormat)
-    {
-        bool needToConvert = SceneValidator::IsTextureChanged(sourceTexturePathname, exportFormat);
-        if(needToConvert || modificationDate.empty())
+        const String & extension = GPUFamilyDescriptor::GetCompressedFileExtension((eGPUFamily)descriptor->exportedAsGpuFamily, (PixelFormat)descriptor->exportedAsPixelFormat);
+        
+        if(extension == ".pvr")
         {
-            //TODO: convert to pvr/dxt
-            //TODO: do we need to convert to pvr if needToConvert is false, but *.pvr file isn't at filesystem
-            
-            TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(texturePathname);
-			if(descriptor)
-			{
-				if(exportFormat == PVR_FILE)
-				{
-					PVRConverter::Instance()->ConvertPngToPvr(sourceTexturePathname, *descriptor);
-					bool wasUpdated = descriptor->UpdateCrcForFormat(PVR_FILE);
-                    if(wasUpdated)
-                    {
-                        descriptor->Save();
-                    }
-				}
-				else if(exportFormat == DXT_FILE)
-				{
-					DXTConverter::ConvertPngToDxt(sourceTexturePathname, *descriptor);
-					bool wasUpdated = descriptor->UpdateCrcForFormat(DXT_FILE);
-                    if(wasUpdated)
-                    {
-                        descriptor->Save();
-                    }
-				}
-
-				SafeRelease(descriptor);
-			}
-			else
-			{
-				errorLog.insert(String(Format("Can't load descriptor from path: %s", texturePathname.GetAbsolutePathname().c_str())));
-			}
+            PVRConverter::Instance()->ConvertPngToPvr(*descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
+        }
+        else if(extension == ".dds")
+        {
+            DXTConverter::ConvertPngToDxt(*descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
+        }
+        else
+        {
+            DVASSERT(false);
+        }
+        
+        bool wasUpdated = descriptor->UpdateCrcForFormat((eGPUFamily)descriptor->exportedAsGpuFamily);
+        if(wasUpdated)
+        {
+            descriptor->Save();
         }
     }
 }

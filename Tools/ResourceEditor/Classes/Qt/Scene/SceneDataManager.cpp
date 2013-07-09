@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "SceneDataManager.h"
 
 #include "DockSceneGraph/SceneGraphModel.h"
@@ -9,6 +25,7 @@
 #include "./Qt/SpritesPacker/SpritePackerHelper.h"
 #include "../Main/QtUtils.h"
 #include "../SceneEditor/EntityOwnerPropertyHelper.h"
+#include "../StringConstants.h"
 
 using namespace DAVA;
 
@@ -58,7 +75,7 @@ Entity* SceneDataManager::AddScene(const FilePath &scenePathname)
     Entity * rootNode = scene->GetRootNode(scenePathname)->Clone();
 
     KeyedArchive * customProperties = rootNode->GetCustomProperties();
-    customProperties->SetString("editor.referenceToOwner", scenePathname.GetAbsolutePathname());
+    customProperties->SetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, scenePathname.GetAbsolutePathname());
     
     rootNode->SetSolid(true);
     scene->AddNode(rootNode);
@@ -94,13 +111,14 @@ Entity* SceneDataManager::AddScene(const FilePath &scenePathname)
 
     //TODO: need save scene automatically?
     bool changesWereMade = SceneValidator::Instance()->ValidateSceneAndShowErrors(scene);
-    SceneValidator::Instance()->EnumerateSceneTextures();
+//    SceneValidator::Instance()->EnumerateSceneTextures();
 	
 	if(needUpdateLandscapeController)
 	{
 		sceneData->SetLandscapesControllerScene(scene);
 	}
 
+    sceneData->GetScene()->UpdateCameraLightOnScene();
     SceneHidePreview();
 	UpdateParticleSprites();
 	emit SceneGraphNeedRebuild();
@@ -163,13 +181,15 @@ void SceneDataManager::EditScene(SceneData* sceneData, const FilePath &scenePath
 
     //TODO: need save scene automatically?
     bool changesWereMade = SceneValidator::Instance()->ValidateSceneAndShowErrors(scene);
-    SceneValidator::Instance()->EnumerateSceneTextures();
+//    SceneValidator::Instance()->EnumerateSceneTextures();
 
     sceneData->SetLandscapesControllerScene(scene);
 	
 	scene->Update(0);
 	sceneData->EmitSceneChanged();
 
+
+    scene->UpdateCameraLightOnScene();
 	UpdateParticleSprites();
     emit SceneGraphNeedRebuild();
 
@@ -225,6 +245,8 @@ void SceneDataManager::ReloadScene(const FilePath &scenePathname, const FilePath
         screen->OnReloadRootNodesQt();
     }
     
+    
+    scene->UpdateCameraLightOnScene();
 	UpdateParticleSprites();
     emit SceneGraphNeedRebuild();
 	sceneData->SetLandscapesControllerScene(scene);
@@ -235,14 +257,15 @@ void SceneDataManager::ReloadNode(EditorScene* scene, Entity *node, const FilePa
 	//если в рут ноды сложить такие же рут ноды то на релоаде все накроет пиздой
     KeyedArchive *customProperties = node->GetCustomProperties();
 	EntityOwnerPropertyHelper::Instance()->UpdateEntityOwner(customProperties);
-    if (customProperties->GetString("editor.referenceToOwner", "") == nodePathname.GetAbsolutePathname())
+    if (customProperties->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER, "") == nodePathname.GetAbsolutePathname())
     {
         Entity *loadedNode = scene->GetRootNode(fromPathname);
         if(loadedNode)
         {
             Entity *newNode = loadedNode->Clone();
             newNode->SetLocalTransform(node->GetLocalTransform());
-            newNode->GetCustomProperties()->SetString("editor.referenceToOwner", fromPathname.GetAbsolutePathname());
+            newNode->GetCustomProperties()->SetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER,
+															fromPathname.GetAbsolutePathname());
             newNode->SetSolid(true);
             
             Entity *parent = node->GetParent();
@@ -258,6 +281,7 @@ void SceneDataManager::ReloadNode(EditorScene* scene, Entity *node, const FilePa
             errors.insert(Format("Cannot load object: %s", fromPathname.GetAbsolutePathname().c_str()));
         }
         
+        scene->UpdateCameraLightOnScene();
         return;
     }
     
@@ -519,6 +543,75 @@ void SceneDataManager::CollectTexture(Map<String, Texture *> &textures, const St
 }
 
 
+void SceneDataManager::EnumerateDescriptors(DAVA::Entity *forNode, DAVA::Set<DAVA::FilePath> &descriptors)
+{
+    if(!forNode)  return;
+    
+    Vector<Entity *> nodes;
+    forNode->GetChildNodes(nodes);
+    
+    nodes.push_back(forNode);
+    
+    for(int32 n = 0; n < (int32)nodes.size(); ++n)
+    {
+        RenderComponent *rc = static_cast<RenderComponent *>(nodes[n]->GetComponent(Component::RENDER_COMPONENT));
+        if(!rc) continue;
+        
+        RenderObject *ro = rc->GetRenderObject();
+        if(!ro) continue;
+        
+        uint32 count = ro->GetRenderBatchCount();
+        for(uint32 b = 0; b < count; ++b)
+        {
+            RenderBatch *renderBatch = ro->GetRenderBatch(b);
+            
+            Material *material = renderBatch->GetMaterial();
+            if(material)
+            {
+                for(int32 t = 0; t < Material::TEXTURE_COUNT; ++t)
+                {
+                    CollectDescriptors(descriptors, material->GetTextureName((DAVA::Material::eTextureLevel)t));
+                }
+            }
+            
+            InstanceMaterialState *instanceMaterial = renderBatch->GetMaterialInstance();
+            if(instanceMaterial)
+            {
+                CollectDescriptors(descriptors, instanceMaterial->GetLightmapName());
+            }
+        }
+        
+        Landscape *land = dynamic_cast<Landscape *>(ro);
+        if(land)
+        {
+            CollectLandscapeDescriptors(descriptors, land);
+        }
+    }
+}
+
+
+void SceneDataManager::CollectLandscapeDescriptors(DAVA::Set<DAVA::FilePath> &descriptors, DAVA::Landscape *forNode)
+{
+    for(int32 t = 0; t < Landscape::TEXTURE_COUNT; t++)
+	{
+		CollectDescriptors(descriptors, forNode->GetTextureName((Landscape::eTextureLevel)t));
+	}
+}
+
+void SceneDataManager::CollectDescriptors(DAVA::Set<DAVA::FilePath> &descriptors, const DAVA::FilePath &pathname)
+{
+    if(pathname.GetType() == FilePath::PATH_EMPTY)
+        return;
+
+    DVASSERT(pathname.IsEqualToExtension(TextureDescriptor::GetDescriptorExtension()));
+    
+    if(!pathname.IsEmpty() && SceneValidator::Instance()->IsPathCorrectForProject(pathname))
+	{
+        descriptors.insert(pathname);
+	}
+}
+
+
 void SceneDataManager::TextureCompressAllNotCompressed()
 {
 	Map<String, Texture *> textures;
@@ -534,24 +627,34 @@ void SceneDataManager::TextureCompressAllNotCompressed()
 	Map<String, Texture *>::const_iterator endItTextures = textures.end();
 	for(Map<String, Texture *>::const_iterator it = textures.begin(); it != endItTextures; ++it)
 	{
-		if(SceneValidator::Instance()->IsTextureChanged(it->first, PVR_FILE))
-		{
-			texturesForPVRCompression.push_back(SafeRetain(it->second));
-		}
-		else if(SceneValidator::Instance()->IsTextureChanged(it->first, DXT_FILE))
-		{
-			texturesForDXTCompression.push_back(SafeRetain(it->second));
-		}
+        for(int32 i = 0; i < GPU_FAMILY_COUNT; ++i)
+        {
+            eGPUFamily gpu = (eGPUFamily)i;
+            if(SceneValidator::Instance()->IsTextureChanged(it->first, gpu))
+            {
+                //TODO: need correct code to create compression threads
+                DVASSERT(false);
+            }
+        }
+        
+//		if(SceneValidator::Instance()->IsTextureChanged(it->first, PVR_FILE))
+//		{
+//			texturesForPVRCompression.push_back(SafeRetain(it->second));
+//		}
+//		else if(SceneValidator::Instance()->IsTextureChanged(it->first, DXT_FILE))
+//		{
+//			texturesForDXTCompression.push_back(SafeRetain(it->second));
+//		}
 	}
 
-	CompressTextures(texturesForPVRCompression, PVR_FILE);
-	CompressTextures(texturesForDXTCompression, DXT_FILE);
+//	CompressTextures(texturesForPVRCompression, PVR_FILE);
+//	CompressTextures(texturesForDXTCompression, DXT_FILE);
 
 	for_each(texturesForPVRCompression.begin(), texturesForPVRCompression.end(),  SafeRelease<Texture>);
 	for_each(texturesForDXTCompression.begin(), texturesForDXTCompression.end(),  SafeRelease<Texture>);
 }
 
-void SceneDataManager::CompressTextures(const List<DAVA::Texture *> texturesForCompression, DAVA::ImageFileFormat fileFormat)
+void SceneDataManager::CompressTextures(const List<DAVA::Texture *> texturesForCompression, DAVA::eGPUFamily forGPU)
 {
 	//TODO: need to run compression at thread
 
@@ -579,7 +682,7 @@ void SceneDataManager::CompressTextures(const List<DAVA::Texture *> texturesForC
 // 	}
 }
 
-void SceneDataManager::TextureReloadAll(DAVA::ImageFileFormat asFile)
+void SceneDataManager::TextureReloadAll(DAVA::eGPUFamily forGPU)
 {
 	Map<String, Texture *> textures;
 	List<SceneData *>::const_iterator endIt = scenes.end();
@@ -594,13 +697,13 @@ void SceneDataManager::TextureReloadAll(DAVA::ImageFileFormat asFile)
 		TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(it->first);
 		if(descriptor)
 		{
-			Texture *newTexture = TextureReload(descriptor, it->second, asFile);
+			Texture *newTexture = TextureReload(descriptor, it->second, forGPU);
 			SafeRelease(descriptor);
 		} //todo: need to reload texture as pinkplaceholder
 	}
 }
 
-DAVA::Texture * SceneDataManager::TextureReload(const TextureDescriptor *descriptor, DAVA::Texture *prevTexture, DAVA::ImageFileFormat asFile)
+DAVA::Texture * SceneDataManager::TextureReload(const TextureDescriptor *descriptor, DAVA::Texture *prevTexture, DAVA::eGPUFamily forGPU)
 {
 	if(!descriptor)
 		return NULL;
@@ -623,7 +726,7 @@ DAVA::Texture * SceneDataManager::TextureReload(const TextureDescriptor *descrip
 	}
 
 	//apply descriptor parameters
-	workingTexture->ReloadAs((ImageFileFormat)asFile, descriptor);
+	workingTexture->ReloadAs(forGPU, descriptor);
 	return workingTexture;
 }
 
@@ -681,6 +784,17 @@ void SceneDataManager::ApplyDefaultFogSettings(Landscape* landscape, DAVA::Entit
 		material->SetFogColor(landscape->GetFogColor());
 		material->SetFogDensity(landscape->GetFogDensity());
 	}
+}
+
+void SceneDataManager::UpdateCameraLightOnScene(bool show)
+{
+ 	List<SceneData *>::const_iterator endIt = scenes.end();
+	for(List<SceneData *>::const_iterator it = scenes.begin(); it != endIt; ++it)
+	{
+        (*it)->GetScene()->UpdateCameraLightOnScene(show);
+	}
+    
+    emit SceneGraphNeedRebuild();
 }
 
 void SceneDataManager::SceneShowPreview(const DAVA::FilePath &path)

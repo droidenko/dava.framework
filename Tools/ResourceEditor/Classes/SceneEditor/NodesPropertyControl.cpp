@@ -1,3 +1,19 @@
+/*==================================================================================
+    Copyright (c) 2008, DAVA, INC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the DAVA, INC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE DAVA, INC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVA, INC BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=====================================================================================*/
+
 #include "NodesPropertyControl.h"
 #include "ControlsFactory.h"
 
@@ -6,6 +22,8 @@
 #include "EditorSettings.h"
 #include "EditorConfig.h"
 #include "SceneNodePropertyNames.h"
+
+#include "../StringConstants.h"
 
 NodesPropertyControl::NodesPropertyControl(const Rect & rect, bool _createNodeProperties)
     :   UIControl(rect)
@@ -250,11 +268,12 @@ void NodesPropertyControl::ReadFrom(Entity *sceneNode)
     else
     {
         KeyedArchive *customProperties = sceneNode->GetCustomProperties();
-        if(customProperties && customProperties->IsKeyExists("editor.isLocked"))
+        if(customProperties && customProperties->IsKeyExists(ResourceEditor::EDITOR_IS_LOCKED))
         {
             propertyList->AddSection("property.scenenode.customproperties", GetHeaderState("property.scenenode.customproperties", true));
-            propertyList->AddBoolProperty("editor.isLocked", PropertyList::PROPERTY_IS_EDITABLE);
-            propertyList->SetBoolPropertyValue("editor.isLocked", customProperties->GetBool("editor.isLocked"));
+            propertyList->AddBoolProperty(ResourceEditor::EDITOR_IS_LOCKED, PropertyList::PROPERTY_IS_EDITABLE);
+            propertyList->SetBoolPropertyValue(ResourceEditor::EDITOR_IS_LOCKED,
+												customProperties->GetBool(ResourceEditor::EDITOR_IS_LOCKED));
         }
     }
 }
@@ -973,7 +992,7 @@ int32 NodesPropertyControl::GetTrianglesForLodLayer(LodComponent::LodData *lodDa
         
         for(int32 m = 0; m < (int32)meshes.size(); ++m)
         {
-            RenderObject *ro = GetRenerObject(meshes[m]);
+            RenderObject *ro = GetRenderObject(meshes[m]);
             if(!ro || ro->GetType() != RenderObject::TYPE_MESH) continue;
 
             uint32 count = ro->GetRenderBatchCount();
