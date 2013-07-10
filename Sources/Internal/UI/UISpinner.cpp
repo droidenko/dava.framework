@@ -368,7 +368,6 @@ List<UIControl* > UISpinner::GetSubcontrols()
 	// Lookup for the contols by their names.
 	AddControlToList(subControls, UISPINNER_BUTTON_PREVIOUS_NAME);
 	AddControlToList(subControls, UISPINNER_BUTTON_NEXT_NAME);
-    AddControlToList(subControls, UISPINNER_BUTTON_NEXT_NAME);
     
 	return subControls;
 }
