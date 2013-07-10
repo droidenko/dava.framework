@@ -286,6 +286,7 @@ void UISpinner::CopyDataFrom(UIControl *srcControl)
 {
 	UIControl* buttonPrevClone = buttonPrevious->Clone();
 	UIControl* buttonNextClone = buttonNext->Clone();
+	UIControl* contentClone = content->Clone();
     ReleaseButtons();
 
     UIControl::CopyDataFrom(srcControl);
@@ -298,7 +299,9 @@ void UISpinner::CopyDataFrom(UIControl *srcControl)
 	AddControl(buttonNextClone);
 	SafeRelease(buttonNextClone);
 
-    FindRequiredControls();
+	AddControl(contentClone);
+	SafeRelease(contentClone);
+
     if (IsPointerToExactClass<UISpinner>(srcControl)) //we can also copy other controls, that's why we check
     {
         UISpinner * srcSpinner = static_cast<UISpinner*>(srcControl);
@@ -313,6 +316,25 @@ UIControl* UISpinner::Clone()
 	UISpinner *t = new UISpinner(GetRect());
 	t->CopyDataFrom(this);
 	return t;
+}
+
+void UISpinner::AddControl(UIControl *control)
+{
+	// Synchronize the pointers to the buttons each time new control is added.
+	UIControl::AddControl(control);
+
+	if (control->GetName() == UISPINNER_BUTTON_NEXT_NAME)
+	{
+		buttonNext = (UIButton*)control;
+	}
+	else if (control->GetName() == UISPINNER_BUTTON_PREVIOUS_NAME)
+	{
+		buttonPrevious = (UIButton*)control;
+	}
+	else if (control->GetName() == UISPINNER_CONTENT_NAME)
+	{
+		content = control;		
+	}
 }
 
 void UISpinner::FindRequiredControls()
@@ -345,9 +367,11 @@ YamlNode * UISpinner::SaveToYamlNode(UIYamlLoader * loader)
 	// "Prev/Next" buttons have to be saved too.
 	YamlNode* prevButtonNode = buttonPrevious->SaveToYamlNode(loader);
 	YamlNode* nextButtonNode = buttonNext->SaveToYamlNode(loader);
+	YamlNode* contentNode = content->SaveToYamlNode(loader);
 	
 	node->AddNodeToMap(UISPINNER_BUTTON_PREVIOUS_NAME, prevButtonNode);
 	node->AddNodeToMap(UISPINNER_BUTTON_NEXT_NAME, nextButtonNode);
+	node->AddNodeToMap(UISPINNER_CONTENT_NAME, contentNode);
 
 	return node;
 }
@@ -357,6 +381,7 @@ List<UIControl* >& UISpinner::GetRealChildren()
 	List<UIControl* >& realChildren = UIControl::GetRealChildren();
 	realChildren.remove(FindByName(UISPINNER_BUTTON_PREVIOUS_NAME));
 	realChildren.remove(FindByName(UISPINNER_BUTTON_NEXT_NAME));
+	realChildren.remove(FindByName(UISPINNER_CONTENT_NAME));
 
 	return realChildren;
 }

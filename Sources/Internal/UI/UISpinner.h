@@ -136,6 +136,7 @@ public:
     virtual List<UIControl* > GetSubcontrols();
 
     virtual UIControl *Clone();
+	virtual void AddControl(UIControl *control);
     virtual void Input(UIEvent *currentInput);
     virtual void Update(float32 timeElapsed);
     

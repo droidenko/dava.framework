@@ -53,6 +53,7 @@ public:
 
     virtual List<UIControl* >& GetRealChildren();
     virtual List<UIControl* > GetSubcontrols();
+	virtual void AddControl(UIControl *control);
     virtual UIControl *Clone();
 
     virtual void Input(UIEvent *currentInput);

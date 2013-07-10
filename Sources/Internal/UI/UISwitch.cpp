@@ -145,6 +145,25 @@ YamlNode * UISwitch::SaveToYamlNode(UIYamlLoader * loader)
 	return node;
 }
 
+void UISwitch::AddControl(UIControl *control)
+{
+	// Synchronize the pointers to the buttons each time new control is added.
+	UIControl::AddControl(control);
+
+	if (control->GetName() == UISWITCH_BUTTON_LEFT_NAME)
+	{
+		buttonLeft = (UIButton*)control;
+	}
+	else if (control->GetName() == UISWITCH_BUTTON_TOGGLE_NAME)
+	{
+		toggle = (UIButton*)control;
+	}
+	else if (control->GetName() == UISWITCH_BUTTON_RIGHT_NAME)
+	{
+		buttonRight = (UIButton*)control;		
+	}
+}
+
 void UISwitch::CopyDataFrom(UIControl *srcControl)
 {
 	UIControl* buttonLeftClone = buttonLeft->Clone();
@@ -167,7 +186,6 @@ void UISwitch::CopyDataFrom(UIControl *srcControl)
 	AddControl(toggleClone);
 	SafeRelease(toggleClone);
 
-    FindRequiredControls();
     InitControls();
 }
 
