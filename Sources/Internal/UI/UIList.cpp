@@ -712,7 +712,7 @@ YamlNode * UIList::SaveToYamlNode(UIYamlLoader * loader)
 	// Save aggregator path only if it is not empty
 	if (!aggregatorPath.IsEmpty())
 	{
-		node->Set("aggregatorPath", aggregatorPath.GetAbsolutePathname());
+		node->Set("aggregatorPath", aggregatorPath.GetFrameworkPath());
 	}
     
 	return node;
