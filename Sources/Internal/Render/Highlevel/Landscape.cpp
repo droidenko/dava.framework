@@ -124,30 +124,30 @@ void Landscape::InitShaders()
     
     tileMaskShader->Recompile();
     
-    uniformTextures[TEXTURE_TILE0] = tileMaskShader->FindUniformLocationByName("tileTexture0");
-    uniformTextures[TEXTURE_TILE1] = tileMaskShader->FindUniformLocationByName("tileTexture1");
-    uniformTextures[TEXTURE_TILE2] = tileMaskShader->FindUniformLocationByName("tileTexture2");
-    uniformTextures[TEXTURE_TILE3] = tileMaskShader->FindUniformLocationByName("tileTexture3");
-    uniformTextures[TEXTURE_TILE_MASK] = tileMaskShader->FindUniformLocationByName("tileMask");
-    uniformTextures[TEXTURE_COLOR] = tileMaskShader->FindUniformLocationByName("colorTexture");
+    uniformTextures[TEXTURE_TILE0] = tileMaskShader->FindUniformIndexByName("tileTexture0");
+    uniformTextures[TEXTURE_TILE1] = tileMaskShader->FindUniformIndexByName("tileTexture1");
+    uniformTextures[TEXTURE_TILE2] = tileMaskShader->FindUniformIndexByName("tileTexture2");
+    uniformTextures[TEXTURE_TILE3] = tileMaskShader->FindUniformIndexByName("tileTexture3");
+    uniformTextures[TEXTURE_TILE_MASK] = tileMaskShader->FindUniformIndexByName("tileMask");
+    uniformTextures[TEXTURE_COLOR] = tileMaskShader->FindUniformIndexByName("colorTexture");
     
-    uniformCameraPosition = tileMaskShader->FindUniformLocationByName("cameraPosition");
+    uniformCameraPosition = tileMaskShader->FindUniformIndexByName("cameraPosition");
     
-    uniformTextureTiling[TEXTURE_TILE0] = tileMaskShader->FindUniformLocationByName("texture0Tiling");
-    uniformTextureTiling[TEXTURE_TILE1] = tileMaskShader->FindUniformLocationByName("texture1Tiling");
-    uniformTextureTiling[TEXTURE_TILE2] = tileMaskShader->FindUniformLocationByName("texture2Tiling");
-    uniformTextureTiling[TEXTURE_TILE3] = tileMaskShader->FindUniformLocationByName("texture3Tiling");
+    uniformTextureTiling[TEXTURE_TILE0] = tileMaskShader->FindUniformIndexByName("texture0Tiling");
+    uniformTextureTiling[TEXTURE_TILE1] = tileMaskShader->FindUniformIndexByName("texture1Tiling");
+    uniformTextureTiling[TEXTURE_TILE2] = tileMaskShader->FindUniformIndexByName("texture2Tiling");
+    uniformTextureTiling[TEXTURE_TILE3] = tileMaskShader->FindUniformIndexByName("texture3Tiling");
     
-    uniformTileColor[TEXTURE_TILE0] = tileMaskShader->FindUniformLocationByName("tileColor0");
-    uniformTileColor[TEXTURE_TILE1] = tileMaskShader->FindUniformLocationByName("tileColor1");
-    uniformTileColor[TEXTURE_TILE2] = tileMaskShader->FindUniformLocationByName("tileColor2");
-    uniformTileColor[TEXTURE_TILE3] = tileMaskShader->FindUniformLocationByName("tileColor3");
+    uniformTileColor[TEXTURE_TILE0] = tileMaskShader->FindUniformIndexByName("tileColor0");
+    uniformTileColor[TEXTURE_TILE1] = tileMaskShader->FindUniformIndexByName("tileColor1");
+    uniformTileColor[TEXTURE_TILE2] = tileMaskShader->FindUniformIndexByName("tileColor2");
+    uniformTileColor[TEXTURE_TILE3] = tileMaskShader->FindUniformIndexByName("tileColor3");
 
     
 	if(isFogEnabled && RenderManager::Instance()->GetOptions()->IsOptionEnabled(RenderOptions::FOG_ENABLE))
     {
-        uniformFogColor = tileMaskShader->FindUniformLocationByName("fogColor");
-        uniformFogDensity = tileMaskShader->FindUniformLocationByName("fogDensity");   
+        uniformFogColor = tileMaskShader->FindUniformIndexByName("fogColor");
+        uniformFogDensity = tileMaskShader->FindUniformIndexByName("fogDensity");   
     }
     
     fullTiledShader = new Shader();
@@ -161,8 +161,8 @@ void Landscape::InitShaders()
     
     if(isFogEnabled && RenderManager::Instance()->GetOptions()->IsOptionEnabled(RenderOptions::FOG_ENABLE))
     {
-        uniformFogColorFT = fullTiledShader->FindUniformLocationByName("fogColor");
-        uniformFogDensityFT = fullTiledShader->FindUniformLocationByName("fogDensity");   
+        uniformFogColorFT = fullTiledShader->FindUniformIndexByName("fogColor");
+        uniformFogDensityFT = fullTiledShader->FindUniformIndexByName("fogDensity");   
     }
 }
     
@@ -1022,53 +1022,53 @@ void Landscape::BindMaterial(int32 lodLayer)
         RenderManager::Instance()->FlushState();
         
         if (uniformTextures[TEXTURE_TILE0] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_TILE0], 0);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_TILE0], 0);
         
         if (uniformTextures[TEXTURE_TILE1] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_TILE1], 1);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_TILE1], 1);
         
         if (uniformTextures[TEXTURE_TILE2] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_TILE2], 2);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_TILE2], 2);
         
         if (uniformTextures[TEXTURE_TILE3] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_TILE3], 3);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_TILE3], 3);
         
         if (uniformTextures[TEXTURE_TILE_MASK] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_TILE_MASK], 4);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_TILE_MASK], 4);
         
         if (uniformTextures[TEXTURE_COLOR] != -1)
-            tileMaskShader->SetUniformValue(uniformTextures[TEXTURE_COLOR], 5);
+            tileMaskShader->SetUniformValueByIndex(uniformTextures[TEXTURE_COLOR], 5);
         
         if (uniformCameraPosition != -1)
-            tileMaskShader->SetUniformValue(uniformCameraPosition, cameraPos);    
+            tileMaskShader->SetUniformValueByIndex(uniformCameraPosition, cameraPos);
         
         if (uniformTextureTiling[TEXTURE_TILE0] != -1)
-            tileMaskShader->SetUniformValue(uniformTextureTiling[TEXTURE_TILE0], textureTiling[TEXTURE_TILE0]);
+            tileMaskShader->SetUniformValueByIndex(uniformTextureTiling[TEXTURE_TILE0], textureTiling[TEXTURE_TILE0]);
         
         if (uniformTextureTiling[TEXTURE_TILE1] != -1)
-            tileMaskShader->SetUniformValue(uniformTextureTiling[TEXTURE_TILE1], textureTiling[TEXTURE_TILE1]);
+            tileMaskShader->SetUniformValueByIndex(uniformTextureTiling[TEXTURE_TILE1], textureTiling[TEXTURE_TILE1]);
         
         if (uniformTextureTiling[TEXTURE_TILE2] != -1)
-            tileMaskShader->SetUniformValue(uniformTextureTiling[TEXTURE_TILE2], textureTiling[TEXTURE_TILE2]);
+            tileMaskShader->SetUniformValueByIndex(uniformTextureTiling[TEXTURE_TILE2], textureTiling[TEXTURE_TILE2]);
         
         if (uniformTextureTiling[TEXTURE_TILE3] != -1)
-            tileMaskShader->SetUniformValue(uniformTextureTiling[TEXTURE_TILE3], textureTiling[TEXTURE_TILE3]);
+            tileMaskShader->SetUniformValueByIndex(uniformTextureTiling[TEXTURE_TILE3], textureTiling[TEXTURE_TILE3]);
 
         
         if (uniformTileColor[TEXTURE_TILE0] != -1)
-            tileMaskShader->SetUniformColor3(uniformTileColor[TEXTURE_TILE0], tileColor[TEXTURE_TILE0]);
+            tileMaskShader->SetUniformColor3ByIndex(uniformTileColor[TEXTURE_TILE0], tileColor[TEXTURE_TILE0]);
         if (uniformTileColor[TEXTURE_TILE1] != -1)
-            tileMaskShader->SetUniformColor3(uniformTileColor[TEXTURE_TILE1], tileColor[TEXTURE_TILE1]);
+            tileMaskShader->SetUniformColor3ByIndex(uniformTileColor[TEXTURE_TILE1], tileColor[TEXTURE_TILE1]);
         if (uniformTileColor[TEXTURE_TILE2] != -1)
-            tileMaskShader->SetUniformColor3(uniformTileColor[TEXTURE_TILE2], tileColor[TEXTURE_TILE2]);
+            tileMaskShader->SetUniformColor3ByIndex(uniformTileColor[TEXTURE_TILE2], tileColor[TEXTURE_TILE2]);
         if (uniformTileColor[TEXTURE_TILE3] != -1)
-            tileMaskShader->SetUniformColor3(uniformTileColor[TEXTURE_TILE3], tileColor[TEXTURE_TILE3]);
+            tileMaskShader->SetUniformColor3ByIndex(uniformTileColor[TEXTURE_TILE3], tileColor[TEXTURE_TILE3]);
                 
         
         if (uniformFogColor != -1)
-            tileMaskShader->SetUniformColor3(uniformFogColor, fogColor);
+            tileMaskShader->SetUniformColor3ByIndex(uniformFogColor, fogColor);
         if (uniformFogDensity != -1)
-            tileMaskShader->SetUniformValue(uniformFogDensity, fogDensity);
+            tileMaskShader->SetUniformValueByIndex(uniformFogDensity, fogDensity);
     }
     else 
     {
@@ -1079,9 +1079,9 @@ void Landscape::BindMaterial(int32 lodLayer)
         RenderManager::Instance()->FlushState();
         
         if (uniformFogColorFT != -1)
-            tileMaskShader->SetUniformColor3(uniformFogColorFT, fogColor);
+            tileMaskShader->SetUniformColor3ByIndex(uniformFogColorFT, fogColor);
         if (uniformFogDensityFT != -1)
-            tileMaskShader->SetUniformValue(uniformFogDensityFT, fogDensity);
+            tileMaskShader->SetUniformValueByIndex(uniformFogDensityFT, fogDensity);
     }
     
     prevLodLayer = lodLayer;

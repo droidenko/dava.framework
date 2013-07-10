@@ -20,7 +20,7 @@
 #include <QDialog>
 #include <QMap>
 #include "DAVAEngine.h"
-#include "QtPosSaver/QtPosSaver.h"
+#include "Tools/QtPosSaver/QtPosSaver.h"
 #include "Scene/SceneDataManager.h"
 
 class QModelIndex;

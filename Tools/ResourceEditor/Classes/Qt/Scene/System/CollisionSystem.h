@@ -52,8 +52,10 @@ public:
 	const EntityGroup* ObjectsRayTest(const DAVA::Vector3 &from, const DAVA::Vector3 &to);
 	const EntityGroup* ObjectsRayTestFromCamera();
 
-	DAVA::Vector3 LandRayTest(const DAVA::Vector3 &from, const DAVA::Vector3 &to);
-	DAVA::Vector3 LandRayTestFromCamera();
+	bool LandRayTest(const DAVA::Vector3 &from,
+					 const DAVA::Vector3 &to,
+					 DAVA::Vector3& intersectionPoint);
+	bool LandRayTestFromCamera(DAVA::Vector3& intersectionPoint);
 
 	void UpdateCollisionObject(DAVA::Entity *entity);
 
@@ -62,7 +64,7 @@ protected:
 	void Draw();
 
 	void ProcessUIEvent(DAVA::UIEvent *event);
-	void PropeccCommand(const Command2 *command, bool redo);
+	void ProcessCommand(const Command2 *command, bool redo);
 
 	virtual void AddEntity(DAVA::Entity * entity);
 	virtual void RemoveEntity(DAVA::Entity * entity);
@@ -80,6 +82,7 @@ protected:
 	DAVA::Vector3 lastLandRayFrom;
 	DAVA::Vector3 lastLandRayTo;
 	DAVA::Vector3 lastLandCollision;
+	bool lastResult;
 
 	btDefaultCollisionConfiguration* objectsCollConf;
 	btCollisionDispatcher* objectsCollDisp;

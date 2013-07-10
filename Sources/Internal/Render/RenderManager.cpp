@@ -118,7 +118,7 @@ RenderManager::RenderManager(Core::eRenderer _renderer)
     
 #if defined (__DAVAENGINE_OPENGL__)
     bufferBindingId[0] = 0;
-    bufferBindingId[1] = 1;
+    bufferBindingId[1] = 0;
     
     lastBindedTexture = 0;
     lastBindedFBO = 0;

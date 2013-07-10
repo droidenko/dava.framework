@@ -258,7 +258,7 @@ void SceneCameraSystem::Draw()
 	// Nothing to draw
 }
 
-void SceneCameraSystem::PropeccCommand(const Command2 *command, bool redo)
+void SceneCameraSystem::ProcessCommand(const Command2 *command, bool redo)
 { }
 
 void SceneCameraSystem::ProcessKeyboardMove(DAVA::float32 timeElapsed)

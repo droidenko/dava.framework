@@ -18,11 +18,13 @@
 #define __COMMAND_NOTIFY_H__
 
 #include "Base/BaseTypes.h"
+#include "Base/BaseObject.h"
 
 class Command2;
 
-struct CommandNotify
+class CommandNotify : public DAVA::BaseObject
 {
+public:
 	CommandNotify();
 	~CommandNotify();
 
@@ -35,13 +37,12 @@ public:
 	CommandNotifyProvider();
 	~CommandNotifyProvider();
 
-	void SetNotify(CommandNotify *notify, bool autorelease);
+	void SetNotify(CommandNotify *notify);
 	CommandNotify* GetNotify() const;
 
 	void EmitNotify(const Command2 *command, bool redo);
 
 protected:
-	bool curAutorelease;
 	CommandNotify* curNotify;
 };
 

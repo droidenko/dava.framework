@@ -49,7 +49,7 @@ void Particle::AddForce(float32 value, const Vector3& direction, float32 overlif
 
 void Particle::UpdateForceOverlife(int32 index, float32 overlife)
 {
-	if (index <= (int32)this->forces.size())
+	if (index < (int32)this->forces.size())
 	{
 		this->forces[index].overlife = overlife;
 		this->forces[index].overlifeEnabled = true;

@@ -21,40 +21,92 @@
 
 // framework
 #include "Scene3D/Entity.h"
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleLayer.h"
+#include "Particles/ParticleForce.h"
 
 Q_DECLARE_METATYPE(DAVA::Entity*);
+Q_DECLARE_METATYPE(DAVA::ParticleLayer*);
+Q_DECLARE_METATYPE(DAVA::ParticleForce*);
 
 class SceneTreeItem : public QStandardItem
 {
 public:
-	enum PropertyItemDataRole
+	enum eItemType
 	{
-		TreeItemEntityRole = Qt::UserRole,
+		EIT_Entity,
+		EIT_Layer,
+		EIT_Force
 	};
 
-	SceneTreeItem(DAVA::Entity *entity);
+	enum eItemDataRole
+	{
+		EIDR_Type = Qt::UserRole,
+		EIDR_Data
+	};
+
+	SceneTreeItem(eItemType type);
 	~SceneTreeItem();
 
-	int	type() const;
 	QVariant data(int role) const;
 
-	DAVA::Entity* GetEntity() const;
-	SceneTreeItem* SearchEntity(DAVA::Entity *entity);
+	int ItemType() const;
+	virtual QIcon ItemIcon() const;
 
-	void UpdateChilds();
-
+	virtual QString ItemName() const = 0;
+	virtual QVariant ItemData() const = 0;
 
 protected:
+	eItemType type;
+};
+
+class SceneTreeItemEntity : public SceneTreeItem
+{
+public:
+	SceneTreeItemEntity(DAVA::Entity* entity);
+	~SceneTreeItemEntity();
+
+	static DAVA::Entity* GetEntity(SceneTreeItem *item);
+	static void DoSync(QStandardItem *rootItem, DAVA::Entity *entity);
+
+	virtual QString ItemName() const;
+	virtual QVariant ItemData() const;
+	virtual QIcon ItemIcon() const;
+
 	DAVA::Entity *entity;
+};
 
-	QIcon GetIcon() const;
+class SceneTreeItemParticleLayer : public SceneTreeItem
+{
+public:
+	SceneTreeItemParticleLayer(DAVA::Entity* parent, DAVA::ParticleLayer *layer);
+	~SceneTreeItemParticleLayer();
 
-	static QIcon GetIconDefault();
-	static QIcon GetIconRenderObject();
-	static QIcon GetIconLandscape();
-	static QIcon GetIconLOD();
-	static QIcon GetIconLight();
-	static QIcon GetIconUserObject();
+	static DAVA::ParticleLayer* GetLayer(SceneTreeItem *item);
+	static void DoSync(QStandardItem *rootItem, DAVA::ParticleLayer *layer);
+
+	virtual QString ItemName() const;
+	virtual QVariant ItemData() const;
+	virtual QIcon ItemIcon() const;
+
+	DAVA::Entity *parent;
+	DAVA::ParticleLayer *layer;
+};
+
+class SceneTreeItemParticleForce : public SceneTreeItem
+{
+public:
+	SceneTreeItemParticleForce(DAVA::ParticleLayer *parent, DAVA::ParticleForce *force);
+	~SceneTreeItemParticleForce();
+
+	static DAVA::ParticleForce* GetForce(SceneTreeItem *rootItem);
+
+	virtual QString ItemName() const;
+	virtual QVariant ItemData() const;
+	virtual QIcon ItemIcon() const;
+
+	DAVA::ParticleLayer *parent;
+	DAVA::ParticleForce *force;
 };
 
 #endif // __QT_PROPERTY_ITEM_H__

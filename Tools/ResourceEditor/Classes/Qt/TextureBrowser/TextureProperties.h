@@ -20,9 +20,9 @@
 #include "DAVAEngine.h"
 #include "Base/EnumMap.h"
 
-#include "QtPropertyEditor/QtPropertyEditor.h"
-#include "QtPropertyEditor/QtPropertyData.h"
-#include "QtPropertyEditor/QtProperyData/QtPropertyDataMetaObject.h"
+#include "Tools/QtPropertyEditor/QtPropertyEditor.h"
+#include "Tools/QtPropertyEditor/QtPropertyData.h"
+#include "Tools/QtPropertyEditor/QtProperyData/QtPropertyDataMetaObject.h"
 
 class TextureProperties : public QtPropertyEditor
 {

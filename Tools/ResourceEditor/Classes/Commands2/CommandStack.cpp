@@ -28,8 +28,7 @@ CommandStack::CommandStack()
 CommandStack::~CommandStack()
 {
 	Clear();
-
-	delete stackCommandsNotify;
+	SafeRelease(stackCommandsNotify);
 }
 
 bool CommandStack::CanUndo() const
@@ -131,7 +130,7 @@ void CommandStack::BeginBatch(const DAVA::String &text)
 	{
 		curBatchCommand = new CommandBatch();
 		curBatchCommand->SetText(text);
-		curBatchCommand->SetNotify(stackCommandsNotify, false);
+		curBatchCommand->SetNotify(stackCommandsNotify);
 	}
 }
 
@@ -173,7 +172,7 @@ void CommandStack::ExecInternal(Command2 *command, bool runCommand)
 
 	if(runCommand)
 	{
-		command->SetNotify(stackCommandsNotify, false);
+		command->SetNotify(stackCommandsNotify);
 		command->Redo();
 	}
 

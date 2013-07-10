@@ -53,8 +53,8 @@ void LandscapeRenderer::InitShader()
     
     if(isFogEnabled && RenderManager::Instance()->GetOptions()->IsOptionEnabled(RenderOptions::FOG_ENABLE))
     {
-        uniformFogColor = shader->FindUniformLocationByName("fogColor");
-        uniformFogDensity = shader->FindUniformLocationByName("fogDensity");
+        uniformFogColor = shader->FindUniformIndexByName("fogColor");
+        uniformFogDensity = shader->FindUniformIndexByName("fogDensity");
     }
     else
     {
@@ -160,9 +160,9 @@ void LandscapeRenderer::BindMaterial(DAVA::Texture *materialTexture)
     Color fogColor(Color::White());
 
     if (uniformFogColor != -1)
-        shader->SetUniformColor3(uniformFogColor, fogColor);
+        shader->SetUniformColor3ByIndex(uniformFogColor, fogColor);
     if (uniformFogDensity != -1)
-        shader->SetUniformValue(uniformFogDensity, fogDensity);
+        shader->SetUniformValueByIndex(uniformFogDensity, fogDensity);
 }
 
 void LandscapeRenderer::UnbindMaterial()

@@ -307,34 +307,39 @@ void SceneValidator::ValidateLandscape(Landscape *landscape, Set<String> &errors
 {
     if(!landscape) return;
     
-    EditorLandscape *editorLandscape = dynamic_cast<EditorLandscape *>(landscape);
-    if(editorLandscape)
-    {
-        return;
-    }
+	if(dynamic_cast<EditorLandscape *>(landscape)) return;
     
-    
-    for(int32 i = 0; i < Landscape::TEXTURE_COUNT; ++i)
-    {
-        if(		(Landscape::TEXTURE_DETAIL == (Landscape::eTextureLevel)i)
-           ||	(Landscape::TEXTURE_TILE_FULL == (Landscape::eTextureLevel)i
-                 &&	(landscape->GetTiledShaderMode() == Landscape::TILED_MODE_TILEMASK
-                 || landscape->GetTiledShaderMode() == Landscape::TILED_MODE_TILE_DETAIL_MASK)))
-        {
-            continue;
-        }
-        
-		// TODO:
-		// new texture path
-		DAVA::FilePath landTexName = landscape->GetTextureName((Landscape::eTextureLevel)i);
-		if(!IsTextureDescriptorPath(landTexName))
+
+	if(landscape->GetTiledShaderMode() == Landscape::TILED_MODE_TILE_DETAIL_MASK)
+	{
+		for(int32 i = 0; i < Landscape::TEXTURE_COUNT; ++i)
 		{
-			landscape->SetTextureName((Landscape::eTextureLevel)i, TextureDescriptor::GetDescriptorPathname(landTexName));
+			Landscape::eTextureLevel texLevel = (Landscape::eTextureLevel)i;
+			if(texLevel == Landscape::TEXTURE_COLOR || texLevel == Landscape::TEXTURE_TILE_MASK || texLevel == Landscape::TEXTURE_TILE0)
+			{
+				ValidateLandscapeTexture(landscape, texLevel, errorsLog);
+			}
 		}
-        
-        ValidateTexture(landscape->GetTexture((Landscape::eTextureLevel)i), landscape->GetTextureName((Landscape::eTextureLevel)i), Format("Landscape. TextureLevel %d", i), errorsLog);
-    }
-    
+	}
+	else
+	{
+		for(int32 i = 0; i < Landscape::TEXTURE_COUNT; ++i)
+		{
+			Landscape::eTextureLevel texLevel = (Landscape::eTextureLevel)i;
+			if(		(Landscape::TEXTURE_DETAIL == texLevel)
+				||	(Landscape::TEXTURE_TILE_FULL == texLevel
+				&&	(landscape->GetTiledShaderMode() == Landscape::TILED_MODE_TILEMASK
+				|| landscape->GetTiledShaderMode() == Landscape::TILED_MODE_TILE_DETAIL_MASK)))
+			{
+				continue;
+			}
+
+			ValidateLandscapeTexture(landscape, texLevel, errorsLog);
+		}
+	}
+
+
+	//validate heightmap
     bool pathIsCorrect = ValidatePathname(landscape->GetHeightmapPathname(), String("Landscape. Heightmap."));
     if(!pathIsCorrect)
     {
@@ -342,6 +347,18 @@ void SceneValidator::ValidateLandscape(Landscape *landscape, Set<String> &errors
         errorsLog.insert("Wrong path of Heightmap: " + path);
     }
 }
+
+void SceneValidator::ValidateLandscapeTexture(Landscape *landscape, Landscape::eTextureLevel texLevel, Set<String> &errorsLog)
+{
+	DAVA::FilePath landTexName = landscape->GetTextureName(texLevel);
+	if(!IsTextureDescriptorPath(landTexName))
+	{
+		landscape->SetTextureName(texLevel, TextureDescriptor::GetDescriptorPathname(landTexName));
+	}
+
+	ValidateTexture(landscape->GetTexture(texLevel), landscape->GetTextureName(texLevel), Format("Landscape. TextureLevel %d", texLevel), errorsLog);
+}
+
 
 void SceneValidator::ConvertLightmapSizeFromProperty(Entity *ownerNode, InstanceMaterialState *materialState)
 {

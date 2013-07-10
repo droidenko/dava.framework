@@ -470,8 +470,24 @@ void DefaultScreen::DeleteSelectedControls()
 {
 	const HierarchyTreeController::SELECTEDCONTROLNODES& selectedControls = HierarchyTreeController::Instance()->GetActiveControlNodes();
 	HierarchyTreeController::SELECTEDCONTROLNODES::const_iterator iter;
+	HierarchyTreeController::SELECTEDCONTROLNODES::const_iterator innerIter;
 	HierarchyTreeNode::HIERARCHYTREENODESLIST nodes;
+	HierarchyTreeController::SELECTEDCONTROLNODES parentNodes(selectedControls);
+	
+	// DF-1273 - remove all child nodes of selected controls - we don't have to remove them here
 	for (iter = selectedControls.begin(); iter != selectedControls.end(); ++iter)
+	{
+		HierarchyTreeNode *node = (*iter);
+		for (innerIter = selectedControls.begin(); innerIter != selectedControls.end(); ++innerIter)
+		{			
+			if (node->IsHasChild(*innerIter))
+			{
+				parentNodes.erase(*innerIter);
+			}
+		}
+	}
+	// DF-1273 - put only "parent" nodes to delete
+	for (iter = parentNodes.begin(); iter != parentNodes.end(); ++iter)
 		nodes.push_back(*iter);
 
 	if (!nodes.size())

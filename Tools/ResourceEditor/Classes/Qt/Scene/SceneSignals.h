@@ -43,16 +43,19 @@ signals:
 	void Activated(SceneEditor2 *scene);
 	void Deactivated(SceneEditor2 *scene);
 
+	void StructureChanged(SceneEditor2 *scene, DAVA::Entity *parent);
+
 	// entities
 	void Selected(SceneEditor2 *scene, DAVA::Entity *entity);
 	void Deselected(SceneEditor2 *scene, DAVA::Entity *entity);
 
-	void Moved(SceneEditor2 *scene, DAVA::Entity *entity);
-	void Removed(SceneEditor2 *scene, DAVA::Entity *entity);
-
 	// mouse
 	void MouseOver(SceneEditor2 *scene, const EntityGroup *entities);
 	void MouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities);
+
+	void UpdateDropperHeight(SceneEditor2* scene, double height);
+	void UpdateVisibilityButtonsState(SceneEditor2* scene);
+	void NeedSaveCustomColorsTexture(SceneEditor2* scene);
 
 public:
 	void EmitOpened(SceneEditor2 *scene) { emit Opened(scene); }
@@ -64,11 +67,14 @@ public:
 	void EmitActivated(SceneEditor2 *scene) { emit Activated(scene); }
 	void EmitDeactivated(SceneEditor2 *scene) { emit Deactivated(scene); }
 
+	void EmitStructureChanged(SceneEditor2 *scene, DAVA::Entity *parent) { emit StructureChanged(scene, parent); }
+
 	void EmitSelected(SceneEditor2 *scene, DAVA::Entity *entity) { emit Selected(scene, entity); }
 	void EmitDeselected(SceneEditor2 *scene, DAVA::Entity *entity)  { emit Deselected(scene, entity); }
 
-	void EmitMoved(SceneEditor2 *scene, DAVA::Entity *entity) { emit Moved(scene, entity); }
-	void EmitRemoved(SceneEditor2 *scene, DAVA::Entity *entity) { emit Removed(scene, entity); }
+	void EmitUpdateDropperHeight(SceneEditor2* scene, DAVA::float32 height) { emit UpdateDropperHeight(scene, (double)height); };
+	void EmitUpdateVisibilityButtonsState(SceneEditor2* scene) { emit UpdateVisibilityButtonsState(scene); };
+	void EmitNeedSaveCustomColorsTexture(SceneEditor2* scene) { emit NeedSaveCustomColorsTexture(scene); };
 
 	void EmitMouseOver(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOver(scene, entities); }
 	void EmitMouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOverSelection(scene, entities); }

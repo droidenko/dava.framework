@@ -156,8 +156,8 @@ void LandscapeEditorBase::Close()
     // workingLandscape->SetDebugFlags(workingLandscape->GetDebugFlags() & ~DebugRenderComponent::DEBUG_DRAW_GRID);
     
     
+	workingLandscape->SetTiledShaderMode(savedShaderMode);
     workingLandscape->UpdateFullTiledTexture();
-    workingLandscape->SetTiledShaderMode(savedShaderMode);
     savedShaderMode = Landscape::TILED_MODE_TILE_DETAIL_MASK;
     
     SafeRelease(workingLandscape);

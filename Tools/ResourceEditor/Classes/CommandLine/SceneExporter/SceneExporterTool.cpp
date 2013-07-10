@@ -61,11 +61,11 @@ bool SceneExporterTool::InitializeFromCommandLine()
     outFolder.MakeDirectoryPathname();
     
     gpu = CommandLineParser::GetCommandParam(String("-gpu"));
-    if(gpu.empty())
-    {
-        errors.insert("Format for export is not set");
-        return false;
-    }
+//    if(gpu.empty())
+//    {
+//        errors.insert("GPU for export is not set");
+//        return false;
+//    }
     
     filename = CommandLineParser::GetCommandParam(String("-processfile"));
     foldername = CommandLineParser::GetCommandParam(String("-processdir"));

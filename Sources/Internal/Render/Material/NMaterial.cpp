@@ -189,55 +189,55 @@ void NMaterialInstance::BindUniforms()
         switch(uniformType)
         {
             case Shader::UT_FLOAT:
-                RENDER_VERIFY(glUniform1fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (float*)data));
+                RENDER_VERIFY(glUniform1fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (float*)data));
                 break;
             case Shader::UT_FLOAT_VEC2:
-                RENDER_VERIFY(glUniform2fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (float*)data));
+                RENDER_VERIFY(glUniform2fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (float*)data));
                 break;
             case Shader::UT_FLOAT_VEC3:
-                RENDER_VERIFY(glUniform3fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (float*)data));
+                RENDER_VERIFY(glUniform3fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (float*)data));
                 break;
             case Shader::UT_FLOAT_VEC4:
-                RENDER_VERIFY(glUniform4fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (float*)data));
+                RENDER_VERIFY(glUniform4fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (float*)data));
                 break;
             case Shader::UT_INT:
-                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_INT_VEC2:
-                RENDER_VERIFY(glUniform2iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform2iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_INT_VEC3:
-                RENDER_VERIFY(glUniform3iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform3iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_INT_VEC4:
-                RENDER_VERIFY(glUniform4iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform4iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_BOOL:
-                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_BOOL_VEC2:
-                RENDER_VERIFY(glUniform2iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform2iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_BOOL_VEC3:
-                RENDER_VERIFY(glUniform3iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform3iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_BOOL_VEC4:
-                RENDER_VERIFY(glUniform4iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform4iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_FLOAT_MAT2:
-                RENDER_VERIFY(glUniformMatrix2fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
+                RENDER_VERIFY(glUniformMatrix2fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
                 break;
             case Shader::UT_FLOAT_MAT3:
-                RENDER_VERIFY(glUniformMatrix3fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
+                RENDER_VERIFY(glUniformMatrix3fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
                 break;
             case Shader::UT_FLOAT_MAT4:
-                RENDER_VERIFY(glUniformMatrix4fv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
+                RENDER_VERIFY(glUniformMatrix4fv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, GL_FALSE, (float32*)data));
                 break;
             case Shader::UT_SAMPLER_2D:
-                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
             case Shader::UT_SAMPLER_CUBE:
-                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocation(uniformIndex), uniformInfo.arraySize, (int32*)data));
+                RENDER_VERIFY(glUniform1iv(shader->GetUniformLocationByIndex(uniformIndex), uniformInfo.arraySize, (int32*)data));
                 break;
         };
     }

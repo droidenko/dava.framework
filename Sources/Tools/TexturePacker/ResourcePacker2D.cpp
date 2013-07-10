@@ -211,6 +211,19 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 			currentLayer.crop(Magick::Geometry(width,height, 0, 0));
 			currentLayer.magick("PNG");
 			FilePath outputFile = FilePath::CreateWithNewExtension(psdNameWithoutExtension, String(Format("%d.png", k - 1)));
+			
+			// Yuri Coder, 2013/07/08. Check whether this file exists - overlapping png files
+			// can cause issues like DF-1426.
+			if (FileSystem::Instance()->IsFile(outputFile.GetAbsolutePathname()))
+			{
+				String errorMessage = Format("File %s already exists. ", outputFile.GetAbsolutePathname().c_str());
+				errorMessage += Format("PSD file name %s conflicts with other PSD files, ", psdName.c_str());
+				errorMessage += Format("terminating packing in %s directory.", processDirectoryPath.GetAbsolutePathname().c_str());
+				Logger::Error(errorMessage.c_str());
+
+				return NULL;
+			}
+
 			currentLayer.write(outputFile.GetAbsolutePathname());
 		}
 		
@@ -295,14 +308,20 @@ void ResourcePacker2D::ProcessFlags(const FilePath & flagsPathname)
 	{
 		Logger::Error("Failed to open file: %s", flagsPathname.GetAbsolutePathname().c_str());
 	}
-	char flagsTmpBuffer[4096];
+	char flagsTmpBuffer[4096] = {0};
 	int flagsSize = 0;
 	while(!file->IsEof())
 	{
-		char c;
+		char c = 0x00;
 		int32 readSize = file->Read(&c, 1);
 		if (readSize == 1)
 		{
+			// Terminate reading if end-of-line is detected.
+			if (c == 0x0D || c == 0x0A)
+			{
+				break;
+			}
+
 			flagsTmpBuffer[flagsSize++] = c;
 		}	
 	}
@@ -405,6 +424,7 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 		//	printf("[Directory changed - rebuild: %s]\n", inputGfxDirectory.c_str());
 	}
 
+	bool needPackResourcesInThisDir = true;
 	if (modified)
 	{
 		FileSystem::Instance()->DeleteDirectoryFiles(outputPath, false);
@@ -418,6 +438,13 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 				{
                     //TODO: check if we need filename or pathname
 					DefinitionFile * defFile = ProcessPSD(processDirectoryPath, fullname, fullname.GetFilename());
+					if (!defFile)
+					{
+						// An error occured while converting this PSD file - cancel converting in this directory.
+						needPackResourcesInThisDir = false;
+						break;
+					}
+
 					definitionFileList.push_back(defFile);
 				}
 				else if(isLightmapsPacking && fullname.IsEqualToExtension(".png"))
@@ -442,7 +469,7 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 		}
 
 		// 
-		if (definitionFileList.size() > 0 && modified)
+		if (needPackResourcesInThisDir && definitionFileList.size() > 0 && modified)
 		{
 			TexturePacker packer;
 			if(isLightmapsPacking)

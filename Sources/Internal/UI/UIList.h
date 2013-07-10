@@ -195,6 +195,7 @@ public:
     virtual void OnViewPositionChanged(UIScrollBar *byScrollBar, float32 newPosition);
 
 	virtual UIControl *Clone();
+	virtual void CopyDataFrom(UIControl *srcControl);
 
 protected:
 	void InitAfterYaml();

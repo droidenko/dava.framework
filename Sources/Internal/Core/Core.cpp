@@ -156,7 +156,7 @@ void Core::ReleaseSingletons()
 	//SoundSystem::Instance()->Release();
 #endif //#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
 	LocalizationSystem::Instance()->Release();
-	Logger::Debug("[Core::Release] successfull");
+//	Logger::Debug("[Core::Release] successfull");
 	FileSystem::Instance()->Release();
 	Random::Instance()->Release();
 	RenderManager::Instance()->Release();

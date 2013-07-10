@@ -15,28 +15,17 @@
 =====================================================================================*/
 
 #include "ParticleTimeLineWidget.h"
+#include "ParticleTimeLineColumns.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include "Commands/ParticleEditorCommands.h"
 #include "Commands/CommandsManager.h"
+#include "Commands/CommandSignals.h"
 #include "../Scene/SceneDataManager.h"
 
 #include "ParticlesEditorController.h"
-
-#define LEFT_INDENT 20
-#define TOP_INDENT 14
-#define BOTTOM_INDENT 24
-#define RIGHT_INDENT 104
-#define LINE_STEP 16
-#define RECT_SIZE 3
-#define LINE_WIDTH 3
-
-#define PARTICLES_INFO_CONTROL_OFFSET 8
-#define PARTICLES_INFO_CONTROL_WIDTH 50
-
-#define UPDATE_LAYERS_EXTRA_INFO_PERIOD 250 // in milliseconds
 
 ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 	ScrollZoomWidget(parent),
@@ -73,13 +62,23 @@ ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 			this,
 			SLOT(OnEffectNodeSelected(Entity*)));
 	
+	connect(CommandSignals::Instance(),
+			SIGNAL(CommandAffectsEntities(DAVA::Scene*, CommandList::eCommandId, const DAVA::Set<DAVA::Entity*>&) ) ,
+			this,
+			SLOT(OnCommandExecuted(DAVA::Scene*, CommandList::eCommandId, const DAVA::Set<DAVA::Entity*>&)));
+	
 	Init(0, 0);
 	
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 	// Init and start updating the particles grid.
-	this->countWidget = new ParticlesCountWidget(this, this);
-	this->areaWidget = new ParticlesAreaWidget(this, this);
+	infoColumns.push_back(new ParticlesCountColumn(this, this));
+	infoColumns.push_back(new ParticlesAverageCountColumn(this, this));
+	infoColumns.push_back(new ParticlesMaxCountColumn(this, this));
+
+	infoColumns.push_back(new ParticlesAreaColumn(this, this));
+	infoColumns.push_back(new ParticlesAverageAreaColumn(this, this));
+	infoColumns.push_back(new ParticlesMaxAreaColumn(this, this));
 
     connect(&updateTimer, SIGNAL(timeout()),
 			this, SLOT(OnUpdateLayersExtraInfoNeeded()));
@@ -88,10 +87,15 @@ ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 
 ParticleTimeLineWidget::~ParticleTimeLineWidget()
 {
-	SafeDelete(this->countWidget);
-	SafeDelete(this->areaWidget);
-
 	updateTimer.stop();
+
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = infoColumns.begin();
+		 iter != infoColumns.end(); iter ++)
+	{
+		SafeDelete(*iter);
+	}
+	
+	infoColumns.clear();
 }
 
 void ParticleTimeLineWidget::OnLayerSelected(Entity* node, ParticleLayer* layer)
@@ -164,6 +168,7 @@ void ParticleTimeLineWidget::HandleNodeSelected(Entity* node, ParticleLayer* lay
 	}
 
 	UpdateSizePolicy();
+	NotifyLayersExtraInfoChanged();
 	UpdateLayersExtraInfoPosition();
 
 	if (lines.size())
@@ -494,29 +499,69 @@ void ParticleTimeLineWidget::UpdateLayersExtraInfoPosition()
 {
 	if (lines.size() == 0)
 	{
-		countWidget->setVisible(false);
-		areaWidget->setVisible(false);
+		ShowLayersExtraInfoValues(false);
 		return;
 	}
-	
+
+	ShowLayersExtraInfoValues(true);
 	QRect graphRect = GetGraphRect();
-	QRect extraInfoRect(graphRect.right() + PARTICLES_INFO_CONTROL_OFFSET,
-					   0,
-					   PARTICLES_INFO_CONTROL_WIDTH + 1,
-					   graphRect.height() + TOP_INDENT + 1);
-	countWidget->setGeometry(extraInfoRect);
-	countWidget->setVisible(true);
 	
-	extraInfoRect.moveRight(extraInfoRect.right() + PARTICLES_INFO_CONTROL_WIDTH);
-	areaWidget->setGeometry(extraInfoRect);
-	areaWidget->setVisible(true);
+	List<ParticlesExtraInfoColumn*>::iterator firstIter = infoColumns.begin();
+	ParticlesExtraInfoColumn* firstColumn = (*firstIter);
+	
+	QRect extraInfoRect(graphRect.right() + PARTICLES_INFO_CONTROL_OFFSET, 0,
+						firstColumn->GetColumnWidth(), graphRect.height() + TOP_INDENT + 1);
+	firstColumn->setGeometry(extraInfoRect);
+
+	firstIter ++;
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = firstIter;
+		 iter != infoColumns.end(); iter ++)
+	{
+		int curRight = extraInfoRect.right();
+		extraInfoRect.setLeft(curRight);
+		extraInfoRect.setRight(curRight + (*iter)->GetColumnWidth());
+
+		(*iter)->setGeometry(extraInfoRect);
+	}
+}
+
+void ParticleTimeLineWidget::ShowLayersExtraInfoValues(bool isVisible)
+{
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = infoColumns.begin();
+		 iter != infoColumns.end(); iter ++)
+	{
+		(*iter)->setVisible(isVisible);
+	}
 }
 
 void ParticleTimeLineWidget::UpdateLayersExtraInfoValues()
 {
-	// Just invalidate and repaint the counter widgets.
-	this->countWidget->repaint();
-	this->areaWidget->repaint();
+	// Just invalidate and repaint the columns.
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = infoColumns.begin();
+		 iter != infoColumns.end(); iter ++)
+	{
+		(*iter)->repaint();
+	}
+}
+
+void ParticleTimeLineWidget::ResetLayersExtraInfoValues()
+{
+	// Just invalidate and repaint the columns.
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = infoColumns.begin();
+		 iter != infoColumns.end(); iter ++)
+	{
+		(*iter)->Reset();
+	}
+}
+
+void ParticleTimeLineWidget::NotifyLayersExtraInfoChanged()
+{
+	// Just invalidate and repaint the columns.
+	for (List<ParticlesExtraInfoColumn*>::iterator iter = infoColumns.begin();
+		 iter != infoColumns.end(); iter ++)
+	{
+		(*iter)->OnLayersListChanged();
+	}
 }
 
 void ParticleTimeLineWidget::UpdateSizePolicy()
@@ -664,6 +709,26 @@ void ParticleTimeLineWidget::OnUpdateLayersExtraInfoNeeded()
 	UpdateLayersExtraInfoValues();
 }
 
+void ParticleTimeLineWidget::OnCommandExecuted(DAVA::Scene* scene, CommandList::eCommandId id,
+											   const DAVA::Set<DAVA::Entity*>& affectedEntities)
+{
+	switch (id)
+	{
+		case CommandList::ID_COMMAND_START_STOP_PARTICLE_EFFECT:
+		case CommandList::ID_COMMAND_RESTART_PARTICLE_EFFECT:
+		{
+			// The particle effect was started, stopped or restarted. Reset all the extra info.
+			ResetLayersExtraInfoValues();
+			break;
+		}
+			
+		default:
+		{
+			break;
+		}
+	}
+}
+
 ParticleTimeLineWidget::SetPointValueDlg::SetPointValueDlg(float32 value, float32 minValue, float32 maxValue, QWidget *parent) :
 	QDialog(parent)
 {
@@ -703,156 +768,4 @@ ParticleTimeLineWidget::SetPointValueDlg::SetPointValueDlg(float32 value, float3
 	btnOk->setDefault(true);
 	valueSpin->setFocus();
 	valueSpin->selectAll();	
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-ParticlesExtraInfoWidget::ParticlesExtraInfoWidget(const ParticleTimeLineWidget* timeLineWidget,
-											   QWidget *parent) :
-	QWidget(parent)
-{
-	this->timeLineWidget = timeLineWidget;
-}
-
-void ParticlesExtraInfoWidget::paintEvent(QPaintEvent *)
-{
-	if (!this->timeLineWidget)
-	{
-		return;
-	}
-
-	QPainter painter(this);
-	painter.setPen(Qt::black);
-	
-	QRect ourRect = rect();
-	ourRect.adjust(0, 0, -1, -1);
-	painter.drawRect(ourRect);
-
-	// Draw the header.
-	painter.setFont(timeLineWidget->nameFont);
-	painter.setPen(Qt::black);
-	QRect textRect(0, 0, rect().width(), TOP_INDENT);
-	painter.drawRect(textRect);
-	painter.drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter, GetExtraInfoHeader());
-
-	// Draw the per-layer particles count.
-	OnBeforeGetExtraInfoLoop();
-
-	QFontMetrics fontMetrics(timeLineWidget->nameFont);
-	painter.setFont(timeLineWidget->nameFont);
-
-	int32 i = 0;
-	for (ParticleTimeLineWidget::LINE_MAP::const_iterator iter = timeLineWidget->lines.begin();
-		 iter != timeLineWidget->lines.end(); ++iter, ++i)
-	{
-		const ParticleTimeLineWidget::LINE& line = iter->second;
-
-		painter.setPen(QPen(line.color, LINE_WIDTH));
-		int startY = i * LINE_STEP + LINE_STEP / 2;
-		QRect textRect (EXTRA_INFO_LEFT_PADDING, TOP_INDENT + startY,
-						rect().width() - EXTRA_INFO_LEFT_PADDING, LINE_STEP);
-		painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter,
-						 GetExtraInfoForLayerLine(line));
-	}
-
-	OnAfterGetExtraInfoLoop();
-
-	// Draw the "Total" box.
-	QPoint totalPoint(EXTRA_INFO_LEFT_PADDING, rect().bottom() - 3);
-	QFont totalFont = timeLineWidget->nameFont;
-	totalFont.setBold(true);
-
-	painter.setPen(QPen(Qt::black, LINE_WIDTH));
-	painter.drawText(totalPoint, GetExtraInfoFooter());
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-ParticlesCountWidget::ParticlesCountWidget(const ParticleTimeLineWidget* timeLineWidget,
-										   QWidget *parent) :
-	ParticlesExtraInfoWidget(timeLineWidget, parent)
-{
-	this->totalParticlesCount = 0;
-}
-
-void ParticlesCountWidget::OnBeforeGetExtraInfoLoop()
-{
-	this->totalParticlesCount = 0;
-}
-
-QString ParticlesCountWidget::GetExtraInfoForLayerLine(const ParticleTimeLineWidget::LINE& line)
-{
-	if (!line.layer)
-	{
-		return QString();
-	}
-	
-	int32 particlesNumber = line.layer->GetActiveParticlesCount();
-	this->totalParticlesCount += particlesNumber;
-
-	return QString::number(particlesNumber);
-}
-
-QString ParticlesCountWidget::GetExtraInfoHeader()
-{
-	return "Count";
-}
-
-QString ParticlesCountWidget::GetExtraInfoFooter()
-{
-	return QString::number(this->totalParticlesCount);
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-ParticlesAreaWidget::ParticlesAreaWidget(const ParticleTimeLineWidget* timeLineWidget,
-									   QWidget *parent) :
-ParticlesExtraInfoWidget(timeLineWidget, parent)
-{
-	this->totalParticlesArea = 0.0f;
-}
-
-void ParticlesAreaWidget::OnBeforeGetExtraInfoLoop()
-{
-	this->totalParticlesArea = 0;
-}
-
-QString ParticlesAreaWidget::GetExtraInfoForLayerLine(const ParticleTimeLineWidget::LINE& line)
-{
-	if (!line.layer)
-	{
-		return QString();
-	}
-	
-	float32 area = line.layer->GetActiveParticlesArea();
-	this->totalParticlesArea += area;
-
-	return FormatFloat(area);
-}
-
-QString ParticlesAreaWidget::GetExtraInfoHeader()
-{
-	return "Area";
-}
-
-QString ParticlesAreaWidget::GetExtraInfoFooter()
-{
-	return FormatFloat(this->totalParticlesArea);
-}
-
-QString ParticlesAreaWidget::FormatFloat(float32 value)
-{
-	QString strValue;
-	if (fabs(value) < 10)
-	{
-		strValue = "%.4f";
-	}
-	else if (fabs(value) < 100)
-	{
-		strValue = "%.2f";
-	}
-	else
-	{
-		strValue = "%.0f";
-	}
-
-	strValue.sprintf(strValue.toAscii(), value);
-	return strValue;
 }

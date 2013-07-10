@@ -20,7 +20,7 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 #include "Base/Singleton.h"
-#include "QtPosSaver/QtPosSaver.h"
+#include "Tools/QtPosSaver/QtPosSaver.h"
 #include "ui_mainwindow.h"
 
 class LibraryModel;
@@ -35,7 +35,9 @@ public:
 	Ui::MainWindow* GetUI();
     
     virtual bool eventFilter(QObject *, QEvent *);
-    
+
+	SceneEditor2* GetCurrentScene();
+
 private:
 	void OpenLastProject();
 
@@ -62,6 +64,8 @@ public slots:
 	//return true if conversion has been started
 	void UpdateParticleSprites();
 	void RepackAndReloadScene();
+
+	void EnableNotPassableNew();
 
 	void Undo2();
 	void Redo2();

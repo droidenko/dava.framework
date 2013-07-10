@@ -516,7 +516,7 @@ void SceneEditorScreenMain::SaveSceneToFile(const FilePath &pathToFile)
     sceneData->SetScenePathname(pathToFile);
 
     BodyItem *iBody = FindCurrentBody();
-    iBody->bodyControl->PushDebugCamera();
+    iBody->bodyControl->PushEditorEntities();
     
     Scene * scene = iBody->bodyControl->GetScene();
     
@@ -528,7 +528,7 @@ void SceneEditorScreenMain::SaveSceneToFile(const FilePath &pathToFile)
     uint64 endTime = SystemTimer::Instance()->AbsoluteMS();
     Logger::Info("[SAVE SCENE TIME] %d ms", (endTime - startTime));
     
-    iBody->bodyControl->PopDebugCamera();			
+    iBody->bodyControl->PopEditorEntities();			
 }
 
 void SceneEditorScreenMain::UpdateModificationPanel(void)
@@ -542,7 +542,7 @@ void SceneEditorScreenMain::UpdateModificationPanel(void)
 void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
 {
     BodyItem *iBody = FindCurrentBody();
-	iBody->bodyControl->PushDebugCamera();
+	iBody->bodyControl->PushEditorEntities();
     
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
     
@@ -557,7 +557,7 @@ void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
     Set<String> errorsLog;
     sceneSaver.SaveScene(iBody->bodyControl->GetScene(), sceneData->GetScenePathname(), errorsLog);
     
-	iBody->bodyControl->PopDebugCamera();
+	iBody->bodyControl->PopEditorEntities();
     
     ShowErrorDialog(errorsLog);
 }
@@ -565,7 +565,7 @@ void SceneEditorScreenMain::SaveToFolder(const FilePath & folder)
 void SceneEditorScreenMain::ExportAs(eGPUFamily forGPU)
 {
     BodyItem *iBody = FindCurrentBody();
-	iBody->bodyControl->PushDebugCamera();
+	iBody->bodyControl->PushEditorEntities();
     
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetActive();
     
@@ -584,7 +584,7 @@ void SceneEditorScreenMain::ExportAs(eGPUFamily forGPU)
     Set<String> errorsLog;
     exporter.ExportScene(iBody->bodyControl->GetScene(), sceneData->GetScenePathname(), errorsLog);
     
-	iBody->bodyControl->PopDebugCamera();
+	iBody->bodyControl->PopEditorEntities();
     
     ShowErrorDialog(errorsLog);
 }

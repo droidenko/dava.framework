@@ -31,7 +31,7 @@ UIList* UIListMetadata::GetActiveUIList() const
 
 void UIListMetadata::InitializeControl(const String& controlName, const Vector2& position)
 {
-	UIControlMetadata::InitializeControl(controlName, position);
+	BaseMetadata::InitializeControl(controlName, position);
 	
 	int paramsCount = this->GetParamsCount();
     for (BaseMetadataParams::METADATAPARAMID i = 0; i < paramsCount; i ++)

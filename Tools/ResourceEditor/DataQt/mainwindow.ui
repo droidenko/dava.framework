@@ -880,6 +880,72 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionEnableNotPassable"/>
+  </widget>
+  <widget class="QDockWidget" name="dockHeightmapEditor">
+   <property name="windowTitle">
+    <string>Heightmap Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="HeightmapEditorPropertiesView" name="heightmapEditorPropertiesView" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockTilemaskEditor">
+   <property name="windowTitle">
+    <string>Tilemask Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="TilemaskEditorPropertiesView" name="widget_2" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockCustomColorsEditor">
+   <property name="windowTitle">
+    <string>Custom Colors Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9">
+    <layout class="QVBoxLayout" name="verticalLayout_12">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="CustomColorsPropertiesView" name="widget_3" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <widget class="QDockWidget" name="dockConsole">
    <property name="windowTitle">
     <string>Console</string>
@@ -922,6 +988,24 @@
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockVisibilityToolEditor">
+   <property name="windowTitle">
+    <string>Visibility Tool Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_10">
+    <layout class="QVBoxLayout" name="verticalLayout_13">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="VisibilityToolPropertiesView" name="widget_4" native="true"/>
      </item>
     </layout>
    </widget>
@@ -1410,6 +1494,11 @@
     <string>Alt+C</string>
    </property>
   </action>
+  <action name="actionEnableNotPassable">
+   <property name="text">
+    <string>Enable not passable</string>
+   </property>
+  </action>
   <action name="actionExportMali">
    <property name="text">
     <string>Mali</string>
@@ -1563,9 +1652,33 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>HeightmapEditorPropertiesView</class>
+   <extends>QWidget</extends>
+   <header>DockHeightmapEditor/HeightmapEditorPropertiesView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TilemaskEditorPropertiesView</class>
+   <extends>QWidget</extends>
+   <header>DockTilemaskEditor/TilemaskEditorPropertiesView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomColorsPropertiesView</class>
+   <extends>QWidget</extends>
+   <header>DockCustomColorsEditor/CustomColorsPropertiesView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ConsoleView</class>
    <extends>QPlainTextEdit</extends>
    <header>DockConsole/ConsoleView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>VisibilityToolPropertiesView</class>
+   <extends>QWidget</extends>
+   <header>DockVisibilityToolEditor/VisibilityToolPropertiesView.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

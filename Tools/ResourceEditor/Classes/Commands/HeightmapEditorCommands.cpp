@@ -21,6 +21,8 @@
 #include "../SceneEditor/EditorBodyControl.h"
 #include "../LandscapeEditor/LandscapesController.h"
 
+#include "../Qt/Scene/System/LandscapeEditorDrawSystem/HeightmapProxy.h"
+
 #include "Utils/Random.h"
 
 HeightmapModificationCommand::HeightmapModificationCommand(Command::eCommandType type,
@@ -306,4 +308,80 @@ LandscapeEditorBase* CommandCopyPasteHeightmap::GetActiveEditor()
 	}
 	
 	return editor;
+}
+
+CommandModifyHeightmap::CommandModifyHeightmap(HeightmapProxy* heightmapProxy,
+											   Heightmap* originalHeightmap,
+											   const Rect& updatedRect)
+:	HeightmapModificationCommand(COMMAND_UNDO_REDO, updatedRect, CommandList::ID_COMMAND_DRAW_HEIGHTMAP)
+,	heightmapProxy(heightmapProxy)
+{
+	commandName = "Heightmap Change";
+	
+	if (originalHeightmap && heightmapProxy)
+	{
+		undoRegion = GetHeightmapRegion(originalHeightmap);
+		redoRegion = GetHeightmapRegion(heightmapProxy);
+	}
+}
+
+CommandModifyHeightmap::~CommandModifyHeightmap()
+{
+	SafeDeleteArray(undoRegion);
+	SafeDeleteArray(redoRegion);
+}
+
+void CommandModifyHeightmap::Execute()
+{
+	ApplyHeightmapRegion(redoRegion);
+}
+
+void CommandModifyHeightmap::Cancel()
+{
+	ApplyHeightmapRegion(undoRegion);
+}
+
+uint16* CommandModifyHeightmap::GetHeightmapRegion(Heightmap* heightmap)
+{
+	int32 size = heightmap->Size();
+	int32 width = (int32)updatedRect.dx;
+	int32 height = (int32)updatedRect.dy;
+	int32 xOffset = (int32)updatedRect.x;
+	int32 yOffset = (int32)updatedRect.y;
+
+	DVASSERT((xOffset + width) <= size && (yOffset + height) <= size);
+
+	uint16* newData = new uint16[width * height];
+	uint16* oldData = heightmap->Data();
+
+	for (int32 i = 0; i < height; ++i)
+	{
+		uint16* src = oldData + (yOffset + i) * size + xOffset;
+		uint16* dst = newData + i * width;
+		memcpy(dst, src, sizeof(uint16) * width);
+	}
+
+	return newData;
+}
+
+void CommandModifyHeightmap::ApplyHeightmapRegion(uint16* region)
+{
+	int32 size = heightmapProxy->Size();
+	int32 width = (int32)updatedRect.dx;
+	int32 height = (int32)updatedRect.dy;
+	int32 xOffset = (int32)updatedRect.x;
+	int32 yOffset = (int32)updatedRect.y;
+
+	DVASSERT((xOffset + width) <= size && (yOffset + height) <= size);
+
+	uint16* data = heightmapProxy->Data();
+
+	for (int32 i = 0; i < height; ++i)
+	{
+		uint16* src = region + i * width;
+		uint16* dst = data + (yOffset + i) * size + xOffset;
+		memcpy(dst, src, sizeof(uint16) * width);
+	}
+
+	heightmapProxy->UpdateRect(updatedRect);
 }

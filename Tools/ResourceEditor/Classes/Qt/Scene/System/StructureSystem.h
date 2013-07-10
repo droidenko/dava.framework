@@ -23,6 +23,8 @@
 // framework
 #include "Entity/SceneSystem.h"
 #include "Scene3D/Entity.h"
+#include "Particles/ParticleLayer.h"
+#include "Particles/ParticleEmitter.h"
 #include "UI/UIEvent.h"
 
 class StructureSystem : public DAVA::SceneSystem
@@ -41,17 +43,29 @@ public:
 	void Remove(DAVA::Entity *entity);
 	void Remove(const EntityGroup *entityGroup);
 
-	void Lock();
-	void Unlock();
+	void MoveLayer(DAVA::ParticleLayer *layer, DAVA::ParticleEmitter *newEmitter, DAVA::ParticleLayer *newBefore);
+	void MoveLayer(const DAVA::Vector<DAVA::ParticleLayer *> &layers, DAVA::ParticleEmitter *newEmitter, DAVA::ParticleLayer *newBefore);
+
+	void RemoveLayer(DAVA::ParticleLayer *layer);
+	void RemoveLayer(const DAVA::Vector<DAVA::ParticleLayer *> &layers);
+
+	void MoveForce(DAVA::ParticleForce *force, DAVA::ParticleLayer *oldLayer, DAVA::ParticleLayer *newLayer);
+	void MoveForce(const DAVA::Vector<DAVA::ParticleForce *> &forces, const DAVA::Vector<DAVA::ParticleLayer *> &oldLayers, DAVA::ParticleLayer *newLayer);
+
+	void RemoveForce(DAVA::ParticleForce *force, DAVA::ParticleLayer *layer);
+	void RemoveForce(const DAVA::Vector<DAVA::ParticleForce *> &forces, const DAVA::Vector<DAVA::ParticleLayer *> &layers);
+
+	void LockSignals();
+	void UnlockSignals();
 
 protected:
-	bool locked;
+	bool lockedSignals;
 
 	void Update(DAVA::float32 timeElapsed);
 	void Draw();
 
 	void ProcessUIEvent(DAVA::UIEvent *event);
-	void PropeccCommand(const Command2 *command, bool redo);
+	void ProcessCommand(const Command2 *command, bool redo);
 
 	void CheckAndMarkSolid(DAVA::Entity *entity);
 	void CheckAndMarkLocked(DAVA::Entity *entity);

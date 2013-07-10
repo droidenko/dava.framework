@@ -560,8 +560,6 @@ void UIFileSystemDialog::HistoryButtonPressed(BaseObject *obj, void *data, void 
     
 void UIFileSystemDialog::CreateHistoryForPath(const FilePath &pathToFile)
 {
-    DVASSERT(pathToFile.IsAbsolutePathname());
-
     foldersHistory.clear();
 
     String absPath = pathToFile.GetAbsolutePathname();

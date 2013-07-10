@@ -19,7 +19,7 @@
 
 #include "ui_LodCorrectionDialog.h"
 
-#include "../../CustomControls/EventFilterDoubleSpinBox.h"
+#include "Tools/EventFilterDoubleSpinBox/EventFilterDoubleSpinBox.h"
 #include "DAVAEngine.h"
 
 using namespace DAVA;

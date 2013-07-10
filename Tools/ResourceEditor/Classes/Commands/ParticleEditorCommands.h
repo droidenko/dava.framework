@@ -41,9 +41,12 @@ class CommandStartStopParticleEffect: public Command
 {
 public:
 	CommandStartStopParticleEffect(bool isStart);
+	DAVA::Set<DAVA::Entity*> GetAffectedEntities();
     
 protected:
 	virtual void Execute();
+
+	DAVA::Entity* affectedEntity;
     bool isStart;
 };
 
@@ -51,9 +54,12 @@ class CommandRestartParticleEffect: public Command
 {
 public:
 	CommandRestartParticleEffect();
-    
+    DAVA::Set<DAVA::Entity*> GetAffectedEntities();
+	
 protected:
 	virtual void Execute();
+
+	DAVA::Entity* affectedEntity;
 };
 
 

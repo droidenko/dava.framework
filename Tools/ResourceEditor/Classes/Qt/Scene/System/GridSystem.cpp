@@ -75,7 +75,7 @@ void SceneGridSystem::Draw()
 	rm->SetState(oldState);
 }
 
-void SceneGridSystem::PropeccCommand(const Command2 *command, bool redo)
+void SceneGridSystem::ProcessCommand(const Command2 *command, bool redo)
 {
 
 }

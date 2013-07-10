@@ -64,7 +64,7 @@ ShadowRect::ShadowRect()
 	shader->LoadFromYaml("~res:/Shaders/ShadowVolume/shadowrect.shader");
 	shader->Recompile();
     
-    uniformShadowColor = shader->FindUniformLocationByName("shadowColor");
+    uniformShadowColor = shader->FindUniformIndexByName("shadowColor");
     DVASSERT(uniformShadowColor != -1);
 }
 
@@ -83,7 +83,7 @@ void ShadowRect::Draw()
 	RenderManager::Instance()->SetRenderData(rdo);
 	RenderManager::Instance()->FlushState();
     
-    shader->SetUniformColor4(uniformShadowColor, shadowColor);
+    shader->SetUniformColor4ByIndex(uniformShadowColor, shadowColor);
     
 	RenderManager::Instance()->AttachRenderData();
 	RenderManager::Instance()->HWDrawArrays(PRIMITIVETYPE_TRIANGLESTRIP, 0, 4);

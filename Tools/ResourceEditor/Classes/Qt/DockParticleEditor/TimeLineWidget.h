@@ -25,7 +25,7 @@
 #include <QScrollBar.h>
 #include <qslider.h>
 #include "ScrollZoomWidget.h"
-#include "../CustomControls/EventFilterDoubleSpinBox.h"
+#include "Tools/EventFilterDoubleSpinBox/EventFilterDoubleSpinBox.h"
 
 using namespace DAVA;
 

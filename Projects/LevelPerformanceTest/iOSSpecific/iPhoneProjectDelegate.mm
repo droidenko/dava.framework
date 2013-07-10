@@ -43,6 +43,15 @@
 	[super applicationDidFinishLaunching:application];
 }
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+	[window makeKeyAndVisible];
+	window.backgroundColor = [UIColor redColor];
+	
+	return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+
 - (void)dealloc 
 {
     [window release];

@@ -124,6 +124,8 @@ protected:
     void ValidateInstanceMaterialState(InstanceMaterialState *materialState, Set<String> &errorsLog);
 
     
+	void ValidateLandscapeTexture(Landscape *landscape, Landscape::eTextureLevel texLevel, Set<String> &errorsLog);
+
     
     int32 EnumerateSceneNodes(Entity *node);
     

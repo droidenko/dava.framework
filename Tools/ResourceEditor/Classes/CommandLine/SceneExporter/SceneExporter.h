@@ -32,8 +32,6 @@ public:
     void SetGPUForExporting(const String &newGPU);
     void SetGPUForExporting(const eGPUFamily newGPU);
     
-    void CleanFolder(const FilePath &folderPathname, Set<String> &errorLog);
-    
     void SetInFolder(const FilePath &folderPathname);
     void SetOutFolder(const FilePath &folderPathname);
     

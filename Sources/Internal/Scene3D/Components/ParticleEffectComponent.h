@@ -127,11 +127,11 @@ private:
 
 public:
 	INTROSPECTION_EXTEND(ParticleEffectComponent, Component,
-		MEMBER(stopAfterNRepeats, "stopAfterNRepeats", I_SAVE)
-        MEMBER(stopWhenEmpty, "stopWhenEmpty", I_SAVE)
+		MEMBER(stopAfterNRepeats, "stopAfterNRepeats", I_VIEW | I_SAVE)
+        MEMBER(stopWhenEmpty, "stopWhenEmpty",  I_VIEW | I_SAVE)
 //        MEMBER(needEmitPlaybackComplete, "needEmitPlaybackComplete", INTROSPECTION_SERIALIZABLE)
-        MEMBER(effectDuration, "effectDuration", I_SAVE)
-		MEMBER(stopOnLoad, "stopOnLoad", I_SAVE)
+        MEMBER(effectDuration, "effectDuration",  I_VIEW | I_SAVE)
+		MEMBER(stopOnLoad, "stopOnLoad",  I_VIEW | I_SAVE)
 
     );
 };

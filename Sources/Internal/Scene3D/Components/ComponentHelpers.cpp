@@ -21,6 +21,7 @@
 #include "Scene3D/Components/LightComponent.h"
 #include "Scene3D/Components/LodComponent.h"
 #include "Scene3D/Components/RenderComponent.h"
+#include "Scene3D/Components/ParticleEffectComponent.h"
 #include "Render/Highlevel/Camera.h"
 #include "Render/Highlevel/Landscape.h"
 #include "Render/Highlevel/RenderObject.h"
@@ -61,6 +62,15 @@ ParticleEmitter * GetEmitter(Entity * fromEntity)
 	return emitter;
 }
 
+ParticleEffectComponent * GetEffectComponent(Entity *fromEntity)
+{
+	if(fromEntity)
+	{
+		return static_cast<ParticleEffectComponent*>(fromEntity->GetComponent(Component::PARTICLE_EFFECT_COMPONENT));
+	}
+
+	return NULL;
+}
 
 Light * GetLight( Entity * fromEntity )
 {

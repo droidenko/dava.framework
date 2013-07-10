@@ -19,6 +19,10 @@
 #include <QDropEvent>
 #include <QMenu>
 
+// framework
+#include "Scene3D/Components/ComponentHelpers.h"
+#include "Scene3D/Components/ParticleEffectComponent.h"
+
 SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	: QTreeView(parent)
 	, skipTreeSelectionProcessing(false)
@@ -29,7 +33,7 @@ SceneTree::SceneTree(QWidget *parent /*= 0*/)
 	treeDelegate = new SceneTreeDelegate();
 	setItemDelegate(treeDelegate);
 
-	setDragDropMode(QAbstractItemView::InternalMove);
+	setDragDropMode(QAbstractItemView::DragDrop);
 	setDragEnabled(true);
 	setAcceptDrops(true);
 	setDropIndicatorShown(true);
@@ -56,27 +60,11 @@ SceneTree::~SceneTree()
 
 }
 
-void SceneTree::dropEvent(QDropEvent * event)
+void SceneTree::GetDropParams(const QPoint &pos, QModelIndex &index, int &row, int &col)
 {
-	QTreeView::dropEvent(event);
-
-	// this is a workaround for Qt bug
-	// see https://bugreports.qt-project.org/browse/QTBUG-26229 
-	// for more information
-	if(!treeModel->DropIsAccepted())
-	{
-		event->setDropAction(Qt::IgnoreAction);
-	}
-}
-
-void SceneTree::dragMoveEvent(QDragMoveEvent *event)
-{
-	QTreeView::dragMoveEvent(event);
-
-	int row = -1;
-	int col = -1;
-
-	QModelIndex index = indexAt(event->pos());
+	row = -1;
+	col = -1;
+	index = indexAt(pos);
 
 	switch (dropIndicatorPosition()) 
 	{
@@ -94,8 +82,36 @@ void SceneTree::dragMoveEvent(QDragMoveEvent *event)
 	case QAbstractItemView::OnViewport:
 		break;
 	}
+}
 
-	if(!treeModel->DropCanBeAccepted(event->mimeData(), event->dropAction(), row, col, index))
+void SceneTree::dropEvent(QDropEvent * event)
+{
+	QTreeView::dropEvent(event);
+
+	if(treeModel->DropAccepted())
+	{
+		int row, col; 
+		QModelIndex parent;
+
+		GetDropParams(event->pos(), parent, row, col);
+		expand(parent);
+	}
+
+	// after processing don't allow this event to go higher
+	// so no body will decide to remove/insert grag&dropped items into treeview
+	// except our model. Model will do this when scene entity remove/move signals catched
+	event->setDropAction(Qt::IgnoreAction);
+}
+
+void SceneTree::dragMoveEvent(QDragMoveEvent *event)
+{
+	int row, col; 
+	QModelIndex parent;
+
+	QTreeView::dragMoveEvent(event);
+
+	GetDropParams(event->pos(), parent, row, col);
+	if(!treeModel->DropCanBeAccepted(event->mimeData(), event->dropAction(), row, col, parent))
 	{
 		event->ignore();
 	}
@@ -151,6 +167,9 @@ void SceneTree::TreeSelectionChanged(const QItemSelection & selected, const QIte
 		SyncSelectionFromTree();
 		skipTreeSelectionProcessing = false;
 	}
+
+	// emit some signal about particles
+	EmitParticleSignals(selected);
 }
 
 void SceneTree::TreeItemClicked(const QModelIndex & index)
@@ -168,7 +187,7 @@ void SceneTree::TreeItemDoubleClicked(const QModelIndex & index)
 	SceneEditor2* sceneEditor = treeModel->GetScene();
 	if(NULL != sceneEditor)
 	{
-		DAVA::Entity *entity = treeModel->GetEntity(index);
+		DAVA::Entity *entity = SceneTreeItemEntity::GetEntity(treeModel->GetItem(index));
 		if(NULL != entity)
 		{
 			DAVA::AABBox3 box = sceneEditor->selectionSystem->GetSelectionAABox(entity, entity->GetWorldTransform());
@@ -180,20 +199,45 @@ void SceneTree::TreeItemDoubleClicked(const QModelIndex & index)
 void SceneTree::ShowContextMenu(const QPoint &pos)
 {
 	QModelIndex index = indexAt(pos);
-	DAVA::Entity *clickedEntity = treeModel->GetEntity(index);
+	SceneTreeItem *item = treeModel->GetItem(index);
 
-	if(NULL != clickedEntity)
+	if(NULL != item)
+	{
+		switch (item->ItemType())
+		{
+		case SceneTreeItem::EIT_Entity:
+			ShowContextMenuEntity(SceneTreeItemEntity::GetEntity(item), mapToGlobal(pos));
+			break;
+		case SceneTreeItem::EIT_Layer:
+			ShowContextMenuLayer(SceneTreeItemParticleLayer::GetLayer(item), mapToGlobal(pos));
+			break;
+		case SceneTreeItem::EIT_Force:
+			ShowContextMenuForce(SceneTreeItemParticleForce::GetForce(item), mapToGlobal(pos));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, const QPoint &pos)
+{
+	if(NULL != entity)
 	{
 		QMenu contextMenu;
 
+		// look at
 		contextMenu.addAction(QIcon(":/QtIcons/zoom.png"), "Look at", this, SLOT(LookAtSelection()));
 		contextMenu.addSeparator();
-		contextMenu.addAction(QIcon(":/QtIcons/remove.png"), "Remove", this, SLOT(RemoveSelection()));
+
+		// add/remove
+		contextMenu.addAction(QIcon(":/QtIcons/remove.png"), "Remove entity", this, SLOT(RemoveSelection()));
 		contextMenu.addSeparator();
+
+		// lock/unlock
 		QAction *lockAction = contextMenu.addAction(QIcon(":/QtIcons/lock_add.png"), "Lock", this, SLOT(LockEntities()));
 		QAction *unlockAction = contextMenu.addAction(QIcon(":/QtIcons/lock_delete.png"), "Unlock", this, SLOT(UnlockEntities()));
-
-		if(clickedEntity->GetLocked())
+		if(entity->GetLocked())
 		{
 			lockAction->setDisabled(true);
 		}
@@ -202,8 +246,32 @@ void SceneTree::ShowContextMenu(const QPoint &pos)
 			unlockAction->setDisabled(true);
 		}
 
-		contextMenu.exec(mapToGlobal(pos));
+		// particle effect
+		DAVA::ParticleEffectComponent* effect = DAVA::GetEffectComponent(entity);
+		if(NULL != effect)
+		{
+			contextMenu.addSeparator();
+			QMenu *particleEffectMenu = contextMenu.addMenu("Particle effect");
+			
+			particleEffectMenu->addAction("Add emitter", this, SLOT(AddEmitter()));
+			particleEffectMenu->addSeparator();
+			particleEffectMenu->addAction(QIcon(":/QtIcons/play.png"), "Start", this, SLOT(StartEmitter()));
+			particleEffectMenu->addAction(QIcon(":/QtIcons/stop.png"), "Stop", this, SLOT(StopEmitter()));
+			particleEffectMenu->addAction(QIcon(":/QtIcons/restart.png"), "Restart", this, SLOT(RestartEmitter()));
+		}
+
+		contextMenu.exec(pos);
 	}
+}
+
+void SceneTree::ShowContextMenuLayer(DAVA::ParticleLayer *layer, const QPoint &pos)
+{
+
+}
+
+void SceneTree::ShowContextMenuForce(DAVA::ParticleForce *force, const QPoint &pos)
+{
+
 }
 
 void SceneTree::LookAtSelection()
@@ -303,7 +371,7 @@ void SceneTree::SyncSelectionToTree()
 		const EntityGroup* curSelection = curScene->selectionSystem->GetSelection();
 		for(size_t i = 0; i < curSelection->Size(); ++i)
 		{
-			QModelIndex index = treeModel->GetEntityIndex(curSelection->GetEntity(i));
+			QModelIndex index = treeModel->GetIndex(curSelection->GetEntity(i));
 
 			if(index.isValid())
 			{
@@ -330,10 +398,13 @@ void SceneTree::SyncSelectionFromTree()
 		QModelIndexList indexList = selectionModel()->selection().indexes();
 		for (int i = 0; i < indexList.size(); ++i)
 		{
-			DAVA::Entity *entity = treeModel->GetEntity(indexList[i]);
+			DAVA::Entity *entity = SceneTreeItemEntity::GetEntity(treeModel->GetItem(indexList[i]));
 
-			treeSelectedEntities.insert(entity);
-			curScene->selectionSystem->AddSelection(entity);
+			if(NULL != entity)
+			{
+				treeSelectedEntities.insert(entity);
+				curScene->selectionSystem->AddSelection(entity);
+			}
 		}
 
 		// remove from selection system all entities that are not selected in tree
@@ -343,6 +414,134 @@ void SceneTree::SyncSelectionFromTree()
 			if(!treeSelectedEntities.contains(selGroup.GetEntity(i)))
 			{
 				curScene->selectionSystem->RemSelection(selGroup.GetEntity(i));
+			}
+		}
+	}
+}
+
+void SceneTree::EmitParticleSignals(const QItemSelection & selected)
+{
+	bool isParticleElements = false;
+
+	// allow only single selected entities
+	if(selected.size() == 1) 
+	{
+		QModelIndexList indexList = selectionModel()->selection().indexes();
+		SceneTreeItem *item = treeModel->GetItem(indexList[0]);
+
+		if(NULL != item)
+		{
+			switch(item->ItemType())
+			{
+			case SceneTreeItem::EIT_Entity:
+				{
+					DAVA::Entity *entity = SceneTreeItemEntity::GetEntity(item);
+					if(NULL != DAVA::GetEmitter(entity))
+					{
+						emit EmitterSelected(entity, NULL);
+						isParticleElements = true;
+					}
+				}
+				break;
+			case SceneTreeItem::EIT_Layer:
+				{
+					SceneTreeItemParticleLayer *itemLayer = (SceneTreeItemParticleLayer *) item;
+					if(NULL != itemLayer->parent && NULL != itemLayer->layer)
+					{
+						emit LayerSelected(itemLayer->parent, itemLayer->layer, NULL, false);
+						isParticleElements = true;
+					}
+				}
+				break;
+			case SceneTreeItem::EIT_Force:
+				{
+					SceneTreeItemParticleForce *itemForce = (SceneTreeItemParticleForce *) item;
+					DAVA::ParticleLayer* layer = itemForce->parent;
+					if(NULL != layer)
+					{
+						for(int i = 0; i < (int) layer->forces.size(); ++i)
+						{
+							if(layer->forces[i] == itemForce->force)
+							{
+								emit ForceSelected(NULL, layer, i, NULL);
+								isParticleElements = true;
+
+								break;
+							}
+						}
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	if(!isParticleElements)
+	{
+		emit EmitterSelected(NULL, NULL);
+	}
+}
+
+void SceneTree::AddEmitter()
+{
+	SceneEditor2* curScene = treeModel->GetScene();
+	if(NULL != curScene)
+	{
+		DAVA::Entity *curEntity = SceneTreeItemEntity::GetEntity(treeModel->GetItem(currentIndex()));
+		if(NULL != curEntity)
+		{
+			//DAVA::ParticleEmitter *emitter = new DAVA::ParticleEmitter();
+			//curScene->structureSystem->Move(emitter, curEntity, NULL);
+		}
+	}
+}
+
+void SceneTree::StartEmitter()
+{
+	SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		const EntityGroup *selection = sceneEditor->selectionSystem->GetSelection();
+		for(size_t i = 0; i < selection->Size(); ++i)
+		{
+			DAVA::ParticleEffectComponent *effect = DAVA::GetEffectComponent(selection->GetEntity(i));
+			if(NULL != effect)
+			{
+				effect->Start();
+			}
+		}
+	}
+}
+
+void SceneTree::StopEmitter()
+{
+	SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		const EntityGroup *selection = sceneEditor->selectionSystem->GetSelection();
+		for(size_t i = 0; i < selection->Size(); ++i)
+		{
+			DAVA::ParticleEffectComponent *effect = DAVA::GetEffectComponent(selection->GetEntity(i));
+			if(NULL != effect)
+			{
+				effect->Stop();
+			}
+		}
+	}
+}
+
+void SceneTree::RestartEmitter()
+{
+	SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		const EntityGroup *selection = sceneEditor->selectionSystem->GetSelection();
+		for(size_t i = 0; i < selection->Size(); ++i)
+		{
+			DAVA::ParticleEffectComponent *effect = DAVA::GetEffectComponent(selection->GetEntity(i));
+			if(NULL != effect)
+			{
+				effect->Restart();
 			}
 		}
 	}

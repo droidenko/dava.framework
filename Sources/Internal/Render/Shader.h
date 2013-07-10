@@ -107,12 +107,11 @@ public:
     const char * GetUniformName(int32 index);
     int32 GetUniformArraySize(int32 index);
 
-    int32 GetUniformLocation(int32 index);
-    int32 FindUniformLocationByName(const FastName & name);
+    int32 GetUniformLocationByIndex(int32 index);
+    //int32 FindUniformLocationByName(const FastName & name);
+    int32 FindUniformIndexByName(const FastName & name);
     
-    
-    
-    void SetUniformValue(int32 uniformLocation, int32 value);
+    /*void SetUniformValue(int32 uniformLocation, int32 value);
     void SetUniformValue(int32 uniformLocation, float32 value);
     void SetUniformValue(int32 uniformLocation, int32 count, int32 * value);
     void SetUniformValue(int32 uniformLocation, int32 count, float32 * value);
@@ -121,8 +120,19 @@ public:
     void SetUniformColor3(int32 uniformLocation, const Color & color);
     void SetUniformColor4(int32 uniformLocation, const Color & color);
     void SetUniformValue(int32 uniformLocation, const Vector4 & vector);
-    void SetUniformValue(int32 uniformLocation, const Matrix4 & matrix);
+    void SetUniformValue(int32 uniformLocation, const Matrix4 & matrix);*/
 
+	void SetUniformValueByIndex(int32 uniformIndex, int32 value);
+    void SetUniformValueByIndex(int32 uniformIndex, float32 value);
+    //void SetUniformValueByIndex(int32 uniformIndex, int32 count, int32 * value);
+    //void SetUniformValueByIndex(int32 uniformIndex, int32 count, float32 * value);
+    void SetUniformValueByIndex(int32 uniformIndex, const Vector2 & vector);
+    void SetUniformValueByIndex(int32 uniformIndex, const Vector3 & vector);
+    void SetUniformColor3ByIndex(int32 uniformIndex, const Color & color);
+    void SetUniformColor4ByIndex(int32 uniformIndex, const Color & color);
+    void SetUniformValueByIndex(int32 uniformIndex, const Vector4 & vector);
+    void SetUniformValueByIndex(int32 uniformIndex, const Matrix4 & matrix);
+	void SetUniformValueByIndex(int32 uniformIndex, const Matrix3 & matrix);
     
     void Dump();
     
@@ -173,8 +183,22 @@ private:
         GLint           location;
         GLint           size;
         eUniformType    type;
-    };
-    Uniform * uniforms;
+		void*			cacheValue;
+		uint16			cacheValueSize;
+		
+		bool ValidateCache(int32 value);
+		bool ValidateCache(float32 value);
+		bool ValidateCache(const Vector2 & value);
+		bool ValidateCache(const Vector3 & value);
+		bool ValidateCacheColor3(const Color & value);
+		bool ValidateCacheColor4(const Color & value);
+		bool ValidateCache(const Vector4 & value);
+		bool ValidateCache(const Matrix4 & value);
+		bool ValidateCache(const Matrix3 & value);
+	};
+	
+	uint16* uniformOffsets;
+	uint8* uniformData;
     
     int32 vertexFormatAttribIndeces[VERTEX_FORMAT_STREAM_MAX_COUNT];
     

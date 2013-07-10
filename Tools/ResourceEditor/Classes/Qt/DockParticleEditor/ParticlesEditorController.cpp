@@ -380,6 +380,7 @@ ForceParticleEditorNode* ParticlesEditorController::AddParticleForceToNode(Layer
 	ParticleForce* newForce = new ParticleForce(RefPtr<PropertyLine<Vector3> >(new PropertyLineValue<Vector3>(Vector3(0, 0, 0))),
 												RefPtr<PropertyLine<Vector3> >(NULL), RefPtr<PropertyLine<float32> >(NULL));
 	layer->AddForce(newForce);
+	newForce->Release();
 
     // Create the node for the new layer.
     int newLayerIndex = layer->forces.size() - 1;

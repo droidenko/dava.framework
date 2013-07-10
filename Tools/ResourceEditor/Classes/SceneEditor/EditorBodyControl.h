@@ -88,8 +88,8 @@ public:
     void SetViewportSize(ResourceEditor::eViewportType viewportType);
     bool ControlsAreLocked();
 
-	void PushDebugCamera();
-	void PopDebugCamera();
+	void PushEditorEntities();
+	void PopEditorEntities();
 
     void GetCursorVectors(Vector3 * from, Vector3 * dir, const Vector2 &point);
     
@@ -215,8 +215,7 @@ protected:
 	
 	Matrix4 translate1, translate2;
 
-	Entity * mainCam;
-	Entity * debugCam;
+	Vector<Entity *> poppedEditorEntitiesForSave;
     
     struct AddedNode
     {

@@ -16,6 +16,7 @@
 
 #include <QtGui>
 #include "DockSceneTree/SceneTreeDelegate.h"
+#include "DockSceneTree/SceneTreeModel.h"
 #include "DockSceneTree/SceneTreeItem.h"
 
 SceneTreeDelegate::SceneTreeDelegate(QWidget *parent /* = 0 */)
@@ -41,15 +42,17 @@ QSize SceneTreeDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 
 void SceneTreeDelegate::customDraw(QPainter *painter, QStyleOptionViewItem *option, const QModelIndex &index) const
 {
-	DAVA::Entity *entity = index.data(SceneTreeItem::TreeItemEntityRole).value<DAVA::Entity*>();
-
-	if(NULL != entity && entity->GetLocked())
+	SceneTreeModel *model = (SceneTreeModel *) index.model();
+	if(NULL != model)
 	{
-		QRect owRect = option->rect;
-		owRect.setLeft(owRect.right() - 16);
+		if(model->GetLocked(index))
+		{
+			QRect owRect = option->rect;
+			owRect.setLeft(owRect.right() - 16);
 
-		lockedIcon.paint(painter, owRect);
+			lockedIcon.paint(painter, owRect);
 
-		option->rect.setRight(owRect.left());
+			option->rect.setRight(owRect.left());
+		}
 	}
 }

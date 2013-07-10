@@ -27,6 +27,7 @@ namespace DAVA
 
 #define vsnprintf _vsnprintf
 #define vswprintf _vsnwprintf
+#define snprintf _snprintf
 
 #endif
 

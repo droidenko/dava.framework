@@ -47,7 +47,7 @@ public:
 	void SetUndoLimit(size_t limit);
 
 protected:
-	std::list<Command2 *> commandList;
+	DAVA::List<Command2 *> commandList;
 	size_t commandListLimit;
 	size_t nextCommandIndex;
 

@@ -62,7 +62,7 @@ protected:
 	EntityGroup				entitiesToGroup;
 	Entity*					resultEntity;
 	Map<Entity*, Entity*>	originalChildParentRelations;//child, paretn
-	SceneEditor2*		sep;
+	SceneEditor2*		sceneEditor;
 	
 	Map<Entity*, Matrix4> originalMatrixes; // local, world
 

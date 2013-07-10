@@ -213,24 +213,40 @@ void Entity::AddNode(Entity * node)
     
 void Entity::InsertBeforeNode(Entity *newNode, Entity *beforeNode)
 {
-    if (newNode)
+    if(newNode && newNode != beforeNode)
     {
-        const Vector<Entity*>::iterator &itEnd = children.end();
+		bool canBeInserted = false;
+
+		Vector<Entity*>::iterator itEnd = children.end();
         for (Vector<Entity*>::iterator it = children.begin(); it != itEnd; ++it)
         {
             if(beforeNode == (*it))
             {
-                newNode->Retain();
-                if (newNode->parent)
-                {
-                    newNode->parent->RemoveNode(newNode);
-                }
-				children.insert(it, newNode);
-                newNode->SetParent(this);
-                newNode->SetScene(GetScene());
+				canBeInserted = true;
                 break;
             }
         }
+
+		if(canBeInserted)
+		{
+			newNode->Retain();
+			if (newNode->parent)
+			{
+				newNode->parent->RemoveNode(newNode);
+			}
+
+			itEnd = children.end();
+			for (Vector<Entity*>::iterator it = children.begin(); it != itEnd; ++it)
+			{
+				if(beforeNode == (*it))
+				{
+					children.insert(it, newNode);
+					newNode->SetParent(this);
+					newNode->SetScene(GetScene());
+					break;
+				}
+			}
+		}
     }
 }
 

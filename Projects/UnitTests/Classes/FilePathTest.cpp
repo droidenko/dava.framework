@@ -11,6 +11,7 @@ FilePathTest::FilePathTest()
 	RegisterFunction(this, &FilePathTest::WinTestFunction, String("FilePathTest Win32"), NULL);
 	RegisterFunction(this, &FilePathTest::WinStylePathTestFunction, String("FilePathTest Win32 Style"), NULL);
 	RegisterFunction(this, &FilePathTest::BundleNameTest, String("FilePathTest BundleNameTest"), NULL);
+	RegisterFunction(this, &FilePathTest::AddFunctionalityTest, String("FilePathTest AddFunctionalityTest"), NULL);
 }
 
 void FilePathTest::LoadResources()
@@ -163,7 +164,7 @@ void FilePathTest::MacTestFunction(PerfFuncData * data)
     TEST_VERIFY(filepath11.GetFilename() == "texture.tex");
     TEST_VERIFY(filepath11.GetBasename() == "texture");
     TEST_VERIFY(filepath11.GetExtension() == ".tex");
-    TEST_VERIFY(filepath11.GetDirectory() == FilePath("aaa").GetDirectory());
+    TEST_VERIFY(filepath11.GetDirectory() == FilePath("testFile").GetDirectory());
 
     filepath11.ReplaceBasename("image");
     TEST_VERIFY(filepath11.GetFilename() == "image.tex");
@@ -348,7 +349,7 @@ void FilePathTest::WinTestFunction(PerfFuncData * data)
     TEST_VERIFY(filepath11.GetFilename() == "texture.tex");
     TEST_VERIFY(filepath11.GetBasename() == "texture");
     TEST_VERIFY(filepath11.GetExtension() == ".tex");
-    TEST_VERIFY(filepath11.GetDirectory() == FilePath("aaa").GetDirectory());
+    TEST_VERIFY(filepath11.GetDirectory() == FilePath("testFile").GetDirectory());
     
     filepath11.ReplaceBasename("image");
     TEST_VERIFY(filepath11.GetFilename() == "image.tex");
@@ -407,7 +408,7 @@ void FilePathTest::WinStylePathTestFunction(PerfFuncData * data)
 {
 	FilePath oldProjectPathname = FilePath::GetBundleName();
     
-    Logger::Debug("[FilePathTest] Win32");
+    Logger::Debug("[FilePathTest] Win32 win style");
     
     FilePath::SetBundleName("c:\\TestProject");
     
@@ -516,7 +517,7 @@ void FilePathTest::WinStylePathTestFunction(PerfFuncData * data)
     TEST_VERIFY(filepath11.GetFilename() == "texture.tex");
     TEST_VERIFY(filepath11.GetBasename() == "texture");
     TEST_VERIFY(filepath11.GetExtension() == ".tex");
-    TEST_VERIFY(filepath11.GetDirectory() == FilePath("aaa").GetDirectory());
+    TEST_VERIFY(filepath11.GetDirectory() == FilePath("testFile").GetDirectory());
     
     filepath11.ReplaceBasename("image");
     TEST_VERIFY(filepath11.GetFilename() == "image.tex");
@@ -562,7 +563,7 @@ void FilePathTest::WinStylePathTestFunction(PerfFuncData * data)
     TEST_VERIFY(filepath13.GetAbsolutePathname() == "c:/Users/Test/file");
     
     
-    Logger::Debug("[FilePathTest] Win32 Done");
+    Logger::Debug("[FilePathTest] Win32 win style Done");
     
     FilePath::SetBundleName(oldProjectPathname);
 }
@@ -612,5 +613,21 @@ bool FilePathTest::HasFileCorrectSize(const FilePath &path, uint32 size)
     SafeRelease(file);
 
     return sizeIsCorrect;
+}
+
+void FilePathTest::AddFunctionalityTest( PerfFuncData * data )
+{
+	Logger::Debug("[FilePathTest] Operation + Test");
+
+	FilePath path1("/Folder/");
+	FilePath path2 = path1 + "file.txt";
+	FilePath path3 = path2 + ".lka";
+	FilePath path4 = FilePath() + path2.GetAbsolutePathname();
+
+	TEST_VERIFY(path2 == "/Folder/file.txt");
+	TEST_VERIFY(path3 == "/Folder/file.txt.lka");
+	TEST_VERIFY(path4 == path2);
+
+	Logger::Debug("[FilePathTest] Operation + Done");
 }
 

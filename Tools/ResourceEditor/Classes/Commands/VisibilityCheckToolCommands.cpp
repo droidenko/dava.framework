@@ -19,6 +19,7 @@
 #include "../SceneEditor/SceneEditorScreenMain.h"
 #include "../Qt/Main/QtUtils.h"
 #include "../SceneEditor/EditorBodyControl.h"
+#include "../Qt/Scene/System/LandscapeEditorDrawSystem/VisibilityToolProxy.h"
 
 CommandSaveTextureVisibilityTool::CommandSaveTextureVisibilityTool()
 :	Command(COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_SAVE_TEXTURE_VISIBILITY_TOOL)
@@ -141,4 +142,136 @@ LandscapeEditorVisibilityCheckTool* CommandPlaceAreaVisibilityTool::GetEditor()
 	}
 
 	return editor;
+}
+
+
+CommandSetVisibilityPoint::CommandSetVisibilityPoint(Image* originalImage,
+													 Sprite* cursorSprite,
+													 VisibilityToolProxy* visibilityToolProxy,
+													 const Vector2& visibilityPoint)
+:	Command(COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_PLACE_POINT_VISIBILITY_TOOL)
+{
+	commandName = "Place Visibility Point";
+
+	this->undoImage = SafeRetain(originalImage);
+	this->cursorSprite = SafeRetain(cursorSprite);
+	this->visibilityToolProxy = SafeRetain(visibilityToolProxy);
+	this->undoVisibilityPoint = visibilityToolProxy->GetVisibilityPoint();
+	this->redoVisibilityPoint = visibilityPoint;
+	this->undoVisibilityPointSet = visibilityToolProxy->IsVisibilityPointSet();
+}
+
+CommandSetVisibilityPoint::~CommandSetVisibilityPoint()
+{
+	SafeRelease(undoImage);
+	SafeRelease(cursorSprite);
+	SafeRelease(visibilityToolProxy);
+}
+
+void CommandSetVisibilityPoint::Execute()
+{
+	Sprite* visibilityToolSprite = visibilityToolProxy->GetSprite();
+	RenderManager::Instance()->SetRenderTarget(visibilityToolSprite);
+	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 0.f);
+
+	cursorSprite->SetPosition(redoVisibilityPoint - cursorSprite->GetSize() / 2.f);
+	cursorSprite->Draw();
+
+	RenderManager::Instance()->RestoreRenderTarget();
+
+	visibilityToolProxy->UpdateVisibilityPointSet(true);
+	visibilityToolProxy->UpdateRect(Rect(0.f, 0.f, undoImage->GetWidth(), undoImage->GetHeight()));
+	visibilityToolProxy->SetVisibilityPoint(redoVisibilityPoint);
+}
+
+void CommandSetVisibilityPoint::Cancel()
+{
+	Sprite* visibilityToolSprite = visibilityToolProxy->GetSprite();
+	RenderManager::Instance()->SetRenderTarget(visibilityToolSprite);
+	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 0.f);
+
+	if (undoImage)
+	{
+		Texture* drawTexture = Texture::CreateFromData(undoImage->GetPixelFormat(),
+													   undoImage->GetData(),
+													   undoImage->GetWidth(),
+													   undoImage->GetHeight(),
+													   false);
+		Sprite* drawSprite = Sprite::CreateFromTexture(drawTexture, 0, 0, undoImage->GetWidth(), undoImage->GetHeight());
+
+		drawSprite->SetPosition(0.f, 0.f);
+		drawSprite->Draw();
+
+		SafeRelease(drawSprite);
+		SafeRelease(drawTexture);
+
+		visibilityToolProxy->UpdateRect(Rect(0.f, 0.f, undoImage->GetWidth(), undoImage->GetHeight()));
+	}
+	
+	RenderManager::Instance()->RestoreRenderTarget();
+
+	visibilityToolProxy->SetVisibilityPoint(undoVisibilityPoint);
+	visibilityToolProxy->UpdateVisibilityPointSet(undoVisibilityPointSet);
+}
+
+
+CommandSetVisibilityArea::CommandSetVisibilityArea(Image* originalImage,
+												   VisibilityToolProxy* visibilityToolProxy,
+												   const Rect& updatedRect)
+:	Command(COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_PLACE_AREA_VISIBILITY_TOOL)
+{
+	commandName = "Place Visibility Area";
+
+	Image* currentImage = visibilityToolProxy->GetSprite()->GetTexture()->CreateImageFromMemory();
+
+	undoImage = Image::CopyImageRegion(originalImage, updatedRect);
+	redoImage = Image::CopyImageRegion(currentImage, updatedRect);
+
+	SafeRelease(currentImage);
+
+	this->visibilityToolProxy = SafeRetain(visibilityToolProxy);
+	this->updatedRect = updatedRect;
+}
+
+CommandSetVisibilityArea::~CommandSetVisibilityArea()
+{
+	SafeRelease(undoImage);
+	SafeRelease(redoImage);
+	SafeRelease(visibilityToolProxy);
+}
+
+void CommandSetVisibilityArea::Execute()
+{
+	ApplyImage(redoImage);
+}
+
+void CommandSetVisibilityArea::Cancel()
+{
+	ApplyImage(undoImage);
+}
+
+void CommandSetVisibilityArea::ApplyImage(DAVA::Image *image)
+{
+	Sprite* visibilityToolSprite = visibilityToolProxy->GetSprite();
+
+	Texture* texture = Texture::CreateFromData(image->GetPixelFormat(), image->GetData(),
+											   image->GetWidth(), image->GetHeight(), false);
+	texture->GeneratePixelesation();
+	Sprite* sprite = Sprite::CreateFromTexture(texture, 0, 0, image->GetWidth(), image->GetHeight());
+
+	RenderManager::Instance()->SetRenderTarget(visibilityToolSprite);
+	RenderManager::Instance()->ClipPush();
+	RenderManager::Instance()->ClipRect(updatedRect);
+
+	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 0.f);
+	sprite->SetPosition(updatedRect.x, updatedRect.y);
+	sprite->Draw();
+
+	RenderManager::Instance()->ClipPop();
+	RenderManager::Instance()->RestoreRenderTarget();
+
+	visibilityToolProxy->UpdateRect(updatedRect);
+
+	SafeRelease(texture);
+	SafeRelease(sprite);
 }

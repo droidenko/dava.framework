@@ -21,6 +21,8 @@ public:
 
     void BundleNameTest(PerfFuncData * data);
 
+	void AddFunctionalityTest(PerfFuncData * data);
+
 private:
     
     bool HasFileCorrectSize(const FilePath &path, uint32 size);

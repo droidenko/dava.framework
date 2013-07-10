@@ -19,7 +19,7 @@
 
 #include <QDialog>
 
-#include "QtPosSaver/QtPosSaver.h"
+#include "Tools/QtPosSaver/QtPosSaver.h"
 
 namespace Ui {
 class LodCorrectionDialog;

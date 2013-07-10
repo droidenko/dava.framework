@@ -35,7 +35,7 @@ protected:
 	void Draw();
 
 	void ProcessUIEvent(DAVA::UIEvent *event);
-	void PropeccCommand(const Command2 *command, bool redo);
+	void ProcessCommand(const Command2 *command, bool redo);
 };
 
 #endif

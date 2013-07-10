@@ -23,6 +23,8 @@
 #include "../Qt/Scene/SceneDataManager.h"
 #include "../Qt/Scene/SceneData.h"
 
+#include "../Qt/Scene/System/LandscapeEditorDrawSystem/CustomColorsProxy.h"
+
 CommandSaveTextureCustomColors::CommandSaveTextureCustomColors()
 :   Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_SAVE_TEXTURE_CUSTOM_COLORS)
 {
@@ -120,4 +122,65 @@ LandscapeEditorCustomColors* CommandDrawCustomColors::GetEditor()
 	}
 
 	return editor;
+}
+
+
+CommandModifyCustomColors::CommandModifyCustomColors(Image* originalImage,
+													 CustomColorsProxy* customColorsProxy,
+													 const Rect& updatedRect)
+:	Command(COMMAND_UNDO_REDO, CommandList::ID_COMMAND_DRAW_CUSTOM_COLORS)
+{
+	commandName = "Custom Color Draw";
+
+	this->updatedRect = updatedRect;
+	this->customColorsProxy = SafeRetain(customColorsProxy);
+
+	Image* currentImage = customColorsProxy->GetSprite()->GetTexture()->CreateImageFromMemory();
+
+	undoImage = Image::CopyImageRegion(originalImage, updatedRect);
+	redoImage = Image::CopyImageRegion(currentImage, updatedRect);
+
+	SafeRelease(currentImage);
+}
+
+CommandModifyCustomColors::~CommandModifyCustomColors()
+{
+	SafeRelease(undoImage);
+	SafeRelease(redoImage);
+	SafeRelease(customColorsProxy);
+}
+
+void CommandModifyCustomColors::Execute()
+{
+	ApplyImage(redoImage);
+}
+
+void CommandModifyCustomColors::Cancel()
+{
+	ApplyImage(undoImage);
+}
+
+void CommandModifyCustomColors::ApplyImage(DAVA::Image *image)
+{
+	Sprite* customColorsSprite = customColorsProxy->GetSprite();
+
+	Texture* texture = Texture::CreateFromData(image->GetPixelFormat(), image->GetData(),
+											   image->GetWidth(), image->GetHeight(), false);
+	Sprite* sprite = Sprite::CreateFromTexture(texture, 0, 0, texture->GetWidth(), texture->GetHeight());
+
+	RenderManager::Instance()->SetRenderTarget(customColorsSprite);
+	RenderManager::Instance()->ClipPush();
+	RenderManager::Instance()->ClipRect(updatedRect);
+
+	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 0.f);
+	sprite->SetPosition(updatedRect.x, updatedRect.y);
+	sprite->Draw();
+
+	RenderManager::Instance()->ClipPop();
+	RenderManager::Instance()->RestoreRenderTarget();
+
+	customColorsProxy->UpdateRect(updatedRect);
+
+	SafeRelease(sprite);
+	SafeRelease(texture);
 }

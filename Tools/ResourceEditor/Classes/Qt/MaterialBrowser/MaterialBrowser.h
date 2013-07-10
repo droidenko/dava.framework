@@ -19,7 +19,7 @@
 
 #include <QDialog>
 #include <QItemSelection>
-#include "QtPosSaver/QtPosSaver.h"
+#include "Tools/QtPosSaver/QtPosSaver.h"
 #include "MaterialBrowser/MaterialTreeModel.h"
 #include "MaterialBrowser/MaterialViewModel.h"
 

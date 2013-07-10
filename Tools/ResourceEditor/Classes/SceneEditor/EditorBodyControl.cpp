@@ -87,9 +87,6 @@ EditorBodyControl::EditorBodyControl(const Rect & rect)
     scene = NULL;
     cameraController = NULL;
 
-	mainCam = 0;
-	debugCam = 0;
-	
 	modificationMode = ResourceEditor::MODIFY_NONE;
 	landscapeRelative = false;
     
@@ -110,6 +107,9 @@ void EditorBodyControl::InitControls()
 
 EditorBodyControl::~EditorBodyControl()
 {
+	for_each(poppedEditorEntitiesForSave.begin(), poppedEditorEntitiesForSave.end(), SafeRelease<Entity>);
+	poppedEditorEntitiesForSave.clear();
+
     SafeRelease(landscapeRulerTool);
     
     SafeRelease(sceneGraph);
@@ -200,60 +200,35 @@ FilePath EditorBodyControl::CustomColorsGetCurrentSaveFileName()
 	return landscapeEditorCustomColors->GetCurrentSaveFileName();
 }
 
-void RemoveDeepCamera(Entity * curr)
+
+void EditorBodyControl::PushEditorEntities()
 {
-	Entity * cam;
-	
-	cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
-	while (cam)
+	DVASSERT(poppedEditorEntitiesForSave.size() == 0);
+
+	Vector<Entity *>entities;
+	scene->GetChildNodes(entities);
+
+	uint32 count = entities.size();
+	for(uint32 i = 0; i < count; ++i)
 	{
-		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
+		if(entities[i]->GetName().find("editor.") != String::npos)
+		{
+			poppedEditorEntitiesForSave.push_back(SafeRetain(entities[i]));
+			entities[i]->GetParent()->RemoveNode(entities[i]);
+		}
 	}
-	
-	cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	while (cam)
-	{
-		cam->GetParent()->RemoveNode(cam);
-		cam = curr->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	}	
 }
 
-void EditorBodyControl::PushDebugCamera()
+void EditorBodyControl::PopEditorEntities()
 {
-	mainCam = scene->FindByName(ResourceEditor::EDITOR_MAIN_CAMERA);
-	if (mainCam)
+	uint32 count = poppedEditorEntitiesForSave.size();
+	for(uint32 i = 0; i < count; ++i)
 	{
-		SafeRetain(mainCam);
-		scene->RemoveNode(mainCam);
+		scene->AddEditorEntity(poppedEditorEntitiesForSave[i]);
+		SafeRelease(poppedEditorEntitiesForSave[i]);
 	}
 	
-	debugCam = scene->FindByName(ResourceEditor::EDITOR_DEBUG_CAMERA);
-	if (debugCam)
-	{
-		SafeRetain(debugCam);
-		scene->RemoveNode(debugCam);
-	}
-	
-	RemoveDeepCamera(scene);
-}
-
-void EditorBodyControl::PopDebugCamera()
-{
-	if (mainCam)
-	{
-        scene->AddEditorEntity(mainCam);
-		SafeRelease(mainCam);
-	}
-	
-	if (debugCam)
-	{
-        scene->AddEditorEntity(debugCam);
-		SafeRelease(debugCam);
-	}
-	
-	mainCam = 0;
-	debugCam = 0;
+	poppedEditorEntitiesForSave.clear();
 }
 
 void EditorBodyControl::CreateModificationPanel(void)

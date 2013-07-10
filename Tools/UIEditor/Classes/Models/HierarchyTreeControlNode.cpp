@@ -50,6 +50,21 @@ HierarchyTreeControlNode::HierarchyTreeControlNode(HierarchyTreeNode* parent,
 	this->uiObject = node->GetUIObject()->Clone();
 	this->needReleaseUIObjects = false;
 	
+	// All UIList controls should always have a delegate
+	// We set a delegate here to avoid inappropriate loading of saved list
+	UIList *list = dynamic_cast<UIList*>(this->uiObject);
+	UIList *srcList = dynamic_cast<UIList*>(node->GetUIObject());
+	if (list)
+	{
+		EditorListDelegate *listDelegate = new EditorListDelegate(list->GetRect());
+		EditorListDelegate *srcListDelegate = dynamic_cast<EditorListDelegate*>(srcList->GetDelegate());
+		if (srcListDelegate)
+		{
+			listDelegate->SetAggregatorID(srcListDelegate->GetAggregatorID());
+		}
+		list->SetDelegate(listDelegate);
+	}
+	
 	// Remove real children & subcontrols - each control is responsible for its
 	// subcontrols by itself.
 	const List<UIControl* > &realChildren = GetUIObject()->GetRealChildrenAndSubcontrols();

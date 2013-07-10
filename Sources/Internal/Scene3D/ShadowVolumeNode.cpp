@@ -61,14 +61,14 @@ void DAVA::ShadowVolumeNode::DrawShadow()
 
 	Vector3 position = Vector3() * GetWorldTransform();
 	Light * light = scene->GetNearestDynamicLight(Light::TYPE_COUNT, position);
-	int32 uniformLightPosition0 = shader->FindUniformLocationByName("lightPosition0");
+	int32 uniformLightPosition0 = shader->FindUniformIndexByName("lightPosition0");
 	if (light && uniformLightPosition0 != -1)
 	{
 		Vector3 lightPosition0 = light->GetPosition();
 		const Matrix4 & matrix = scene->GetCurrentCamera()->GetMatrix();
 		lightPosition0 = lightPosition0 * matrix;
 
-		shader->SetUniformValue(uniformLightPosition0, lightPosition0); 
+		shader->SetUniformValueByIndex(uniformLightPosition0, lightPosition0);
 	}
 
 	if (shadowPolygonGroup->renderDataObject->GetIndexBufferID() != 0)

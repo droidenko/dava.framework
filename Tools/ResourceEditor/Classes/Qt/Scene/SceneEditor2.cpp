@@ -21,6 +21,11 @@
 #include "Scene/System/SelectionSystem.h"
 #include "Scene/System/ModifSystem.h"
 #include "Scene/System/HoodSystem.h"
+#include "Scene/System/LandscapeEditorDrawSystem.h"
+#include "Scene/System/HeightmapEditorSystem.h"
+#include "Scene/System/TilemaskEditorSystem.h"
+#include "Scene/System/CustomColorsSystem.h"
+#include "Scene/System/VisibilityToolSystem.h"
 #include "Scene/SceneSignals.h"
 
 // framework
@@ -29,14 +34,16 @@
 SceneEditor2::SceneEditor2()
 	: Scene()
 {
-	commandStack.SetNotify(new EditorCommandNotify(this), true);
+	EditorCommandNotify *notify = new EditorCommandNotify(this);
+	commandStack.SetNotify(notify);
+	SafeRelease(notify);
 
 	cameraSystem = new SceneCameraSystem(this);
 	AddSystem(cameraSystem, 0);
 
 	gridSystem = new SceneGridSystem(this);
 	AddSystem(gridSystem, 0);
-
+	
 	collisionSystem = new SceneCollisionSystem(this);
 	AddSystem(collisionSystem, 0);
 
@@ -45,9 +52,27 @@ SceneEditor2::SceneEditor2()
 
 	selectionSystem = new SceneSelectionSystem(this, collisionSystem, hoodSystem);
 	AddSystem(selectionSystem, 0);
+	
+	particlesSystem = new ParticlesDebugDrawSystem(this);
+	AddSystem(particlesSystem, (1 << DAVA::Component::PARTICLE_EFFECT_COMPONENT));
 
 	modifSystem = new EntityModificationSystem(this, collisionSystem, cameraSystem, hoodSystem);
 	AddSystem(modifSystem, 0);
+
+	landscapeEditorDrawSystem = new LandscapeEditorDrawSystem(this);
+	AddSystem(landscapeEditorDrawSystem, 0);
+
+	heightmapEditorSystem = new HeightmapEditorSystem(this);
+	AddSystem(heightmapEditorSystem, 0);
+
+	tilemaskEditorSystem = new TilemaskEditorSystem(this);
+	AddSystem(tilemaskEditorSystem, 0);
+
+	customColorsSystem = new CustomColorsSystem(this);
+	AddSystem(customColorsSystem, 0);
+
+	visibilityToolSystem = new VisibilityToolSystem(this);
+	AddSystem(visibilityToolSystem, 0);
 
 	structureSystem = new StructureSystem(this);
 	AddSystem(structureSystem, 0);
@@ -64,7 +89,7 @@ bool SceneEditor2::Load(const DAVA::FilePath &path)
 {
 	bool ret = false;
 
-	structureSystem->Lock();
+	structureSystem->LockSignals();
 
 	Entity * rootNode = GetRootNode(path);
 	if(rootNode)
@@ -93,7 +118,7 @@ bool SceneEditor2::Load(const DAVA::FilePath &path)
 	}
 
 	structureSystem->Init();
-	structureSystem->Unlock();
+	structureSystem->UnlockSignals();
 
 	SceneSignals::Instance()->EmitLoaded(this);
 	return ret;
@@ -173,14 +198,19 @@ void SceneEditor2::Exec(Command2 *command)
 void SceneEditor2::Update(float timeElapsed)
 {
 	Scene::Update(timeElapsed);
-
 	gridSystem->Update(timeElapsed);
 	cameraSystem->Update(timeElapsed);
 	collisionSystem->Update(timeElapsed);
 	hoodSystem->Update(timeElapsed);
 	selectionSystem->Update(timeElapsed);
 	modifSystem->Update(timeElapsed);
+	landscapeEditorDrawSystem->Update(timeElapsed);
+	heightmapEditorSystem->Update(timeElapsed);
+	tilemaskEditorSystem->Update(timeElapsed);
+	customColorsSystem->Update(timeElapsed);
+	visibilityToolSystem->Update(timeElapsed);
 	structureSystem->Update(timeElapsed);
+	particlesSystem->Update(timeElapsed);
 }
 
 void SceneEditor2::PostUIEvent(DAVA::UIEvent *event)
@@ -191,7 +221,12 @@ void SceneEditor2::PostUIEvent(DAVA::UIEvent *event)
 	hoodSystem->ProcessUIEvent(event);
 	selectionSystem->ProcessUIEvent(event);
 	modifSystem->ProcessUIEvent(event);
+	heightmapEditorSystem->ProcessUIEvent(event);
+	tilemaskEditorSystem->ProcessUIEvent(event);
+	customColorsSystem->ProcessUIEvent(event);
+	visibilityToolSystem->ProcessUIEvent(event);
 	structureSystem->ProcessUIEvent(event);
+	particlesSystem->ProcessUIEvent(event);
 }
 
 void SceneEditor2::SetViewportRect(const DAVA::Rect &newViewportRect)
@@ -210,17 +245,20 @@ void SceneEditor2::Draw()
 	hoodSystem->Draw();
 	modifSystem->Draw();
 	structureSystem->Draw();
+	tilemaskEditorSystem->Draw();
+	particlesSystem->Draw();
 }
 
 void SceneEditor2::EditorCommandProcess(const Command2 *command, bool redo)
 {
-	gridSystem->PropeccCommand(command, redo);
-	cameraSystem->PropeccCommand(command, redo);
-	collisionSystem->PropeccCommand(command, redo);
-	selectionSystem->PropeccCommand(command, redo);
-	hoodSystem->PropeccCommand(command, redo);
-	modifSystem->PropeccCommand(command, redo);
-	structureSystem->PropeccCommand(command, redo);
+	gridSystem->ProcessCommand(command, redo);
+	cameraSystem->ProcessCommand(command, redo);
+	collisionSystem->ProcessCommand(command, redo);
+	selectionSystem->ProcessCommand(command, redo);
+	hoodSystem->ProcessCommand(command, redo);
+	modifSystem->ProcessCommand(command, redo);
+	structureSystem->ProcessCommand(command, redo);
+	particlesSystem->ProcessCommand(command, redo);
 }
 
 SceneEditor2::EditorCommandNotify::EditorCommandNotify(SceneEditor2 *_editor)

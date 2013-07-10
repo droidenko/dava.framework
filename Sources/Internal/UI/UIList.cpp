@@ -668,6 +668,14 @@ UIControl *UIList::Clone()
 	return c;
 }
 
+void UIList::CopyDataFrom(UIControl *srcControl)
+{
+	UIControl::CopyDataFrom(srcControl);
+	UIList* t = (UIList*) srcControl;
+	InitAfterYaml();
+	aggregatorPath = t->aggregatorPath;
+}
+
 const FilePath & UIList::GetAggregatorPath()
 {
 	return aggregatorPath;

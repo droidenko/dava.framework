@@ -71,4 +71,49 @@ protected:
 	virtual void Cancel();
 };
 
+
+class VisibilityToolProxy;
+
+class CommandSetVisibilityPoint: public Command
+{
+public:
+	CommandSetVisibilityPoint(Image* originalImage,
+							  Sprite* cursorSprite,
+							  VisibilityToolProxy* visibilityToolProxy,
+							  const Vector2& visibilityPoint);
+	virtual ~CommandSetVisibilityPoint();
+
+protected:
+	Image* undoImage;
+	Sprite* cursorSprite;
+	VisibilityToolProxy* visibilityToolProxy;
+	Vector2 undoVisibilityPoint;
+	Vector2 redoVisibilityPoint;
+	bool undoVisibilityPointSet;
+
+	virtual void Execute();
+	virtual void Cancel();
+};
+
+class CommandSetVisibilityArea: public Command
+{
+public:
+	CommandSetVisibilityArea(Image* originalImage,
+							 VisibilityToolProxy* visibilityToolProxy,
+							 const Rect& updatedRect);
+	virtual ~CommandSetVisibilityArea();
+
+protected:
+	Image* undoImage;
+	Image* redoImage;
+
+	VisibilityToolProxy* visibilityToolProxy;
+	Rect updatedRect;
+
+	virtual void Execute();
+	virtual void Cancel();
+
+	void ApplyImage(Image* image);
+};
+
 #endif

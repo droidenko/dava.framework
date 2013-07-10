@@ -325,6 +325,7 @@ CommandStartStopParticleEffect::CommandStartStopParticleEffect(bool isStart) :
     Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_START_STOP_PARTICLE_EFFECT)
 {
     this->isStart = isStart;
+	this->affectedEntity = NULL;
 }
 
 void CommandStartStopParticleEffect::Execute()
@@ -344,11 +345,26 @@ void CommandStartStopParticleEffect::Execute()
     {
         effectComponent->Stop();
     }
+	
+	this->affectedEntity = effectNode->GetRootNode();
+}
+
+DAVA::Set<DAVA::Entity*> CommandStartStopParticleEffect::GetAffectedEntities()
+{
+	if (!this->affectedEntity)
+	{
+		return Command::GetAffectedEntities();
+	}
+	
+	DAVA::Set<DAVA::Entity*> affectedEntities;
+	affectedEntities.insert(this->affectedEntity);
+	return affectedEntities;
 }
 
 CommandRestartParticleEffect::CommandRestartParticleEffect() :
     Command(Command::COMMAND_WITHOUT_UNDO_EFFECT, CommandList::ID_COMMAND_RESTART_PARTICLE_EFFECT)
 {
+	this->affectedEntity = NULL;
 }
 
 void CommandRestartParticleEffect::Execute()
@@ -363,6 +379,20 @@ void CommandRestartParticleEffect::Execute()
 	ParticleEffectComponent * effectComponent = effectNode->GetParticleEffectComponent();
 	DVASSERT(effectComponent);
     effectComponent->Restart();
+	
+	this->affectedEntity = effectNode->GetRootNode();
+}
+
+DAVA::Set<DAVA::Entity*> CommandRestartParticleEffect::GetAffectedEntities()
+{
+	if (!this->affectedEntity)
+	{
+		return Command::GetAffectedEntities();
+	}
+	
+	DAVA::Set<DAVA::Entity*> affectedEntities;
+	affectedEntities.insert(this->affectedEntity);
+	return affectedEntities;
 }
 
 CommandAddParticleEmitterLayer::CommandAddParticleEmitterLayer() :

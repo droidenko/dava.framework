@@ -458,13 +458,30 @@ void HierarchyTreeWidget::OnDeleteControlAction()
 	bool needConfirm = false;
 	bool needDeleteFiles = false;
 
-	HierarchyTreeNode::HIERARCHYTREENODESLIST nodes;
+	// DF-1273 - Remove all child nodes. We don't have to remove them here.
+	QList<QTreeWidgetItem*> parentItems(items);
 	for (QList<QTreeWidgetItem*>::iterator iter = items.begin(); iter != items.end(); ++iter)
 	{
-		QTreeWidgetItem* item = (*iter);
-		QVariant data = item->data(ITEM_ID);
-		HierarchyTreeNode::HIERARCHYTREENODEID id = data.toInt();
-		HierarchyTreeNode* node = HierarchyTreeController::Instance()->GetTree().GetNode(id);
+		HierarchyTreeNode* node = GetNodeFromTreeItem(*iter);
+		
+		if (!node)
+			continue;
+				
+		for (QList<QTreeWidgetItem*>::iterator innerIter = items.begin(); innerIter != items.end(); ++innerIter)
+		{
+			HierarchyTreeNode* innerNode = GetNodeFromTreeItem(*innerIter);
+				
+			if (node->IsHasChild(innerNode))
+			{
+				parentItems.removeOne(*innerIter);
+			}
+		}
+	}	
+
+	HierarchyTreeNode::HIERARCHYTREENODESLIST nodes;
+	for (QList<QTreeWidgetItem*>::iterator iter = parentItems.begin(); iter != parentItems.end(); ++iter)
+	{
+		HierarchyTreeNode* node = GetNodeFromTreeItem(*iter);
 		
 		HierarchyTreeAggregatorNode* aggregatorNode = dynamic_cast<HierarchyTreeAggregatorNode*>(node);
 		if (aggregatorNode)
@@ -607,4 +624,11 @@ bool HierarchyTreeWidget::IsDeleteNodeAllowed(HierarchyTreeControlNode* selected
 
 	// Subcontrols cannot be deleted.
 	return !uiControl->IsSubcontrol();
+}
+
+HierarchyTreeNode* HierarchyTreeWidget::GetNodeFromTreeItem(QTreeWidgetItem* item)
+{
+	QVariant data = item->data(ITEM_ID);
+	HierarchyTreeNode::HIERARCHYTREENODEID id = data.toInt();
+	return HierarchyTreeController::Instance()->GetTree().GetNode(id);
 }

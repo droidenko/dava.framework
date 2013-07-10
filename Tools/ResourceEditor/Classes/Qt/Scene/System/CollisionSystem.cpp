@@ -158,14 +158,15 @@ const EntityGroup* SceneCollisionSystem::ObjectsRayTestFromCamera()
 	return ObjectsRayTest(traceFrom, traceTo);
 }
 
-DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const DAVA::Vector3 &to)
+bool SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const DAVA::Vector3 &to, DAVA::Vector3& intersectionPoint)
 {
 	DAVA::Vector3 ret;
 
 	// check if cache is available 
 	if(lastLandRayFrom == from && lastLandRayTo == to)
 	{
-		return lastLandCollision;
+		intersectionPoint = lastLandCollision;
+		return lastResult;
 	}
 
 	// no cache. start new ray test
@@ -178,6 +179,8 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const
 
 	btVector3 btFrom(from.x, from.y, from.z);
 
+	lastResult = false;
+
 	while (rayLength > 0)
 	{
 		btVector3 btTo(btFrom.x() + rayStep.x, btFrom.y() + rayStep.y, btFrom.z() + rayStep.z);
@@ -189,6 +192,7 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const
 			btVector3 hitPoint = btCallback.m_hitPointWorld;
 			ret = DAVA::Vector3(hitPoint.x(), hitPoint.y(), hitPoint.z());
 
+			lastResult = true;
 			break;
 		}
 
@@ -197,10 +201,11 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTest(const DAVA::Vector3 &from, const
 	}
 
 	lastLandCollision = ret;
-	return ret;
+	intersectionPoint = ret;
+	return lastResult;
 }
 
-DAVA::Vector3 SceneCollisionSystem::LandRayTestFromCamera()
+bool SceneCollisionSystem::LandRayTestFromCamera(DAVA::Vector3& intersectionPoint)
 {
 	SceneCameraSystem *cameraSystem	= ((SceneEditor2 *) GetScene())->cameraSystem;
 
@@ -210,7 +215,7 @@ DAVA::Vector3 SceneCollisionSystem::LandRayTestFromCamera()
 	DAVA::Vector3 traceFrom = camPos;
 	DAVA::Vector3 traceTo = traceFrom + camDir * 1000.0f;
 
-	return LandRayTest(traceFrom, traceTo);
+	return LandRayTest(traceFrom, traceTo, intersectionPoint);
 }
 
 void SceneCollisionSystem::UpdateCollisionObject(DAVA::Entity *entity)
@@ -319,7 +324,7 @@ void SceneCollisionSystem::Draw()
 	DAVA::RenderManager::Instance()->SetState(oldState);
 }
 
-void SceneCollisionSystem::PropeccCommand(const Command2 *command, bool redo)
+void SceneCollisionSystem::ProcessCommand(const Command2 *command, bool redo)
 {
 	if(NULL != command)
 	{

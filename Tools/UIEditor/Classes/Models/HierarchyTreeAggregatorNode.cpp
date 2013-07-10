@@ -209,7 +209,6 @@ void HierarchyTreeAggregatorNode::ReplaceAggregator(HierarchyTreeControlNode *no
 	UIList *list = dynamic_cast<UIList*>(node->GetUIObject());
 	// For UIList control we should should always create a delegate
 	// Set aggregator ID for list if it has saved aggregator path and it is available in tree
-// 	if (list && list->GetAggregatorPath().compare(path.re) == 0)
 	if (list && list->GetAggregatorPath() == path)
 	{
 		EditorListDelegate *listDelegate = new EditorListDelegate(list->GetRect());

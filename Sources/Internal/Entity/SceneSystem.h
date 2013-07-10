@@ -39,12 +39,17 @@ public:
     
     virtual void Process();
 
+	void SetLocked(bool locked);
+	bool IsLocked();
+
 protected:
 	Scene * GetScene();
 
 private:
     uint32 requiredComponents;
 	Scene * scene;
+
+	bool locked;
 };
 
 };

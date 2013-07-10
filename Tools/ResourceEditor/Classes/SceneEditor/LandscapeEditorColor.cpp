@@ -182,15 +182,15 @@ void LandscapeEditorColor::UpdateTileMask()
 	RenderManager::Instance()->FlushState();
 	RenderManager::Instance()->AttachRenderData();
     
-	int32 tex0 = tileMaskEditorShader->FindUniformLocationByName("texture0");
-	tileMaskEditorShader->SetUniformValue(tex0, 0);
-	int32 tex1 = tileMaskEditorShader->FindUniformLocationByName("texture1");
-	tileMaskEditorShader->SetUniformValue(tex1, 1);
-	int32 colorTypeUniform = tileMaskEditorShader->FindUniformLocationByName("colorType");
-	tileMaskEditorShader->SetUniformValue(colorTypeUniform, colorType);
-	int32 intensityUniform = tileMaskEditorShader->FindUniformLocationByName("intensity");
+	int32 tex0 = tileMaskEditorShader->FindUniformIndexByName("texture0");
+	tileMaskEditorShader->SetUniformValueByIndex(tex0, 0);
+	int32 tex1 = tileMaskEditorShader->FindUniformIndexByName("texture1");
+	tileMaskEditorShader->SetUniformValueByIndex(tex1, 1);
+	int32 colorTypeUniform = tileMaskEditorShader->FindUniformIndexByName("colorType");
+	tileMaskEditorShader->SetUniformValueByIndex(colorTypeUniform, colorType);
+	int32 intensityUniform = tileMaskEditorShader->FindUniformIndexByName("intensity");
     
-	tileMaskEditorShader->SetUniformValue(intensityUniform, currentTool->strength);
+	tileMaskEditorShader->SetUniformValueByIndex(intensityUniform, currentTool->strength);
     
 	RenderManager::Instance()->HWDrawArrays(PRIMITIVETYPE_TRIANGLESTRIP, 0, 4);
     

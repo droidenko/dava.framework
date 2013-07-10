@@ -129,6 +129,11 @@ void HoodSystem::SetScale(DAVA::float32 scale)
 	}
 }
 
+DAVA::float32 HoodSystem::GetScale() const
+{
+	return curScale;
+}
+
 void HoodSystem::SetModifMode(ST_ModifMode mode)
 {
 	if(curMode != mode)
@@ -278,7 +283,7 @@ void HoodSystem::Draw()
 	}
 }
 
-void HoodSystem::PropeccCommand(const Command2 *command, bool redo)
+void HoodSystem::ProcessCommand(const Command2 *command, bool redo)
 {
 
 }

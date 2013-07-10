@@ -33,13 +33,15 @@
 #include "../SceneEditor/SceneEditorScreenMain.h"
 #include "../SceneEditor/EditorBodyControl.h"
 #include "../SceneEditor/EditorConfig.h"
-#include "Classes/QT/SpritesPacker/SpritePackerHelper.h"
-#include "Classes/QT/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
+#include "SpritesPacker/SpritePackerHelper.h"
+#include "Tools/QResourceEditorProgressDialog/QResourceEditorProgressDialog.h"
 
 #include <QApplication>
 #include <QPixmap>
 
 #include "ModificationWidget.h"
+
+#include "Qt/Scene/System/LandscapeEditorDrawSystem.h"
 
 
 QtMainWindow::QtMainWindow(QWidget *parent)
@@ -147,6 +149,8 @@ void QtMainWindow::SetupActions()
 	//Edit
 	connect(ui->actionConvertToShadow, SIGNAL(triggered()), actionHandler, SLOT(ConvertToShadow()));
     
+	connect(ui->actionEnableNotPassable, SIGNAL(triggered()), this, SLOT(EnableNotPassableNew()));
+    
     ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
 	connect(ui->actionEnableCameraLight, SIGNAL(triggered()), actionHandler, SLOT(CameraLightTrigerred()));
 
@@ -175,6 +179,10 @@ void QtMainWindow::SetupMainMenu()
     QAction *actionSceneInfo = ui->dockSceneInfo->toggleViewAction();
 	QAction *actionSceneTree = ui->dockSceneTree->toggleViewAction();
 	QAction *actionConsole = ui->dockConsole->toggleViewAction();
+	QAction *actionCustomColors2 = ui->dockCustomColorsEditor->toggleViewAction();
+	QAction *actionVisibilityTool2 = ui->dockVisibilityToolEditor->toggleViewAction();
+	QAction *actionHeightmapEditor2 = ui->dockHeightmapEditor->toggleViewAction();
+	QAction *actionTilemaskEditor2 = ui->dockTilemaskEditor->toggleViewAction();
 
     ui->menuView->addAction(actionSceneInfo);
     ui->menuView->addAction(actionToolBar);
@@ -190,6 +198,10 @@ void QtMainWindow::SetupMainMenu()
 	ui->menuView->addAction(actionSetSwitchIndex);
 	ui->menuView->addAction(actionSceneTree);
 	ui->menuView->addAction(actionConsole);
+	ui->menuView->addAction(actionCustomColors2);
+	ui->menuView->addAction(actionVisibilityTool2);
+	ui->menuView->addAction(actionHeightmapEditor2);
+	ui->menuView->addAction(actionTilemaskEditor2);
 
     ui->menuView->insertSeparator(ui->actionRestoreViews);
     ui->menuView->insertSeparator(actionToolBar);
@@ -200,7 +212,9 @@ void QtMainWindow::SetupMainMenu()
                                        actionSceneGraph,
                                        actionProperties, actionLibrary, actionToolBar,
 									   actionReferences, actionCustomColors, actionVisibilityCheckTool, 
-									   actionParticleEditor, actionHangingObjects, actionSetSwitchIndex, actionSceneInfo);
+									   actionParticleEditor, actionHangingObjects, actionSetSwitchIndex, actionSceneInfo,
+									   actionCustomColors2, actionVisibilityTool2, actionHeightmapEditor2,
+									   actionTilemaskEditor2);
 
 
     ui->dockProperties->hide();
@@ -565,6 +579,29 @@ void QtMainWindow::UpdateLibraryFileTypes()
 void QtMainWindow::UpdateLibraryFileTypes(bool showDAEFiles, bool showSC2Files)
 {
 	emit LibraryFileTypesChanged(showDAEFiles, showSC2Files);
+}
+
+void QtMainWindow::EnableNotPassableNew()
+{
+	SceneEditor2* sep = GetCurrentScene();
+	if (!sep)
+	{
+		return;
+	}
+	
+	if (sep->landscapeEditorDrawSystem->IsNotPassableTerrainEnabled())
+	{
+		sep->landscapeEditorDrawSystem->DisableNotPassableTerrain();
+	}
+	else
+	{
+		sep->landscapeEditorDrawSystem->EnableNotPassableTerrain();
+	}
+}
+
+SceneEditor2* QtMainWindow::GetCurrentScene()
+{
+	return ui->sceneTabWidget->GetCurrentScene();
 }
 
 void QtMainWindow::Undo2()

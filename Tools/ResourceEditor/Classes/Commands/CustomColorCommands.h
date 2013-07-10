@@ -56,4 +56,26 @@ protected:
 };
 
 
+class CustomColorsProxy;
+
+class CommandModifyCustomColors: public Command
+{
+public:
+	CommandModifyCustomColors(Image* originalImage,
+							  CustomColorsProxy* customColorsProxy,
+							  const Rect& updatedRect);
+	virtual ~CommandModifyCustomColors();
+
+protected:
+	CustomColorsProxy* customColorsProxy;
+	Image* undoImage;
+	Image* redoImage;
+	Rect updatedRect;
+
+	virtual void Execute();
+	virtual void Cancel();
+
+	void ApplyImage(Image* image);
+};
+
 #endif // #ifndef __RESOURCE_EDITOR_CUSTOM_COLOR_COMMANDS_H__

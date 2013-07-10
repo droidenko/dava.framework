@@ -17,12 +17,13 @@
 #ifndef __PARTICLE_FORCE_H__
 #define __PARTICLE_FORCE_H__
 
+#include "Base/BaseObject.h"
 #include "Particles/ParticlePropertyLine.h"
 
 namespace DAVA {
 
 // Particle Force class is needed to store Particle Force data.
-class ParticleForce
+class ParticleForce : public BaseObject
 {
 public:
 	// Initialization constructor.

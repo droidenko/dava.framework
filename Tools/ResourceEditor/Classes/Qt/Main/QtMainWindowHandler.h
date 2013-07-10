@@ -32,6 +32,8 @@
 #include "Classes/Qt/DockSetSwitchIndex/SetSwitchIndexHelper.h"
 #include "Classes/Commands/CommandList.h"
 
+#include "../Scene/System/HeightmapEditorSystem.h"
+
 class Command;
 class QMenu;
 class QAction;
@@ -44,6 +46,8 @@ class ModificationWidget;
 class QSpinBox;
 class QCheckBox;
 class QDoubleSpinBox;
+class SceneEditor2;
+class AddSwitchEntityDialog;
 
 class QtMainWindowHandler: public QObject, public DAVA::Singleton<QtMainWindowHandler>
 {
@@ -72,10 +76,25 @@ public:
     void ShowStatusBarMessage(const DAVA::String &message, DAVA::int32 displayTime = 0);
     
     void SetWaitingCursorEnabled(bool enabled);
-    
+
+	//heightmap editor
+	void RegisterHeightmapEditorWidgets(QPushButton*, QSlider*, QComboBox*, QRadioButton*,
+										QRadioButton*, QRadioButton*, QSlider*, QSlider*,
+										QLabel*, QRadioButton*, QRadioButton*, QCheckBox*,
+										QCheckBox*);
+	void SetHeightmapEditorWidgetsState(bool state);
+
+	//tilemask editor
+	void RegisterTilemaskEditorWidgets(QPushButton*, QSlider*, QComboBox*, QSlider*, QComboBox*);
+	void SetTilemaskEditorWidgetsState(bool state);
+
 	//custom colors
 	void RegisterCustomColorsWidgets(QPushButton*, QPushButton*, QSlider*, QComboBox*, QPushButton*);
     void SetCustomColorsWidgetsState(bool state);
+
+	//custom colors new
+	void RegisterCustomColorsEditorWidgets(QPushButton*, QPushButton*, QSlider*, QComboBox*, QPushButton*);
+    void SetCustomColorsEditorWidgetsState(bool state);
 
 	//set switch index
 	void RegisterSetSwitchIndexWidgets(QSpinBox*, QRadioButton*, QRadioButton*, QPushButton*);
@@ -95,6 +114,10 @@ public:
 	void SetWidgetsStateVisibilityTool(bool state);
 	void SetPointButtonStateVisibilityTool(bool state);
 	void SetAreaButtonStateVisibilityTool(bool state);
+
+	//visibility tool new
+	void RegisterVisibilityToolWidgets(QPushButton*, QPushButton*, QPushButton*, QPushButton*, QSlider*);
+	void SetVisibilityToolWidgetsState(bool state);
 
 	void UpdateUndoActionsState();
     
@@ -157,19 +180,55 @@ public slots:
 	//hanging objects
 	void ToggleHangingObjects(float value, bool isEnabled);
 
+	//heightmap editor
+	void ToggleHeightmapEditor();
+	void SetHeightmapEditorBrushSize(int brushSize);
+	void SetHeightmapEditorToolImage(int imageIndex);
+	void SetRelativeHeightmapDrawing();
+	void SetAverageHeightmapDrawing();
+	void SetAbsoluteHeightmapDrawing();
+	void SetHeightmapEditorStrength(int strength);
+	void SetHeightmapEditorAverageStrength(int averageStrength);
+	void SetHeightmapDropperHeight(SceneEditor2* scene, double height);
+	void SetHeightmapDropper();
+	void SetHeightmapCopyPaste();
+
+	//tilemask editor
+	void ToggleTilemaskEditor();
+	void SetTilemaskEditorBrushSize(int brushSize);
+	void SetTilemaskEditorToolImage(int imageIndex);
+	void SetTilemaskEditorStrength(int strength);
+	void SetTilemaskDrawTexture(int textureIndex);
+
     //custom colors
     void ToggleCustomColors();
     void SaveTextureCustomColors();
     void ChangeBrushSizeCustomColors(int newSize);
     void ChangeColorCustomColors(int newColorIndex);
 	void LoadTextureCustomColors();
-	
+
+	//custom colors new
+	void ToggleCustomColorsEditor();
+	void SaveCustomColorsTexture();
+	void LoadCustomColorsTexture();
+	void SetCustomColorsBrushSize(int brushSize);
+	void SetCustomColorsColor(int colorIndex);
+	void NeedSaveCustomColorsTexture(SceneEditor2* scene);
+
 	//visibility check tool
 	void ToggleVisibilityTool();
 	void SaveTextureVisibilityTool();
 	void ChangleAreaSizeVisibilityTool(int newSize);
 	void SetVisibilityPointVisibilityTool();
 	void SetVisibilityAreaVisibilityTool();
+
+	//visibility check tool new
+	void ToggleVisibilityToolEditor();
+	void SaveVisibilityToolTexture();
+	void SetVisibilityToolAreaSize(int size);
+	void SetVisibilityPoint();
+	void SetVisibilityArea();
+	void SetVisibilityToolButtonsState(SceneEditor2* scene);
 
     //
     void RepackAndReloadTextures();
@@ -200,6 +259,7 @@ public slots:
 
     void ShowLODCorrectionDialog();
 
+    void AddSwitchEntity();
     
 signals:
 	void ProjectChanged();
@@ -220,6 +280,10 @@ private:
 	void SaveParticleEmitterNodes(Scene* scene);
 	void SaveParticleEmitterNodeRecursive(Entity* parentNode);
 
+
+	void SetHeightmapDrawingType(HeightmapEditorSystem::eHeightmapDrawType type);
+
+	void UpdateTilemaskTileTextures();
 
 private:
 	//set switch index
@@ -242,14 +306,50 @@ private:
 	QSlider* customColorsBrushSizeSlider;
 	QComboBox* customColorsColorComboBox;
 	QPushButton* customColorsLoadTextureButton;
-	
+
+	//custom colors new
+	QPushButton* customColorsEditorToggleButton;
+	QPushButton* customColorsSaveTexture;
+	QSlider* customColorsBrushSize;
+	QComboBox* customColorsColor;
+	QPushButton* customColorsLoadTexture;
+
 	//visibility check tool
 	QPushButton* visibilityToolToggleButton;
 	QPushButton* visibilityToolSaveTextureButton;
 	QPushButton* visibilityToolSetPointButton;
 	QPushButton* visibilityToolSetAreaButton;
 	QSlider* visibilityToolAreaSizeSlider;
-    
+
+	//visibility check tool new
+	QPushButton* visibilityToolEditorToggleButton;
+	QPushButton* visibilityToolSaveTexture;
+	QPushButton* visibilityToolSetPoint;
+	QPushButton* visibilityToolSetArea;
+	QSlider* visibilityToolAreaSize;
+
+	//heightmap editor
+	QPushButton* heightmapToggleButton;
+	QSlider* heightmapBrushSize;
+	QComboBox* heightmapToolImage;
+	QRadioButton* heightmapDrawingRelative;
+	QRadioButton* heightmapDrawingAverage;
+	QRadioButton* heightmapDrawingAbsolute;
+	QSlider* heightmapStrength;
+	QSlider* heightmapAverageStrength;
+	QLabel* heightmapDropperHeight;
+	QRadioButton* heightmapDropper;
+	QRadioButton* heightmapCopyPaste;
+	QCheckBox* heightmapCopyHeightmap;
+	QCheckBox* heightmapCopyTilemask;
+
+	//tilemassk editor
+	QPushButton* tilemaskToggleButton;
+	QSlider* tilemaskBrushSize;
+	QComboBox* tilemaskToolImage;
+	QSlider* tilemaskStrength;
+	QComboBox* tilemaskDrawTexture;
+
     QAction *resentSceneActions[EditorSettings::RESENT_FILES_COUNT];
     QAction *nodeActions[ResourceEditor::NODE_COUNT];
     QAction *viewportActions[ResourceEditor::VIEWPORT_COUNT];
@@ -262,6 +362,7 @@ private:
 	QWidget *defaultFocusWidget;
     
     QStatusBar *statusBar;
+
 };
 
 #endif // __QT_MAIN_WINDOW_HANDLER_H__

@@ -22,7 +22,7 @@
 #include "GradientPickerWidget.h"
 #include "TimeLineWidget.h"
 #include "BaseParticleEditorContentWidget.h"
-#include "../CustomControls/EventFilterDoubleSpinBox.h"
+#include "Tools/EventFilterDoubleSpinBox/EventFilterDoubleSpinBox.h"
 
 #include <QComboBox>
 #include <QLabel>

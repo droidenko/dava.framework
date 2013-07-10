@@ -83,14 +83,14 @@ void ShadowVolume::Draw(Camera * camera)
 	RenderManager::Instance()->AttachRenderData();
 
 	//Vector3 position = Vector3() * GetWorldTransform();
-	int32 uniformLightPosition0 = shader->FindUniformLocationByName("lightPosition0");
+	int32 uniformLightPosition0 = shader->FindUniformIndexByName("lightPosition0");
 	if (light && uniformLightPosition0 != -1)
 	{
 		Vector3 lightPosition0 = light->GetPosition();
 		const Matrix4 & matrix = camera->GetMatrix();
 		lightPosition0 = lightPosition0 * matrix;
 
-		shader->SetUniformValue(uniformLightPosition0, lightPosition0); 
+		shader->SetUniformValueByIndex(uniformLightPosition0, lightPosition0);
 	}
 
 	if (shadowPolygonGroup->renderDataObject->GetIndexBufferID() != 0)

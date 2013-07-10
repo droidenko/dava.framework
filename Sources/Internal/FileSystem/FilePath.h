@@ -49,7 +49,7 @@ public:
     FilePath(const String & directory, const String & filename);
     FilePath(const char *directory, const String & filename);
 
-	virtual ~FilePath();
+	~FilePath();
 
     /**
         \brief Function to retrieve FilePath with new extension without changing of source FilePath object
@@ -233,13 +233,6 @@ public:
     static void RemoveResourcesFolder(const FilePath & folder);
     static const List<FilePath> GetResourcesFolders();
     
-    
-    /**
-        \brief Function to check if path is absolute
-        \returns true if path is absolute
-     */
-    bool IsAbsolutePathname() const;
-
     
     bool Exists() const;
     

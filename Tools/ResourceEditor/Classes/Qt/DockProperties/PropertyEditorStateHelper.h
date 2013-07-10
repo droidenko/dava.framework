@@ -17,8 +17,8 @@
 #ifndef __PROPERTY_EDITOR_STATE_HELPER__H__
 #define __PROPERTY_EDITOR_STATE_HELPER__H__
 
-#include "../Main/QTreeViewStateHelper.h"
-#include "../QtPropertyEditor/QtPropertyModel.h"
+#include "Main/QTreeViewStateHelper.h"
+#include "Tools/QtPropertyEditor/QtPropertyModel.h"
 
 class PropertyEditorStateHelper : public DAVA::QTreeViewStateHelper<QString>
 {

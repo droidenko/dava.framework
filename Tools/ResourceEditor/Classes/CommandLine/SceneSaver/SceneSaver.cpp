@@ -78,8 +78,6 @@ void SceneSaver::SaveFile(const String &fileName, Set<String> &errorLog)
 
 void SceneSaver::ResaveFile(const String &fileName, Set<String> &errorLog)
 {
-    DVASSERT(0);    //TODO: check save
-
 	Logger::Info("[SceneSaver::ResaveFile] %s", fileName.c_str());
 
 	FilePath sc2Filename = sceneUtils.dataSourceFolder + fileName;

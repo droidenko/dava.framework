@@ -42,11 +42,21 @@ SceneSelectionSystem::~SceneSelectionSystem()
 
 void SceneSelectionSystem::Update(DAVA::float32 timeElapsed)
 {
+	if (IsLocked())
+	{
+		return;
+	}
+
 	UpdateHoodPos();
 }
 
 void SceneSelectionSystem::ProcessUIEvent(DAVA::UIEvent *event)
 {
+	if (IsLocked())
+	{
+		return;
+	}
+
 	if(DAVA::UIEvent::PHASE_BEGAN == event->phase)
 	{
 		// we can select only if mouse isn't over hood axis
@@ -119,6 +129,11 @@ void SceneSelectionSystem::ProcessUIEvent(DAVA::UIEvent *event)
 
 void SceneSelectionSystem::Draw()
 {
+	if (IsLocked())
+	{
+		return;
+	}
+
 	if(curSelections.Size() > 0)
 	{
 		int oldState = DAVA::RenderManager::Instance()->GetState();
@@ -165,7 +180,7 @@ void SceneSelectionSystem::Draw()
 	}
 }
 
-void SceneSelectionSystem::PropeccCommand(const Command2 *command, bool redo)
+void SceneSelectionSystem::ProcessCommand(const Command2 *command, bool redo)
 {
 	if(NULL != command)
 	{
@@ -221,8 +236,11 @@ void SceneSelectionSystem::AddSelection(DAVA::Entity *entity)
 		selectableItem.entity = entity;
 		selectableItem.bbox = GetSelectionAABox(entity);
 
-		curSelections.Add(selectableItem);
-		SceneSignals::Instance()->EmitSelected((SceneEditor2 *) GetScene(), entity);
+		if(!curSelections.HasEntity(entity))
+		{
+			curSelections.Add(selectableItem);
+			SceneSignals::Instance()->EmitSelected((SceneEditor2 *) GetScene(), entity);
+		}
 	}
 
 	UpdateHoodPos();
@@ -230,8 +248,11 @@ void SceneSelectionSystem::AddSelection(DAVA::Entity *entity)
 
 void SceneSelectionSystem::RemSelection(DAVA::Entity *entity)
 {
-	curSelections.Rem(entity);
-	SceneSignals::Instance()->EmitDeselected((SceneEditor2 *) GetScene(), entity);
+	if(curSelections.HasEntity(entity))
+	{
+		curSelections.Rem(entity);
+		SceneSignals::Instance()->EmitDeselected((SceneEditor2 *) GetScene(), entity);
+	}
 
 	UpdateHoodPos();
 }

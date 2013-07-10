@@ -18,8 +18,8 @@
 #define __QT_PROPERTY_WIDGET_H__
 
 #include "PropertyEditorStateHelper.h"
-#include "QtPosSaver/QtPosSaver.h"
-#include "QtPropertyEditor/QtPropertyEditor.h"
+#include "Tools/QtPosSaver/QtPosSaver.h"
+#include "Tools/QtPropertyEditor/QtPropertyEditor.h"
 #include "Scene/SceneData.h"
 #include "Scene/SceneSignals.h"
 
