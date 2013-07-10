@@ -66,6 +66,8 @@ private:
 	TREEITEMS GetAllItems();
 	void GetChildItems(const QTreeWidgetItem* parent, Map<int, QTreeWidgetItem*> &items);
 	void ResetSelection();
+	// Get hierarchy tree node from selected tree item
+	HierarchyTreeNode* GetNodeFromTreeItem(QTreeWidgetItem* item);
 
 	// Apply the icon, font color etc to the tree item.
 	void Decorate(QTreeWidgetItem* item, UIControl* uiControl);
