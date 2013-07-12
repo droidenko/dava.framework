@@ -76,10 +76,6 @@
 		E845D4E61732B7C9000DA8E7 /* FilePathObjective.mm in Sources */ = {isa = PBXBuildFile; fileRef = E845D4E51732B7C9000DA8E7 /* FilePathObjective.mm */; };
 		E867917C175F620400C5A6A2 /* GlobalEnum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E867917A175F620400C5A6A2 /* GlobalEnum.cpp */; };
 		E867917D175F620400C5A6A2 /* GlobalEnum.h in Headers */ = {isa = PBXBuildFile; fileRef = E867917B175F620400C5A6A2 /* GlobalEnum.h */; };
-		E8679180175F621E00C5A6A2 /* GPUFamilyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E867917E175F621E00C5A6A2 /* GPUFamilyDescriptor.cpp */; };
-		E8679181175F621E00C5A6A2 /* GPUFamilyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = E867917F175F621E00C5A6A2 /* GPUFamilyDescriptor.h */; };
-		E8679184175F62D600C5A6A2 /* EnumMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8679182175F62D600C5A6A2 /* EnumMap.cpp */; };
-		E8679185175F62D600C5A6A2 /* EnumMap.h in Headers */ = {isa = PBXBuildFile; fileRef = E8679183175F62D600C5A6A2 /* EnumMap.h */; };
 		E89CE92A16C54A36006BEFF4 /* SpriteObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E89CE92616C54A36006BEFF4 /* SpriteObject.cpp */; };
 		E89CE92B16C54A36006BEFF4 /* SpriteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E89CE92716C54A36006BEFF4 /* SpriteObject.h */; };
 		E89CE92C16C54A36006BEFF4 /* SpriteRenderBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E89CE92816C54A36006BEFF4 /* SpriteRenderBatch.cpp */; };
@@ -747,10 +743,6 @@
 		E845D4E51732B7C9000DA8E7 /* FilePathObjective.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePathObjective.mm; sourceTree = "<group>"; };
 		E867917A175F620400C5A6A2 /* GlobalEnum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalEnum.cpp; sourceTree = "<group>"; };
 		E867917B175F620400C5A6A2 /* GlobalEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalEnum.h; sourceTree = "<group>"; };
-		E867917E175F621E00C5A6A2 /* GPUFamilyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUFamilyDescriptor.cpp; sourceTree = "<group>"; };
-		E867917F175F621E00C5A6A2 /* GPUFamilyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUFamilyDescriptor.h; sourceTree = "<group>"; };
-		E8679182175F62D600C5A6A2 /* EnumMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumMap.cpp; sourceTree = "<group>"; };
-		E8679183175F62D600C5A6A2 /* EnumMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumMap.h; sourceTree = "<group>"; };
 		E89CE92616C54A36006BEFF4 /* SpriteObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpriteObject.cpp; sourceTree = "<group>"; };
 		E89CE92716C54A36006BEFF4 /* SpriteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpriteObject.h; sourceTree = "<group>"; };
 		E89CE92816C54A36006BEFF4 /* SpriteRenderBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpriteRenderBatch.cpp; sourceTree = "<group>"; };
@@ -1455,8 +1447,6 @@
 		E8B3C7BD16B9326D002BD35F /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				E8679182175F62D600C5A6A2 /* EnumMap.cpp */,
-				E8679183175F62D600C5A6A2 /* EnumMap.h */,
 				E867917A175F620400C5A6A2 /* GlobalEnum.cpp */,
 				E867917B175F620400C5A6A2 /* GlobalEnum.h */,
 				E8B3C7BE16B9326D002BD35F /* BaseMath.cpp */,
@@ -1806,8 +1796,6 @@
 		E8B3C8F916B9326D002BD35F /* Render */ = {
 			isa = PBXGroup;
 			children = (
-				E867917E175F621E00C5A6A2 /* GPUFamilyDescriptor.cpp */,
-				E867917F175F621E00C5A6A2 /* GPUFamilyDescriptor.h */,
 				CCC7A4A416F1D8200061EA5D /* RenderState.cpp */,
 				CCC7A4A516F1D8200061EA5D /* RenderState.h */,
 				E8B3C8FA16B9326D002BD35F /* 2D */,
@@ -2659,8 +2647,6 @@
 				84E5E0FE174D02EA0001C74F /* OpenUDIDApple.h in Headers */,
 				84E5E102174D02F60001C74F /* OpenUDIDios.h in Headers */,
 				E867917D175F620400C5A6A2 /* GlobalEnum.h in Headers */,
-				E8679181175F621E00C5A6A2 /* GPUFamilyDescriptor.h in Headers */,
-				E8679185175F62D600C5A6A2 /* EnumMap.h in Headers */,
 				A6A1E86A1785688600AA3A86 /* CRC32.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3024,8 +3010,6 @@
 				84E5E0FF174D02EA0001C74F /* OpenUDIDApple.mm in Sources */,
 				84E5E103174D02F60001C74F /* OpenUDIDios.mm in Sources */,
 				E867917C175F620400C5A6A2 /* GlobalEnum.cpp in Sources */,
-				E8679180175F621E00C5A6A2 /* GPUFamilyDescriptor.cpp in Sources */,
-				E8679184175F62D600C5A6A2 /* EnumMap.cpp in Sources */,
 				A6A1E8691785688600AA3A86 /* CRC32.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
