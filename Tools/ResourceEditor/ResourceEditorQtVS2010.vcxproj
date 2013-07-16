@@ -218,6 +218,7 @@
     <ClCompile Include="..\..\Sources\Tools\TextureCompression\PVRConverter.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\CommandLineParser.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\DefinitionFile.cpp" />
+    <ClCompile Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ImagePacker.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\PngImage.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.cpp" />
@@ -496,6 +497,7 @@
     <ClCompile Include="Classes\Qt\Scene\System\CollisionSystem\CollisionParticleEmitter.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\CollisionSystem\CollisionRenderObject.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\CustomColorsSystem.cpp" />
+    <ClCompile Include="Classes\Qt\Scene\System\EditorLightSystem.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\GridSystem.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\HeightmapEditorSystem.cpp" />
     <ClCompile Include="Classes\Qt\Scene\System\HoodSystem.cpp" />
@@ -775,6 +777,7 @@
     <ClInclude Include="..\..\Sources\Tools\TextureCompression\PVRConverter.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\CommandLineParser.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\DefinitionFile.h" />
+    <ClInclude Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ImagePacker.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\PngImage.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.h" />
@@ -1136,6 +1139,7 @@
     <ClInclude Include="Classes\Qt\Scene\System\CollisionSystem\CollisionParticleEmitter.h" />
     <ClInclude Include="Classes\Qt\Scene\System\CollisionSystem\CollisionRenderObject.h" />
     <ClInclude Include="Classes\Qt\Scene\System\CustomColorsSystem.h" />
+    <ClInclude Include="Classes\Qt\Scene\System\EditorLightSystem.h" />
     <ClInclude Include="Classes\Qt\Scene\System\GridSystem.h" />
     <ClInclude Include="Classes\Qt\Scene\System\HeightmapEditorSystem.h" />
     <ClInclude Include="Classes\Qt\Scene\System\HoodSystem.h" />

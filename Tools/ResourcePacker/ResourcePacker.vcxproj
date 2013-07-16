@@ -111,6 +111,7 @@
     <ClCompile Include="..\..\Sources\Tools\TextureCompression\PVRConverter.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\CommandLineParser.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\DefinitionFile.cpp" />
+    <ClCompile Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ImagePacker.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\PngImage.cpp" />
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="..\..\Sources\Tools\TextureCompression\PVRConverter.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\CommandLineParser.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\DefinitionFile.h" />
+    <ClInclude Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ImagePacker.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\PngImage.h" />
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\ResourcePacker2D.h" />

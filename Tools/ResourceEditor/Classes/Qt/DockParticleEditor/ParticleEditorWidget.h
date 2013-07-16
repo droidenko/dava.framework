@@ -38,10 +38,17 @@ public:
     ~ParticleEditorWidget();
 	
 protected slots:
+	// "Old" signals.
 	void OnEffectSelected(Entity* effectNode);
 	void OnEmitterSelected(Entity* emitterNode, BaseParticleEditorNode* editorNode);
     void OnLayerSelected(Entity* emitterNode, ParticleLayer* layer, BaseParticleEditorNode* editorNode, bool forceRefresh);
     void OnForceSelected(Entity* emitterNode, ParticleLayer* layer, int32 forceIndex, BaseParticleEditorNode* editorNode);
+
+	// New signals for SceneTree.
+	void OnEffectSelectedFromSceneTree(DAVA::Entity* effectNode);
+	void OnEmitterSelectedFromSceneTree(DAVA::Entity* emitterNode);
+	void OnLayerSelectedFromSceneTree(DAVA::ParticleLayer* layer, bool forceRefresh);
+    void OnForceSelectedFromSceneTree(DAVA::ParticleLayer* layer, DAVA::int32 forceIndex);
 
 	void OnUpdate();
 	void OnValueChanged();
@@ -60,6 +67,13 @@ private:
 	
 	// Update visible widgets for the layer.
 	void UpdateWidgetsForLayer();
+
+protected:
+	// Handle the "Layer Selected" signal.
+	void HandleLayerSelected(ParticleEmitter* emitter, ParticleLayer* layer, BaseParticleEditorNode* editorNode, bool forceRefresh);
+	
+	// Handle the "Force Selected" signal.
+	void HandleForceSelected(ParticleEmitter* emitter, ParticleLayer* layer, int32 forceIndex, BaseParticleEditorNode* editorNode);
 
 private:
 	ParticleEffectPropertiesWidget* effectPropertiesWidget;

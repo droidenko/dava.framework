@@ -27,6 +27,8 @@
 
 #include "../StringConstants.h"
 
+#include "../Qt/Main/QtUtils.h"
+
 using namespace DAVA;
 
 SceneExporter::SceneExporter()
@@ -371,6 +373,7 @@ void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, 
         
         if(extension == ".pvr")
         {
+            DeleteOldPVRTextureIfPowerVr_IOS(descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
             PVRConverter::Instance()->ConvertPngToPvr(*descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
         }
         else if(extension == ".dds")

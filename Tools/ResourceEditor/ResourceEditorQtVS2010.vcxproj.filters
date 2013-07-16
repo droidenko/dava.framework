@@ -1908,6 +1908,12 @@
     <ClCompile Include="Classes\Qt\Tools\MimeDataHelper\MimeDataHelper.cpp">
       <Filter>Classes\Qt\Tools\MimeDataHelper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.cpp">
+      <Filter>Tools\TexturePacker</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\Scene\System\EditorLightSystem.cpp">
+      <Filter>Classes\Qt\Scene\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h">
@@ -3343,6 +3349,12 @@
     </ClInclude>
     <ClInclude Include="Classes\Qt\Tools\MimeDataHelper\MimeDataHelper.h">
       <Filter>Classes\Qt\Tools\MimeDataHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.h">
+      <Filter>Tools\TexturePacker</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\Scene\System\EditorLightSystem.h">
+      <Filter>Classes\Qt\Scene\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

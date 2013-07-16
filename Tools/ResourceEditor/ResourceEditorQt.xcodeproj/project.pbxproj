@@ -25,6 +25,7 @@
 		177D1A9016CB8ADB0021104B /* SceneGraphModelStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 177D1A8E16CB8ADB0021104B /* SceneGraphModelStateHelper.cpp */; };
 		177D1A9316CB8C820021104B /* PropertyEditorStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 177D1A9116CB8C820021104B /* PropertyEditorStateHelper.cpp */; };
 		178A9B721716E584006BB1F7 /* ParticleEffectPropertiesWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178A9B701716E583006BB1F7 /* ParticleEffectPropertiesWidget.cpp */; };
+		17B8201B178FEFCD00954A81 /* FramePathHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17B82019178FEFCD00954A81 /* FramePathHelper.cpp */; };
 		17D9FE251784220500A621A0 /* BaseParticleEditorContentWidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17D9FE231784220500A621A0 /* BaseParticleEditorContentWidget_moc.cpp */; };
 		493BAC5D16BFD655000E5F84 /* EditorBodyControlCommands.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 493BAC5B16BFD655000E5F84 /* EditorBodyControlCommands.cpp */; };
 		4940AF6C164C1684003E95A7 /* CustomColorCommands.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4940AF6A164C1684003E95A7 /* CustomColorCommands.cpp */; };
@@ -509,6 +510,7 @@
 		E8951B3F1737AF1200755339 /* DXTConverter.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8951B391737AF1200755339 /* DXTConverter.cpp */; };
 		E8951B401737AF1200755339 /* PVRConverter.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8951B3B1737AF1200755339 /* PVRConverter.cpp */; };
 		E89DFD30163ED2A900B51706 /* DataQt in Bundle Resources */ = {isa = PBXBuildFile; fileRef = E89DFD2F163ED2A900B51706 /* DataQt */; };
+		E8A1091817944416007FF496 /* EditorLightSystem.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8A1091617944416007FF496 /* EditorLightSystem.cpp */; };
 		E8BD1F0016DE40ED00499E18 /* libFrameworkQt.a in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = E8BD1EFF16DE40E300499E18 /* libFrameworkQt.a */; };
 		E8C4C64F17294079004B0B3B /* CameraSystem.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8C4C63017294079004B0B3B /* CameraSystem.cpp */; };
 		E8C4C65017294079004B0B3B /* CollisionLandscape.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8C4C63417294079004B0B3B /* CollisionLandscape.cpp */; };
@@ -619,6 +621,8 @@
 		177D1A9216CB8C820021104B /* PropertyEditorStateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyEditorStateHelper.h; sourceTree = "<group>"; };
 		178A9B701716E583006BB1F7 /* ParticleEffectPropertiesWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleEffectPropertiesWidget.cpp; sourceTree = "<group>"; };
 		178A9B711716E583006BB1F7 /* ParticleEffectPropertiesWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleEffectPropertiesWidget.h; sourceTree = "<group>"; };
+		17B82019178FEFCD00954A81 /* FramePathHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FramePathHelper.cpp; sourceTree = "<group>"; };
+		17B8201A178FEFCD00954A81 /* FramePathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FramePathHelper.h; sourceTree = "<group>"; };
 		17D9FE231784220500A621A0 /* BaseParticleEditorContentWidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseParticleEditorContentWidget_moc.cpp; path = _GeneratedQt/DockParticleEditor/BaseParticleEditorContentWidget_moc.cpp; sourceTree = SOURCE_ROOT; };
 		29FF4FD1BCB9408020402F99 /* theora_macos */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = theora_macos; path = ../../Libs/libs/libtheora_macos.a; sourceTree = "<group>"; };
 		2A689518AF9C22C7AA97C9EF /* ogg_macos */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = ogg_macos; path = ../../Libs/libs/libogg_macos.a; sourceTree = "<group>"; };
@@ -1573,6 +1577,8 @@
 		E8951B3B1737AF1200755339 /* PVRConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PVRConverter.cpp; sourceTree = "<group>"; };
 		E8951B3C1737AF1200755339 /* PVRConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRConverter.h; sourceTree = "<group>"; };
 		E89DFD2F163ED2A900B51706 /* DataQt */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DataQt; sourceTree = "<group>"; };
+		E8A1091617944416007FF496 /* EditorLightSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorLightSystem.cpp; sourceTree = "<group>"; };
+		E8A1091717944416007FF496 /* EditorLightSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorLightSystem.h; sourceTree = "<group>"; };
 		E8B836241740FCC800D11EAE /* ImageTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageTools.cpp; sourceTree = "<group>"; };
 		E8B836251740FCC800D11EAE /* ImageTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageTools.h; sourceTree = "<group>"; };
 		E8BD1EF616DE40E300499E18 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../../Projects/MacOSFramework/Framework.xcodeproj; sourceTree = "<group>"; };
@@ -2278,6 +2284,8 @@
 			children = (
 				499E4A6F178ABDD10067FA56 /* CustomColorsSystem.cpp */,
 				499E4A70178ABDD10067FA56 /* CustomColorsSystem.h */,
+				E8A1091617944416007FF496 /* EditorLightSystem.cpp */,
+				E8A1091717944416007FF496 /* EditorLightSystem.h */,
 				499E4A71178ABDD10067FA56 /* HeightmapEditorSystem.cpp */,
 				499E4A72178ABDD10067FA56 /* HeightmapEditorSystem.h */,
 				499E4A73178ABDD10067FA56 /* LandscapeEditorDrawSystem.cpp */,
@@ -3206,6 +3214,8 @@
 		E81895B5170F192E009A815A /* TexturePacker */ = {
 			isa = PBXGroup;
 			children = (
+				17B82019178FEFCD00954A81 /* FramePathHelper.cpp */,
+				17B8201A178FEFCD00954A81 /* FramePathHelper.h */,
 				E81895B6170F192E009A815A /* CommandLineParser.cpp */,
 				E81895B7170F192E009A815A /* CommandLineParser.h */,
 				E81895B8170F192E009A815A /* DefinitionFile.cpp */,
@@ -4399,6 +4409,8 @@
 				6295E409178B08050007F9EC /* MimeDataHelper.cpp in Build Sources */,
 				E87FE30D178D6A59009416BE /* LodCorrectionDialog.cpp in Build Sources */,
 				E87FE314178D6A7F009416BE /* LodCorrectionDialog_moc.cpp in Build Sources */,
+				17B8201B178FEFCD00954A81 /* FramePathHelper.cpp in Build Sources */,
+				E8A1091817944416007FF496 /* EditorLightSystem.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

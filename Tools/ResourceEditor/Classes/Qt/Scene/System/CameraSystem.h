@@ -26,6 +26,7 @@
 class SceneCameraSystem : public DAVA::SceneSystem
 {
 	friend class SceneEditor2;
+	friend class EditorLightSystem;
 
 public:
 	SceneCameraSystem(DAVA::Scene * scene);

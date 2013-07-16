@@ -27,7 +27,7 @@ public:
 
 	void SetInputDir(const FilePath & inputDir);
 	void SetOutputDir(const FilePath & outputDir);
-	void Pack();
+	void Pack(bool isLightmapPacking);
 
 protected:
 

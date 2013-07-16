@@ -21,6 +21,7 @@
 #include "../QtPropertyWidgets/QtColorLineEdit.h"
 
 #include <QColorDialog>
+#include <QFileDialog>
 #include <QPushButton>
 #include <QPainter>
 #include <QLineEdit>
@@ -275,6 +276,15 @@ void QtPropertyDataDavaVariant::ChildsCreate()
             max->ChildAdd("Y", box.max.y);
             max->ChildAdd("Z", box.max.z);
         }
+		break;
+	case DAVA::VariantType::TYPE_FILEPATH:
+		{
+			QPushButton *filePathBtn = new QPushButton(QIcon(":/QtIcons/openscene.png"), "");
+			filePathBtn->setIconSize(QSize(14, 14));
+			filePathBtn->setFlat(true);
+			AddOW(QtPropertyOW(filePathBtn));
+			QObject::connect(filePathBtn, SIGNAL(pressed()), this, SLOT(FilePathOWPressed()));
+		}
 		break;
 	}
 }
@@ -749,6 +759,15 @@ void QtPropertyDataDavaVariant::ColorOWPressed()
 	}
 }
 
+void QtPropertyDataDavaVariant::FilePathOWPressed()
+{
+	QString path = QFileDialog::getOpenFileName(GetOWViewport(), "Select file", QString(curVariantValue.AsFilePath().GetAbsolutePathname().c_str()));
+	if(!path.isEmpty())
+	{
+		curVariantValue.SetFilePath(DAVA::FilePath(path.toStdString()));
+	}
+}
+
 QIcon QtPropertyDataDavaVariant::GetIcon()
 {
 	if(!iconCacheIsValid)
@@ -776,6 +795,10 @@ QIcon QtPropertyDataDavaVariant::GetIcon()
 			p.drawRect(QRect(0,0,15,15));
 
 			iconCache = QIcon(pix);
+		}
+		else if(curVariantValue.type == DAVA::VariantType::TYPE_FILEPATH)
+		{
+			iconCache = QIcon(":/QtIcons/file.png");
 		}
 		else
 		{

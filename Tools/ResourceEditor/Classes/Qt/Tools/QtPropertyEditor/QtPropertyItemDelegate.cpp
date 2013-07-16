@@ -28,8 +28,13 @@ QtPropertyItemDelegate::QtPropertyItemDelegate(QWidget *parent /* = 0 */)
 void QtPropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QStyleOptionViewItemV4 opt = option;
-
 	initStyleOption(&opt, index);
+
+	if(index.column() == 1)
+	{
+		opt.textElideMode = Qt::ElideLeft;
+	}
+
 	recalcOptionalWidgets(index, &opt);
 
 	QStyledItemDelegate::paint(painter, opt, index);
@@ -37,7 +42,8 @@ void QtPropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
 QSize QtPropertyItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    return QStyledItemDelegate::sizeHint(option, index);
+	QSize s = QStyledItemDelegate::sizeHint(option, index);
+    return QSize(s.width(), s.height() + 4);
 }
 
 QWidget* QtPropertyItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -113,8 +119,40 @@ void QtPropertyItemDelegate::updateEditorGeometry(QWidget * editor, const QStyle
 		editor->setStyleSheet("#customPropertyEditor{ border: 1px solid gray; }");
 		QRect r = option.rect;
 		r.adjust(2, -1, 0, 1);
+
+		if(!index.model()->data(index, Qt::DecorationRole).isNull())
+		{
+			r.adjust(17, 0, 0, 0);
+		}
+
 		editor->setGeometry(r);
 	}
+}
+
+bool QtPropertyItemDelegate::helpEvent(QHelpEvent * event, QAbstractItemView * view, const QStyleOptionViewItem & option, const QModelIndex & index)
+{
+	bool showToolTip = true;
+
+	if(NULL != event && NULL != view && event->type() == QEvent::ToolTip)
+	{
+		QRect rect = view->visualRect(index);
+		QSize size = sizeHint(option, index);
+		if(rect.width() >= size.width()) 
+		{
+			showToolTip = false;
+		}
+	}
+
+	if(showToolTip)
+	{
+		return QStyledItemDelegate::helpEvent(event, view, option, index);
+	}
+	else
+	{
+		QToolTip::hideText();
+	}
+
+	return false;
 }
 
 void QtPropertyItemDelegate::recalcOptionalWidgets(const QModelIndex &index, QStyleOptionViewItem *option) const

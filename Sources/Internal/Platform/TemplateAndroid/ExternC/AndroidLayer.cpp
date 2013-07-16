@@ -19,7 +19,6 @@
 
 #include "AndroidLayer.h"
 
-#include "Platform/TemplateAndroid/AndroidSpecifics.h"
 #include "Platform/TemplateAndroid/CorePlatformAndroid.h"
 #include "FileSystem/Logger.h"
 #include "Utils/Utils.h"

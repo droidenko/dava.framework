@@ -89,6 +89,7 @@ QVariant QtPropertyItem::data(int role) const
 			v = itemData->GetIcon();
 			break;
 		case Qt::DisplayRole:
+		case Qt::ToolTipRole:
 		case Qt::EditRole:
 			v = itemData->GetAlias();
 			if(!v.isValid())

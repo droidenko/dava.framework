@@ -81,9 +81,9 @@ Sprite* Sprite::PureCreate(const FilePath & spriteName, Sprite* forPointer)
 //	Logger::Info("Sprite pure creation");
 	FilePath pathName = FilePath::CreateWithNewExtension(spriteName, ".txt");
     
-	
-	FilePath scaledName = GetScaledName(spriteName);
-	FilePath scaledPath = FilePath::CreateWithNewExtension(scaledName, ".txt");
+	// Yuri Coder, 2013/07/15. According to DF-1504 issue we have to sent the full existing
+	// path to GetScaledName.
+	FilePath scaledPath = GetScaledName(pathName);
     
     Sprite *sprForScaledPath = GetSpriteFromMap(scaledPath);
     if(sprForScaledPath)
@@ -160,6 +160,11 @@ FilePath Sprite::GetScaledName(const FilePath &spriteName)
     if(String::npos != pos)
 	{
         String pathname = spriteName.GetAbsolutePathname();
+		
+		String subStrPath = pathname.substr(0, pos);
+		String resFolder = Core::Instance()->GetResourceFolder(Core::Instance()->GetDesirableResourceIndex());
+		String footer = pathname.substr(pos + Core::Instance()->GetResourceFolder(Core::Instance()->GetBaseResourceIndex()).length());
+										
         return pathname.substr(0, pos)
                         + Core::Instance()->GetResourceFolder(Core::Instance()->GetDesirableResourceIndex())
                         + pathname.substr(pos + Core::Instance()->GetResourceFolder(Core::Instance()->GetBaseResourceIndex()).length());

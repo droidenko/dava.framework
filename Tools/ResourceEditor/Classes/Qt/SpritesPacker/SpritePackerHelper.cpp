@@ -73,7 +73,7 @@ void SpritePackerHelper::Pack()
 	SpritesPacker packer;
 	packer.SetInputDir(inputDir);
 	packer.SetOutputDir(outputDir);
-	packer.Pack();
+	packer.Pack(false);
 	DAVA::QtLayer::Instance()->ReleaseAutoreleasePool(pool);
 }
 

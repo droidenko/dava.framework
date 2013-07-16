@@ -21,7 +21,6 @@
 #include "DAVAEngine.h"
 #if defined(__DAVAENGINE_ANDROID__)
 
-#include "AndroidSpecifics.h"
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 

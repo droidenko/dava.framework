@@ -940,7 +940,7 @@ void EditorBodyControl::PackLightmaps()
 	packer.SetInputDir(inputDir);
 
 	packer.SetOutputDir(outputDir);
-	packer.Pack();
+	packer.Pack(true);
 	packer.CreateDescriptors();
 	packer.ParseSpriteDescriptors();
 
@@ -1349,7 +1349,7 @@ ArrowsNode* EditorBodyControl::GetArrowsNode(bool createIfNotExist)
         arrowsNode->SetName(ResourceEditor::EDITOR_ARROWS_NODE);
 
         EditorScene *scene = SceneDataManager::Instance()->SceneGetActive()->GetScene();
-        scene->InsertBeforeNode(arrowsNode, scene->GetChild(0));
+        scene->AddEditorEntity(arrowsNode);
 
 		arrowsNode->Release();
 	}

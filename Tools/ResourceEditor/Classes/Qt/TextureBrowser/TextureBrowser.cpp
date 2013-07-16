@@ -38,6 +38,13 @@
 #include <QMessageBox>
 #include <QProgressBar>
 
+QColor TextureBrowser::gpuColor_PVR_ISO = QColor(0, 155, 0, 255);
+QColor TextureBrowser::gpuColor_PVR_Android = QColor(0, 0, 155, 255);
+QColor TextureBrowser::gpuColor_Tegra = QColor(0, 155, 155, 255);
+QColor TextureBrowser::gpuColor_MALI = QColor(155, 155, 0, 255);
+QColor TextureBrowser::gpuColor_Adreno = QColor(155, 0, 155, 255);
+QColor TextureBrowser::errorColor = QColor(200, 0, 0, 255);
+
 TextureBrowser::TextureBrowser(QWidget *parent)
     : QDialog(parent)
 	, ui(new Ui::TextureBrowser)
@@ -504,22 +511,45 @@ void TextureBrowser::setupTextureViewTabBar()
 	ui->viewTabBar->setUsesScrollButtons(false);
 	ui->viewTabBar->setExpanding(false);
 
+	QPixmap pix(16,16);
+	QPainter p(&pix);
 	int tabIndex;
-
+	
+	p.setBrush(QBrush(gpuColor_PVR_ISO));
+	p.setPen(QColor(64, 64, 64, 255));
+	p.drawRect(QRect(0,0,15,15));
+	
 	tabIndex = ui->viewTabBar->addTab("PVR iOS");
 	ui->viewTabBar->setTabData(tabIndex, GPU_POWERVR_IOS);
+	ui->viewTabBar->setTabIcon(tabIndex, QIcon(pix));
+
+	p.setBrush(QBrush(gpuColor_PVR_Android));
+	p.drawRect(QRect(0,0,15,15));
 
 	tabIndex = ui->viewTabBar->addTab("PVR Android");
 	ui->viewTabBar->setTabData(tabIndex, GPU_POWERVR_ANDROID);
+	ui->viewTabBar->setTabIcon(tabIndex, QIcon(pix));
+
+	p.setBrush(QBrush(gpuColor_Tegra));
+	p.drawRect(QRect(0,0,15,15));
 
 	tabIndex = ui->viewTabBar->addTab("Tegra");
 	ui->viewTabBar->setTabData(tabIndex, GPU_TEGRA);
+	ui->viewTabBar->setTabIcon(tabIndex, QIcon(pix));
+
+	p.setBrush(QBrush(gpuColor_MALI));
+	p.drawRect(QRect(0,0,15,15));
 
 	tabIndex = ui->viewTabBar->addTab("MALI");
 	ui->viewTabBar->setTabData(tabIndex, GPU_MALI);
+	ui->viewTabBar->setTabIcon(tabIndex, QIcon(pix));
+
+	p.setBrush(QBrush(gpuColor_Adreno));
+	p.drawRect(QRect(0,0,15,15));
 
 	tabIndex = ui->viewTabBar->addTab("Adreno");
 	ui->viewTabBar->setTabData(tabIndex, GPU_ADRENO);
+	ui->viewTabBar->setTabIcon(tabIndex, QIcon(pix));
 
 	QObject::connect(ui->viewTabBar,  SIGNAL(currentChanged(int)), this, SLOT(textureViewChanged(int)));
 }

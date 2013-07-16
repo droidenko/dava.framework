@@ -122,7 +122,6 @@ void SceneData::RemoveSceneNode(DAVA::Entity *node)
 //        SceneValidator::Instance()->EnumerateSceneTextures();
     }
     
-    scene->UpdateCameraLightOnScene();
     RebuildSceneGraph();
 }
 

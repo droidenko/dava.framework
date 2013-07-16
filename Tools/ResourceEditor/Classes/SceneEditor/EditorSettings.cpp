@@ -297,16 +297,16 @@ void EditorSettings::SetDesignerName(const String &userName)
     settings->SetString("DesignerName", userName);
 }
 
-bool EditorSettings::GetShowEditorCamerLight()
-{
-    return settings->GetBool("ShowEditorCamerLight", true);
-}
-
-void EditorSettings::SetShowEditorCamerLight(bool show)
-{
-    settings->SetBool("ShowEditorCamerLight", show);
-    Save();
-}
+// bool EditorSettings::GetShowEditorCamerLight()
+// {
+//     return settings->GetBool("ShowEditorCamerLight", true);
+// }
+// 
+// void EditorSettings::SetShowEditorCamerLight(bool show)
+// {
+//     settings->SetBool("ShowEditorCamerLight", show);
+//     Save();
+// }
 
 void EditorSettings::SetPreviewDialogEnabled(bool enabled)
 {

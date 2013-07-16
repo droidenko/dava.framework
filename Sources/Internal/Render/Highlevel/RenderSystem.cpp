@@ -220,6 +220,14 @@ void RenderSystem::ProcessClipping()
     for (uint32 pos = 0; pos < size; ++pos)
     {
         RenderObject * node = renderObjectArray[pos];
+		
+		uint32 flags = node->GetFlags();
+		flags = (flags | RenderObject::VISIBLE_AFTER_CLIPPING_THIS_FRAME) & RenderObject::VISIBILITY_CRITERIA;
+		if (flags != RenderObject::VISIBILITY_CRITERIA)
+		{
+			continue;
+		}
+
         node->AddFlag(RenderObject::VISIBLE_AFTER_CLIPPING_THIS_FRAME);
         //Logger::Debug("Cull Node: %s rc: %d", node->GetFullName().c_str(), node->GetRetainCount());
         if (!frustum->IsInside(node->GetWorldBoundingBox()))

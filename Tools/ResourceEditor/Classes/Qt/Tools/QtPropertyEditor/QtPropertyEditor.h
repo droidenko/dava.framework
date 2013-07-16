@@ -51,6 +51,8 @@ protected:
 	QtPropertyModel *curModel;
 	QtPropertyItemDelegate *curItemDelegate;
 
+	virtual void drawRow(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+
 protected slots:
 	void ItemClicked(const QModelIndex &);
 };

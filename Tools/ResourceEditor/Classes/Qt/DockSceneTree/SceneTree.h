@@ -36,11 +36,6 @@ public:
 	SceneTree(QWidget *parent = 0);
 	~SceneTree();
 
-signals:
-	void EmitterSelected(DAVA::Entity* emitterNode, DAVA::BaseParticleEditorNode* editorNode);
-	void LayerSelected(DAVA::Entity* emitterNode, DAVA::ParticleLayer* layer, DAVA::BaseParticleEditorNode* editorNode, bool forceRefresh);
-	void ForceSelected(DAVA::Entity* emitterNode, DAVA::ParticleLayer* layer, DAVA::int32 forceIndex, DAVA::BaseParticleEditorNode* editorNode);
-	
 public slots:
 	void ShowContextMenu(const QPoint &pos);
 

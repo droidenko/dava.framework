@@ -91,7 +91,8 @@ ParticleLayer::ParticleLayer()
 	frameOverLifeFPS = 0;
 
     isDisabled = false;
-	isLooped = true;
+	// DF-1453 - disable loop option by default
+	isLooped = false;
 
 	playbackSpeed = 1.0f;
 }

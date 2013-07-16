@@ -61,6 +61,7 @@ protected:
 
 protected slots:
 	void ColorOWPressed();
+	void FilePathOWPressed();
 
 private:
 	struct AllowedValue

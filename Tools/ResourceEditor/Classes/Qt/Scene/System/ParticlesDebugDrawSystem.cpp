@@ -51,10 +51,8 @@ void ParticlesDebugDrawSystem::ProcessUIEvent(DAVA::UIEvent *event)
 
 }
 
-DAVA::float32 ParticlesDebugDrawSystem::GetDebugDrawRadius(DAVA::Entity* parentEntity)
+void ParticlesDebugDrawSystem::DrawDebugInfoForEmitter(DAVA::Entity* parentEntity)
 {
-	DAVA::float32 drawRadius = 0.1f;
-	DAVA::float32 currentMax = 0.0f;
 	SceneCollisionSystem *collisionSystem = ((SceneEditor2 *) GetScene())->collisionSystem;
 	
 	if (collisionSystem)
@@ -62,18 +60,32 @@ DAVA::float32 ParticlesDebugDrawSystem::GetDebugDrawRadius(DAVA::Entity* parentE
 		for(int i = 0; i < parentEntity->GetChildrenCount(); ++i)
 		{
 			DAVA::Entity *entity = parentEntity->GetChild(i);
-			DAVA::AABBox3 entityBox = collisionSystem->GetBoundingBox(entity);
+			DAVA::AABBox3 entitySizeBox = collisionSystem->GetBoundingBox(entity);
+			// Get center of debug effect
+			DAVA::AABBox3 entityCenterBox = entity->GetWTMaximumBoundingBoxSlow();
+			DAVA::Vector3 center = entityCenterBox.GetCenter();				
+			// Get sphere radius (size) of debug effect
+			DAVA::float32 radius = GetDebugDrawRadius(entitySizeBox) * 2;
 			
-			currentMax = Max(currentMax, Abs(entityBox.max.x));
-			currentMax = Max(currentMax, Abs(entityBox.max.y));
-			currentMax = Max(currentMax, Abs(entityBox.max.z));
-			currentMax = Max(currentMax, Abs(entityBox.min.x));
-			currentMax = Max(currentMax, Abs(entityBox.min.y));
-			currentMax = Max(currentMax, Abs(entityBox.min.z));
+			DAVA::RenderManager::Instance()->SetColor(DAVA::Color(0.9f, 0.9f, 0.9f, 0.35f));
+			DAVA::RenderHelper::Instance()->FillDodecahedron(center, radius);
 		}
 	}
+}
+
+DAVA::float32 ParticlesDebugDrawSystem::GetDebugDrawRadius(DAVA::AABBox3 entitySizeBox)
+{
+	DAVA::float32 drawRadius = 0.1f;
+	DAVA::float32 currentMax = 0.0f;
+			
+	currentMax = Max(currentMax, Abs(entitySizeBox.max.x));
+	currentMax = Max(currentMax, Abs(entitySizeBox.max.y));
+	currentMax = Max(currentMax, Abs(entitySizeBox.max.z));
+	currentMax = Max(currentMax, Abs(entitySizeBox.min.x));
+	currentMax = Max(currentMax, Abs(entitySizeBox.min.y));
+	currentMax = Max(currentMax, Abs(entitySizeBox.min.z));
 	
-	return Max(drawRadius, currentMax * 2);
+	return Max(drawRadius, currentMax);
 }
 
 void ParticlesDebugDrawSystem::Draw()
@@ -81,15 +93,7 @@ void ParticlesDebugDrawSystem::Draw()
 	// Draw debug information for non-selected entities
 	for(int i = 0; i < entities.size(); ++i)
 	{				
-		DAVA::Entity *entity = entities[i];
-				
-		DAVA::AABBox3 box = entity->GetWTMaximumBoundingBoxSlow();		
-		DAVA::Vector3 center = box.GetCenter();
-		
-		DAVA::float32 drawRadius = GetDebugDrawRadius(entity);
-				
-		DAVA::RenderManager::Instance()->SetColor(DAVA::Color(0.1f, 0.1f, 0.1f, 0.35f));
-		DAVA::RenderHelper::Instance()->FillDodecahedron(center, drawRadius);		
+		DrawDebugInfoForEmitter(entities[i]);
 	}
 	
 	// Draw debug information for selected entities
@@ -183,7 +187,7 @@ void ParticlesDebugDrawSystem::DrawSizeBox(DAVA::ParticleEmitter *emitter, DAVA:
 
 void ParticlesDebugDrawSystem::DrawVectorArrow(DAVA::ParticleEmitter *emitter, DAVA::Vector3 center)
 {
-	DAVA::Vector3 emitterVector;
+	DAVA::Vector3 emitterVector(1.0f, 1.0f, 1.0f);
 	DAVA::float32 arrowBaseSize = 5.0f;
 				
 	if (emitter->emissionVector)
@@ -199,23 +203,10 @@ void ParticlesDebugDrawSystem::DrawVectorArrow(DAVA::ParticleEmitter *emitter, D
 		scale = hoodSystem->GetScale();
 	}
 	
-	//DAVA::float32 coefx = Abs(arrowBaseSize / (emitterVector.x != 0 ? emitterVector.x : 1.0f));
-	//DAVA::float32 coefy = Abs(arrowBaseSize / (emitterVector.y != 0 ? emitterVector.y : 1.0f));
-	//DAVA::float32 coefz = Abs(arrowBaseSize / (emitterVector.z != 0 ? emitterVector.z : 1.0f));
+	emitterVector.Normalize();
 	
-	//DAVA::float32 coef = Max(coefx, coefy);
-	//coef = Max(coef, coefz);
-	//coef /= arrowBaseSize;
-	
-	//emitterVector = arrowBaseSize / emitterVector;
-	
-	emitterVector = (emitterVector * scale * arrowBaseSize) + center;
-	
-	//emitterVector = (emitterVector * arrowBaseSize * scale) + center;
-	
-	DAVA::float32 arrowSize = (arrowBaseSize * scale) / 6;
-	
-	//DAVA::RenderHelper::Instance()->DrawLine(center, emitterVector);
+	DAVA::float32 arrowSize = scale;
+	emitterVector = (emitterVector * arrowBaseSize * scale) + center;
 	
 	DAVA::RenderHelper::Instance()->FillArrow(center, emitterVector, arrowSize, 1);
 }

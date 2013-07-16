@@ -48,6 +48,13 @@ public:
 
 	void Close();
 
+	static QColor gpuColor_PVR_ISO;
+	static QColor gpuColor_PVR_Android;
+	static QColor gpuColor_Tegra;
+	static QColor gpuColor_MALI;
+	static QColor gpuColor_Adreno;
+	static QColor errorColor;
+
 protected:
 	void closeEvent(QCloseEvent * e);
 

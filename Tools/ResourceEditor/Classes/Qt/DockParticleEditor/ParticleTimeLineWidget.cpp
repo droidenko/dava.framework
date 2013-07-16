@@ -24,14 +24,14 @@
 #include "Commands/CommandsManager.h"
 #include "Commands/CommandSignals.h"
 #include "../Scene/SceneDataManager.h"
-
+#include "Qt/Scene/SceneSignals.h"
 #include "ParticlesEditorController.h"
 
 ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 	ScrollZoomWidget(parent),
 	selectedPoint(-1, -1),
-	emitterNode(NULL),
-	effectNode(NULL),
+	selectedEffect(NULL),
+	selectedEmitter(NULL),
 	selectedLayer(NULL),
 #ifdef Q_WS_WIN
 	nameFont("Courier", 8, QFont::Normal)
@@ -43,7 +43,13 @@ ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 	backgroundBrush.setStyle(Qt::SolidPattern);
 	
 	gridStyle = GRID_STYLE_LIMITS;
-	
+
+	// "Old" signals handling.
+	connect(ParticlesEditorController::Instance(),
+			SIGNAL(EffectSelected(Entity*)),
+			this,
+			SLOT(OnEffectNodeSelected(Entity*)));
+
 	connect(ParticlesEditorController::Instance(),
 			SIGNAL(EmitterSelected(Entity*, BaseParticleEditorNode*)),
 			this,
@@ -57,11 +63,24 @@ ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 			this,
 			SLOT(OnNodeSelected(Entity*)));
 
-	connect(ParticlesEditorController::Instance(),
-			SIGNAL(EffectSelected(Entity*)),
+	// New signals handling from Scene Tree.
+	connect(SceneSignals::Instance(),
+			SIGNAL(EffectSelected(DAVA::Entity*)),
 			this,
-			SLOT(OnEffectNodeSelected(Entity*)));
-	
+			SLOT(OnEffectSelectedFromSceneTree(DAVA::Entity*)));
+	connect(SceneSignals::Instance(),
+			SIGNAL(EmitterSelected(DAVA::Entity*)),
+			this,
+			SLOT(OnEmitterSelectedFromSceneTree(DAVA::Entity*)));
+	connect(SceneSignals::Instance(),
+			SIGNAL(LayerSelected(DAVA::ParticleLayer*, bool)),
+			this,
+			SLOT(OnLayerSelectedFromSceneTree(DAVA::ParticleLayer*, bool)));
+	connect(SceneSignals::Instance(),
+			SIGNAL(ForceSelected(DAVA::ParticleLayer*, DAVA::int32)),
+			this,
+			SLOT(OnForceSelectedFromSceneTree(DAVA::ParticleLayer*, DAVA::int32)));
+
 	connect(CommandSignals::Instance(),
 			SIGNAL(CommandAffectsEntities(DAVA::Scene*, CommandList::eCommandId, const DAVA::Set<DAVA::Entity*>&) ) ,
 			this,
@@ -102,69 +121,65 @@ void ParticleTimeLineWidget::OnLayerSelected(Entity* node, ParticleLayer* layer)
 {
 	if (!node || !layer)
 	{
+		CleanupTimelines();
 		emit ChangeVisible(false);
 		return;
 	}
 	
-	HandleNodeSelected(node, layer);
+	ParticleEmitter* emitter = GetEmitter(node);
+	HandleEmitterSelected(emitter, layer);
 }
 
 void ParticleTimeLineWidget::OnNodeSelected(Entity* node)
 {
-	HandleNodeSelected(node, NULL);
+	ParticleEmitter* emitter = GetEmitter(node);
+	HandleEmitterSelected(emitter, NULL);
 }
 
-void ParticleTimeLineWidget::HandleNodeSelected(Entity* node, ParticleLayer* layer)
+void ParticleTimeLineWidget::HandleEmitterSelected(ParticleEmitter* emitter, ParticleLayer* layer)
 {
-	emitterNode = node;
-	selectedLayer = layer;
-	effectNode = NULL;
-	
-	float32 minTime = 0;
-	float32 maxTime = 0;
-	ParticleEmitter* emitter = NULL;
-	if (node)
+	if (!emitter)
 	{
-		emitter = GetEmitter(node);
-		if (!emitter)
-		{
-		    return;
-		}
-
-		maxTime = emitter->GetLifeTime();
+		CleanupTimelines();
+		emit ChangeVisible(false);
+		return;
 	}
 
+	selectedEmitter = emitter;
+	selectedLayer = layer;
+	selectedEffect = NULL;
+	
+	float32 minTime = 0;
+	float32 maxTime = emitter->GetLifeTime();
+
 	Init(minTime, maxTime);
-	if (emitter)
+	QColor colors[3] = {Qt::blue, Qt::darkGreen, Qt::red};
+	uint32 colorsCount = sizeof(colors) / sizeof(*colors);
+
+	if (!layer)
 	{
-		QColor colors[3] = {Qt::blue, Qt::darkGreen, Qt::red};
-		uint32 colorsCount = sizeof(colors) / sizeof(*colors);
-
-		if (!layer)
+		// No particular layer specified - add all ones.
+		const Vector<ParticleLayer*> & layers = emitter->GetLayers();
+		for (uint32 i = 0; i < layers.size(); ++i)
 		{
-			// No particular layer specified - add all ones.
-			const Vector<ParticleLayer*> & layers = emitter->GetLayers();
-			for (uint32 i = 0; i < layers.size(); ++i)
+			AddLayerLine(i, minTime, maxTime, colors[i % colorsCount], layers[i]);
+		}
+	}
+	else
+	{
+		// Add the particular layer only.
+		int layerIndex = 0;
+		const Vector<ParticleLayer*> & layers = emitter->GetLayers();
+		for (uint32 i = 0; i < layers.size(); i ++)
+		{
+			if (layers[i] == layer)
 			{
-				AddLayerLine(i, minTime, maxTime, colors[i % colorsCount], layers[i]);
+				layerIndex = i;
+				break;
 			}
 		}
-		else
-		{
-			// Add the particular layer only.
-			int layerIndex = 0;
-			const Vector<ParticleLayer*> & layers = emitter->GetLayers();
-			for (uint32 i = 0; i < layers.size(); i ++)
-			{
-				if (layers[i] == layer)
-				{
-					layerIndex = i;
-					break;
-				}
-			}
 
-			AddLayerLine(layerIndex, minTime, maxTime, colors[layerIndex % colorsCount], layer);
-		}
+		AddLayerLine(layerIndex, minTime, maxTime, colors[layerIndex % colorsCount], layer);
 	}
 
 	UpdateSizePolicy();
@@ -218,9 +233,10 @@ QRect ParticleTimeLineWidget::GetDecreaseRect() const
 
 void ParticleTimeLineWidget::OnEffectNodeSelected(Entity* node)
 {
-	emitterNode = NULL;
-	effectNode = node;
-	
+	selectedEffect = node;
+	selectedEmitter = NULL;
+	selectedLayer = NULL;
+
 	float32 minTime = 0;
 	float32 maxTime = 0;
 	if (node)
@@ -696,12 +712,14 @@ void ParticleTimeLineWidget::OnValueChanged(int lineId)
 
 void ParticleTimeLineWidget::OnUpdate()
 {
-	if (selectedLayer && emitterNode)
-		OnLayerSelected(emitterNode, selectedLayer);
-	else if (emitterNode)
-		OnNodeSelected(emitterNode);
-	else if (effectNode)
-		OnEffectNodeSelected(effectNode);
+	if (selectedEmitter)
+	{
+		HandleEmitterSelected(selectedEmitter, selectedLayer);
+	}
+	else if (selectedEffect)
+	{
+		OnEffectNodeSelected(selectedEffect);
+	}
 }
 
 void ParticleTimeLineWidget::OnUpdateLayersExtraInfoNeeded()
@@ -727,6 +745,53 @@ void ParticleTimeLineWidget::OnCommandExecuted(DAVA::Scene* scene, CommandList::
 			break;
 		}
 	}
+}
+
+void ParticleTimeLineWidget::OnEffectSelectedFromSceneTree(DAVA::Entity* effectNode)
+{
+	OnEffectNodeSelected(effectNode);
+}
+
+void ParticleTimeLineWidget::OnEmitterSelectedFromSceneTree(DAVA::Entity* emitterNode)
+{
+	ParticleEmitter* emitter = NULL;
+	if (emitterNode)
+	{
+		emitter = GetEmitter(emitterNode);
+	}
+
+	HandleEmitterSelected(emitter, NULL);
+}
+
+void ParticleTimeLineWidget::OnLayerSelectedFromSceneTree(DAVA::ParticleLayer* layer, bool forceRefresh)
+{
+	ParticleEmitter* emitter = NULL;
+	if (layer)
+	{
+		emitter = layer->GetEmitter();
+	}
+	
+	HandleEmitterSelected(emitter, layer);
+}
+
+void ParticleTimeLineWidget::OnForceSelectedFromSceneTree(DAVA::ParticleLayer* layer, DAVA::int32 forceIndex)
+{
+	// Handle in the same way as Layer.
+	ParticleEmitter* emitter = NULL;
+	if (layer)
+	{
+		emitter = layer->GetEmitter();
+	}
+	
+	HandleEmitterSelected(emitter, layer);
+}
+
+void ParticleTimeLineWidget::CleanupTimelines()
+{
+	lines.clear();
+	UpdateSizePolicy();
+	NotifyLayersExtraInfoChanged();
+	UpdateLayersExtraInfoPosition();
 }
 
 ParticleTimeLineWidget::SetPointValueDlg::SetPointValueDlg(float32 value, float32 minValue, float32 maxValue, QWidget *parent) :

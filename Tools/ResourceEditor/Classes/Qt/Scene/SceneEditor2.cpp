@@ -15,17 +15,6 @@
 =====================================================================================*/
 
 #include "Scene/SceneEditor2.h"
-#include "Scene/System/CameraSystem.h"
-#include "Scene/System/GridSystem.h"
-#include "Scene/System/CollisionSystem.h"
-#include "Scene/System/SelectionSystem.h"
-#include "Scene/System/ModifSystem.h"
-#include "Scene/System/HoodSystem.h"
-#include "Scene/System/LandscapeEditorDrawSystem.h"
-#include "Scene/System/HeightmapEditorSystem.h"
-#include "Scene/System/TilemaskEditorSystem.h"
-#include "Scene/System/CustomColorsSystem.h"
-#include "Scene/System/VisibilityToolSystem.h"
 #include "Scene/SceneSignals.h"
 
 // framework
@@ -77,11 +66,16 @@ SceneEditor2::SceneEditor2()
 	structureSystem = new StructureSystem(this);
 	AddSystem(structureSystem, 0);
 
+	editorLightSystem = new EditorLightSystem(this);
+	AddSystem(editorLightSystem, 0);
+
 	SceneSignals::Instance()->EmitOpened(this);
 }
 
 SceneEditor2::~SceneEditor2()
 {
+    editorLightSystem->SetCameraLightEnabled(false);
+
 	SceneSignals::Instance()->EmitClosed(this);
 }
 
@@ -211,6 +205,7 @@ void SceneEditor2::Update(float timeElapsed)
 	visibilityToolSystem->Update(timeElapsed);
 	structureSystem->Update(timeElapsed);
 	particlesSystem->Update(timeElapsed);
+	editorLightSystem->Update(timeElapsed);
 }
 
 void SceneEditor2::PostUIEvent(DAVA::UIEvent *event)
@@ -259,6 +254,19 @@ void SceneEditor2::EditorCommandProcess(const Command2 *command, bool redo)
 	modifSystem->ProcessCommand(command, redo);
 	structureSystem->ProcessCommand(command, redo);
 	particlesSystem->ProcessCommand(command, redo);
+	editorLightSystem->ProcessCommand(command, redo);
+}
+
+void SceneEditor2::AddEditorEntity( Entity *editorEntity )
+{
+	if(GetChildrenCount())
+	{
+		InsertBeforeNode(editorEntity, GetChild(0));
+	}
+	else
+	{
+		AddNode(editorEntity);
+	}
 }
 
 SceneEditor2::EditorCommandNotify::EditorCommandNotify(SceneEditor2 *_editor)

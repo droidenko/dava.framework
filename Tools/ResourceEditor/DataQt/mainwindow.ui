@@ -85,20 +85,6 @@
        <property name="acceptDrops">
         <bool>true</bool>
        </property>
-       <property name="styleSheet">
-        <string notr="true"> QTreeView::branch:has-children:!has-siblings:closed,
- QTreeView::branch:closed:has-children:has-siblings {
-         border-image: none;
-         image: url(:/QtImages/tree-closed.png);
- }
-
- QTreeView::branch:open:has-children:!has-siblings,
- QTreeView::branch:open:has-children:has-siblings  {
-         border-image: none;
-         image: url(:/QtImages/tree-open.png);
- }
-</string>
-       </property>
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -195,20 +181,6 @@
        <property name="contextMenuPolicy">
         <enum>Qt::CustomContextMenu</enum>
        </property>
-       <property name="styleSheet">
-        <string notr="true"> QTreeView::branch:has-children:!has-siblings:closed,
- QTreeView::branch:closed:has-children:has-siblings {
-         border-image: none;
-         image: url(:/QtImages/tree-closed.png);
- }
-
- QTreeView::branch:open:has-children:!has-siblings,
- QTreeView::branch:open:has-children:has-siblings  {
-         border-image: none;
-         image: url(:/QtImages/tree-open.png);
- }
-</string>
-       </property>
       </widget>
      </item>
     </layout>
@@ -262,20 +234,6 @@
       <widget class="PropertyEditor" name="propertyEditor">
        <property name="mouseTracking">
         <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QTreeView::branch:has-children:!has-siblings:closed,
- QTreeView::branch:closed:has-children:has-siblings {
-         border-image: none;
-         image: url(:/QtImages/tree-closed.png);
- }
-
- QTreeView::branch:open:has-children:!has-siblings,
- QTreeView::branch:open:has-children:has-siblings  {
-         border-image: none;
-         image: url(:/QtImages/tree-open.png);
- }
-</string>
        </property>
        <property name="editTriggers">
         <set>QAbstractItemView::AllEditTriggers</set>
@@ -790,20 +748,6 @@
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
-       <property name="styleSheet">
-        <string notr="true"> QTreeView::branch:has-children:!has-siblings:closed,
- QTreeView::branch:closed:has-children:has-siblings {
-         border-image: none;
-         image: url(:/QtImages/tree-closed.png);
- }
-
- QTreeView::branch:open:has-children:!has-siblings,
- QTreeView::branch:open:has-children:has-siblings  {
-         border-image: none;
-         image: url(:/QtImages/tree-open.png);
- }
-</string>
-       </property>
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -866,9 +810,6 @@
      </item>
      <item>
       <widget class="SceneTree" name="sceneTree">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>

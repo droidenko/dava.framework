@@ -96,8 +96,8 @@ public:
 
 	FilePath GetParticlesConfigsPath();
     
-    bool GetShowEditorCamerLight();
-    void SetShowEditorCamerLight(bool show);
+//     bool GetShowEditorCamerLight();
+//     void SetShowEditorCamerLight(bool show);
     
     void SetPreviewDialogEnabled(bool enabled);
     bool GetPreviewDialogEnabled();

@@ -71,6 +71,13 @@ protected slots:
 	void OnNodeSelected(Entity* node);
 	void OnEffectNodeSelected(Entity* node);
 	void OnLayerSelected(Entity* node, ParticleLayer* layer);
+	
+	// New signals for SceneTree.
+	void OnEffectSelectedFromSceneTree(DAVA::Entity* effectNode);
+	void OnEmitterSelectedFromSceneTree(DAVA::Entity* emitterNode);
+	void OnLayerSelectedFromSceneTree(DAVA::ParticleLayer* layer, bool forceRefresh);
+    void OnForceSelectedFromSceneTree(DAVA::ParticleLayer* layer, DAVA::int32 forceIndex);
+	
 	void OnUpdate();
 
 	void OnUpdateLayersExtraInfoNeeded();
@@ -107,7 +114,7 @@ private:
 
 	// Handle situation when the Particle Emitter Node is selected (including
 	// case when separate Layer node is selected.
-	void HandleNodeSelected(Entity* node, ParticleLayer* layer);
+	void HandleEmitterSelected(ParticleEmitter* emitter, ParticleLayer* layer);
 	
 	virtual QRect GetSliderRect() const;
 	virtual QRect GetIncreaseRect() const;
@@ -118,12 +125,17 @@ private:
 	// Get the width/height for particle counter label.
 	void GetParticlesCountWidthHeight(const LINE& line, int32& width, int32& height);
 
+	
+	// Cleanup all the timelines and info.
+	void CleanupTimelines();
+
 	LINE_MAP lines;
 	QFont nameFont;
 	
 	QPoint selectedPoint;
-	Entity* emitterNode;
-	Entity* effectNode;
+
+	Entity* selectedEffect;
+	ParticleEmitter* selectedEmitter;
 	ParticleLayer* selectedLayer;
 	
 	QTimer updateTimer;

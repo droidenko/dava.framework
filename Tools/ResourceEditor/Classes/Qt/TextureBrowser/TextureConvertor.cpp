@@ -29,6 +29,8 @@
 
 #include "Platform/Qt/QtLayer.h"
 
+#include "../Main/QtUtils.h"
+
 TextureConvertor::TextureConvertor()
 	: curJobOriginal(NULL)
 	, jobIdCounter(1)
@@ -393,6 +395,9 @@ DAVA::Image* TextureConvertor::ConvertPVR(DAVA::TextureDescriptor *descriptor, D
 	{
 		if(forceConvert || !DAVA::FileSystem::Instance()->IsFile(outputPath))
 		{
+            DeleteOldPVRTextureIfPowerVr_IOS(descriptor, gpu);
+
+            
 			QString command = PVRConverter::Instance()->GetCommandLinePVR(*descriptor, gpu).c_str();
 			DAVA::Logger::Info("%s", command.toStdString().c_str());
 

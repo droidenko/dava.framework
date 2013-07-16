@@ -54,6 +54,7 @@ enum eMessageBoxFlags
 int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int buttons, int defaultButton);
 int ShowSaveSceneQuestion(DAVA::Scene *scene);
 
+DAVA_DEPRECATED(void DeleteOldPVRTextureIfPowerVr_IOS(const DAVA::TextureDescriptor *descriptor, const DAVA::eGPUFamily gpu));
 
 
 #endif // __QT_UTILS_H__

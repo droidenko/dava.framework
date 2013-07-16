@@ -132,6 +132,7 @@
 		17E897F3162FEB3600A2A946 /* MetadataFactory.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17E897F1162FEB3600A2A946 /* MetadataFactory.cpp */; };
 		17F6F49E1647B234003FFA0E /* HierarchyTreeNodeExtraData.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17F6F49C1647B234003FFA0E /* HierarchyTreeNodeExtraData.cpp */; };
 		17FBCE46163A7ED100FD96C0 /* UIControlStateHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17FBCE44163A7ED100FD96C0 /* UIControlStateHelper.cpp */; };
+		17FDD8031790131F00EAAD4D /* FramePathHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17FDD8011790131F00EAAD4D /* FramePathHelper.cpp */; };
 		17FF15E016400160001B130F /* createplatformdlg.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 17FF15DD16400160001B130F /* createplatformdlg.ui */; };
 		17FF15E116400160001B130F /* createscreendlg.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 17FF15DE16400160001B130F /* createscreendlg.ui */; };
 		17FF15E216400160001B130F /* fontmanagerdialog.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 17FF15DF16400160001B130F /* fontmanagerdialog.ui */; };
@@ -230,6 +231,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		17FDD8061790132000EAAD4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C107915B16D78C9E0081E58C /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 176DEB77174B5561007A983B;
+			remoteInfo = FrameworkNPAPI;
+		};
 		C107916116D78C9E0081E58C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C107915B16D78C9E0081E58C /* Framework.xcodeproj */;
@@ -453,6 +461,8 @@
 		17F6F49D1647B234003FFA0E /* HierarchyTreeNodeExtraData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HierarchyTreeNodeExtraData.h; path = Models/HierarchyTreeNodeExtraData.h; sourceTree = "<group>"; };
 		17FBCE44163A7ED100FD96C0 /* UIControlStateHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIControlStateHelper.cpp; path = Helpers/UIControlStateHelper.cpp; sourceTree = "<group>"; };
 		17FBCE45163A7ED100FD96C0 /* UIControlStateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIControlStateHelper.h; path = Helpers/UIControlStateHelper.h; sourceTree = "<group>"; };
+		17FDD8011790131F00EAAD4D /* FramePathHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FramePathHelper.cpp; sourceTree = "<group>"; };
+		17FDD8021790131F00EAAD4D /* FramePathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FramePathHelper.h; sourceTree = "<group>"; };
 		17FF15DD16400160001B130F /* createplatformdlg.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = createplatformdlg.ui; sourceTree = "<group>"; };
 		17FF15DE16400160001B130F /* createscreendlg.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = createscreendlg.ui; sourceTree = "<group>"; };
 		17FF15DF16400160001B130F /* fontmanagerdialog.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = fontmanagerdialog.ui; sourceTree = "<group>"; };
@@ -1053,6 +1063,7 @@
 			children = (
 				C107916216D78C9E0081E58C /* libFramework.a */,
 				C107916416D78C9E0081E58C /* libFrameworkQt.a */,
+				17FDD8071790132000EAAD4D /* libFrameworkNPAPI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1218,6 +1229,8 @@
 		E8951B541737B03100755339 /* TexturePacker */ = {
 			isa = PBXGroup;
 			children = (
+				17FDD8011790131F00EAAD4D /* FramePathHelper.cpp */,
+				17FDD8021790131F00EAAD4D /* FramePathHelper.h */,
 				E8951B551737B03100755339 /* CommandLineParser.cpp */,
 				E8951B561737B03100755339 /* CommandLineParser.h */,
 				E8951B571737B03100755339 /* DefinitionFile.cpp */,
@@ -1318,6 +1331,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		17FDD8071790132000EAAD4D /* libFrameworkNPAPI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFrameworkNPAPI.a;
+			remoteRef = 17FDD8061790132000EAAD4D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		C107916216D78C9E0081E58C /* libFramework.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1599,6 +1619,7 @@
 				E8951B691737B03100755339 /* ResourcePacker2D.cpp in Build Sources */,
 				E8951B6A1737B03100755339 /* TexturePacker.cpp in Build Sources */,
 				1712331E1741118F0051D960 /* PropertyNames.cpp in Build Sources */,
+				17FDD8031790131F00EAAD4D /* FramePathHelper.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

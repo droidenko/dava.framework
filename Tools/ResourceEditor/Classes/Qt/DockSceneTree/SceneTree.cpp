@@ -436,9 +436,14 @@ void SceneTree::EmitParticleSignals(const QItemSelection & selected)
 			case SceneTreeItem::EIT_Entity:
 				{
 					DAVA::Entity *entity = SceneTreeItemEntity::GetEntity(item);
-					if(NULL != DAVA::GetEmitter(entity))
+					if(NULL != DAVA::GetEffectComponent(entity))
 					{
-						emit EmitterSelected(entity, NULL);
+						SceneSignals::Instance()->EmitEffectSelected(entity);
+						isParticleElements = true;
+					}
+					else if(NULL != DAVA::GetEmitter(entity))
+					{
+						SceneSignals::Instance()->EmitEmitterSelected(entity);
 						isParticleElements = true;
 					}
 				}
@@ -448,7 +453,7 @@ void SceneTree::EmitParticleSignals(const QItemSelection & selected)
 					SceneTreeItemParticleLayer *itemLayer = (SceneTreeItemParticleLayer *) item;
 					if(NULL != itemLayer->parent && NULL != itemLayer->layer)
 					{
-						emit LayerSelected(itemLayer->parent, itemLayer->layer, NULL, false);
+						SceneSignals::Instance()->EmitLayerSelected(itemLayer->layer, false);
 						isParticleElements = true;
 					}
 				}
@@ -463,7 +468,7 @@ void SceneTree::EmitParticleSignals(const QItemSelection & selected)
 						{
 							if(layer->forces[i] == itemForce->force)
 							{
-								emit ForceSelected(NULL, layer, i, NULL);
+								SceneSignals::Instance()->EmitForceSelected(layer, i);
 								isParticleElements = true;
 
 								break;
@@ -478,7 +483,7 @@ void SceneTree::EmitParticleSignals(const QItemSelection & selected)
 
 	if(!isParticleElements)
 	{
-		emit EmitterSelected(NULL, NULL);
+		SceneSignals::Instance()->EmitEmitterSelected(NULL);
 	}
 }
 

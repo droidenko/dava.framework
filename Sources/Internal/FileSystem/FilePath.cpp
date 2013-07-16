@@ -245,6 +245,7 @@ String FilePath::ResolveResourcesPath() const
         String relativePathname = "Data" + absolutePathname.substr(5);
         FilePath path;
         
+		bool isResolved = false;
         List<FilePath>::reverse_iterator endIt = resourceFolders.rend();
         for(List<FilePath>::reverse_iterator it = resourceFolders.rbegin(); it != endIt; ++it)
         {
@@ -254,6 +255,7 @@ String FilePath::ResolveResourcesPath() const
             {
                 if(FileSystem::Instance()->IsDirectory(path))
                 {
+					isResolved = true;
                     break;
                 }
             }
@@ -261,9 +263,18 @@ String FilePath::ResolveResourcesPath() const
             {
                 if(FileSystem::Instance()->IsFile(path))
                 {
+					isResolved = true;
                     break;
                 }
             }
+        }
+		
+		if (!isResolved)
+		{
+			String warningMsg = "Unable to resolve relative path " + absolutePathname + "\n";
+			warningMsg += "Returning default absolute path found ";
+			warningMsg += path.absolutePathname;
+			Logger::Warning(warningMsg.c_str());
         }
         
         return path.absolutePathname;

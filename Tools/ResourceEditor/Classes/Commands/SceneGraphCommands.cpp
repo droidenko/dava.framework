@@ -200,7 +200,6 @@ void CommandInternalRemoveSceneNode::Execute()
 	}
 
 	SceneData *activeScene = SceneDataManager::Instance()->SceneGetActive();
-    activeScene->GetScene()->UpdateCameraLightOnScene();
 	activeScene->RebuildSceneGraph();
 }
 

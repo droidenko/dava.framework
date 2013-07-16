@@ -76,9 +76,6 @@ public:
 	// Refresh the information regarding the particular Particles Editor nods.
 	void RefreshParticlesLayer(DAVA::ParticleLayer* layer);
 
-public slots:
-    void UpdateCameraLightOnScene(bool show);
-    
 signals:
 	void SceneCreated(SceneData *scene);
 	void SceneActivated(SceneData *scene);

@@ -17,6 +17,7 @@
 #include "TextureListDelegate.h"
 #include "TextureListModel.h"
 #include "TextureCache.h"
+#include "TextureBrowser.h"
 #include <QPainter>
 #include <QFileInfo>
 
@@ -29,9 +30,6 @@
 #define INFO_TEXT_COLOR QColor(0, 0, 0, 100)
 #define FORMAT_INFO_WIDTH 4
 #define FORMAT_INFO_SPACING 2
-#define FORMAT_PVR_COLOR QColor(0, 200, 0, 100)
-#define FORMAT_DXT_COLOR QColor(0, 0, 200, 100)
-#define NOT_SQUARE_COLOR QColor(150, 0, 0, 100)
 
 TextureListDelegate::TextureListDelegate(QObject *parent /* = 0 */)
 	: QAbstractItemDelegate(parent)
@@ -267,32 +265,35 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 		rect.setX(rect.x() + rect.width() - FORMAT_INFO_WIDTH);
 		rect.setWidth(FORMAT_INFO_WIDTH);
 
-		if(descriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
-		{
-			painter->setPen(FORMAT_PVR_COLOR);
-			painter->setBrush(QBrush(FORMAT_PVR_COLOR));
+		QColor gpuInfoColors[DAVA::GPU_FAMILY_COUNT];
+		gpuInfoColors[DAVA::GPU_POWERVR_IOS] = TextureBrowser::gpuColor_PVR_ISO;
+		gpuInfoColors[DAVA::GPU_POWERVR_ANDROID] = TextureBrowser::gpuColor_PVR_Android;
+		gpuInfoColors[DAVA::GPU_TEGRA] = TextureBrowser::gpuColor_Tegra;
+		gpuInfoColors[DAVA::GPU_MALI] = TextureBrowser::gpuColor_MALI;
+		gpuInfoColors[DAVA::GPU_ADRENO] = TextureBrowser::gpuColor_Adreno;
 
-			painter->drawRect(rect);
+		for(int i = 0; i < DAVA::GPU_FAMILY_COUNT; ++i)
+		{
+			if(descriptor->compression[i].format != DAVA::FORMAT_INVALID)
+			{
+				QColor c = gpuInfoColors[i];
+				c.setAlpha(200);
+
+				painter->setPen(c);
+				painter->setBrush(c);
+				painter->drawRect(rect);
+			}
+
 			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
 		}
 
-		if(descriptor->compression[DAVA::GPU_TEGRA].format != DAVA::FORMAT_INVALID)
-		{
-			painter->setPen(FORMAT_DXT_COLOR);
-			painter->setBrush(QBrush(FORMAT_DXT_COLOR));
-
-			painter->drawRect(rect);
-			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
-		}
-
-		if((descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR4 || descriptor->compression[DAVA::GPU_POWERVR_IOS].format == DAVA::FORMAT_PVR2) &&
-			texture->width != texture->height)
+		if(texture->width != texture->height)
 		{
 			QRect r = rect;
 			r.setHeight(FORMAT_INFO_WIDTH * 2);
 
-			painter->setPen(NOT_SQUARE_COLOR);
-			painter->setBrush(QBrush(NOT_SQUARE_COLOR));
+			painter->setPen(TextureBrowser::errorColor);
+			painter->setBrush(QBrush(TextureBrowser::errorColor));
 			painter->drawRect(r);
 
 			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);

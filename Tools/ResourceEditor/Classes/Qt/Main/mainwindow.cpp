@@ -151,7 +151,8 @@ void QtMainWindow::SetupActions()
     
 	connect(ui->actionEnableNotPassable, SIGNAL(triggered()), this, SLOT(EnableNotPassableNew()));
     
-    ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
+//     ui->actionEnableCameraLight->setChecked(EditorSettings::Instance()->GetShowEditorCamerLight());
+	ui->actionEnableCameraLight->setChecked(true);
 	connect(ui->actionEnableCameraLight, SIGNAL(triggered()), actionHandler, SLOT(CameraLightTrigerred()));
 
 	connect(ui->actionSetLODCorrection, SIGNAL(triggered()), actionHandler, SLOT(ShowLODCorrectionDialog()));

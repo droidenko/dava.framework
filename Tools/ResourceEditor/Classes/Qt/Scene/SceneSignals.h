@@ -53,6 +53,12 @@ signals:
 	void MouseOver(SceneEditor2 *scene, const EntityGroup *entities);
 	void MouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities);
 
+	// particles
+	void EffectSelected(DAVA::Entity* effectNode);
+	void EmitterSelected(DAVA::Entity* emitterNode);
+	void LayerSelected(DAVA::ParticleLayer* layer, bool forceRefresh);
+	void ForceSelected(DAVA::ParticleLayer* layer, DAVA::int32 forceIndex);
+
 	void UpdateDropperHeight(SceneEditor2* scene, double height);
 	void UpdateVisibilityButtonsState(SceneEditor2* scene);
 	void NeedSaveCustomColorsTexture(SceneEditor2* scene);
@@ -78,6 +84,17 @@ public:
 
 	void EmitMouseOver(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOver(scene, entities); }
 	void EmitMouseOverSelection(SceneEditor2 *scene, const EntityGroup *entities) { emit MouseOverSelection(scene, entities); }
+
+	void EmitEffectSelected(DAVA::Entity* effectNode) { emit EffectSelected(effectNode); };
+	void EmitEmitterSelected(DAVA::Entity* emitterNode) { emit EmitterSelected(emitterNode); };
+	void EmitLayerSelected(DAVA::ParticleLayer* layer, bool forceRefresh)
+	{
+		emit LayerSelected(layer, forceRefresh);
+	};
+	void EmitForceSelected(DAVA::ParticleLayer* layer, DAVA::int32 forceIndex)
+	{
+		emit ForceSelected(layer, forceIndex);
+	};
 };
 
 #endif // __SCENE_MANAGER_H__

@@ -38,6 +38,7 @@ public:
 public slots:
 	void collapse(const QModelIndex & index);
 	void expand(const QModelIndex & index);
+	bool helpEvent(QHelpEvent * event, QAbstractItemView * view, const QStyleOptionViewItem & option, const QModelIndex & index);
 
 protected:
 	void recalcOptionalWidgets(const QModelIndex &index, QStyleOptionViewItem *option) const;

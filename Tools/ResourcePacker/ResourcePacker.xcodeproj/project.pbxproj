@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17588E16178EED3100D2F78F /* FramePathHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17588E14178EED3100D2F78F /* FramePathHelper.cpp */; };
 		E8951AF61737775600755339 /* FrameworkMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8951AF21737775600755339 /* FrameworkMain.cpp */; };
 		E8951AF71737775600755339 /* GameCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8951AF41737775600755339 /* GameCore.cpp */; };
 		E8951B24173780E800755339 /* DXTConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8951B12173780E800755339 /* DXTConverter.cpp */; };
@@ -35,6 +36,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		17588E19178EED3200D2F78F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEC3E2EA133A9A5A00442ADD /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 176DEB77174B5561007A983B;
+			remoteInfo = FrameworkNPAPI;
+		};
 		E8222486171009EE00D1D955 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEC3E2EA133A9A5A00442ADD /* Framework.xcodeproj */;
@@ -73,6 +81,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17588E14178EED3100D2F78F /* FramePathHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FramePathHelper.cpp; sourceTree = "<group>"; };
+		17588E15178EED3100D2F78F /* FramePathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FramePathHelper.h; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* ResourcePacker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ResourcePacker; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859E8B029090EE04C91782 /* ResourceEditorConsole.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ResourceEditorConsole.1; sourceTree = "<group>"; };
 		E8951AF21737775600755339 /* FrameworkMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameworkMain.cpp; path = Classes/FrameworkMain.cpp; sourceTree = "<group>"; };
@@ -213,6 +223,8 @@
 				E8951B20173780E800755339 /* ResourcePacker2D.h */,
 				E8951B21173780E800755339 /* TexturePacker.cpp */,
 				E8951B22173780E800755339 /* TexturePacker.h */,
+				17588E14178EED3100D2F78F /* FramePathHelper.cpp */,
+				17588E15178EED3100D2F78F /* FramePathHelper.h */,
 			);
 			path = TexturePacker;
 			sourceTree = "<group>";
@@ -222,6 +234,7 @@
 			children = (
 				FEC3E2EF133A9A5A00442ADD /* libFramework.a */,
 				E8222487171009EE00D1D955 /* libFrameworkQt.a */,
+				17588E1A178EED3200D2F78F /* libFrameworkNPAPI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -295,6 +308,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		17588E1A178EED3200D2F78F /* libFrameworkNPAPI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFrameworkNPAPI.a;
+			remoteRef = 17588E19178EED3200D2F78F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E8222487171009EE00D1D955 /* libFrameworkQt.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -343,6 +363,7 @@
 				E8951B29173780E800755339 /* PngImage.cpp in Sources */,
 				E8951B2A173780E800755339 /* ResourcePacker2D.cpp in Sources */,
 				E8951B2B173780E800755339 /* TexturePacker.cpp in Sources */,
+				17588E16178EED3100D2F78F /* FramePathHelper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

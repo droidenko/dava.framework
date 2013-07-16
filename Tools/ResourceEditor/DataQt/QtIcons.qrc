@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>QtIcons/file.png</file>
     <file>QtIcons/play.png</file>
     <file>QtIcons/restart.png</file>
     <file>QtIcons/stop.png</file>
