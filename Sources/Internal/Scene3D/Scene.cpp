@@ -361,35 +361,6 @@ void Scene::AddRootNode(Entity *node, const FilePath &rootNodePath)
 
 Entity *Scene::GetRootNode(const FilePath &rootNodePath)
 {
-//    ProxyNode * proxyNode = dynamic_cast<ProxyNode*>(scenes->FindByName(rootNodePath));
-//    if (proxyNode)
-//    {
-//        return proxyNode->GetNode();
-//    }
-//    
-//    String ext = FileSystem::Instance()->GetExtension(rootNodePath);
-//    if(ext == ".sce")
-//    {
-//        SceneFile *file = new SceneFile();
-//        file->SetDebugLog(true);
-//        file->LoadScene(rootNodePath, this);
-//        SafeRelease(file);
-//    }
-//    else if(ext == ".sc2")
-//    {
-//        SceneFileV2 *file = new SceneFileV2();
-//        file->EnableDebugLog(true);
-//        file->LoadScene(rootNodePath.c_str(), this);
-//        SafeRelease(file);
-//    }
-//
-//    proxyNode = dynamic_cast<ProxyNode*>(scenes->FindByName(rootNodePath));
-//    if (proxyNode)
-//    {
-//        return proxyNode->GetNode();
-//    }
-//    return 0;
-    
 	Map<String, ProxyNode*>::const_iterator it;
 	it = rootNodes.find(rootNodePath.GetAbsolutePathname());
 	if (it != rootNodes.end())
@@ -644,70 +615,7 @@ Camera * Scene::GetClipCamera() const
     return clipCamera;
 }
  
-//void Scene::SetForceLodLayer(int32 layer)
-//{
-//    forceLodLayer = layer;
-//}
-//int32 Scene::GetForceLodLayer()
-//{
-//    return forceLodLayer;
-//}
-//
-//int32 Scene::RegisterLodLayer(float32 nearDistance, float32 farDistance)
-//{
-//    LodLayer newLevel;
-//    newLevel.nearDistance = nearDistance;
-//    newLevel.farDistance = farDistance;
-//    newLevel.nearDistanceSq = nearDistance * nearDistance;
-//    newLevel.farDistanceSq = farDistance * farDistance;
-//    int i = 0;
-//    
-//    for (Vector<LodLayer>::iterator it = lodLayers.begin(); it < lodLayers.end(); it++)
-//    {
-//        if (nearDistance < it->nearDistance)
-//        {
-//            lodLayers.insert(it, newLevel);
-//            return i;
-//        }
-//        i++;
-//    }
-//    
-//    lodLayers.push_back(newLevel);
-//    return i;
-//}
-//    
-//void Scene::ReplaceLodLayer(int32 layerNum, float32 nearDistance, float32 farDistance)
-//{
-//    DVASSERT(layerNum < (int32)lodLayers.size());
-//    
-//    lodLayers[layerNum].nearDistance = nearDistance;
-//    lodLayers[layerNum].farDistance = farDistance;
-//    lodLayers[layerNum].nearDistanceSq = nearDistance * nearDistance;
-//    lodLayers[layerNum].farDistanceSq = farDistance * farDistance;
-//    
-//    
-////    LodLayer newLevel;
-////    newLevel.nearDistance = nearDistance;
-////    newLevel.farDistance = farDistance;
-////    newLevel.nearDistanceSq = nearDistance * nearDistance;
-////    newLevel.farDistanceSq = farDistance * farDistance;
-////    int i = 0;
-////    
-////    for (Vector<LodLayer>::iterator it = lodLayers.begin(); it < lodLayers.end(); it++)
-////    {
-////        if (nearDistance < it->nearDistance)
-////        {
-////            lodLayers.insert(it, newLevel);
-////            return i;
-////        }
-////        i++;
-////    }
-////    
-////    lodLayers.push_back(newLevel);
-////    return i;
-//}
-//    
-    
+
 
 void Scene::AddDrawTimeShadowVolume(ShadowVolumeNode * shadowVolume)
 {
@@ -877,32 +785,40 @@ void Scene::ApplyLodLayerCorrectionRecursive(Entity *entity)
 Entity * Scene::GetSceneSettings()
 {
     if(!globalSceneSettings)
-    {
-        globalSceneSettings = new Entity();
-//        globalSceneSettings->RemoveComponent(Component::TRANSFORM_COMPONENT);
-        globalSceneSettings->SetScene(this);
-        globalSceneSettings->SetName(SCENE_SETTINGS_NAME);
-        
-        if(GetChildrenCount())
-        {
-            InsertBeforeNode(globalSceneSettings, GetChild(0));
-        }
-        else
-        {
-            AddNode(globalSceneSettings);
-        }
-        
-        globalSceneSettings->Release();
+    {   // try to find loaded settings
+        globalSceneSettings = FindByName(SCENE_SETTINGS_NAME);
     }
     
     return globalSceneSettings;
 }
 
-void Scene::FindSceneSettings()
+Entity * Scene::CreateSceneSettings()
 {
-    globalSceneSettings = FindByName(SCENE_SETTINGS_NAME);
-}
+    if(globalSceneSettings)
+    {
+        Logger::Warning("[Scene::CreateSceneSettings] Global Settings Entity has been initalized already.");
+        return globalSceneSettings;
+    }
+    
+    globalSceneSettings = new Entity();
+    globalSceneSettings->SetScene(this);
+    globalSceneSettings->SetName(SCENE_SETTINGS_NAME);
+    
+    if(GetChildrenCount())
+    {
+        InsertBeforeNode(globalSceneSettings, GetChild(0));
+    }
+    else
+    {
+        AddNode(globalSceneSettings);
+    }
+    
+    globalSceneSettings->Release();
 
+    return globalSceneSettings;
+}
+    
+    
 void Scene::RemoveNode(Entity * node)
 {
     if(globalSceneSettings == node)

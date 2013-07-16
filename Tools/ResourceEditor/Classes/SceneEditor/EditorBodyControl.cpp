@@ -67,6 +67,7 @@ EditorBodyControl::EditorBodyControl(const Rect & rect)
     currentViewportType = ResourceEditor::VIEWPORT_DEFAULT;
     
     scene = NULL;
+    isCameraLightEnabled = false;
     
     landscapeRulerTool = NULL;
 	
@@ -205,6 +206,9 @@ void EditorBodyControl::PushEditorEntities()
 {
 	DVASSERT(poppedEditorEntitiesForSave.size() == 0);
 
+    isCameraLightEnabled = scene->editorLightSystem->GetCameraLightEnabled();
+    scene->editorLightSystem->SetCameraLightEnabled(false);
+
 	Vector<Entity *>entities;
 	scene->GetChildNodes(entities);
 
@@ -214,8 +218,14 @@ void EditorBodyControl::PushEditorEntities()
 		if(entities[i]->GetName().find("editor.") != String::npos)
 		{
 			poppedEditorEntitiesForSave.push_back(SafeRetain(entities[i]));
-			entities[i]->GetParent()->RemoveNode(entities[i]);
 		}
+	}
+    
+    count = poppedEditorEntitiesForSave.size();
+    for(uint32 i = 0; i < count; ++i)
+	{
+        Entity *entity = poppedEditorEntitiesForSave[i];
+        entity->GetParent()->RemoveNode(entity);
 	}
 }
 
@@ -229,6 +239,9 @@ void EditorBodyControl::PopEditorEntities()
 	}
 	
 	poppedEditorEntitiesForSave.clear();
+    
+    scene->editorLightSystem->SetCameraLightEnabled(isCameraLightEnabled);
+    isCameraLightEnabled = false;
 }
 
 void EditorBodyControl::CreateModificationPanel(void)

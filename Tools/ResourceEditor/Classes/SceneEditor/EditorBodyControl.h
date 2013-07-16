@@ -216,6 +216,7 @@ protected:
 	Matrix4 translate1, translate2;
 
 	Vector<Entity *> poppedEditorEntitiesForSave;
+    bool isCameraLightEnabled;
     
     struct AddedNode
     {

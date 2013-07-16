@@ -199,11 +199,10 @@ public:
     
     void ApplyLodLayerCorrection();
     
-    
-    void FindSceneSettings();
-
     virtual void	RemoveNode(Entity * node);
 	virtual void	RemoveAllChildren();
+
+    Entity *CreateSceneSettings();
 
 protected:
     
@@ -260,32 +259,6 @@ int32 Scene::GetCameraCount()
 }
 
     
-//int32 Scene::GetLodLayersCount()
-//{
-//    return (int32)lodLayers.size();
-//}
-//
-//float32 Scene::GetLodLayerNear(int32 layerNum)
-//{
-//    return lodLayers[layerNum].nearDistance;
-//}
-//
-//float32 Scene::GetLodLayerFar(int32 layerNum)
-//{
-//    return lodLayers[layerNum].farDistance;
-//}
-//
-//float32 Scene::GetLodLayerNearSquare(int32 layerNum)
-//{
-//    return lodLayers[layerNum].nearDistanceSq;
-//}
-//
-//float32 Scene::GetLodLayerFarSquare(int32 layerNum)
-//{
-//    return lodLayers[layerNum].farDistanceSq;
-//}
-    
-
 };
 
 
