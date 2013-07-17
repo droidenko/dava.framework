@@ -29,11 +29,20 @@
 =====================================================================================*/
 #import "iPhoneProjectDelegate.h"
 
+
 #if defined(__DAVAENGINE_IPHONE__)
 
 @implementation iPhoneProjectDelegate
 
 @synthesize window;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+	[window makeKeyAndVisible];
+	window.backgroundColor = [UIColor redColor];
+	
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {    

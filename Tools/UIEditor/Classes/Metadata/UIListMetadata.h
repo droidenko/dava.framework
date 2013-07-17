@@ -28,6 +28,7 @@ class UIListMetadata : public UIControlMetadata
     Q_OBJECT
 	
 	Q_PROPERTY(int AggregatorID READ GetAggregatorID WRITE SetAggregatorID);
+	Q_PROPERTY(int Orientation READ GetOrientation WRITE SetOrientation);
 
 public:
     UIListMetadata(QObject* parent = 0);
@@ -46,7 +47,13 @@ protected:
 	int GetAggregatorID();
     void SetAggregatorID(int value);
 	
+	int GetOrientation();
+	void SetOrientation(int value);
+	
 	virtual void SetActiveControlRect(const Rect& rect);
+
+private:
+	void UpdateListCellSize(const Rect& rect, UIList::eListOrientation orientation);
 };
 
 };

@@ -63,7 +63,8 @@ SOURCES += \
     Classes/UI/PropertyGridWidgets/alignspropertygridwidget.cpp \
     UI/spinnerpropertygridwidget.cpp \
     Classes/UI/PropertyGridWidgets/spinnerpropertygridwidget.cpp \
-    Classes/UI/PropertyGridWidgets/listpropertygridwidget.cpp
+    Classes/UI/PropertyGridWidgets/listpropertygridwidget.cpp \
+    Classes/UI/PropertyGridWidgets/scrollviewpropertygridwidget.cpp
 
 HEADERS  += \
         Classes/AppScreens.h \
@@ -113,7 +114,8 @@ HEADERS  += \
     Classes/UI/PropertyGridWidgets/alignspropertygridwidget.h \
     UI/spinnerpropertygridwidget.h \
     Classes/UI/PropertyGridWidgets/spinnerpropertygridwidget.h \
-    Classes/UI/PropertyGridWidgets/listpropertygridwidget.h
+    Classes/UI/PropertyGridWidgets/listpropertygridwidget.h \
+    Classes/UI/PropertyGridWidgets/scrollviewpropertygridwidget.h
 
 FORMS    += \
         UI/mainwindow.ui \
@@ -154,7 +156,8 @@ FORMS    += \
     UI/spinnerpropertygridwidget.ui \
     UI/listpropertygridwidget.ui \
     UI/alignspropertygridwidget.ui \
-    UI/sliderpropertygridwidget.ui
+    UI/sliderpropertygridwidget.ui \
+    UI/scrollviewpropertygridwidget.ui
 
 
 #debug dependent

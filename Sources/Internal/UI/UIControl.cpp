@@ -798,6 +798,8 @@ namespace DAVA
 		size = newSize;
 		// Update size and align of childs		
 		RecalculateChildsSize();
+		// DF-1482 - Each time we resize control - we have to reset tiles arrays for DRAW_TILED option
+		GetBackground()->ResetTilesArrays();
 	}
 	
 	float32 UIControl::GetAngle() const
@@ -881,6 +883,8 @@ namespace DAVA
 			scale.y = rect.dy / (size.y * gd.scale.y);
 			SetPosition(Vector2(rect.x + pivotPoint.x * scale.x, rect.y + pivotPoint.y * scale.y), rectInAbsoluteCoordinates);
 		}
+		// DF-1482 - Each time we change control rect - we have to reset tiles arrays for DRAW_TILED option
+		GetBackground()->ResetTilesArrays();
 	}
 
 	
@@ -1493,12 +1497,9 @@ namespace DAVA
 			Draw(drawData);
 		}
 		
-		if (debugDrawEnabled)
-		{//TODO: Add debug draw for rotated controls
-			Color oldColor = RenderManager::Instance()->GetColor();
-			RenderManager::Instance()->SetColor(debugDrawColor);
-			RenderHelper::Instance()->DrawRect(drawData.GetUnrotatedRect());
-			RenderManager::Instance()->SetColor(oldColor);
+		if (debugDrawEnabled && !clipContents)
+		{	//TODO: Add debug draw for rotated controls
+			DrawDebugRect(drawData.GetUnrotatedRect());
 		}
 		
 		isIteratorCorrupted = false;
@@ -1517,7 +1518,41 @@ namespace DAVA
 		if(clipContents)
 		{
 			RenderManager::Instance()->ClipPop();
+			
+			if(debugDrawEnabled)
+			{ //TODO: Add debug draw for rotated controls
+				DrawDebugRect(drawData.GetUnrotatedRect());
+			}
 		}
+
+		if(debugDrawEnabled && NULL != parent && parent->GetClipContents())
+		{	
+			RenderManager::Instance()->ClipPush();
+			RenderManager::Instance()->ClipRect(Rect(0, 0, -1, -1));
+			DrawDebugRect(drawData.GetUnrotatedRect(), true);
+			RenderManager::Instance()->ClipPop();
+		}
+	}
+	
+	void UIControl::DrawDebugRect(const Rect &drawRect, bool useAlpha)
+	{
+		Color oldColor = RenderManager::Instance()->GetColor();
+		RenderManager::Instance()->ClipPush();
+
+		if (useAlpha)
+		{
+			Color drawColor = debugDrawColor;
+			drawColor.a = 0.4f;
+			RenderManager::Instance()->SetColor(drawColor);
+		}
+		else
+		{
+			RenderManager::Instance()->SetColor(debugDrawColor);
+		}
+		RenderHelper::Instance()->DrawRect(drawRect);
+
+		RenderManager::Instance()->ClipPop();
+		RenderManager::Instance()->SetColor(oldColor);
 	}
 	
 	bool UIControl::IsPointInside(const Vector2 &_point, bool expandWithFocus/* = false*/)

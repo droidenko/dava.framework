@@ -26,13 +26,15 @@ class EditorListDelegate : public UIControl, public UIListDelegate
 {
 
 public:
-	EditorListDelegate(const Rect &rect = Rect(), bool rectInAbsoluteCoordinates = false);
+	EditorListDelegate(const Rect &rect = Rect(), UIList::eListOrientation orientation =  UIList::ORIENTATION_VERTICAL,
+																				 bool rectInAbsoluteCoordinates = false);
 	virtual ~EditorListDelegate();
 
 	// UIListDelegate
     virtual int32 ElementsCount(UIList *forList);
 	virtual UIListCell *CellAtIndex(UIList *forList, int32 index);
 	virtual int32 CellHeight(UIList *forList, int32 index);
+	virtual int32 CellWidth(UIList *forList, int32 index);
 	virtual void SaveToYaml(UIList *forList, YamlNode *node);
 	
 	void SetAggregatorID(int32 id);

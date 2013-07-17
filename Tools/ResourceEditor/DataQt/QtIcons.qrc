@@ -9,6 +9,7 @@
     <file>QtIcons/force.png</file>
     <file>QtIcons/layer_particle.png</file>
     <file>QtIcons/node.png</file>
+    <file>QtIcons/error.png</file>
     <file>QtIcons/box_closed.png</file>
     <file>QtIcons/box_open.png</file>
     <file>QtIcons/render_object.png</file>

@@ -31,20 +31,6 @@ class UISliderMetadata : public UIControlMetadata
     Q_PROPERTY(float SliderValue READ GetSliderValue WRITE SetSliderValue);
 	Q_PROPERTY(float SliderMinValue READ GetSliderMinValue WRITE SetSliderMinValue);
 	Q_PROPERTY(float SliderMaxValue READ GetSliderMaxValue WRITE SetSliderMaxValue);
-	
-	// Thumb sprite and frame
-	Q_PROPERTY(QString SliderThumbSprite READ GetSliderThumbSprite WRITE SetSliderThumbSprite);
-    Q_PROPERTY(int SliderThumbSpriteFrame READ GetSliderThumbSpriteFrame WRITE SetSliderThumbSpriteFrame);
-	
-	// Min sprite, frame and drawtype
-	Q_PROPERTY(QString SliderMinSprite READ GetSliderMinSprite WRITE SetSliderMinSprite);
-	Q_PROPERTY(int SliderMinSpriteFrame READ GetSliderMinSpriteFrame WRITE SetSliderMinSpriteFrame);
-	Q_PROPERTY(int SliderMinDrawType READ GetSliderMinDrawType WRITE SetSliderMinDrawType);
-	
-	// Max sprite, frame and drawtype and leftrigth stratch cap
-	Q_PROPERTY(QString SliderMaxSprite READ GetSliderMaxSprite WRITE SetSliderMaxSprite);
-	Q_PROPERTY(int SliderMaxSpriteFrame READ GetSliderMaxSpriteFrame WRITE SetSliderMaxSpriteFrame);
-	Q_PROPERTY(int SliderMaxDrawType READ GetSliderMaxDrawType WRITE SetSliderMaxDrawType);
 	  
 public:
     UISliderMetadata(QObject* parent = 0);
@@ -68,28 +54,6 @@ protected:
     void SetSliderMinValue(float value);
     float GetSliderMaxValue() const;
     void SetSliderMaxValue(float value);
-	
-	// Slider thumb sprite and frame
-	QString GetSliderThumbSprite() const;
-	void SetSliderThumbSprite(QString value);
-	int GetSliderThumbSpriteFrame() const;
-	void SetSliderThumbSpriteFrame(int value);
-	
-	// Slider Min sprite, frame and drawtype
-	QString GetSliderMinSprite() const;
-	void SetSliderMinSprite(QString value);
-	int GetSliderMinSpriteFrame() const;
-	void SetSliderMinSpriteFrame(int value);
-	int GetSliderMinDrawType() const;
-	void SetSliderMinDrawType(int value);
-	
-	// Slider Max sprite, frame and drawtype
-	QString GetSliderMaxSprite() const;
-	void SetSliderMaxSprite(QString value);
-	int GetSliderMaxSpriteFrame() const;
-	void SetSliderMaxSpriteFrame(int value);
-	int GetSliderMaxDrawType() const;
-	void SetSliderMaxDrawType(int value);
 };
 
 };

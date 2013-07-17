@@ -148,6 +148,7 @@
 #include "UI/UIHierarchyCell.h"
 #include "UI/UIFileSystemDialog.h"
 #include "UI/UIWebView.h"
+#include "UI/UIScrollView.h"
 #include "UI/UISpinner.h"
 #include "UI/VectorSpinnerAdapter.h"
 #include "UI/UISwitch.h"

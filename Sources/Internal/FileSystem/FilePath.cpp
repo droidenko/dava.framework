@@ -249,6 +249,7 @@ String FilePath::ResolveResourcesPath() const
         List<FilePath>::reverse_iterator endIt = resourceFolders.rend();
         for(List<FilePath>::reverse_iterator it = resourceFolders.rbegin(); it != endIt; ++it)
         {
+            FilePath t = *it;
             path = *it + relativePathname;
             
             if(isDirectory)

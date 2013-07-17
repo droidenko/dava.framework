@@ -94,7 +94,14 @@ void QtPosSaver::LoadGeometry(QWidget *widget)
 		QByteArray mState = Load(key);
 		if(!mState.isEmpty() && mState.at(0))
 		{
-			widget->showMaximized();
+			if(widget->isVisible())
+			{
+				widget->showMaximized();
+			}
+			else
+			{
+				widget->setWindowState((widget->windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen)) | Qt::WindowMaximized);
+			}
 		}
 
 		key = attachedWidgetName + "-geometry-" + widget->objectName();

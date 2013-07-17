@@ -22,6 +22,7 @@
 		5CDC2501156CC93300742348 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CDC2500156CC93300742348 /* libz.dylib */; };
 		5CF22540157E555D00DF5395 /* BaseScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2253E157E555D00DF5395 /* BaseScreen.cpp */; };
 		7410E83117146D5B0028AAAA /* UIListTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7410E82F17146D5B0028AAAA /* UIListTest.cpp */; };
+		749A1B4F174A73130082B080 /* UIScrollViewTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 749A1B4D174A73130082B080 /* UIScrollViewTest.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C151B19116D37E8300E09BAF /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C151B18E16D37E2700E09BAF /* WebKit.framework */; };
 		C151B1C016D50BDA00E09BAF /* eMailTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C151B1BE16D50BDA00E09BAF /* eMailTest.cpp */; };
@@ -124,6 +125,8 @@
 		5CF2253F157E555D00DF5395 /* BaseScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseScreen.h; path = Classes/BaseScreen.h; sourceTree = "<group>"; };
 		7410E82F17146D5B0028AAAA /* UIListTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIListTest.cpp; path = Classes/UIListTest.cpp; sourceTree = "<group>"; };
 		7410E83017146D5B0028AAAA /* UIListTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIListTest.h; path = Classes/UIListTest.h; sourceTree = "<group>"; };
+		749A1B4D174A73130082B080 /* UIScrollViewTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScrollViewTest.cpp; path = Classes/UIScrollViewTest.cpp; sourceTree = "<group>"; };
+		749A1B4E174A73130082B080 /* UIScrollViewTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScrollViewTest.h; path = Classes/UIScrollViewTest.h; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* UnitTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnitTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C151B18E16D37E2700E09BAF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		C151B1BE16D50BDA00E09BAF /* eMailTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eMailTest.cpp; path = Classes/eMailTest.cpp; sourceTree = "<group>"; };
@@ -309,6 +312,7 @@
 			isa = PBXGroup;
 			children = (
 				E8679170175F405F00C5A6A2 /* FormatsTest */,
+				749A1B48174A70C80082B080 /* UIScrollViewTest */,
 				E87402CF172582C900A4A75A /* FileSystemTests */,
 				7410E82E17146CB70028AAAA /* UIListTest */,
 				E8B6B3BD1705DD80004F665E /* LocaliztionTests */,
@@ -369,6 +373,15 @@
 				7410E83017146D5B0028AAAA /* UIListTest.h */,
 			);
 			name = UIListTest;
+			sourceTree = "<group>";
+		};
+		749A1B48174A70C80082B080 /* UIScrollViewTest */ = {
+			isa = PBXGroup;
+			children = (
+				749A1B4D174A73130082B080 /* UIScrollViewTest.cpp */,
+				749A1B4E174A73130082B080 /* UIScrollViewTest.h */,
+			);
+			name = UIScrollViewTest;
 			sourceTree = "<group>";
 		};
 		C151B1BC16D50BD000E09BAF /* eMailTest */ = {
@@ -655,6 +668,7 @@
 				49C2B8F816F75A39006E24CB /* DeviceInfoTest.cpp in Sources */,
 				E8B6B3C11705DD97004F665E /* LocalizationTest.cpp in Sources */,
 				7410E83117146D5B0028AAAA /* UIListTest.cpp in Sources */,
+				749A1B4F174A73130082B080 /* UIScrollViewTest.cpp in Sources */,
 				E87402D7172582DB00A4A75A /* FileListTest.cpp in Sources */,
 				E87402D8172582DB00A4A75A /* FilePathTest.cpp in Sources */,
 				E87402D9172582DB00A4A75A /* FileSystemTest.cpp in Sources */,

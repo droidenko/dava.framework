@@ -361,7 +361,7 @@ void BackGroundPropertyGridWidget::SetStretchCapMaxValues()
 		QString spriteName =  ui->spriteLineEdit->text();
 		if (!spriteName.isEmpty())
 		{
-			Sprite* sprite = Sprite::Create(TruncateTxtFileExtension(spriteName).toStdString());
+			Sprite* sprite = Sprite::Create(spriteName.toStdString());
 			
 			if (sprite)
 			{

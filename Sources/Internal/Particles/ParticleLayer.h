@@ -191,7 +191,7 @@ protected:
 	void GenerateNewParticle(int32 emitIndex);
 	void GenerateSingleParticle();
 
-	void CheckLayerNeedRestart();
+	void RestartLayerIfNeed();
 
 	void DeleteAllParticles();
 	

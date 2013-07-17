@@ -52,7 +52,6 @@ private:
 	
 private:
 	UIButton* finishTestBtn;
-
 	bool testFinished;
 		
 	float32 onScreenTime;

@@ -381,7 +381,11 @@ void Core::RegisterAvailableResourceSize(int32 width, int32 height, const String
 	
 	allowedSizes.push_back(newSize);
 }
-	
+
+void Core::UnregisterAllAvailableResourceSizes()
+{
+	allowedSizes.clear();
+}
 	
 float32 Core::GetPhysicalScreenWidth()
 {

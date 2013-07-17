@@ -56,6 +56,7 @@
 #include "LocalizationTest.h"
 #include "UIListTest.h"
 #include "FormatsTest.h"
+#include "UIScrollViewTest.h"
 
 using namespace DAVA;
 
@@ -106,6 +107,8 @@ void GameCore::OnAppStarted()
 	new SplitTest();
 	new KeyedArchiveYamlTest();
 	new DLCTest();
+	new UIListTest();
+	new UIScrollViewTest();
     
     errors.reserve(TestCount());
 

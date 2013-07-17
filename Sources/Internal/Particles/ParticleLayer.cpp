@@ -91,7 +91,6 @@ ParticleLayer::ParticleLayer()
 	frameOverLifeFPS = 0;
 
     isDisabled = false;
-	// DF-1453 - disable loop option by default
 	isLooped = false;
 
 	playbackSpeed = 1.0f;
@@ -312,7 +311,7 @@ bool ParticleLayer::GetLooped()
 	return isLooped;
 }
 
-void ParticleLayer::CheckLayerNeedRestart()
+void ParticleLayer::RestartLayerIfNeed()
 {
 	// Restart layer effect if auto restart option is on and layer time exceeds its endtime
 	if(isLooped && (layerTime > endTime) && !emitter->IsPaused())
@@ -327,7 +326,7 @@ void ParticleLayer::Update(float32 timeElapsed)
 	timeElapsed *= playbackSpeed;
 	layerTime += timeElapsed;
 	
-	CheckLayerNeedRestart();
+	RestartLayerIfNeed();
 
 	switch(type)
 	{

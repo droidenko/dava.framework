@@ -18,6 +18,9 @@
 #include "PropertyNames.h"
 namespace DAVA {
 // Property Names for different Properties.
+const char* PropertyNames::SIZE_X = "SizeX";
+const char* PropertyNames::SIZE_Y = "SizeY";
+	
 const char* PropertyNames::LOCALIZED_TEXT_KEY_PROPERTY_NAME = "LocalizedTextKey";
 const char* PropertyNames::FONT_PROPERTY_NAME = "Font";
 const char* PropertyNames::FONT_SIZE_PROPERTY_NAME = "FontSize";
@@ -69,6 +72,12 @@ const char* PropertyNames::VCENTER_ALIGN = "VCenterAlign";
 const char* PropertyNames::VCENTER_ALIGN_ENABLED = "VCenterAlignEnabled";
 const char* PropertyNames::BOTTOM_ALIGN = "BottomAlign";
 const char* PropertyNames::BOTTOM_ALIGN_ENABLED = "BottomAlignEnabled";
+
+// UI Scroll View properties
+const char* PropertyNames::HORIZONTAL_SCROLL_POSITION = "HorizontalScrollPosition";
+const char* PropertyNames::VERTICAL_SCROLL_POSITION = "VerticalScrollPosition";
+const char* PropertyNames::SCROLL_CONTENT_SIZE_X = "ContentSizeX";
+const char* PropertyNames::SCROLL_CONTENT_SIZE_Y = "ContentSizeY";
 
 // UI Spinner properties.
 const char* PropertyNames::UISPINNER_PREV_BUTTON_TEXT = "PrevButtonText";

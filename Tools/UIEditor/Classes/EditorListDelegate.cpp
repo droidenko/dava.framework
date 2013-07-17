@@ -29,10 +29,18 @@
 
 namespace DAVA
 {
-	EditorListDelegate::EditorListDelegate(const Rect &rect, bool rectInAbsoluteCoordinates/* = FALSE*/)
+	EditorListDelegate::EditorListDelegate(const Rect &rect, UIList::eListOrientation orientation /*ORIENTATION_VERTICAL*/
+																			, bool rectInAbsoluteCoordinates/* = FALSE*/)
 	: UIControl(rect, rectInAbsoluteCoordinates)
 	{
-		cellSize = Vector2(rect.dx, (rect.dy / CELLS_COUNT));
+		if (orientation == UIList::ORIENTATION_VERTICAL)
+		{
+			cellSize = Vector2(rect.dx, (rect.dy / CELLS_COUNT));
+		}
+		else
+		{
+			cellSize = Vector2((rect.dx / CELLS_COUNT), rect.dy);
+		}
 		aggregatorID = DEFAULT_AGGREGATOR_ID;
 	}
 	
@@ -72,6 +80,8 @@ namespace DAVA
 		else
 		{
 			cell->SetSize(Vector2(cellSize.x, cellSize.y));
+			// Reset reusable cells relative positions - new proper positions will be calculated at UIList::AddCellAtPost() method
+			cell->SetPosition(Vector2(0.0f, 0.0f));
 		}
 		
 		// Get aggregator node
@@ -104,6 +114,11 @@ namespace DAVA
 	int32 EditorListDelegate::CellHeight(UIList *, int32)
 	{
     	return cellSize.y;
+	}
+	
+	int32 EditorListDelegate::CellWidth(UIList *, int32)
+	{
+		return cellSize.x;
 	}
 	
 	void EditorListDelegate::SaveToYaml(UIList *forList, YamlNode *)

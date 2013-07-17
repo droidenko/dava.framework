@@ -40,7 +40,7 @@ void UIListMetadata::InitializeControl(const String& controlName, const Vector2&
         UIList* list = dynamic_cast<UIList*>(this->treeNodeParams[i].GetUIControl());
 		if (list)
 		{
-			EditorListDelegate *editorList = new EditorListDelegate(list->GetRect());
+			EditorListDelegate *editorList = new EditorListDelegate(list->GetRect(), list->GetOrientation());
 			list->SetDelegate(editorList);
 			list->GetBackground()->SetDrawType(UIControlBackground::DRAW_SCALE_TO_RECT);
 		}
@@ -77,17 +77,55 @@ void UIListMetadata::SetAggregatorID(int value)
 	GetActiveUIList()->Refresh();
 }
 
+int UIListMetadata::GetOrientation()
+{
+    if (!VerifyActiveParamID())
+    {
+        return UIList::ORIENTATION_VERTICAL;
+    }
+
+    return GetActiveUIList()->GetOrientation();
+}
+    
+void UIListMetadata::SetOrientation(int value)
+{
+    if (!VerifyActiveParamID())
+    {
+        return;
+    }	
+    
+	UpdateListCellSize(GetActiveUIList()->GetRect(), (UIList::eListOrientation)value);
+	GetActiveUIList()->SetOrientation((UIList::eListOrientation)value);	
+}
+
 void UIListMetadata::SetActiveControlRect(const Rect& rect)
 {
 	UIControlMetadata::SetActiveControlRect(rect);
+	UpdateListCellSize(rect, GetActiveUIList()->GetOrientation());
+}
+
+
+void UIListMetadata::UpdateListCellSize(const Rect& rect, UIList::eListOrientation orientation)
+{
 	// Get delegate for current list
 	EditorListDelegate *editorList = (EditorListDelegate *)GetActiveUIList()->GetDelegate();	
 	if (!editorList)
 		return;
-	// Update cell width
-	float32 width = rect.dx;
-	// Calculate new height of list cell by dividing list height on elements count
-	float32 height = rect.dy / editorList->ElementsCount(GetActiveUIList());
+
+	float32 width = 0;
+	float32 height = 0;		
+	// Calculate cell width and cell height
+	if (orientation == UIList::ORIENTATION_VERTICAL)
+	{
+		width = rect.dx;
+		height = rect.dy / editorList->ElementsCount(GetActiveUIList());
+	}
+	else
+	{
+		width = rect.dx / editorList->ElementsCount(GetActiveUIList());;
+		height = rect.dy;
+	}
+
 	// Update cell size with new height and width
 	editorList->SetCellSize(Vector2(width, height));
 	// Refresh list - and recreate cells

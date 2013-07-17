@@ -26,9 +26,6 @@ namespace DAVA {
 // Truncate the file extension.
 QString TruncateFileExtension(const QString& fileName, const QString& extension);
 
-// Truncate the ".txt" file extension.
-QString TruncateTxtFileExtension(const QString& fileName);
-
 //convert QString to WideString
 WideString QStrint2WideString(const QString& str);
 

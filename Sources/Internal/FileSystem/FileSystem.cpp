@@ -558,6 +558,7 @@ void FileSystem::AttachArchive(const String & archiveName, const String & attach
 	resourceArchiveList.push_back(item);
 }
 
+
 int32 FileSystem::Spawn(const String& command)
 {
 	int32 retCode = 0;
@@ -584,13 +585,13 @@ int32 FileSystem::Spawn(const String& command)
 #endif
 
 	if(retCode != 0)
+
 	{
 		Logger::Warning("[FileSystem::Spawn] command (%s) has return code (%d)", command.c_str(), retCode);
 	}
 
 	return retCode;
 }
-
 
     
 }

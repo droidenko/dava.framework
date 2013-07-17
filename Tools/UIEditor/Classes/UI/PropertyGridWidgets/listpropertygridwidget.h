@@ -38,7 +38,7 @@ private:
     Ui::ListPropertyGridWidget *ui;
 	
 	// Fill the combo with appropriate values.
-    void FillCombobox();
+    void FillComboboxes();
 	QList<int> nodeIDList;
 	
 protected:

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>64</height>
+    <height>90</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>64</height>
+    <height>90</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -31,7 +31,7 @@
      <x>1</x>
      <y>1</y>
      <width>299</width>
-     <height>63</height>
+     <height>89</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -61,6 +61,29 @@
      <rect>
       <x>100</x>
       <y>26</y>
+      <width>191</width>
+      <height>26</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>61</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Orientation:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="orientationComboBox">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>55</y>
       <width>191</width>
       <height>26</height>
      </rect>

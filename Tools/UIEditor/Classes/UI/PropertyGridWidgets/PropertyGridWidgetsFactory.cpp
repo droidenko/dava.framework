@@ -24,6 +24,7 @@
 #include "UIControlMetadata.h"
 #include "UIButtonMetadata.h"
 #include "UIListMetadata.h"
+#include "UIScrollViewMetadata.h"
 #include "UISliderMetadata.h"
 #include "UISpinnerMetadata.h"
 #include "UIStaticTextMetadata.h"
@@ -75,6 +76,9 @@ PropertyGridWidgetsFactory::PropertyGridWidgetsFactory()
 	
 	listWidget = new ListPropertyGridWidget();
 	registeredWidgets.push_back(listWidget);
+	
+	scrollWidget = new ScrollViewPropertyGridWidget();
+	registeredWidgets.push_back(scrollWidget);
 }
 
 PropertyGridWidgetsFactory::~PropertyGridWidgetsFactory()
@@ -213,6 +217,21 @@ const PropertyGridWidgetsFactory::PROPERTYGRIDWIDGETSLIST PropertyGridWidgetsFac
         resultList.push_back(rectWidget);
 		resultList.push_back(alignWidget);
         resultList.push_back(stateWidget);
+        resultList.push_back(backgroundWidget);
+        resultList.push_back(flagsWidget);
+        
+        return resultList;
+	}
+	
+	// UI Scroll View.
+	const UIScrollViewMetadata* uiScrollViewMetadata = dynamic_cast<const UIScrollViewMetadata*>(metaData);
+	if (uiScrollViewMetadata)
+	{
+		resultList.push_back(controlWidget);
+        resultList.push_back(rectWidget);
+		resultList.push_back(alignWidget);
+        resultList.push_back(stateWidget);
+		resultList.push_back(scrollWidget);
         resultList.push_back(backgroundWidget);
         resultList.push_back(flagsWidget);
         

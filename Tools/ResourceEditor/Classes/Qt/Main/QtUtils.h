@@ -55,6 +55,7 @@ int ShowQuestion(const DAVA::String &header, const DAVA::String &question, int b
 int ShowSaveSceneQuestion(DAVA::Scene *scene);
 
 DAVA_DEPRECATED(void DeleteOldPVRTextureIfPowerVr_IOS(const DAVA::TextureDescriptor *descriptor, const DAVA::eGPUFamily gpu));
+DAVA_DEPRECATED(void DeleteOldDXTTextureIfTegra(const DAVA::TextureDescriptor *descriptor, const DAVA::eGPUFamily gpu));
 
 
 #endif // __QT_UTILS_H__

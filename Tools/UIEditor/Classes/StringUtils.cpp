@@ -40,14 +40,6 @@ QString TruncateFileExtension(const QString& fileName, const QString& extension)
     return QString::fromStdString(truncatedName);
 }
 
-QString TruncateTxtFileExtension(const QString& fileName)
-{
-    FilePath path(fileName.toStdString());
-    path.TruncateExtension();
-    
-    return QString::fromStdString(path.GetAbsolutePathname());
-}
-
 WideString QStrint2WideString(const QString& str)
 {
 #ifdef __DAVAENGINE_MACOS__

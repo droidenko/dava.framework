@@ -218,6 +218,7 @@ public:
 	virtual void SetVirtualScreenSize(int32 width, int32 height);//!< Sets virtual screen size. You need to set size what takes into account screen orientation modifier
 	virtual void SetProportionsIsFixed(bool needFixed);
 	virtual void RegisterAvailableResourceSize(int32 width, int32 height, const String &resourcesFolderName);//!< Registers available sizes of resources. Can be called many times.
+	virtual void UnregisterAllAvailableResourceSizes();
 	
 
 	virtual float32 GetPhysicalScreenWidth();//returns physical size what don't take intpo account screen orientation

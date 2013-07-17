@@ -274,7 +274,7 @@ inline Landscape* Test::GetLandscape()
 	Landscape* landscape = NULL;
 	if (landscapeNode)
 	{
-		RenderComponent* renderComponent = cast_if_equal<RenderComponent*>(landscapeNode->GetComponent(Component::RENDER_COMPONENT));
+		RenderComponent* renderComponent = dynamic_cast<RenderComponent*>(landscapeNode->GetComponent(Component::RENDER_COMPONENT));
 		if (renderComponent)
 		{
 			landscape = dynamic_cast<Landscape*>(renderComponent->GetRenderObject());

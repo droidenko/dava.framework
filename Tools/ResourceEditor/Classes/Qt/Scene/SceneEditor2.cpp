@@ -74,7 +74,8 @@ SceneEditor2::SceneEditor2()
 
 SceneEditor2::~SceneEditor2()
 {
-    editorLightSystem->SetCameraLightEnabled(false);
+    RemoveSystem(editorLightSystem, 0);
+    SafeDelete(editorLightSystem);
 
 	SceneSignals::Instance()->EmitClosed(this);
 }

@@ -175,7 +175,9 @@ public:
 	int32 GetTouchHoldDelta();
 
 	void ScrollTo(float delta);
-
+	
+	
+	void SetOrientation(eListOrientation orientation);
     inline eListOrientation GetOrientation() { return orientation; };
     
 	const List<UIControl*> &GetVisibleCells();

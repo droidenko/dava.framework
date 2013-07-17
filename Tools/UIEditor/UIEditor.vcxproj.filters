@@ -612,8 +612,23 @@
     <ClCompile Include="Classes\Metadata\PropertyNames.cpp">
       <Filter>Sources\Metadata</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Helpers\ListPropertyGridWidgetHelper.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.cpp">
       <Filter>Sources\Tools\TexturePacker</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Metadata\UIScrollViewMetadata.cpp">
+      <Filter>Sources\Metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\UI\PropertyGridWidgets\scrollviewpropertygridwidget.cpp">
+      <Filter>Sources\UI\PropertyGridWidgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\UI\PropertyGridWidgets\scrollviewpropertygridwidget_moc.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Metadata\UIScrollViewMetadata_moc.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -971,8 +986,20 @@
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\TexturePacker.h">
       <Filter>Sources\Tools\TexturePacker</Filter>
     </ClInclude>
+    <ClInclude Include="Classes\Helpers\ListPropertyGridWidgetHelper.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.h">
       <Filter>Sources\Tools\TexturePacker</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Metadata\UIScrollViewMetadata.h">
+      <Filter>Sources\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\UI\PropertyGridWidgets\scrollviewpropertygridwidget.h">
+      <Filter>Sources\UI\PropertyGridWidgets</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_scrollviewpropertygridwidget.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

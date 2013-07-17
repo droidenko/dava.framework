@@ -92,11 +92,17 @@ void GameCore::OnAppStarted()
 			{
 				String k = rootNode->GetItemKeyName(i);
 				String levelFile = rootNode->Get(i)->AsString();
-				if(k != "default" && k != "tutorial")
+                File * file = File::Create(dirPath + levelFile, File::OPEN | File::READ);
+                if(file)
                 {
-					levelsPaths.push_back(levelFile);
+                    levelsPaths.push_back(levelFile);
                     Logger::Debug("[GameCore::OnAppStarted()] Add test level: %s", levelFile.c_str());
                 }
+                else
+                {
+                    Logger::Debug("[GameCore::OnAppStarted()] Scenefile not found: %s", levelFile.c_str());
+                }
+                SafeRelease(file);
 			}
 		}
 	}

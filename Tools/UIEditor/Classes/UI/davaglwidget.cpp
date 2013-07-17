@@ -112,7 +112,11 @@ void DavaGLWidget::resizeEvent(QResizeEvent *e)
 	DAVA::QtLayer::Instance()->Resize(e->size().width(), e->size().height());
 
 	//YZ fix load resource
-	Core::Instance()->RegisterAvailableResourceSize((int32)e->size().width(), (int32)e->size().height(), "Gfx");
+	
+	Core::Instance()->UnregisterAllAvailableResourceSizes();
+	Core::Instance()->RegisterAvailableResourceSize(size().width(), size().height(), "Gfx");
+	Core::Instance()->CalculateScaleMultipliers();
+
 	ScreenWrapper::Instance()->RequestUpdateView();
 }
 

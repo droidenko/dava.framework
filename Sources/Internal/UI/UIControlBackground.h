@@ -265,6 +265,15 @@ protected:
 
 private:
 	void GenerateCell(float32* vertices, int32 offset, float32 leftStretchCap, float32 topStretchCap, float32 x, float32 y, float32 tWidth = 1, float32 tHeight = 1);
+	void InitTilesArrays(int32 vertexCount, int32 trianglesCount);
+	void DeleteTilesArrays();
+		
+	float32* tilesVertices;
+	float32* tilesTexCoords;
+	uint32 *tilesIndeces;
+	
+public:
+	void ResetTilesArrays();
     
 protected:
 	~UIControlBackground();

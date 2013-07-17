@@ -21,15 +21,15 @@
 #include <QPainter>
 #include <QFileInfo>
 
-#define TEXTURE_PREVIEW_SIZE 100
+#define TEXTURE_PREVIEW_SIZE 80
 #define TEXTURE_PREVIEW_SIZE_SMALL 24
 #define BORDER_MARGIN 1
 #define BORDER_COLOR QColor(0, 0, 0, 25)
 #define SELECTION_BORDER_COLOR QColor(0, 0, 0, 50)
 #define SELECTION_COLOR_ALPHA 100
 #define INFO_TEXT_COLOR QColor(0, 0, 0, 100)
-#define FORMAT_INFO_WIDTH 4
-#define FORMAT_INFO_SPACING 2
+#define FORMAT_INFO_WIDTH 3
+#define FORMAT_INFO_SPACING 1
 
 TextureListDelegate::TextureListDelegate(QObject *parent /* = 0 */)
 	: QAbstractItemDelegate(parent)
@@ -145,12 +145,12 @@ void TextureListDelegate::drawPreviewBig(QPainter *painter, const QStyleOptionVi
 		}
 
 		// draw formats info
-		drawFormatInfo(painter, borderRect, curTexture, curTextureDescriptor);
+		int infoLen = drawFormatInfo(painter, borderRect, curTexture, curTextureDescriptor);
 
 		// draw text info
 		{
 			QRectF textRect = option.rect;
-			textRect.adjust(TEXTURE_PREVIEW_SIZE, option.decorationSize.height() / 2, 0, 0);
+			textRect.adjust(TEXTURE_PREVIEW_SIZE, option.decorationSize.height() / 2, -infoLen, 0);
 
 			QFont origFont = painter->font();
 			painter->setPen(option.palette.text().color());
@@ -169,18 +169,6 @@ void TextureListDelegate::drawPreviewBig(QPainter *painter, const QStyleOptionVi
 			infoText += dimen;
 			infoText += "\nData size: ";
 			infoText += textureDataSize.toString();
-
-			if(curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format != DAVA::FORMAT_INVALID)
-			{
-				infoText += "\nPVR: ";
-				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_POWERVR_IOS].format));
-			}
-
-			if(curTextureDescriptor->compression[DAVA::GPU_TEGRA].format != DAVA::FORMAT_INVALID)
-			{
-				infoText += "\nDXT: ";
-				infoText += QString(DAVA::Texture::GetPixelFormatString((DAVA::PixelFormat) curTextureDescriptor->compression[DAVA::GPU_TEGRA].format));
-			}
 
 			painter->drawText(textRect, infoText);
 		}
@@ -233,11 +221,11 @@ void TextureListDelegate::drawPreviewSmall(QPainter *painter, const QStyleOption
 		painter->drawRect(previewRect);
 
 		// draw formats info
-		drawFormatInfo(painter, borderRect, curTexture, curTextureDescriptor);
+		int infoLen = drawFormatInfo(painter, borderRect, curTexture, curTextureDescriptor);
 
 		// draw text
 		QRectF textRect = option.rect;
-		textRect.adjust(TEXTURE_PREVIEW_SIZE_SMALL, (option.rect.height() - option.fontMetrics.height())/2, 0, 0);
+		textRect.adjust(TEXTURE_PREVIEW_SIZE_SMALL, (option.rect.height() - option.fontMetrics.height())/2, -infoLen, 0);
 		painter->setPen(option.palette.text().color());
 		painter->drawText(textRect, curModel->data(index).toString());
 
@@ -257,13 +245,18 @@ void TextureListDelegate::drawPreviewSmall(QPainter *painter, const QStyleOption
 	}
 }
 
-void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DAVA::Texture *texture, const DAVA::TextureDescriptor *descriptor) const
+int TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DAVA::Texture *texture, const DAVA::TextureDescriptor *descriptor) const
 {
+	static QIcon errorIcon = QIcon(":/QtIcons/error.png");
+
+	int ret = 0;
+	QRect r = rect;
+
 	if(NULL != descriptor && NULL != texture)
 	{
-		rect.adjust(FORMAT_INFO_SPACING, FORMAT_INFO_SPACING, -FORMAT_INFO_SPACING, -FORMAT_INFO_SPACING);
-		rect.setX(rect.x() + rect.width() - FORMAT_INFO_WIDTH);
-		rect.setWidth(FORMAT_INFO_WIDTH);
+		r.adjust(FORMAT_INFO_SPACING, FORMAT_INFO_SPACING, -FORMAT_INFO_SPACING, -FORMAT_INFO_SPACING);
+		r.setX(rect.x() + rect.width());
+		r.setWidth(FORMAT_INFO_WIDTH);
 
 		QColor gpuInfoColors[DAVA::GPU_FAMILY_COUNT];
 		gpuInfoColors[DAVA::GPU_POWERVR_IOS] = TextureBrowser::gpuColor_PVR_ISO;
@@ -272,31 +265,32 @@ void TextureListDelegate::drawFormatInfo(QPainter *painter, QRect rect, const DA
 		gpuInfoColors[DAVA::GPU_MALI] = TextureBrowser::gpuColor_MALI;
 		gpuInfoColors[DAVA::GPU_ADRENO] = TextureBrowser::gpuColor_Adreno;
 
-		for(int i = 0; i < DAVA::GPU_FAMILY_COUNT; ++i)
+		// format lines
+		for(int i = (DAVA::GPU_FAMILY_COUNT - 1); i >= 0; --i)
 		{
+			r.moveLeft(r.x() - FORMAT_INFO_WIDTH);
+
 			if(descriptor->compression[i].format != DAVA::FORMAT_INVALID)
 			{
 				QColor c = gpuInfoColors[i];
-				c.setAlpha(200);
 
-				painter->setPen(c);
+				painter->setPen(Qt::NoPen);
 				painter->setBrush(c);
-				painter->drawRect(rect);
+				painter->drawRect(r);
 			}
 
-			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
+			r.moveLeft(r.x() - FORMAT_INFO_SPACING);
 		}
 
+		// error icon
 		if(texture->width != texture->height)
 		{
-			QRect r = rect;
-			r.setHeight(FORMAT_INFO_WIDTH * 2);
-
-			painter->setPen(TextureBrowser::errorColor);
-			painter->setBrush(QBrush(TextureBrowser::errorColor));
-			painter->drawRect(r);
-
-			rect.adjust(-FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0, -FORMAT_INFO_WIDTH - FORMAT_INFO_SPACING, 0);
+			r.moveLeft(r.x() - 16);
+			errorIcon.paint(painter, r.x(), r.y(), 16, 16);
 		}
+
+		ret = rect.width() - (r.x() - rect.x());
 	}
+
+	return ret;
 }

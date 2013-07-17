@@ -38,7 +38,7 @@
 
 // Switch on/off messege box in assertion situation. In case this flag is
 // enabled the assertion message will be displayed even in release builds.
-//#define ENABLE_ASSERT_MESSAGE
+#define ENABLE_ASSERT_MESSAGE
 #include "Autotesting/Config.h"
 
 

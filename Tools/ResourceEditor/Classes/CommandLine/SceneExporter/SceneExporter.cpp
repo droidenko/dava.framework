@@ -378,6 +378,7 @@ void SceneExporter::CompressTextureIfNeed(const TextureDescriptor * descriptor, 
         }
         else if(extension == ".dds")
         {
+            DeleteOldDXTTextureIfTegra(descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
             DXTConverter::ConvertPngToDxt(*descriptor, (eGPUFamily)descriptor->exportedAsGpuFamily);
         }
         else

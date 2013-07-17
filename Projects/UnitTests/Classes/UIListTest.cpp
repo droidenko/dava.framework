@@ -67,7 +67,7 @@ void UIListTest::LoadResources()
 {
 	Font *font = FTFont::Create("~res:/Fonts/korinna.ttf");
     DVASSERT(font);
-	font->SetSize(20);
+	font->SetSize(14);
     font->SetColor(Color::White());
 
 	YamlParser * parser = YamlParser::Create("~res:/TestData/ListTest/ListData.yaml");
@@ -101,6 +101,7 @@ void UIListTest::LoadResources()
 	finishTestBtn = new UIButton(Rect(10, 210, 300, 30));
 	finishTestBtn->SetStateFont(0xFF, font);
 	finishTestBtn->SetStateText(0xFF, L"Finish test");
+
 	finishTestBtn->SetDebugDraw(true);
 	finishTestBtn->AddEvent(UIControl::EVENT_TOUCH_UP_INSIDE, Message(this, &UIListTest::ButtonPressed));
 	AddControl(finishTestBtn);
@@ -109,7 +110,6 @@ void UIListTest::LoadResources()
 void UIListTest::UnloadResources()
 {
 	RemoveAllControls();
-
 	SafeRelease(finishTestBtn);
 }
 

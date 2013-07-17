@@ -129,8 +129,8 @@ if None != connection:
 						else:
 							report.write('<b><i>SceneFileSize </i>: ' + ('%.2f' % (sceneFileSize)) + ' Mb (Limit: 11 Mb)</b><br/>\n')
 
-						zippedSceneSize = getZippedSize(sceneFilePath)/(1024. * 1024.);
-						report.write('<b><i>ZippedSceneSize</i>: ' + ('%.2f' % (zippedSceneSize)) + ' Mb</b><br/>\n')
+						#zippedSceneSize = getZippedSize(sceneFilePath)/(1024. * 1024.);
+						#report.write('<b><i>ZippedSceneSize</i>: ' + ('%.2f' % (zippedSceneSize)) + ' Mb</b><br/>\n')
 
 					elif 'TextureFilesSize' == reportValue:
 						report.write('<b><i>' + reportValue + '</i>: ' + level[reportValue] + '</b><br/>\n')

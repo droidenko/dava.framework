@@ -372,8 +372,7 @@ void UIButtonMetadata::SetSprite(const QString& value)
 		}
 		else
 		{
-			GetActiveUIButton()->SetStateSprite(this->uiControlStates[i],
-												TruncateTxtFileExtension(value).toStdString());
+			GetActiveUIButton()->SetStateSprite(this->uiControlStates[i], value.toStdString());
 		}
 	}
 
@@ -748,7 +747,7 @@ void UIButtonMetadata::UpdatePropertyDirtyFlagForSpriteModification()
 // Initialize the control(s) attached.
 void UIButtonMetadata::InitializeControl(const String& controlName, const Vector2& position)
 {
-    BaseMetadata::InitializeControl(controlName, position);
+    UIControlMetadata::InitializeControl(controlName, position);
 
     int paramsCount = this->GetParamsCount();
     for (BaseMetadataParams::METADATAPARAMID i = 0; i < paramsCount; i ++)

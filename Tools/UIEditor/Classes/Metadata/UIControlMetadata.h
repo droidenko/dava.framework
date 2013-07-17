@@ -99,6 +99,8 @@ public:
 
 protected:
     virtual QString GetUIControlClassName() { return "UIControl"; };
+	
+	virtual void InitializeControl(const String& controlName, const Vector2& position);
 
     // Getters/setters.
     QString GetName() const;
@@ -220,6 +222,10 @@ protected:
 	void SetCustomControlName(const QString& value);
 
 	virtual void SetActiveControlRect(const Rect& rect);
+
+private:
+	void ResizeScrollViewContent(UIControl *control);
+
 };
     
 }

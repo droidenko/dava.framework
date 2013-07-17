@@ -33,6 +33,7 @@
 #include "flagspropertygridwidget.h"
 #include "listpropertygridwidget.h"
 #include "rectpropertygridwidget.h"
+#include "scrollviewpropertygridwidget.h"
 #include "sliderpropertygridwidget.h"
 #include "spinnerpropertygridwidget.h"
 #include "statepropertygridwidget.h"
@@ -74,7 +75,8 @@ private:
 	SliderPropertyGridWidget* sliderWidget;
 	AlignsPropertyGridWidget* alignWidget;
 	SpinnerPropertyGridWidget* spinnerWidget;
-	ListPropertyGridWidget* listWidget;    
+	ListPropertyGridWidget* listWidget;
+	ScrollViewPropertyGridWidget* scrollWidget;
 	
     // The same widgets in the list manner - for easier handling of group operations.
     PROPERTYGRIDWIDGETSLIST registeredWidgets;

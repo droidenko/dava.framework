@@ -446,6 +446,8 @@ DAVA::Image* TextureConvertor::ConvertDXT(DAVA::TextureDescriptor *descriptor, D
 	{
 		if(forceConvert || !DAVA::FileSystem::Instance()->IsFile(outputPath))
 		{
+            DeleteOldDXTTextureIfTegra(descriptor, gpu);
+
 			outputPath = DXTConverter::ConvertPngToDxt(*descriptor, gpu);
 
 			bool wasUpdated = descriptor->UpdateCrcForFormat(gpu);

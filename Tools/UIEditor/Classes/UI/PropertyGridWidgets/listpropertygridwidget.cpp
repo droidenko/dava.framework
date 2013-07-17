@@ -16,6 +16,7 @@
 #include "listpropertygridwidget.h"
 #include "ui_listpropertygridwidget.h"
 
+#include "ListPropertyGridWidgetHelper.h"
 #include "UIListMetadata.h"
 
 #include "WidgetSignalsBlocker.h"
@@ -40,22 +41,25 @@ ListPropertyGridWidget::~ListPropertyGridWidget()
 void ListPropertyGridWidget::Initialize(BaseMetadata* activeMetadata)
 {
     BasePropertyGridWidget::Initialize(activeMetadata);	
-	FillCombobox();
+	FillComboboxes();
 	
 	// Build the properties map to make the properties search faster.
 	PROPERTIESMAP propertiesMap = BuildMetadataPropertiesMap();
 	
 	RegisterComboBoxWidgetForProperty(propertiesMap, "AggregatorID", ui->aggregatorsComboBox, false, true);
+	RegisterComboBoxWidgetForProperty(propertiesMap, "Orientation", ui->orientationComboBox, false, true);
 }
 
 void ListPropertyGridWidget::Cleanup()
 {	
-	UnregisterComboBoxWidget(ui->aggregatorsComboBox);	
+	UnregisterComboBoxWidget(ui->aggregatorsComboBox);
+	UnregisterComboBoxWidget(ui->orientationComboBox);
 }
 
-void ListPropertyGridWidget::FillCombobox()
+void ListPropertyGridWidget::FillComboboxes()
 {
     WidgetSignalsBlocker aggregatorsBlocker(ui->aggregatorsComboBox);
+	WidgetSignalsBlocker orientationBlocked(ui->orientationComboBox);
 	// Reset lists
 	ui->aggregatorsComboBox->clear();
 	nodeIDList.clear();
@@ -83,6 +87,13 @@ void ListPropertyGridWidget::FillCombobox()
 			}
 		}
 	}
+	
+	ui->orientationComboBox->clear();
+    int itemsCount = ListPropertyGridWidgetHelper::GetOrientationCount();
+    for (int i = 0; i < itemsCount; i ++)
+    {
+        ui->orientationComboBox->addItem(ListPropertyGridWidgetHelper::GetOrientationDesc(i));
+    }
 }
 
 void ListPropertyGridWidget::ProcessComboboxValueChanged(QComboBox* senderWidget, const PROPERTYGRIDWIDGETSITER& iter,
@@ -101,6 +112,10 @@ void ListPropertyGridWidget::ProcessComboboxValueChanged(QComboBox* senderWidget
     {
 		return CustomProcessComboboxValueChanged(iter, nodeIDList.at(selectedIndex));
     }
+	else if (senderWidget == ui->orientationComboBox)
+	{
+		return CustomProcessComboboxValueChanged(iter, ListPropertyGridWidgetHelper::GetOrientation(selectedIndex));
+	}
 
     // No postprocessing was applied - use the generic process.
     BasePropertyGridWidget::ProcessComboboxValueChanged(senderWidget, iter, value);
@@ -139,6 +154,13 @@ void ListPropertyGridWidget::UpdateComboBoxWidgetWithPropertyValue(QComboBox* co
 		
         return SetComboboxSelectedItem(comboBoxWidget, ui->aggregatorsComboBox->itemText(index));
     }
+	else if (comboBoxWidget == ui->orientationComboBox)
+	{
+	    UpdateWidgetPalette(comboBoxWidget, propertyName);
+		
+        return SetComboboxSelectedItem(comboBoxWidget,  ListPropertyGridWidgetHelper::GetOrientationDescByType(
+																		(UIList::eListOrientation)propertyValue));
+	}
 
     // Not related to the custom combobox - call the generic one.
     BasePropertyGridWidget::UpdateComboBoxWidgetWithPropertyValue(comboBoxWidget, curProperty);

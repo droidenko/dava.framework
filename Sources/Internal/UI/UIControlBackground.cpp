@@ -37,6 +37,9 @@ UIControlBackground::UIControlBackground()
 ,	colorInheritType(COLOR_IGNORE_PARENT)
 ,	perPixelAccuracyType(PER_PIXEL_ACCURACY_DISABLED)
 ,	lastDrawPos(0, 0)
+,	tilesVertices(NULL)
+,	tilesTexCoords(NULL)
+,	tilesIndeces(NULL)
 {
 	rdoObject = new RenderDataObject();
     vertexStream = rdoObject->SetStream(EVF_VERTEX, TYPE_FLOAT, 2, 0, 0);
@@ -71,6 +74,7 @@ UIControlBackground::~UIControlBackground()
 {
 	SafeRelease(rdoObject);
 	SafeRelease(spr);
+	DeleteTilesArrays();
 }
 	
 Sprite*	UIControlBackground::GetSprite()
@@ -107,6 +111,7 @@ void UIControlBackground::SetSprite(const FilePath &spriteName, int32 drawFrame)
 {
 	Sprite *tempSpr = Sprite::Create(spriteName);
 	SetSprite(tempSpr, drawFrame);
+	ResetTilesArrays();
 	SafeRelease(tempSpr);
 }
 
@@ -122,36 +127,43 @@ void UIControlBackground::SetSprite(Sprite* drawSprite, int32 drawFrame)
 	SafeRelease(spr);
 	spr = SafeRetain(drawSprite);
 	frame =  drawFrame;
+	ResetTilesArrays();
 }
 void UIControlBackground::SetFrame(int32 drawFrame)
 {
 	DVASSERT(spr);
 	frame = drawFrame;
+	ResetTilesArrays();
 }
 
 void UIControlBackground::SetAlign(int32 drawAlign)
 {
 	align = drawAlign;
+	ResetTilesArrays();
 }
 void UIControlBackground::SetDrawType(UIControlBackground::eDrawType drawType)
 {
 	type = drawType;
+	ResetTilesArrays();
 }
 
 void UIControlBackground::SetModification(int32 modification)
 {
-	spriteModification = modification;	
+	spriteModification = modification;
+	ResetTilesArrays();
 }
 	
 void UIControlBackground::SetColorInheritType(UIControlBackground::eColorInheritType inheritType)
 {
 	DVASSERT(inheritType >= 0 && inheritType < COLOR_INHERIT_TYPES_COUNT);
 	colorInheritType = inheritType;
+	ResetTilesArrays();
 }
     
 void UIControlBackground::SetPerPixelAccuracyType(ePerPixelAccuracyType accuracyType)
 {
     perPixelAccuracyType = accuracyType;
+	ResetTilesArrays();
 }
     
 UIControlBackground::ePerPixelAccuracyType UIControlBackground::GetPerPixelAccuracyType() const
@@ -213,9 +225,6 @@ void UIControlBackground::SetParentColor(const Color &parentColor)
 			break;
 	}	
 }
-	
-
-
 
 void UIControlBackground::Draw(const UIGeometricData &geometricData)
 {
@@ -464,7 +473,6 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 	RenderManager::Instance()->ResetColor();
 	
 }
-
 	
 void UIControlBackground::DrawStretched(const Rect &drawRect)
 {
@@ -645,6 +653,35 @@ void UIControlBackground::GenerateCell(float32* vertices, int32 offset, float32 
 	}
 }
 
+void UIControlBackground::InitTilesArrays(int32 vertexCount, int32 trianglesCount)
+{	
+	DeleteTilesArrays();
+	
+	tilesVertices = new float32[vertexCount];
+	tilesTexCoords = new float32[vertexCount];
+	tilesIndeces = new uint32[trianglesCount];
+	 
+	memset(tilesVertices, 0,  vertexCount * sizeof(float32));
+	memset(tilesTexCoords, 0, vertexCount * sizeof(float32));
+	memset(tilesIndeces, 0, trianglesCount * sizeof(uint32));
+}
+
+void UIControlBackground::DeleteTilesArrays()
+{
+	SafeDeleteArray(tilesVertices);
+	SafeDeleteArray(tilesTexCoords);
+	SafeDeleteArray(tilesIndeces);
+}
+
+void UIControlBackground::ResetTilesArrays()
+{
+	// Delete tiles arrays for DRAW_TILED option - need to recalculate them
+	if (type == UIControlBackground::DRAW_TILED)
+	{
+		DeleteTilesArrays();
+	}
+}
+
 void UIControlBackground::DrawTiled(const Rect &drawRect)
 {
 	if (!spr)return;
@@ -684,35 +721,35 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 	
 	// The number of vertices for cells - 8 coordinates for each cells - 4 "X" and 4 "Y"
 	int32 vertexCount = cellsHCount * cellsVCount * 4 * 2;
-	// Arrays of vertices and texture coordinates
-	float32* vertices = new float32[vertexCount];
-	float32* texCoords = new float32[vertexCount];
-	 
-	memset(vertices, 0,  vertexCount * sizeof(float32));
-	memset(texCoords, 0, vertexCount * sizeof(float32));
+	// The number of triangles
+	int32 vertInTriCount = cellsHCount * cellsVCount * 6;
+	if (!tilesVertices || !tilesTexCoords || !tilesIndeces)
+	{
+		InitTilesArrays(vertexCount, vertInTriCount);
+	}
 	
 	// Generate coorinates for corner cells
 	// Top left corner cell
-	GenerateCell(vertices, 0, leftStretchCap, topStretchCap, x, y);
+	GenerateCell(tilesVertices, 0, leftStretchCap, topStretchCap, x, y);
 	// Top right corner cell
-	GenerateCell(vertices, (cellsHCount - 1) * 8, leftStretchCap, topStretchCap, x + dx - leftStretchCap, y);
+	GenerateCell(tilesVertices, (cellsHCount - 1) * 8, leftStretchCap, topStretchCap, x + dx - leftStretchCap, y);
 	// Bottom left corner cell
-	GenerateCell(vertices, (cellsHCount * (cellsVCount - 1)) * 8, leftStretchCap, topStretchCap, x, y + dy - topStretchCap);
+	GenerateCell(tilesVertices, (cellsHCount * (cellsVCount - 1)) * 8, leftStretchCap, topStretchCap, x, y + dy - topStretchCap);
 	// Bottom right corner cell
-	GenerateCell(vertices, (cellsHCount * cellsVCount - 1) * 8, leftStretchCap, topStretchCap, x + dx - leftStretchCap, y + dy - topStretchCap);	
+	GenerateCell(tilesVertices, (cellsHCount * cellsVCount - 1) * 8, leftStretchCap, topStretchCap, x + dx - leftStretchCap, y + dy - topStretchCap);	
 	
 	// Generate texture coordinates for cells
 	// Top left
-	GenerateCell(texCoords, 0, leftStretchCap, topStretchCap,
+	GenerateCell(tilesTexCoords, 0, leftStretchCap, topStretchCap,
 					texX, texY, textureWidth, textureHeight);
 	// Top right
-	GenerateCell(texCoords, (cellsHCount - 1) * 8, leftStretchCap, topStretchCap,
+	GenerateCell(tilesTexCoords, (cellsHCount - 1) * 8, leftStretchCap, topStretchCap,
 					texX + texDx - leftStretchCap, texY, textureWidth, textureHeight);
 	// Bottom left
-	GenerateCell(texCoords, (cellsHCount * (cellsVCount - 1)) * 8, leftStretchCap, topStretchCap,
+	GenerateCell(tilesTexCoords, (cellsHCount * (cellsVCount - 1)) * 8, leftStretchCap, topStretchCap,
 					texX, texY + texDy - topStretchCap, textureWidth, textureHeight);
 	// Bottom right
-	GenerateCell(texCoords, (cellsHCount * cellsVCount - 1) * 8, leftStretchCap, topStretchCap,
+	GenerateCell(tilesTexCoords, (cellsHCount * cellsVCount - 1) * 8, leftStretchCap, topStretchCap,
 					texX + texDx - leftStretchCap, texY + texDy - topStretchCap, textureWidth, textureHeight);
 				
 	// Horizontal border cells
@@ -726,16 +763,16 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 			if (lastCellOffset < 0) lastCellOffset = 0;
 		}		
 		// Left border cell
-		GenerateCell(vertices, i * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
+		GenerateCell(tilesVertices, i * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
 					x + leftStretchCap + horizontalStretchCap * (i - 1), y);
 		// Right border cell
-		GenerateCell(vertices, (i + cellsHCount * (cellsVCount - 1)) * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
+		GenerateCell(tilesVertices, (i + cellsHCount * (cellsVCount - 1)) * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
 					x + leftStretchCap + horizontalStretchCap * (i - 1), y + dy - topStretchCap);
 		// Left border cell texture
-		GenerateCell(texCoords, i * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
+		GenerateCell(tilesTexCoords, i * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
 						texX + leftStretchCap, texY, textureWidth, textureHeight);
 		// Right border cell texture
-		GenerateCell(texCoords, (i + cellsHCount * (cellsVCount - 1)) * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
+		GenerateCell(tilesTexCoords, (i + cellsHCount * (cellsVCount - 1)) * 8, horizontalStretchCap - lastCellOffset, topStretchCap,
 						texX + leftStretchCap, texY + texDy - topStretchCap, textureWidth, textureHeight);
 	}
 	
@@ -750,16 +787,16 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 			if (lastCellOffset < 0) lastCellOffset = 0;
 		}		
 		// Top border cell
-		GenerateCell(vertices, (i * cellsHCount) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
+		GenerateCell(tilesVertices, (i * cellsHCount) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
 					x, y + topStretchCap + verticalStretchCap * (i - 1));
 		// Bottom border cell
-		GenerateCell(vertices, (i * cellsHCount + cellsHCount - 1) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
+		GenerateCell(tilesVertices, (i * cellsHCount + cellsHCount - 1) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
 					x + dx - leftStretchCap, y + topStretchCap + verticalStretchCap * (i - 1));
 		// Top border cell texture part
-		GenerateCell(texCoords, (i * cellsHCount) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
+		GenerateCell(tilesTexCoords, (i * cellsHCount) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
 						texX, texY + topStretchCap, textureWidth, textureHeight);
 		// Bottom border cell texture part
-		GenerateCell(texCoords, (i * cellsHCount + cellsHCount - 1) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
+		GenerateCell(tilesTexCoords, (i * cellsHCount + cellsHCount - 1) * 8, leftStretchCap, verticalStretchCap - lastCellOffset,
 						texX + texDx - leftStretchCap, texY + topStretchCap, textureWidth, textureHeight);
 	}
 	
@@ -784,20 +821,15 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 				if (lastCellHOffset < 0) lastCellHOffset = 0;
 			}		
 			// Central cell used for "tiling"
-			GenerateCell(vertices, (ix + cellsHCount * iy) * 8, horizontalStretchCap - lastCellHOffset, verticalStretchCap - lastCellVOffset,
+			GenerateCell(tilesVertices, (ix + cellsHCount * iy) * 8, horizontalStretchCap - lastCellHOffset, verticalStretchCap - lastCellVOffset,
 						x + leftStretchCap + horizontalStretchCap * (ix - 1), y +  topStretchCap + verticalStretchCap * (iy - 1));
 			// Central cell texture part
-			GenerateCell(texCoords, (ix + cellsHCount * iy) * 8, horizontalStretchCap - lastCellHOffset, verticalStretchCap - lastCellVOffset,
+			GenerateCell(tilesTexCoords, (ix + cellsHCount * iy) * 8, horizontalStretchCap - lastCellHOffset, verticalStretchCap - lastCellVOffset,
 						texX + leftStretchCap, texY + topStretchCap,
 						textureWidth, textureHeight);
 		}
 	}
 	
-	// The number of triangles and array of triangle points
-	int32 vertInTriCount = cellsHCount * cellsVCount * 6;
-	uint32 *indeces = new uint32[vertInTriCount];
-
-	memset(indeces, 0, vertInTriCount * sizeof(uint32));
 
 	// Generate triangles points - first 2 triangles -  0,1,2, 1,3,2
 	int32 a = 0;
@@ -805,38 +837,36 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 	{
 		for (int32 i2 = 0; i2 < cellsHCount; ++i2)
 		{
-			indeces[(i2 + i1 * cellsHCount) * 6 + 0] = a;
-			indeces[(i2 + i1 * cellsHCount) * 6 + 1] = a + 1;
-			indeces[(i2 + i1 * cellsHCount) * 6 + 2] = a + 2;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 0] = a;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 1] = a + 1;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 2] = a + 2;
 		
-			indeces[(i2 + i1 * cellsHCount) * 6 + 3] = a + 1;
-			indeces[(i2 + i1 * cellsHCount) * 6 + 4] = a + 3;
-			indeces[(i2 + i1 * cellsHCount) * 6 + 5] = a + 2;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 3] = a + 1;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 4] = a + 3;
+			tilesIndeces[(i2 + i1 * cellsHCount) * 6 + 5] = a + 2;
 			a += 4;
 		}
 	}
 	
-	vertexStream->Set(TYPE_FLOAT, 2, 0, vertices);
-	texCoordStream->Set(TYPE_FLOAT, 2, 0, texCoords);
+	vertexStream->Set(TYPE_FLOAT, 2, 0, tilesVertices);
+	texCoordStream->Set(TYPE_FLOAT, 2, 0, tilesTexCoords);
 
 	RenderManager::Instance()->SetTexture(texture);
 	RenderManager::Instance()->SetRenderEffect(RenderManager::TEXTURE_MUL_FLAT_COLOR);
 	RenderManager::Instance()->SetRenderData(rdoObject);
-	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, vertInTriCount, EIF_32, indeces);
-	
-	SafeDeleteArray(indeces);
-	SafeDeleteArray(texCoords);
-	SafeDeleteArray(vertices);	
+	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, vertInTriCount, EIF_32, tilesIndeces);
 }
 
 void UIControlBackground::SetLeftRightStretchCap(float32 _leftStretchCap)
 {
 	leftStretchCap = _leftStretchCap;
+	ResetTilesArrays();
 }
 
 void UIControlBackground::SetTopBottomStretchCap(float32 _topStretchCap)
 {
 	topStretchCap = _topStretchCap;
+	ResetTilesArrays();
 }
 	
 float32 UIControlBackground::GetLeftRightStretchCap() const

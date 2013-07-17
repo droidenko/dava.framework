@@ -29,6 +29,18 @@ UIControlMetadata::UIControlMetadata(QObject* parent) :
 {
 }
 
+void UIControlMetadata::InitializeControl(const String& controlName, const Vector2& position)
+{
+	BaseMetadata::InitializeControl(controlName, position);
+	
+    int paramsCount = this->GetParamsCount();
+	for (BaseMetadataParams::METADATAPARAMID i = 0; i < paramsCount; i ++)
+    {
+   		UIControl* control = this->treeNodeParams[i].GetUIControl();
+		ResizeScrollViewContent(control);
+    }
+}
+
 QString UIControlMetadata::GetName() const
 {
     if (!VerifyActiveParamID())
@@ -536,7 +548,7 @@ void UIControlMetadata::SetSprite(const QString& value)
     }
     else
     {
-        Sprite* sprite = Sprite::Create(TruncateTxtFileExtension(value).toStdString());
+        Sprite* sprite = Sprite::Create(value.toStdString());
         if (sprite)
         {
             GetActiveUIControl()->GetBackground()->SetSprite(sprite, 0);
@@ -873,6 +885,8 @@ void UIControlMetadata::SetBottomAlignEnabled(const bool value)
 void UIControlMetadata::SetActiveControlRect(const Rect& rect)
 {
 	GetActiveUIControl()->SetRect(rect);
+	
+	ResizeScrollViewContent(GetActiveUIControl());
 }
 
 QString UIControlMetadata::GetCustomControlName() const
@@ -901,5 +915,28 @@ void UIControlMetadata::SetCustomControlName(const QString& value)
 		GetActiveUIControl()->SetCustomControlType(value.toStdString());
 	}
 }
+
+void UIControlMetadata::ResizeScrollViewContent(UIControl * control)
+{
+	UIControl *parentControl = control->GetParent();
+	
+	UIScrollView *scrollView = dynamic_cast<UIScrollView*>(parentControl);
+	UIScreen *screen = dynamic_cast<UIScreen*>(parentControl);
+	
+	if (screen || !parentControl)
+	{
+		return;
+	}
+	
+	if (scrollView)
+	{
+		scrollView->RecalculateContentSize();
+	}
+	else
+	{
+		ResizeScrollViewContent(parentControl);
+	}
+}
+
 
 };

@@ -211,7 +211,7 @@ void HierarchyTreeAggregatorNode::ReplaceAggregator(HierarchyTreeControlNode *no
 	// Set aggregator ID for list if it has saved aggregator path and it is available in tree
 	if (list && list->GetAggregatorPath() == path)
 	{
-		EditorListDelegate *listDelegate = new EditorListDelegate(list->GetRect());
+		EditorListDelegate *listDelegate = new EditorListDelegate(list->GetRect(), list->GetOrientation());
 		// If loaded delegate has aggregator path - pass its id to delegate
 		listDelegate->SetAggregatorID(GetId());
 		// Always set a delegate for loaded UIList

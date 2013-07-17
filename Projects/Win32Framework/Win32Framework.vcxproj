@@ -547,6 +547,8 @@
     <ClInclude Include="..\..\Sources\Internal\UI\UIScreenManagerMacOS.h" />
     <ClInclude Include="..\..\Sources\Internal\UI\UIScreenTransition.h" />
     <ClInclude Include="..\..\Sources\Internal\UI\UIScrollBar.h" />
+    <ClInclude Include="..\..\Sources\Internal\UI\UIScrollView.h" />
+    <ClInclude Include="..\..\Sources\Internal\UI\UIScrollViewContainer.h" />
     <ClInclude Include="..\..\Sources\Internal\UI\UISlider.h" />
     <ClInclude Include="..\..\Sources\Internal\UI\UISpinner.h" />
     <ClInclude Include="..\..\Sources\Internal\UI\UIStaticText.h" />
@@ -886,6 +888,8 @@
     <ClCompile Include="..\..\Sources\Internal\UI\UIScreenManagerMacOS.cpp" />
     <ClCompile Include="..\..\Sources\Internal\UI\UIScreenTransition.cpp" />
     <ClCompile Include="..\..\Sources\Internal\UI\UIScrollBar.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\UI\UIScrollView.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\UI\UIScrollViewContainer.cpp" />
     <ClCompile Include="..\..\Sources\Internal\UI\UISlider.cpp" />
     <ClCompile Include="..\..\Sources\Internal\UI\UISpinner.cpp" />
     <ClCompile Include="..\..\Sources\Internal\UI\UIStaticText.cpp" />
