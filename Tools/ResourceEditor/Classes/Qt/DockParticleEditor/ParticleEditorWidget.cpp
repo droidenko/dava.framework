@@ -332,15 +332,13 @@ void ParticleEditorWidget::UpdateVisibleTimelinesForParticleEmitter()
 	bool radiusTimeLineVisible = false;
 	bool sizeTimeLineVisible = false;
 
-	bool emissionVectorTimeLineVisible = true;
-
 	switch (emitterPropertiesWidget->GetEmitter()->emitterType)
 	{
-		case DAVA::ParticleEmitter::EMITTER_ONCIRCLE:
+		case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_VOLUME:
+		case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_EDGES:
 		case DAVA::ParticleEmitter::EMITTER_SHOCKWAVE:
 		{
 			radiusTimeLineVisible = true;
-			emissionVectorTimeLineVisible = false;
 			break;
 		}
 			
@@ -357,7 +355,6 @@ void ParticleEditorWidget::UpdateVisibleTimelinesForParticleEmitter()
 	
 	emitterPropertiesWidget->GetEmitterRadiusTimeline()->setVisible(radiusTimeLineVisible);
 	emitterPropertiesWidget->GetEmitterSizeTimeline()->setVisible(sizeTimeLineVisible);
-	emitterPropertiesWidget->GetEmissionVectorTimeline()->setVisible(emissionVectorTimeLineVisible);
 }
 
 void ParticleEditorWidget::UpdateWidgetsForLayer()

@@ -78,6 +78,7 @@ private:
 	QCheckBox* enableCheckBox;
 	QCheckBox* additiveCheckBox;
 	QCheckBox* isLongCheckBox;
+	QCheckBox* isLoopedCheckBox;
 
 	QLabel* layerTypeLabel;
 	QComboBox* layerTypeComboBox;

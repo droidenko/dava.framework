@@ -36,6 +36,7 @@
 #include "LandscapeEditorDrawSystem/LandscapeProxy.h"
 #include "../../../Commands2/HeightmapEditorCommands2.h"
 #include "../../Main/QtUtils.h"
+#include "../../../SceneEditor/EditorSettings.h"
 
 const float32 HeightmapEditorSystem::MAX_STRENGTH = 30.f;
 
@@ -54,12 +55,13 @@ HeightmapEditorSystem::HeightmapEditorSystem(Scene* scene)
 ,	drawingType(HEIGHTMAP_DRAW_RELATIVE)
 ,	copyPasteFrom(-1.f, -1.f)
 ,	copyPasteTo(-1.f, -1.f)
+,	prevCursorPosition(-1.f, -1.f)
+,	tilemaskImage(NULL)
+,	tilemaskCopyPasteTool(NULL)
+,	originalTilemaskImage(NULL)
 {
 	cursorTexture = Texture::CreateFromFile("~res:/LandscapeEditor/Tools/cursor/cursor.png");
 	cursorTexture->SetWrapMode(Texture::WRAP_CLAMP_TO_EDGE, Texture::WRAP_CLAMP_TO_EDGE);
-
-	squareTexture = Texture::CreateFromFile("~res:/LandscapeEditor/Tools/cursor/squareCursor.png");
-	squareTexture->SetWrapMode(Texture::WRAP_CLAMP_TO_EDGE, Texture::WRAP_CLAMP_TO_EDGE);
 
 	collisionSystem = ((SceneEditor2 *) GetScene())->collisionSystem;
 	selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
@@ -159,15 +161,24 @@ void HeightmapEditorSystem::ProcessUIEvent(DAVA::UIEvent *event)
 				{
 					if (drawingType == HEIGHTMAP_COPY_PASTE)
 					{
-						if (IsKeyModificatorPressed(DVKEY_ALT)) //(copyPasteFrom == Vector2(-1.f, -1.f))
+						if (IsKeyModificatorPressed(DVKEY_ALT))
 						{
 							copyPasteFrom = cursorPosition;
 							copyPasteTo = Vector2(-1.f, -1.f);
+							return;
 						}
 						else
 						{
 							copyPasteTo = cursorPosition;
-							StoreOriginalHeightmap();
+							if (copyPasteTilemask)
+							{
+								PrepareTilemaskCopyPaste();
+							}
+
+							if (copyPasteHeightmap)
+							{
+								StoreOriginalHeightmap();
+							}
 						}
 					}
 					else
@@ -186,8 +197,15 @@ void HeightmapEditorSystem::ProcessUIEvent(DAVA::UIEvent *event)
 			case UIEvent::PHASE_ENDED:
 				if (editingIsEnabled)
 				{
-					CreateUndoPoint();
-					
+					if (drawingType == HEIGHTMAP_COPY_PASTE)
+					{
+						CreateCopyPasteUndo();
+					}
+					else
+					{
+						CreateHeightmapUndo();
+					}
+
 					editingIsEnabled = false;
 				}
 				break;
@@ -281,7 +299,7 @@ void HeightmapEditorSystem::UpdateBrushTool(float32 timeElapsed)
 	EditorHeightmap* editorHeightmap = drawSystem->GetHeightmapProxy();
 	
 	int32 scaleSize = toolImage->GetWidth();
-	Vector2 pos = cursorPosition - Vector2((float32)scaleSize, (float32)scaleSize)/2.0f;
+	Vector2 pos = cursorPosition - Vector2((float32)scaleSize, (float32)scaleSize) / 2.0f;
 	{
 		switch (drawingType)
 		{
@@ -327,15 +345,57 @@ void HeightmapEditorSystem::UpdateBrushTool(float32 timeElapsed)
 					return;
 				}
 
-				int32 scaleSize = toolImage->GetWidth();
-				Vector2 posTo = pos;
+				if (copyPasteHeightmap)
+				{
+					Vector2 posTo = pos;
+					
+					Vector2 deltaPos = cursorPosition - copyPasteTo;
+					Vector2 posFrom = copyPasteFrom + deltaPos - Vector2((float32)scaleSize, (float32)scaleSize)/2.f;
+					
+					float32 koef = (averageStrength * timeElapsed) * 2.0f;
 
-				Vector2 deltaPos = cursorPosition - copyPasteTo;
-				Vector2 posFrom = copyPasteFrom + deltaPos - Vector2((float32)scaleSize, (float32)scaleSize)/2.f;
+					editorHeightmap->DrawCopypasteRGBA(toolImage, posFrom, posTo, scaleSize, scaleSize, koef);
+				}
 
-				float32 koef = (averageStrength * timeElapsed) * 2.0f;
+				if (copyPasteTilemask && prevCursorPosition != cursorPosition)
+				{
+					int32 tilemaskSize = drawSystem->GetTextureSize();
+					int32 heightmapSize = drawSystem->GetHeightmapProxy()->Size();
+					float32 multiplier = (float32)tilemaskSize / (float32)heightmapSize;
+					int32 tilemaskCursorSize = (float32)((int32)(cursorSize * multiplier));
 
-				editorHeightmap->DrawCopypasteRGBA(toolImage, posFrom, posTo, scaleSize, scaleSize, koef);
+					Vector2 posTo = cursorPosition * multiplier - Vector2((float32)tilemaskCursorSize,
+																		  (float32)tilemaskCursorSize) / 2.f;
+					posTo.x = (float32)((int32)posTo.x);
+					posTo.y = (float32)((int32)posTo.y);
+
+					Vector2 deltaPos = cursorPosition - copyPasteTo;
+					Vector2 posFrom = (copyPasteFrom + deltaPos) * multiplier - Vector2((float32)tilemaskCursorSize,
+																						(float32)tilemaskCursorSize) / 2.f;
+					posFrom.x = (float32)((int32)posFrom.x);
+					posFrom.y = (float32)((int32)posFrom.y);
+
+					LandscapeProxy* landscapeProxy = drawSystem->GetLandscapeProxy();
+					Texture* texture = landscapeProxy->GetLandscapeTexture(Landscape::TEXTURE_TILE_MASK);
+
+					EditorHeightmap::DrawCopypasteRGBA(tilemaskImage, tilemaskImage, tilemaskCopyPasteTool,
+													   posFrom, posTo, tilemaskCursorSize, tilemaskCursorSize);
+					if(texture)
+					{
+						texture->TexImage(0, tilemaskImage->GetWidth(), tilemaskImage->GetHeight(),
+										  tilemaskImage->GetData(), 0);
+						//TODO: is code useful?
+						texture->GenerateMipmaps();
+						texture->SetWrapMode(Texture::WRAP_REPEAT, Texture::WRAP_REPEAT);
+						//ENDOFTODO
+
+						landscapeProxy->UpdateFullTiledTexture();
+					}
+
+					prevCursorPosition = cursorPosition;
+					Rect r = Rect(posTo, Vector2(tilemaskCursorSize, tilemaskCursorSize));
+					AddRectToAccumulator(tilemaskUpdatedRect, r);
+				}
 
 				break;
 			}
@@ -347,36 +407,53 @@ void HeightmapEditorSystem::UpdateBrushTool(float32 timeElapsed)
 		
 		Rect rect(pos.x, pos.y, (float32)scaleSize, (float32)scaleSize);
 		drawSystem->GetHeightmapProxy()->UpdateRect(rect);
-		AddRectToAccumulator(rect);
+		AddRectToAccumulator(heightmapUpdatedRect, rect);
 	}
 }
 
-void HeightmapEditorSystem::ResetAccumulatorRect()
+void HeightmapEditorSystem::ResetAccumulatorRect(Rect& accumulator)
 {
 	float32 inf = std::numeric_limits<float32>::infinity();
-	updatedRectAccumulator = Rect(inf, inf, -inf, -inf);
+	accumulator = Rect(inf, inf, -inf, -inf);
 }
 
-void HeightmapEditorSystem::AddRectToAccumulator(const Rect &rect)
+void HeightmapEditorSystem::AddRectToAccumulator(Rect& accumulator, const Rect& rect)
 {
-	updatedRectAccumulator = updatedRectAccumulator.Combine(rect);
+	accumulator = accumulator.Combine(rect);
 }
 
-Rect HeightmapEditorSystem::GetUpdatedRect()
+Rect HeightmapEditorSystem::GetClampedRect(const DAVA::Rect &rect, const DAVA::Rect &boundaries)
 {
-	EditorHeightmap* editorHeightmap = drawSystem->GetHeightmapProxy();
-	
-	int32 heightmapSize = editorHeightmap->Size() - 1;
-	Rect r = updatedRectAccumulator;
+	int32 left = (int32)boundaries.x;
+	int32 right = (int32)(boundaries.x + boundaries.dx) - 1;
+	int32 top = (int32)boundaries.y;
+	int32 bottom = (int32)(boundaries.y + boundaries.dy) - 1;
 
-	r.x = (float32)Clamp((int32)updatedRectAccumulator.x, 0, heightmapSize - 1);
-	r.y = (float32)Clamp((int32)updatedRectAccumulator.y, 0, heightmapSize - 1);
-	r.dx = Clamp((updatedRectAccumulator.x + updatedRectAccumulator.dx),
-				 0.f, (float32)heightmapSize - 1.f) - updatedRectAccumulator.x;
-	r.dy = Clamp((updatedRectAccumulator.y + updatedRectAccumulator.dy),
-				 0.f, (float32)heightmapSize - 1.f) - updatedRectAccumulator.y;
+	Rect r = rect;
+
+	r.x = Clamp(rect.x, (float32)left, (float32)right);
+	r.y = Clamp(rect.y, (float32)top, (float32)bottom);
+	r.dx = Clamp(rect.x + rect.dx, (float32)left, (float32)right) - rect.x;
+	r.dy = Clamp(rect.y + rect.dy, (float32)top, (float32)bottom) - rect.y;
 
 	return r;
+}
+
+Rect HeightmapEditorSystem::GetHeightmapUpdatedRect()
+{
+	EditorHeightmap* editorHeightmap = drawSystem->GetHeightmapProxy();
+	int32 heightmapSize = editorHeightmap->Size();
+	Rect r = Rect(Vector2(0, 0), Vector2(heightmapSize, heightmapSize));
+
+	return GetClampedRect(heightmapUpdatedRect, r);
+}
+
+Rect HeightmapEditorSystem::GetTilemaskUpdatedRect()
+{
+	int32 size = drawSystem->GetTextureSize();
+	Rect r(Vector2(0, 0), Vector2(size, size));
+
+	return GetClampedRect(tilemaskUpdatedRect, r);
 }
 
 void HeightmapEditorSystem::StoreOriginalHeightmap()
@@ -385,18 +462,47 @@ void HeightmapEditorSystem::StoreOriginalHeightmap()
 	
 	DVASSERT(originalHeightmap == NULL);
 	originalHeightmap = editorHeightmap->Clone(NULL);
-	ResetAccumulatorRect();
+	ResetAccumulatorRect(heightmapUpdatedRect);
 }
 
-void HeightmapEditorSystem::CreateUndoPoint()
+void HeightmapEditorSystem::PrepareTilemaskCopyPaste()
+{
+	tilemaskImage = CreateTilemaskImage();
+	originalTilemaskImage = CreateTilemaskImage();
+	CreateTilemaskCopyPasteTool();
+	ResetAccumulatorRect(tilemaskUpdatedRect);
+}
+
+void HeightmapEditorSystem::CreateHeightmapUndo()
 {
 	SceneEditor2* scene = dynamic_cast<SceneEditor2*>(GetScene());
 	DVASSERT(scene);
 	scene->Exec(new ModifyHeightmapCommand(drawSystem->GetHeightmapProxy(),
 										   originalHeightmap,
-										   GetUpdatedRect()));
+										   GetHeightmapUpdatedRect()));
 
 	SafeRelease(originalHeightmap);
+}
+
+void HeightmapEditorSystem::CreateCopyPasteUndo()
+{
+	if (!copyPasteHeightmap && !copyPasteTilemask)
+	{
+		return;
+	}
+
+	SceneEditor2* scene = dynamic_cast<SceneEditor2*>(GetScene());
+	DVASSERT(scene);
+
+	Rect heightmapRect = GetHeightmapUpdatedRect();
+	Rect tilemaskRect = GetTilemaskUpdatedRect();
+
+	scene->Exec(new CopyPasteHeightmapCommand(copyPasteHeightmap, copyPasteTilemask,
+											  drawSystem->GetHeightmapProxy(), originalHeightmap, heightmapRect,
+											  drawSystem->GetLandscapeProxy(), originalTilemaskImage, tilemaskRect));
+
+	SafeRelease(originalHeightmap);
+	SafeRelease(originalTilemaskImage);
 }
 
 void HeightmapEditorSystem::SetBrushSize(int32 brushSize)
@@ -440,15 +546,34 @@ void HeightmapEditorSystem::SetToolImage(const FilePath& toolImagePath)
 void HeightmapEditorSystem::SetDrawingType(eHeightmapDrawType type)
 {
 	copyPasteFrom = Vector2(-1.f, -1.f);
-
-	if (type == HEIGHTMAP_COPY_PASTE)
-	{
-		drawSystem->SetCursorTexture(squareTexture);
-	}
-	else if (drawingType == HEIGHTMAP_COPY_PASTE)
-	{
-		drawSystem->SetCursorTexture(cursorTexture);
-	}
-
 	drawingType = type;
+}
+
+void HeightmapEditorSystem::SetCopyPasteHeightmap(bool active)
+{
+	copyPasteHeightmap = active;
+}
+
+void HeightmapEditorSystem::SetCopyPasteTilemask(bool active)
+{
+	copyPasteTilemask = active;
+}
+
+Image* HeightmapEditorSystem::CreateTilemaskImage()
+{
+	Texture* texture = drawSystem->GetLandscapeProxy()->GetLandscapeTexture(Landscape::TEXTURE_TILE_MASK);
+
+	eBlendMode src = RenderManager::Instance()->GetSrcBlend();
+	eBlendMode dst = RenderManager::Instance()->GetDestBlend();
+	RenderManager::Instance()->SetBlendMode(BLEND_ONE, BLEND_ZERO);
+	Image* img = texture->CreateImageFromMemory();
+	RenderManager::Instance()->SetBlendMode(src, dst);
+
+	return img;
+}
+
+void HeightmapEditorSystem::CreateTilemaskCopyPasteTool()
+{
+	SafeRelease(tilemaskCopyPasteTool);
+	tilemaskCopyPasteTool = CreateToolImage(128, toolImagePath);
 }

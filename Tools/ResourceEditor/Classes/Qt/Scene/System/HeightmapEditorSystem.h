@@ -68,6 +68,9 @@ public:
 	void SetToolImage(const FilePath& toolImagePath);
 	void SetDrawingType(eHeightmapDrawType type);
 
+	void SetCopyPasteHeightmap(bool active);
+	void SetCopyPasteTilemask(bool active);
+
 protected:
 	bool enabled;
 	
@@ -82,6 +85,7 @@ protected:
 	uint32 cursorSize;
 	uint32 curToolSize;
 	Image* toolImage;
+	Image* tilemaskCopyPasteTool;
 	
 	eHeightmapDrawType drawingType;
 	float32 strength;
@@ -94,24 +98,39 @@ protected:
 	Vector2 cursorPosition;
 	Vector2 copyPasteFrom;
 	Vector2 copyPasteTo;
+	Vector2 prevCursorPosition;
 	
-	Rect updatedRectAccumulator;
-	
+	Rect heightmapUpdatedRect;
+	Rect tilemaskUpdatedRect;
+
 	bool editingIsEnabled;
 	
 	Heightmap* originalHeightmap;
-	
+
+	bool copyPasteHeightmap;
+	bool copyPasteTilemask;
+
+	Image* tilemaskImage;
+	Image* originalTilemaskImage;
+
 	void UpdateCursorPosition();
 	void UpdateToolImage(bool force = false);
 	void UpdateBrushTool(float32 timeElapsed);
 	Image* CreateToolImage(int32 sideSize, const FilePath& filePath);
 	
-	void AddRectToAccumulator(const Rect& rect);
-	void ResetAccumulatorRect();
-	Rect GetUpdatedRect();
+	void AddRectToAccumulator(Rect& accumulator, const Rect& rect);
+	void ResetAccumulatorRect(Rect& accumulator);
+	Rect GetClampedRect(const Rect& rect, const Rect& boundaries);
+	Rect GetHeightmapUpdatedRect();
+	Rect GetTilemaskUpdatedRect();
 	
 	void StoreOriginalHeightmap();
-	void CreateUndoPoint();
+	void PrepareTilemaskCopyPaste();
+	void CreateHeightmapUndo();
+	void CreateCopyPasteUndo();
+
+	Image* CreateTilemaskImage();
+	void CreateTilemaskCopyPasteTool();
 };
 
 #endif /* defined(__RESOURCEEDITORQT__HEIGHTMAPEDITORSYSTEM__) */

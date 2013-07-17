@@ -282,7 +282,8 @@ void ParticleTimeLineWidget::OnEffectNodeSelected(Entity* node)
 					{
 						float32 startTime = Max(minTime, layers[iLayer]->startTime);
 						float32 endTime = Min(maxTime, layers[iLayer]->endTime);
-						AddLine(iLines, startTime, endTime, colors[iLines % 3],
+						bool isLooped = layers[iLayer]->GetLooped();
+						AddLine(iLines, startTime, endTime, maxTime, isLooped, colors[iLines % 3],
 								QString::fromStdString(layers[iLayer]->layerName), layers[iLayer]);
 						iLines++;
 					}
@@ -319,15 +320,19 @@ void ParticleTimeLineWidget::AddLayerLine(uint32 layerLineID, float32 minTime, f
 	
 	float32 startTime = Max(minTime, layer->startTime);
 	float32 endTime = Min(maxTime, layer->endTime);
+	bool isLooped = layer->GetLooped();
 	
-	AddLine(layerLineID, startTime, endTime, layerColor, QString::fromStdString(layer->layerName), layer);
+	AddLine(layerLineID, startTime, endTime, maxTime, isLooped, layerColor, QString::fromStdString(layer->layerName), layer);
 }
 
-void ParticleTimeLineWidget::AddLine(uint32 lineId, float32 startTime, float32 endTime, const QColor& color, const QString& legend, ParticleLayer* layer)
+void ParticleTimeLineWidget::AddLine(uint32 lineId, float32 startTime, float32 endTime, float32 loopedEndTime,
+	bool isLooped, const QColor& color, const QString& legend, ParticleLayer* layer)
 {
 	LINE line;
 	line.startTime = startTime;
 	line.endTime = endTime;
+	line.loopedEndTime = loopedEndTime;
+	line.isLooped = isLooped;
 	line.color = color;
 	line.legend = legend;
 	line.layer = layer;
@@ -462,6 +467,27 @@ void ParticleTimeLineWidget::paintEvent(QPaintEvent *e)
 		{
 			painter.drawLine(startPoint, endPoint);
 		}
+		
+		if (line.isLooped)
+		{
+			GetLineRect(iter->first, startRect, endRect, true);
+			startPosition =  GetPointPositionFromDrawingRect(startRect.center());
+			endPosition =  GetPointPositionFromDrawingRect(endRect.center());
+			
+			QPoint startPoint(startRect.center());
+			startPoint.setX(startPoint.x() + 3);
+			QPoint endPoint(endRect.center());
+			endPoint.setX(endPoint.x() - 3);
+			
+			if(!(startPosition == endPosition && startPosition != POSITION_INSIDE))
+			{
+				painter.setPen(QPen(line.color, LINE_WIDTH));
+				painter.drawRect(endRect);
+			
+				painter.setPen(QPen(line.color, LINE_WIDTH, Qt::DotLine));
+				painter.drawLine(startPoint, endPoint);
+			}			
+		}
 
 		UpdateLayersExtraInfoPosition();
 	}
@@ -469,7 +495,7 @@ void ParticleTimeLineWidget::paintEvent(QPaintEvent *e)
 	ScrollZoomWidget::paintEvent(e, painter);
 }
 
-bool ParticleTimeLineWidget::GetLineRect(uint32 id, QRect& startRect, QRect& endRect) const
+bool ParticleTimeLineWidget::GetLineRect(uint32 id, QRect& startRect, QRect& endRect, bool useLoopedTime) const
 {
 	uint32 i = 0;
 	QRect grapRect = GetGraphRect();
@@ -479,9 +505,12 @@ bool ParticleTimeLineWidget::GetLineRect(uint32 id, QRect& startRect, QRect& end
 			continue;
 		
 		const LINE& line = iter->second;
-		
-		QPoint startPoint(grapRect.left() + (line.startTime - minTime) / (maxTime - minTime) * grapRect.width(), grapRect.top() + (i + 1) * LINE_STEP);
-		QPoint endPoint(grapRect.left() + (line.endTime - minTime) / (maxTime - minTime) * grapRect.width(), grapRect.top() + (i + 1) * LINE_STEP);
+		// For looped option set - we need different start/end time
+		float32 startTime = useLoopedTime ? line.endTime : line.startTime;
+		float32 endTime = useLoopedTime ? line.loopedEndTime : line.endTime;
+	
+		QPoint startPoint(grapRect.left() + (startTime - minTime) / (maxTime - minTime) * grapRect.width(), grapRect.top() + (i + 1) * LINE_STEP);
+		QPoint endPoint(grapRect.left() + (endTime - minTime) / (maxTime - minTime) * grapRect.width(), grapRect.top() + (i + 1) * LINE_STEP);
 		startRect = QRect(startPoint - QPoint(RECT_SIZE, RECT_SIZE), startPoint + QPoint(RECT_SIZE, RECT_SIZE));
 		endRect = QRect(endPoint - QPoint(RECT_SIZE, RECT_SIZE), endPoint + QPoint(RECT_SIZE, RECT_SIZE));
 		return true;

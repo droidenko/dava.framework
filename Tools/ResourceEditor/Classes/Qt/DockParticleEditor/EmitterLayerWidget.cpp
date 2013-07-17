@@ -212,6 +212,13 @@ EmitterLayerWidget::EmitterLayerWidget(QWidget *parent) :
 			SIGNAL(valueChanged(double)),
 			this,
 			SLOT(OnValueChanged()));
+			
+	isLoopedCheckBox = new QCheckBox("Loop layer");
+	mainBox->addWidget(isLoopedCheckBox);
+	connect(isLoopedCheckBox,
+			SIGNAL(stateChanged(int)),
+			this,
+			SLOT(OnValueChanged()));
 	
 	Q_FOREACH( QAbstractSpinBox * sp, findChildren<QAbstractSpinBox*>() ) {
         sp->installEventFilter( this );
@@ -307,6 +314,7 @@ void EmitterLayerWidget::Init(ParticleEmitter* emitter, DAVA::ParticleLayer *lay
 	enableCheckBox->setChecked(!layer->GetDisabled());
 	additiveCheckBox->setChecked(layer->GetAdditive());
 	isLongCheckBox->setChecked(layer->IsLong());
+	isLoopedCheckBox->setChecked(layer->GetLooped());
 
 	//LAYER_SPRITE = 0,
 	sprite = layer->GetSprite();
@@ -597,6 +605,7 @@ void EmitterLayerWidget::OnValueChanged()
 						 !enableCheckBox->isChecked(),
 						 additiveCheckBox->isChecked(),
 						 isLongCheckBox->isChecked(),
+						 isLoopedCheckBox->isChecked(),
 						 sprite,
 						 propLife.GetPropLine(),
 						 propLifeVariation.GetPropLine(),

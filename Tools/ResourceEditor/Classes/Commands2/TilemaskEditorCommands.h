@@ -27,8 +27,8 @@ class LandscapeProxy;
 class ModifyTilemaskCommand: public Command2
 {
 public:
-	ModifyTilemaskCommand(Image* originalMask, Image* originalTexture,
-						  LandscapeProxy* landscapeProxy, const Rect& updatedRect);
+	ModifyTilemaskCommand(Image* originalMask, LandscapeProxy* landscapeProxy,
+						  const Rect& updatedRect);
 	~ModifyTilemaskCommand();
 
 	virtual void Undo();
@@ -38,8 +38,6 @@ public:
 protected:
 	Image* undoImageMask;
 	Image* redoImageMask;
-	Image* undoImageTexture;
-	Image* redoImageTexture;
 	LandscapeProxy* landscapeProxy;
 	Rect updatedRect;
 

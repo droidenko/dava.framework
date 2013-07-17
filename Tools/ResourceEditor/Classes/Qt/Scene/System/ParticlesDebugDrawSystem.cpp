@@ -122,7 +122,8 @@ void ParticlesDebugDrawSystem::Draw()
 					DAVA::RenderManager::Instance()->SetColor(DAVA::Color(0.7f, 0.0f, 0.0f, 0.25f));
 					switch (emitter->emitterType)
 					{
-						case DAVA::ParticleEmitter::EMITTER_ONCIRCLE:
+						case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_VOLUME:
+						case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_EDGES:
 						case DAVA::ParticleEmitter::EMITTER_SHOCKWAVE:
 						{
 							float emitterRadius = DEFAULT_EFFECT_SIZE;

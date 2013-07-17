@@ -17,30 +17,23 @@
 #include "TilemaskEditorCommands.h"
 #include "../Qt/Scene/System/LandscapeEditorDrawSystem/LandscapeProxy.h"
 
-ModifyTilemaskCommand::ModifyTilemaskCommand(Image* originalMask, Image* originalTexture,
-											 LandscapeProxy* landscapeProxy, const Rect& updatedRect)
+ModifyTilemaskCommand::ModifyTilemaskCommand(Image* originalMask, LandscapeProxy* landscapeProxy, const Rect& updatedRect)
 :	Command2(CMDID_MODIFY_TILEMASK, "Tilemask Modification")
 {
 	this->updatedRect = updatedRect;
 	this->landscapeProxy = SafeRetain(landscapeProxy);
 
 	undoImageMask = Image::CopyImageRegion(originalMask, updatedRect);
-	undoImageTexture = Image::CopyImageRegion(originalTexture, updatedRect);
 
 	Image* currentImageMask = landscapeProxy->GetLandscapeTexture(Landscape::TEXTURE_TILE_MASK)->CreateImageFromMemory();
-	Image* currentImageTexture = landscapeProxy->GetLandscapeTexture(Landscape::TEXTURE_TILE_FULL)->CreateImageFromMemory();
 	redoImageMask = Image::CopyImageRegion(currentImageMask, updatedRect);
-	redoImageTexture = Image::CopyImageRegion(currentImageTexture, updatedRect);
 	SafeRelease(currentImageMask);
-	SafeRelease(currentImageTexture);
 }
 
 ModifyTilemaskCommand::~ModifyTilemaskCommand()
 {
 	SafeRelease(undoImageMask);
 	SafeRelease(redoImageMask);
-	SafeRelease(undoImageTexture);
-	SafeRelease(redoImageTexture);
 	SafeRelease(landscapeProxy);
 }
 

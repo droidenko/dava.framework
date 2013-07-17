@@ -391,7 +391,9 @@ void ParticleEmitter::PrepareEmitterParameters(Particle * particle, float32 velo
             lineDirection = Vector3(size->GetValue(time).x * rand05_x, size->GetValue(time).y * rand05_y, size->GetValue(time).z * rand05_z);
 		particle->position = tempPosition + lineDirection;
 	}
-    else if ((emitterType == EMITTER_ONCIRCLE) || (emitterType == EMITTER_SHOCKWAVE))
+    else if ((emitterType == EMITTER_ONCIRCLE_VOLUME) ||
+			 (emitterType == EMITTER_ONCIRCLE_EDGES) ||
+			 (emitterType == EMITTER_SHOCKWAVE))
     {
         // here just set particle position
 		// Yuri Coder, 2013/04/18. Shockwave particle isn't implemented for 2D mode -
@@ -432,7 +434,9 @@ void ParticleEmitter::PrepareEmitterParameters(Particle * particle, float32 velo
     // reuse particle velocity we've calculated
 	// Yuri Coder, 2013/04/18. Shockwave particle isn't implemented for 2D mode -
 	// currently draw them in the same way as "onCircle" ones.
-    if ((emitterType == EMITTER_ONCIRCLE) || (emitterType == EMITTER_SHOCKWAVE))
+    if ((emitterType == EMITTER_ONCIRCLE_VOLUME) ||
+		(emitterType == EMITTER_ONCIRCLE_EDGES) ||
+		(emitterType == EMITTER_SHOCKWAVE))
     {
         if(radius)
             particle->position += vel * radius->GetValue(time);
@@ -522,7 +526,9 @@ void ParticleEmitter::LoadFromYaml(const FilePath & filename)
 			else if (typeNode->AsString() == "rect")
 				emitterType = EMITTER_RECT;
 			else if (typeNode->AsString() == "oncircle")
-				emitterType = EMITTER_ONCIRCLE;
+				emitterType = EMITTER_ONCIRCLE_VOLUME;
+			else if (typeNode->AsString() == "oncircle_edges")
+				emitterType = EMITTER_ONCIRCLE_EDGES;
 			else if (typeNode->AsString() == "shockwave")
 				emitterType = EMITTER_SHOCKWAVE;
 			else
@@ -740,9 +746,14 @@ String ParticleEmitter::GetEmitterTypeName()
             return "rect";
         }
 
-        case EMITTER_ONCIRCLE:
+        case EMITTER_ONCIRCLE_VOLUME:
         {
             return "oncircle";
+        }
+
+		case EMITTER_ONCIRCLE_EDGES:
+        {
+            return "oncircle_edges";
         }
 
 		case EMITTER_SHOCKWAVE:

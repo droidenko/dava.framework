@@ -71,6 +71,8 @@ void HeightmapEditorPropertiesView::Init()
 	connect(ui->radioCopyPaste, SIGNAL(clicked()), handler, SLOT(SetHeightmapCopyPaste()));
 	connect(ui->sliderStrength, SIGNAL(valueChanged(int)), handler, SLOT(SetHeightmapEditorStrength(int)));
 	connect(ui->sliderAverageStrength, SIGNAL(valueChanged(int)), handler, SLOT(SetHeightmapEditorAverageStrength(int)));
+	connect(ui->checkboxHeightmap, SIGNAL(stateChanged(int)), handler, SLOT(SetHeightmapCopyPasteHeightmap(int)));
+	connect(ui->checkboxTilemask, SIGNAL(stateChanged(int)), handler, SLOT(SetHeightmapCopyPasteTilemask(int)));
 
 	QtMainWindowHandler::Instance()->RegisterHeightmapEditorWidgets(ui->buttonEnableHeightmapEditor,
 																	ui->sliderBrushSize,

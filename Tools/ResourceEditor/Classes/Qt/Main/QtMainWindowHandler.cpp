@@ -1293,6 +1293,8 @@ void QtMainWindowHandler::ToggleHeightmapEditor()
 			SetHeightmapEditorStrength(heightmapStrength->value());
 			SetHeightmapEditorAverageStrength(heightmapAverageStrength->value());
 			SetHeightmapEditorToolImage(heightmapToolImage->currentIndex());
+			SetHeightmapCopyPasteHeightmap(heightmapCopyHeightmap->checkState());
+			SetHeightmapCopyPasteTilemask(heightmapCopyTilemask->checkState());
 		}
 		else
 		{
@@ -1448,6 +1450,30 @@ void QtMainWindowHandler::SetHeightmapDropperHeight(SceneEditor2 *scene, double 
 	}
 
 	heightmapDropperHeight->setText(QString::number(height));
+}
+
+void QtMainWindowHandler::SetHeightmapCopyPasteHeightmap(int state)
+{
+	QtMainWindow *window = dynamic_cast<QtMainWindow *>(parent());
+	SceneEditor2* sep = window->GetCurrentScene();
+	if (!sep)
+	{
+		return;
+	}
+
+	sep->heightmapEditorSystem->SetCopyPasteHeightmap(state == Qt::Checked);
+}
+
+void QtMainWindowHandler::SetHeightmapCopyPasteTilemask(int state)
+{
+	QtMainWindow *window = dynamic_cast<QtMainWindow *>(parent());
+	SceneEditor2* sep = window->GetCurrentScene();
+	if (!sep)
+	{
+		return;
+	}
+
+	sep->heightmapEditorSystem->SetCopyPasteTilemask(state == Qt::Checked);
 }
 
 

@@ -192,6 +192,8 @@ public slots:
 	void SetHeightmapDropperHeight(SceneEditor2* scene, double height);
 	void SetHeightmapDropper();
 	void SetHeightmapCopyPaste();
+	void SetHeightmapCopyPasteHeightmap(int );
+	void SetHeightmapCopyPasteTilemask(int);
 
 	//tilemask editor
 	void ToggleTilemaskEditor();

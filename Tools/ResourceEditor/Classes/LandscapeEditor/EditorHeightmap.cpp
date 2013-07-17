@@ -675,7 +675,10 @@ void EditorHeightmap::DrawCopypasteRGBA(Image *src, Image *dst, Image *mask, con
                 
                 if((xSrc < src->width) && (xDst < dst->width))
                 {
-                    uint8 maskData = mask->data[(iRow * width + iCol) * 4];
+					// mask size could be not equal to the copy/paste area size
+					uint32 maskY = iRow * mask->GetHeight() / height;
+					uint32 maskX = iCol * mask->GetWidth() / width;
+                    uint8 maskData = mask->data[(maskY * mask->width + maskX) * 4];
                     if(maskData)
                     {
                         int64 dstOffset = (dstIndex + xDst) * formatSize;

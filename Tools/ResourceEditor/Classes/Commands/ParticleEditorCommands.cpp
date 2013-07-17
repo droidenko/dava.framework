@@ -112,6 +112,7 @@ void CommandUpdateParticleLayer::Init(const QString& layerName,
 									  bool isDisabled,
 									  bool additive,
 									  bool isLong,
+									  bool isLooped,
 									  Sprite* sprite,
 									  RefPtr< PropertyLine<float32> > life,
 									  RefPtr< PropertyLine<float32> > lifeVariation,
@@ -144,6 +145,7 @@ void CommandUpdateParticleLayer::Init(const QString& layerName,
 	this->layerType = layerType;
 	this->isDisabled = isDisabled;
 	this->additive = additive;
+	this->isLooped = isLooped;
 	this->isLong = isLong;
 	this->sprite = sprite;
 	this->life = life;
@@ -183,6 +185,7 @@ void CommandUpdateParticleLayer::Execute()
 	layer->SetDisabled(isDisabled);
 	layer->SetAdditive(additive);
 	layer->SetLong(isLong);
+	layer->SetLooped(isLooped);
 	layer->life = life;
 	layer->lifeVariation = lifeVariation;
 	layer->number = number;

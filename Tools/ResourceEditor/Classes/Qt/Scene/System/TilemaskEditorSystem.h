@@ -95,7 +95,6 @@ protected:
 	Shader* tileMaskEditorShader;
 
 	Image* originalMask;
-	Image* originalTexture;
 
 	bool needCreateUndo;
 	

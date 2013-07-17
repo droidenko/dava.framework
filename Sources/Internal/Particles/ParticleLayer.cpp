@@ -313,8 +313,16 @@ bool ParticleLayer::GetLooped()
 
 void ParticleLayer::RestartLayerIfNeed()
 {
+	float32 lifeVariationTime = 0;
+	if (lifeVariation)
+	{
+		lifeVariationTime = lifeVariation->GetValue(layerTime);
+	}
+	
+	float32 layerEndTime = Max(endTime, lifeVariationTime);
 	// Restart layer effect if auto restart option is on and layer time exceeds its endtime
-	if(isLooped && (layerTime > endTime) && !emitter->IsPaused())
+	// Don't restart layer if it's endTime or liveVariationTime is not "ended"
+	if(isLooped && (layerTime > layerEndTime) && !emitter->IsPaused())
 	{
 		Restart(true);
 	}

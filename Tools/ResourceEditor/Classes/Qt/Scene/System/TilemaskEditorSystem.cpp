@@ -53,7 +53,6 @@ TilemaskEditorSystem::TilemaskEditorSystem(Scene* scene)
 ,	toolSpriteUpdated(false)
 ,	needCreateUndo(false)
 ,	originalMask(NULL)
-,	originalTexture(NULL)
 {
 	cursorTexture = Texture::CreateFromFile("~res:/LandscapeEditor/Tools/cursor/cursor.png");
 	cursorTexture->SetWrapMode(Texture::WRAP_CLAMP_TO_EDGE, Texture::WRAP_CLAMP_TO_EDGE);
@@ -457,18 +456,15 @@ void TilemaskEditorSystem::CreateUndoPoint()
 {
 	SceneEditor2* scene = dynamic_cast<SceneEditor2*>(GetScene());
 	DVASSERT(scene);
-	scene->Exec(new ModifyTilemaskCommand(originalMask, originalTexture,
-										  drawSystem->GetLandscapeProxy(), GetUpdatedRect()));
+	scene->Exec(new ModifyTilemaskCommand(originalMask, drawSystem->GetLandscapeProxy(), GetUpdatedRect()));
 
 	SafeRelease(originalMask);
-	SafeRelease(originalTexture);
 }
 
 void TilemaskEditorSystem::StoreOriginalState()
 {
-	DVASSERT(originalMask == NULL && originalTexture == NULL);
+	DVASSERT(originalMask == NULL);
 
 	LandscapeProxy* lp = drawSystem->GetLandscapeProxy();
 	originalMask = lp->GetLandscapeTexture(Landscape::TEXTURE_TILE_MASK)->CreateImageFromMemory();
-	originalTexture = lp->GetLandscapeTexture(Landscape::TEXTURE_TILE_FULL)->CreateImageFromMemory();
 }

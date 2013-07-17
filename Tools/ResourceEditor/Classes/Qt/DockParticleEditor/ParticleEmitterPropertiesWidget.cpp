@@ -41,7 +41,8 @@ ParticleEmitterPropertiesWidget::ParticleEmitterPropertiesWidget(QWidget* parent
 	emitterType = new QComboBox(this);
 	emitterType->addItem("Point");
 	emitterType->addItem("Box");
-	emitterType->addItem("Circle");
+	emitterType->addItem("Circle - Volume");
+	emitterType->addItem("Circle - Edges");
 	emitterType->addItem("Shockwave");
 	emitterTypeHBox->addWidget(emitterType);
 	mainLayout->addLayout(emitterTypeHBox);

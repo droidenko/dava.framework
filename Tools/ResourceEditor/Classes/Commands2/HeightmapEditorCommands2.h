@@ -34,6 +34,7 @@
 using namespace DAVA;
 
 class HeightmapProxy;
+class LandscapeProxy;
 
 class ModifyHeightmapCommand: public Command2
 {
@@ -56,6 +57,50 @@ protected:
 
 	uint16* GetHeightmapRegion(Heightmap* heightmap);
 	void ApplyHeightmapRegion(uint16* region);
+};
+
+class CopyPasteHeightmapCommand: public Command2
+{
+public:
+	CopyPasteHeightmapCommand(bool heightmapModified,
+							  bool tilemaskModified,
+							  HeightmapProxy* heightmapProxy,
+							  Heightmap* originalHeightmap,
+							  const Rect& heightmapUpdatedRect,
+							  LandscapeProxy* landscapeProxy,
+							  Image* originalTilemaskImage,
+							  const Rect& tilemaskUpdatedRect);
+
+	~CopyPasteHeightmapCommand();
+
+protected:
+	HeightmapProxy* heightmapProxy;
+	LandscapeProxy* landscapeProxy;
+
+	bool heightmapModified;
+	bool tilemaskModified;
+
+	uint16* undoRegion;
+	uint16* redoRegion;
+
+	Image* undoImageMask;
+	Image* redoImageMask;
+
+	Rect heightmapUpdatedRect;
+	Rect tilemaskUpdatedRect;
+
+	bool firstRun;
+
+	virtual void Redo();
+	virtual void Undo();
+
+	virtual Entity* GetEntity() const;
+
+	uint16* GetHeightmapRegion(Heightmap* heightmap, const Rect& updatedRect);
+	void ApplyHeightmapRegion(uint16* region, const Rect& updatedRect);
+	Sprite* ApplyImageToTexture(Image* image,
+								Texture* texture,
+								const Rect& updatedRect);
 };
 
 #endif /* defined(__RESOURCEEDITORQT__HEIGHTMAPEDITORCOMMANDS2__) */
