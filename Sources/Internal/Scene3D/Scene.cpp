@@ -199,6 +199,7 @@ void Scene::RegisterNode(Entity * node)
     if(!globalSceneSettings && node->GetName() == SCENE_SETTINGS_NAME)
     {
         globalSceneSettings = node;
+        ApplyLodLayerCorrection();
     }
 }
 
@@ -227,6 +228,7 @@ void Scene::UnregisterNode(Entity * node)
     if(globalSceneSettings == node)
     {
         globalSceneSettings = NULL;
+        ApplyLodLayerCorrection();
     }
 }
     
@@ -840,6 +842,7 @@ void Scene::CreateSceneSettings()
     
     globalSceneSettings->Release();
 }
+    
 };
 
 

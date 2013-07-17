@@ -52,6 +52,10 @@ void LodSystem::Process()
 void LodSystem::AddEntity(Entity * entity)
 {
 	entities.push_back(entity);
+    
+    LodComponent *lod = GetLodComponent(entity);
+    lod->RecalcWorkingDistances();
+    
 	UpdatePartialUpdateIndices();
 }
 

@@ -210,7 +210,6 @@ protected:
     
     Entity *globalSceneSettings;
     
-    
     uint64 updateTime;
     uint64 drawTime;
     uint32 nodeCounter;
