@@ -117,7 +117,9 @@ void EditorLightSystem::RemoveCameraLightFromScene()
 void EditorLightSystem::AddEntity( DAVA::Entity * entity )
 {
 	DVASSERT(entity);
-
+    
+    if(entity == cameraLight) return;
+    
 	lightCountOnScene += CountLightsForEntityRecursive(entity);
 
 	if(isEnabled && (lightCountOnScene > 0))
@@ -129,6 +131,8 @@ void EditorLightSystem::AddEntity( DAVA::Entity * entity )
 void EditorLightSystem::RemoveEntity( DAVA::Entity * entity )
 {
 	DVASSERT(entity);
+
+    if(entity == cameraLight) return;
 
 	lightCountOnScene -= CountLightsForEntityRecursive(entity);
 	DVASSERT(lightCountOnScene >= 0);

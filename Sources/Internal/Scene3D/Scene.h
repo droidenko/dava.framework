@@ -203,6 +203,7 @@ public:
 	virtual void	RemoveAllChildren();
 
     Entity *CreateSceneSettings();
+    Entity *GetSceneSettings();
 
 protected:
     
@@ -210,7 +211,6 @@ protected:
     
     void UpdateLights();
     
-    Entity *GetSceneSettings();
     Entity *globalSceneSettings;
     
     
