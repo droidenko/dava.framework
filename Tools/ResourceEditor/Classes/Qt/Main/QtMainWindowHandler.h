@@ -284,6 +284,9 @@ private:
 
 	void UpdateTilemaskTileTextures();
 
+    bool CreateSceneGlobalSettingsIfNeed(SceneData *sceneData);
+
+    
 private:
 	//set switch index
 	QPushButton*	setSwitchIndexToggleButton;

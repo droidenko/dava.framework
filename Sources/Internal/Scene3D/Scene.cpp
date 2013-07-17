@@ -195,6 +195,11 @@ void Scene::RegisterNode(Entity * node)
         if (needAdd)
             systems[k]->AddEntity(node);
     }
+    
+    if(!globalSceneSettings && node->GetName() == SCENE_SETTINGS_NAME)
+    {
+        globalSceneSettings = node;
+    }
 }
 
 void Scene::UnregisterNode(Entity * node)
@@ -218,6 +223,11 @@ void Scene::UnregisterNode(Entity * node)
 	{
 		UnregisterImposter(imposter);
 	}
+    
+    if(globalSceneSettings == node)
+    {
+        globalSceneSettings = NULL;
+    }
 }
     
 void Scene::AddComponent(Entity * entity, Component * component)
@@ -277,8 +287,6 @@ void Scene::AddSystem(SceneSystem * sceneSystem, uint32 componentFlags)
     
 void Scene::RemoveSystem(SceneSystem * sceneSystem, uint32 /*componentFlags*/)
 {
-    //TODO: need to check if sceneSystem is one of scene-needed systems such as transform/lod/article etc?
-    
     Vector<SceneSystem*>::const_iterator endIt = systems.end();
     for(Vector<SceneSystem*>::iterator it = systems.begin(); it != endIt; ++it)
     {
@@ -289,7 +297,7 @@ void Scene::RemoveSystem(SceneSystem * sceneSystem, uint32 /*componentFlags*/)
         }
     }
 
-    DVASSERT_MSG(false, "System must be at systems array");
+    DVASSERT_MSG(false, "sceneSystem must be at systems array");
 }
 
 Scene * Scene::GetScene()
@@ -805,20 +813,16 @@ void Scene::ApplyLodLayerCorrectionRecursive(Entity *entity)
 
 Entity * Scene::GetSceneSettings()
 {
-    if(!globalSceneSettings)
-    {   // try to find loaded settings
-        globalSceneSettings = FindByName(SCENE_SETTINGS_NAME);
-    }
-    
     return globalSceneSettings;
 }
 
-Entity * Scene::CreateSceneSettings()
+
+void Scene::CreateSceneSettings()
 {
     if(globalSceneSettings)
     {
         Logger::Warning("[Scene::CreateSceneSettings] Global Settings Entity has been initalized already.");
-        return globalSceneSettings;
+        return;
     }
     
     globalSceneSettings = new Entity();
@@ -835,29 +839,7 @@ Entity * Scene::CreateSceneSettings()
     }
     
     globalSceneSettings->Release();
-
-    return globalSceneSettings;
 }
-    
-    
-void Scene::RemoveNode(Entity * node)
-{
-    if(globalSceneSettings == node)
-    {
-        globalSceneSettings = NULL;
-    }
-    
-    Entity::RemoveNode(node);
-}
-    
-void Scene::RemoveAllChildren()
-{
-    globalSceneSettings = NULL;
-    
-    Entity::RemoveAllChildren();
-}
-
-
 };
 
 

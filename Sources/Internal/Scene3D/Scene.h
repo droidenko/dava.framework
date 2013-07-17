@@ -199,10 +199,7 @@ public:
     
     void ApplyLodLayerCorrection();
     
-    virtual void	RemoveNode(Entity * node);
-	virtual void	RemoveAllChildren();
-
-    Entity *CreateSceneSettings();
+    void CreateSceneSettings();
     Entity *GetSceneSettings();
 
 protected:

@@ -2007,6 +2007,16 @@ void QtMainWindowHandler::OpenHelp()
 void QtMainWindowHandler::ShowLODCorrectionDialog()
 {
     SceneData *sceneData = SceneDataManager::Instance()->SceneGetLevel();
+
+    if(CreateSceneGlobalSettingsIfNeed(sceneData))
+    {
+        LodCorrectionDialog dlg(sceneData->GetScene());
+        dlg.exec();
+    }
+}
+
+bool QtMainWindowHandler::CreateSceneGlobalSettingsIfNeed(SceneData *sceneData)
+{
     Scene *scene = sceneData->GetScene();
     
     if (NULL == scene->GetSceneSettings())
@@ -2014,13 +2024,12 @@ void QtMainWindowHandler::ShowLODCorrectionDialog()
         int answer = ShowQuestion("Scene Editor", "There are no settings for scene. Create scene global settings?", MB_FLAG_NO | MB_FLAG_YES, MB_FLAG_YES);
         if(MB_FLAG_NO == answer)
         {
-            return NULL;
+            return false;
         }
-
+        
         scene->CreateSceneSettings();
         sceneData->RebuildSceneGraph();
     }
-    
-    LodCorrectionDialog dlg(scene);
-    dlg.exec();
+
+    return true;
 }
