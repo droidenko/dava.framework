@@ -319,6 +319,8 @@ protected:
     int16 AllocateRDOQuad(LandscapeQuad * quad);
     void ReleaseAllRDOQuads();
 
+	int GetMaxLod(LandscapeQuad& quad);
+	
     Vector<LandscapeVertex *> landscapeVerticesArray;
     Vector<RenderDataObject *> landscapeRDOArray;
     

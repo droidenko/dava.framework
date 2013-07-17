@@ -299,7 +299,7 @@ void Landscape::BuildLandscape()
     quadTreeHead.data.size = heightmap->Size() - 1;
     quadTreeHead.data.rdoQuad = -1;
     
-    SetLods(Vector4(60.0f, 120.0f, 240.0f, 480.0f));
+    SetLods(Vector4(50.0f, 100.0f, 200.0f, 480.0f));
  
     allocatedMemoryForQuads = 0;
 
@@ -842,7 +842,28 @@ void Landscape::DrawFans()
         RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_TRIANGLEFAN, count, EIF_16, indices); 
     }
  */
-}  
+}
+	
+int Landscape::GetMaxLod(LandscapeQuad& quad)
+{
+	Vector3 v = cameraPos - quad.bbox.max;
+	float32 dist0 = v.SquareLength();
+		
+	v = cameraPos - quad.bbox.min;
+	float32 dist1 = v.SquareLength();
+		
+	dist0 = Max(dist0, dist1);
+		
+	int32 maxLod = 0;
+		
+	for (int32 k = 0; k < lodLevelsCount; ++k)
+	{
+		if (dist0 > lodSqDistance[k])
+			maxLod = k + 1;
+	}
+		
+	return maxLod;
+}
     
 void Landscape::Draw(LandQuadTreeNode<LandscapeQuad> * currentNode)
 {
@@ -911,6 +932,35 @@ void Landscape::Draw(LandQuadTreeNode<LandscapeQuad> * currentNode)
             minLod = k + 1;
         if (maxDist > lodSqDistance[k])
             maxLod = k + 1;
+    }
+	
+	//VI: this check should fix occasional cracks on the landscape
+	if(minLod == maxLod)
+	{
+		LandQuadTreeNode<LandscapeQuad> * parentNode = currentNode->parent;
+		
+		if(parentNode)
+		{
+			if(parentNode->neighbours[LEFT])
+			{
+				maxLod = Max(maxLod, GetMaxLod(parentNode->neighbours[LEFT]->data));
+			}
+			
+			if(parentNode->neighbours[RIGHT])
+			{
+				maxLod = Max(maxLod, GetMaxLod(parentNode->neighbours[RIGHT]->data));
+			}
+			
+			if(parentNode->neighbours[TOP])
+			{
+				maxLod = Max(maxLod, GetMaxLod(parentNode->neighbours[TOP]->data));
+			}
+			
+			if(parentNode->neighbours[BOTTOM])
+			{
+				maxLod = Max(maxLod, GetMaxLod(parentNode->neighbours[BOTTOM]->data));
+			}
+		}
     }
     
     // debug block
