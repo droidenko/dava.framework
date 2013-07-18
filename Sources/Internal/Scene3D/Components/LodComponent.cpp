@@ -27,6 +27,7 @@ const float32 LodComponent::MAX_LOD_DISTANCE = 1000.f;
 
 static const float32 NEAR_DISTANCE_COEFF = 0.95f;
 static const float32 FAR_DISTANCE_COEFF = 1.05f;
+static const float32 LOD_LAYERS_DELTA = 1.f;
     
     
 LodComponent::LodDistance::LodDistance()
@@ -315,6 +316,12 @@ void LodComponent::RecalcWorkingDistance(int32 forLayer)
     DVASSERT(0 <= forLayer && forLayer < MAX_LOD_LAYERS);
     
     float32 distance = RecalcDistance(lodLayersArrayOriginal[forLayer].distance, GetPersentage(forLayer));
+    
+    float32 minDistance = (forLayer) ? (lodLayersArrayWorking[forLayer - 1].distance + LOD_LAYERS_DELTA): INVALID_DISTANCE;
+    float32 maxDistance = (forLayer < GetLodLayersCount() - 1) ? (lodLayersArrayWorking[forLayer + 1].distance - LOD_LAYERS_DELTA): (MAX_LOD_DISTANCE * 2);
+    
+    distance = Clamp(distance, minDistance, maxDistance);
+    
     SetDistanceToArray(lodLayersArrayWorking, distance, forLayer);
 
     flags |= NEED_UPDATE_AFTER_LOAD;
