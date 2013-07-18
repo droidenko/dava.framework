@@ -214,6 +214,9 @@
     <Filter Include="Classes\Qt\Tools\MimeDataHelper">
       <UniqueIdentifier>{6d3f4be9-f1f7-4e9d-806c-61a057978588}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\Qt\Tools\LodCorrection">
+      <UniqueIdentifier>{23725b89-702d-44c6-89bc-98a78f6599ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Collada\ColladaAnimatedMesh.cpp">
@@ -1914,6 +1917,12 @@
     <ClCompile Include="Classes\Qt\Scene\System\EditorLightSystem.cpp">
       <Filter>Classes\Qt\Scene\System</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Qt\Tools\LodCorrection\LodCorrectionDialog.cpp">
+      <Filter>Classes\Qt\Tools\LodCorrection</Filter>
+    </ClCompile>
+    <ClCompile Include="_GeneratedQt\Tools\LodCorrection\LodCorrectionDialog_moc.cpp">
+      <Filter>QtGenerated</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Collada\ColladaAnimatedMesh.h">
@@ -3355,6 +3364,9 @@
     </ClInclude>
     <ClInclude Include="Classes\Qt\Scene\System\EditorLightSystem.h">
       <Filter>Classes\Qt\Scene\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\Tools\LodCorrection\LodCorrectionDialog.h">
+      <Filter>Classes\Qt\Tools\LodCorrection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
