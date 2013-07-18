@@ -176,7 +176,6 @@
 		4FAD0D311785EC6E00B05A35 /* TextureScrollArea_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CAE1785EC6E00B05A35 /* TextureScrollArea_moc.cpp */; };
 		4FAD0D321785EC6E00B05A35 /* AddSwitchEntityDialog_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CB11785EC6E00B05A35 /* AddSwitchEntityDialog_moc.cpp */; };
 		4FAD0D331785EC6E00B05A35 /* EventFilterDoubleSpinBox_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CB31785EC6E00B05A35 /* EventFilterDoubleSpinBox_moc.cpp */; };
-		4FAD0D341785EC6E00B05A35 /* QMimeDataHelper_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CB51785EC6E00B05A35 /* QMimeDataHelper_moc.cpp */; };
 		4FAD0D351785EC6E00B05A35 /* QResourceEditorProgressDialog_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CB71785EC6E00B05A35 /* QResourceEditorProgressDialog_moc.cpp */; };
 		4FAD0D361785EC6E00B05A35 /* QtPosSaver_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CB91785EC6E00B05A35 /* QtPosSaver_moc.cpp */; };
 		4FAD0D371785EC6E00B05A35 /* QtPropertyData_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 4FAD0CBB1785EC6E00B05A35 /* QtPropertyData_moc.cpp */; };
@@ -534,6 +533,7 @@
 		E8DD07BF16B054210013F115 /* BaseParticleEditorContentWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8DD07BD16B054210013F115 /* BaseParticleEditorContentWidget.cpp */; };
 		E8EE7E59160DBCA000645405 /* RulerTool.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8EE7E57160DBCA000645405 /* RulerTool.cpp */; };
 		E8F020CB16103E84000969AF /* RulerToolLandscape.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8F020C916103E84000969AF /* RulerToolLandscape.cpp */; };
+		E8F799C01797D6F400E7C3C8 /* MimeDataHelper_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8F799BF1797D6F400E7C3C8 /* MimeDataHelper_moc.cpp */; };
 		E8FB1E02172E900300D1428F /* CommandLineManager.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8FB1DFE172E900300D1428F /* CommandLineManager.cpp */; };
 		E8FB1E06172E93CD00D1428F /* CommandLineTool.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8FB1E04172E93CD00D1428F /* CommandLineTool.cpp */; };
 		E8FB1E0C172E949700D1428F /* ImageSplitter.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = E8FB1E08172E949700D1428F /* ImageSplitter.cpp */; };
@@ -834,7 +834,6 @@
 		4FAD0CAE1785EC6E00B05A35 /* TextureScrollArea_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureScrollArea_moc.cpp; sourceTree = "<group>"; };
 		4FAD0CB11785EC6E00B05A35 /* AddSwitchEntityDialog_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddSwitchEntityDialog_moc.cpp; sourceTree = "<group>"; };
 		4FAD0CB31785EC6E00B05A35 /* EventFilterDoubleSpinBox_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFilterDoubleSpinBox_moc.cpp; sourceTree = "<group>"; };
-		4FAD0CB51785EC6E00B05A35 /* QMimeDataHelper_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QMimeDataHelper_moc.cpp; sourceTree = "<group>"; };
 		4FAD0CB71785EC6E00B05A35 /* QResourceEditorProgressDialog_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QResourceEditorProgressDialog_moc.cpp; sourceTree = "<group>"; };
 		4FAD0CB91785EC6E00B05A35 /* QtPosSaver_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtPosSaver_moc.cpp; sourceTree = "<group>"; };
 		4FAD0CBB1785EC6E00B05A35 /* QtPropertyData_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtPropertyData_moc.cpp; sourceTree = "<group>"; };
@@ -1625,6 +1624,7 @@
 		E8EE7E58160DBCA000645405 /* RulerTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RulerTool.h; path = Classes/RulerTool/RulerTool.h; sourceTree = "<group>"; };
 		E8F020C916103E84000969AF /* RulerToolLandscape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerToolLandscape.cpp; path = Classes/LandscapeEditor/RulerToolLandscape.cpp; sourceTree = "<group>"; };
 		E8F020CA16103E84000969AF /* RulerToolLandscape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RulerToolLandscape.h; path = Classes/LandscapeEditor/RulerToolLandscape.h; sourceTree = "<group>"; };
+		E8F799BF1797D6F400E7C3C8 /* MimeDataHelper_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MimeDataHelper_moc.cpp; sourceTree = "<group>"; };
 		E8FB1DFE172E900300D1428F /* CommandLineManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandLineManager.cpp; path = Classes/CommandLine/CommandLineManager.cpp; sourceTree = "<group>"; };
 		E8FB1DFF172E900300D1428F /* CommandLineManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandLineManager.h; path = Classes/CommandLine/CommandLineManager.h; sourceTree = "<group>"; };
 		E8FB1E04172E93CD00D1428F /* CommandLineTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandLineTool.cpp; path = Classes/CommandLine/CommandLineTool.cpp; sourceTree = "<group>"; };
@@ -2185,9 +2185,9 @@
 			isa = PBXGroup;
 			children = (
 				E87FE312178D6A7F009416BE /* LodCorrection */,
+				E8F799BE1797D6F400E7C3C8 /* MimeDataHelper */,
 				4FAD0CB01785EC6E00B05A35 /* AddSwitchEntityDialog */,
 				4FAD0CB21785EC6E00B05A35 /* EventFilterDoubleSpinBox */,
-				4FAD0CB41785EC6E00B05A35 /* QMimeDataHelper */,
 				4FAD0CB61785EC6E00B05A35 /* QResourceEditorProgressDialog */,
 				4FAD0CB81785EC6E00B05A35 /* QtPosSaver */,
 				4FAD0CBA1785EC6E00B05A35 /* QtPropertyEditor */,
@@ -2211,14 +2211,6 @@
 				4FAD0CB31785EC6E00B05A35 /* EventFilterDoubleSpinBox_moc.cpp */,
 			);
 			path = EventFilterDoubleSpinBox;
-			sourceTree = "<group>";
-		};
-		4FAD0CB41785EC6E00B05A35 /* QMimeDataHelper */ = {
-			isa = PBXGroup;
-			children = (
-				4FAD0CB51785EC6E00B05A35 /* QMimeDataHelper_moc.cpp */,
-			);
-			path = QMimeDataHelper;
 			sourceTree = "<group>";
 		};
 		4FAD0CB61785EC6E00B05A35 /* QResourceEditorProgressDialog */ = {
@@ -3614,6 +3606,14 @@
 			name = RulerTool;
 			sourceTree = "<group>";
 		};
+		E8F799BE1797D6F400E7C3C8 /* MimeDataHelper */ = {
+			isa = PBXGroup;
+			children = (
+				E8F799BF1797D6F400E7C3C8 /* MimeDataHelper_moc.cpp */,
+			);
+			path = MimeDataHelper;
+			sourceTree = "<group>";
+		};
 		E8FB1DF7172E867C00D1428F /* CommandLine */ = {
 			isa = PBXGroup;
 			children = (
@@ -4367,7 +4367,6 @@
 				4FAD0D311785EC6E00B05A35 /* TextureScrollArea_moc.cpp in Build Sources */,
 				4FAD0D321785EC6E00B05A35 /* AddSwitchEntityDialog_moc.cpp in Build Sources */,
 				4FAD0D331785EC6E00B05A35 /* EventFilterDoubleSpinBox_moc.cpp in Build Sources */,
-				4FAD0D341785EC6E00B05A35 /* QMimeDataHelper_moc.cpp in Build Sources */,
 				4FAD0D351785EC6E00B05A35 /* QResourceEditorProgressDialog_moc.cpp in Build Sources */,
 				4FAD0D361785EC6E00B05A35 /* QtPosSaver_moc.cpp in Build Sources */,
 				4FAD0D371785EC6E00B05A35 /* QtPropertyData_moc.cpp in Build Sources */,
@@ -4411,6 +4410,7 @@
 				E87FE314178D6A7F009416BE /* LodCorrectionDialog_moc.cpp in Build Sources */,
 				17B8201B178FEFCD00954A81 /* FramePathHelper.cpp in Build Sources */,
 				E8A1091817944416007FF496 /* EditorLightSystem.cpp in Build Sources */,
+				E8F799C01797D6F400E7C3C8 /* MimeDataHelper_moc.cpp in Build Sources */,
 			);
 			name = "Build Sources";
 			runOnlyForDeploymentPostprocessing = 0;

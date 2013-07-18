@@ -137,7 +137,7 @@ protected:
     float32 RecalcDistance(float32 originalDistance, float32 persentage);
     float32 GetPersentage(uint32 forLayer);
     
-    
+    void SetDistanceToArray(Vector<LodDistance> &lodArray, float32 distance, float32 forLayer);
     
 public:
     

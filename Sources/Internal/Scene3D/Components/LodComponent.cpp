@@ -65,11 +65,8 @@ Component * LodComponent::Clone(Entity * toEntity)
 	}
 
 	//Lod values
-	for(int32 iLayer = 0; iLayer < MAX_LOD_LAYERS; ++iLayer)
-	{
-        newLod->lodLayersArrayOriginal[iLayer] = lodLayersArrayOriginal[iLayer];
-        newLod->lodLayersArrayWorking[iLayer] = lodLayersArrayWorking[iLayer];
-	}
+    newLod->lodLayersArrayOriginal = lodLayersArrayOriginal;
+    newLod->lodLayersArrayWorking = lodLayersArrayWorking;
 
 	newLod->forceDistance = forceDistance;
 	newLod->forceDistanceSq = forceDistanceSq;
@@ -160,6 +157,8 @@ void LodComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
 					lodLayersArrayOriginal[i].farDistanceSq = lodLayersArrayOriginal[i].farDistance * lodLayersArrayOriginal[i].farDistance;
 				}
 			}
+            
+            lodLayersArrayWorking = lodLayersArrayOriginal;
 		}
 
 		KeyedArchive *lodDataArch = archive->GetArchive("lc.loddata");
@@ -208,12 +207,12 @@ LodComponent::LodComponent()
 	{
 		lodLayersArrayOriginal[iLayer].SetDistance(GetDefaultDistance(iLayer));
 		lodLayersArrayOriginal[iLayer].SetFarDistance(MAX_LOD_DISTANCE * 2);
-        
-        lodLayersArrayWorking[iLayer] = lodLayersArrayOriginal[iLayer];
 	}
 
 	lodLayersArrayOriginal[0].SetNearDistance(0.0f);
-	lodLayersArrayWorking[0].SetNearDistance(0.0f);
+
+    lodLayersArrayWorking = lodLayersArrayOriginal;
+
     
     flags = NEED_UPDATE_AFTER_LOAD;
 }
@@ -231,14 +230,14 @@ void LodComponent::SetCurrentLod(LodData *newLod)
 		if (currentLod) 
 		{
 			int32 size = currentLod->nodes.size();
-			for (int i = 0; i < size; i++) 
+			for (int32 i = 0; i < size; i++)
 			{
 				currentLod->nodes[i]->SetLodVisible(false);
 			}
 		}
 		currentLod = newLod;
 		int32 size = currentLod->nodes.size();
-		for (int i = 0; i < size; i++) 
+		for (int32 i = 0; i < size; i++)
 		{
 			currentLod->nodes[i]->SetLodVisible(true);
 		}
@@ -272,25 +271,8 @@ void LodComponent::SetLodLayerDistance(int32 layerNum, float32 distance)
 {
     DVASSERT(0 <= layerNum && layerNum < MAX_LOD_LAYERS);
     
-    if(INVALID_DISTANCE != distance)
-    {
-        float32 nearDistance = distance * NEAR_DISTANCE_COEFF;
-        float32 farDistance = distance * FAR_DISTANCE_COEFF;
-        
-        if(GetLodLayersCount() - 1 == layerNum)
-        {
-            lodLayersArrayOriginal[layerNum].SetFarDistance(MAX_LOD_DISTANCE * 2);
-        }
-        if(layerNum)
-        {
-            lodLayersArrayOriginal[layerNum-1].SetFarDistance(farDistance);
-        }
-        
-        lodLayersArrayOriginal[layerNum].SetNearDistance(nearDistance);
-    }
+    SetDistanceToArray(lodLayersArrayOriginal, distance, layerNum);
 
-    lodLayersArrayOriginal[layerNum].SetDistance(distance);
-    
     RecalcWorkingDistance(layerNum);
 }
 
@@ -333,30 +315,36 @@ void LodComponent::RecalcWorkingDistance(int32 forLayer)
     DVASSERT(0 <= forLayer && forLayer < MAX_LOD_LAYERS);
     
     float32 distance = RecalcDistance(lodLayersArrayOriginal[forLayer].distance, GetPersentage(forLayer));
-    if(distance != INVALID_DISTANCE)
-    {
-        float32 nearDistance = distance * NEAR_DISTANCE_COEFF;
-        float32 farDistance = distance * FAR_DISTANCE_COEFF;
-
-        if(GetLodLayersCount() - 1 == forLayer)
-        {
-            lodLayersArrayWorking[forLayer].SetFarDistance(MAX_LOD_DISTANCE * 2);
-        }
-        
-        if(forLayer)
-        {
-            lodLayersArrayWorking[forLayer-1].SetFarDistance(farDistance);
-        }
-
-        lodLayersArrayWorking[forLayer].SetNearDistance(nearDistance);
-    }
-    
-    lodLayersArrayWorking[forLayer].distance = distance;
-    
+    SetDistanceToArray(lodLayersArrayWorking, distance, forLayer);
 
     flags |= NEED_UPDATE_AFTER_LOAD;
 }
     
+    
+void LodComponent::SetDistanceToArray(Vector<LodDistance> &lodArray, float32 distance, float32 forLayer)
+{
+    if(distance != INVALID_DISTANCE)
+    {
+        float32 nearDistance = distance * NEAR_DISTANCE_COEFF;
+        float32 farDistance = distance * FAR_DISTANCE_COEFF;
+        
+        if(GetLodLayersCount() - 1 == forLayer)
+        {
+            lodArray[forLayer].SetFarDistance(MAX_LOD_DISTANCE * 2);
+        }
+        
+        if(forLayer)
+        {
+            lodArray[forLayer-1].SetFarDistance(farDistance);
+        }
+        
+        lodArray[forLayer].SetNearDistance(nearDistance);
+    }
+    
+    lodArray[forLayer].distance = distance;
+}
+
+
 float32 LodComponent::RecalcDistance(float32 originalDistance, float32 persentage)
 {
     if(originalDistance == INVALID_DISTANCE)
