@@ -12,6 +12,7 @@
 		029E4D8A15D403BA004A4167 /* SplitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029E4D8915D403BA004A4167 /* SplitTest.cpp */; };
 		02E9E45E173A43A900C501BC /* libfmodevent.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E9E45C173A43A900C501BC /* libfmodevent.dylib */; };
 		02E9E45F173A43A900C501BC /* libfmodex.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E9E45D173A43A900C501BC /* libfmodex.dylib */; };
+		495B67091797DCA30017D8DD /* TransparentWebViewTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495B67071797DCA30017D8DD /* TransparentWebViewTest.cpp */; };
 		49B774CD16B188A900A80FA3 /* DLCSystemTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B774CB16B188A900A80FA3 /* DLCSystemTests.cpp */; };
 		49C2B8F816F75A39006E24CB /* DeviceInfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C2B8F616F75A39006E24CB /* DeviceInfoTest.cpp */; };
 		49C432081675E370000EA877 /* DXTTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C432061675E370000EA877 /* DXTTest.cpp */; };
@@ -30,7 +31,6 @@
 		E81F2AF016BFA4A600C4545E /* MaterialCompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E81F2AEE16BFA4A600C4545E /* MaterialCompilerTest.cpp */; };
 		E83604F1163FEB4C0061A636 /* KeyedArchiveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E83604ED163FEB4C0061A636 /* KeyedArchiveTest.cpp */; };
 		E83604F2163FEB4C0061A636 /* KeyedArchiveYamlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E83604EF163FEB4C0061A636 /* KeyedArchiveYamlTest.cpp */; };
-		E8679174175F407200C5A6A2 /* FormatsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8679172175F407200C5A6A2 /* FormatsTest.cpp */; };
 		E87402D7172582DB00A4A75A /* FileListTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E87402D1172582DB00A4A75A /* FileListTest.cpp */; };
 		E87402D8172582DB00A4A75A /* FilePathTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E87402D3172582DB00A4A75A /* FilePathTest.cpp */; };
 		E87402D9172582DB00A4A75A /* FileSystemTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E87402D5172582DB00A4A75A /* FileSystemTest.cpp */; };
@@ -54,6 +54,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		495B67051797DC8D0017D8DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE98930B11638F3C00500198 /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 176DEB77174B5561007A983B;
+			remoteInfo = FrameworkNPAPI;
+		};
 		E81F2AEC16BFA49100C4545E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FE98930B11638F3C00500198 /* Framework.xcodeproj */;
@@ -101,6 +108,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* TemplateProjectMacOS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateProjectMacOS_Prefix.pch; sourceTree = "<group>"; };
+		495B67071797DCA30017D8DD /* TransparentWebViewTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransparentWebViewTest.cpp; path = Classes/TransparentWebViewTest.cpp; sourceTree = "<group>"; };
+		495B67081797DCA30017D8DD /* TransparentWebViewTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransparentWebViewTest.h; path = Classes/TransparentWebViewTest.h; sourceTree = "<group>"; };
 		49B774CB16B188A900A80FA3 /* DLCSystemTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DLCSystemTests.cpp; path = Classes/DLCSystemTests.cpp; sourceTree = "<group>"; };
 		49B774CC16B188A900A80FA3 /* DLCSystemTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DLCSystemTests.h; path = Classes/DLCSystemTests.h; sourceTree = "<group>"; };
 		49C2B8F616F75A39006E24CB /* DeviceInfoTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceInfoTest.cpp; path = Classes/DeviceInfoTest.cpp; sourceTree = "<group>"; };
@@ -138,8 +147,6 @@
 		E83604EE163FEB4C0061A636 /* KeyedArchiveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyedArchiveTest.h; path = Classes/KeyedArchiveTest.h; sourceTree = "<group>"; };
 		E83604EF163FEB4C0061A636 /* KeyedArchiveYamlTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyedArchiveYamlTest.cpp; path = Classes/KeyedArchiveYamlTest.cpp; sourceTree = "<group>"; };
 		E83604F0163FEB4C0061A636 /* KeyedArchiveYamlTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyedArchiveYamlTest.h; path = Classes/KeyedArchiveYamlTest.h; sourceTree = "<group>"; };
-		E8679172175F407200C5A6A2 /* FormatsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FormatsTest.cpp; path = Classes/FormatsTest.cpp; sourceTree = "<group>"; };
-		E8679173175F407200C5A6A2 /* FormatsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormatsTest.h; path = Classes/FormatsTest.h; sourceTree = "<group>"; };
 		E87402D1172582DB00A4A75A /* FileListTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileListTest.cpp; path = Classes/FileListTest.cpp; sourceTree = "<group>"; };
 		E87402D2172582DB00A4A75A /* FileListTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileListTest.h; path = Classes/FileListTest.h; sourceTree = "<group>"; };
 		E87402D3172582DB00A4A75A /* FilePathTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilePathTest.cpp; path = Classes/FilePathTest.cpp; sourceTree = "<group>"; };
@@ -278,6 +285,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		495B67021797DC8D0017D8DD /* TransparentWebViewTest */ = {
+			isa = PBXGroup;
+			children = (
+				495B67071797DCA30017D8DD /* TransparentWebViewTest.cpp */,
+				495B67081797DCA30017D8DD /* TransparentWebViewTest.h */,
+			);
+			name = TransparentWebViewTest;
+			sourceTree = "<group>";
+		};
 		49B774CA16B1889A00A80FA3 /* DLCTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,7 +324,7 @@
 		5C1066D8156D351400912A45 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				E8679170175F405F00C5A6A2 /* FormatsTest */,
+				495B67021797DC8D0017D8DD /* TransparentWebViewTest */,
 				E87402CF172582C900A4A75A /* FileSystemTests */,
 				7410E82E17146CB70028AAAA /* UIListTest */,
 				E8B6B3BD1705DD80004F665E /* LocaliztionTests */,
@@ -418,15 +434,6 @@
 			name = KeyedArchiveTest;
 			sourceTree = "<group>";
 		};
-		E8679170175F405F00C5A6A2 /* FormatsTest */ = {
-			isa = PBXGroup;
-			children = (
-				E8679172175F407200C5A6A2 /* FormatsTest.cpp */,
-				E8679173175F407200C5A6A2 /* FormatsTest.h */,
-			);
-			name = FormatsTest;
-			sourceTree = "<group>";
-		};
 		E87402CF172582C900A4A75A /* FileSystemTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -488,6 +495,7 @@
 			children = (
 				FE98931811638F3C00500198 /* libFramework.a */,
 				E81F2AED16BFA49100C4545E /* libFrameworkQt.a */,
+				495B67061797DC8D0017D8DD /* libFrameworkNPAPI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -578,6 +586,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		495B67061797DC8D0017D8DD /* libFrameworkNPAPI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFrameworkNPAPI.a;
+			remoteRef = 495B67051797DC8D0017D8DD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E81F2AED16BFA49100C4545E /* libFrameworkQt.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -658,7 +673,7 @@
 				E87402D7172582DB00A4A75A /* FileListTest.cpp in Sources */,
 				E87402D8172582DB00A4A75A /* FilePathTest.cpp in Sources */,
 				E87402D9172582DB00A4A75A /* FileSystemTest.cpp in Sources */,
-				E8679174175F407200C5A6A2 /* FormatsTest.cpp in Sources */,
+				495B67091797DCA30017D8DD /* TransparentWebViewTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

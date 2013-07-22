@@ -11,7 +11,11 @@ import datetime
 import shutil
 import platform;
 
+import shlex
+import subprocess
+
 mapsDir = './DataSource/3d/';
+formatParam = 'tegra'
 
 executables = { "Darwin": 'Tools/ResEditor/dava.framework/Tools/ResourceEditor/ResourceEditorQt.app/Contents/MacOS/ResourceEditorQt',
 "Windows": 'Tools/ResEditor/dava.framework/Tools/ResourceEditor/ResourceEditorQtVS2010.exe',
@@ -27,15 +31,35 @@ def zipdir(basedir, archivename):
                 zfn = absfn[len(basedir)+len(os.sep):] #XXX: relative path
                 z.write(absfn, zfn)
 
+def run_command(command):
+    p = subprocess.Popen(command,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    return iter(p.stdout.readline, b'')
+
 def getZippedSize(sceneFile):
 	pervDir = os.getcwd();
 	os.chdir("../../../wot.blitz/");
 
+    	currentDir = os.getcwd(); 
+    	dataDir =  os.path.realpath(currentDir + "/../Data/3d/");
+    	dataSourceDir = os.path.realpath(currentDir + "/DataSource/3d/");
+    	index = dataSourceDir.find(':');
+    	if ( index != -1):
+        	dataSourceDir = dataSourceDir[index + 1:];
 
 	outDir = os.getcwd() + '/export_process/';
+
+	exportDir = os.path.realpath(outDir);
+	index = exportDir.find(':')
+    	if ( index != -1):
+        	exportDir = exportDir[index + 1:];
+
+
 	executable = executables[platform.system()];
 
-	os.spawnv(os.P_WAIT, executable, [executable, '-sceneexporter', '-export', '-indir', mapsDir, '-outdir', outDir, '-processfile', sceneFile, '-forceclose']);
+	os.spawnv(os.P_WAIT, executable, [executable, '-sceneexporter', '-export', '-indir', dataSourceDir, '-outdir', exportDir, '-processfile', sceneFile, '-forceclose', '-format', formatParam]);
+
 	zipdir(outDir[:-1], 'export_process.zip');
 	zipSize = os.path.getsize('export_process.zip');
 
@@ -49,12 +73,14 @@ def getZippedSize(sceneFile):
 
 arguments = sys.argv[1:]
 
-if 0 == len(arguments) or 1 != len(arguments):
-	print 'Usage: ./LevelPerformanceTestReport.py [Test ID]'
+if 0 == len(arguments) or 2 < len(arguments):
+	print 'Usage: ./LevelPerformanceTestReport.py [Test ID] <Texture Format>'
 	exit(1)
 
 testID = arguments[0]
 
+if 2 == len(arguments):
+	formatParam = arguments[1]
 
 def LogError(logfile, message):
 	logfile.write('<br/><font color="red">')
@@ -130,8 +156,8 @@ if None != connection:
 						else:
 							report.write('<b><i>SceneFileSize </i>: ' + ('%.2f' % (sceneFileSize)) + ' Mb (Limit: 11 Mb)</b><br/>\n')
 
-						#zippedSceneSize = getZippedSize(sceneFilePath)/(1024. * 1024.);
-						#report.write('<b><i>ZippedSceneSize</i>: ' + ('%.2f' % (zippedSceneSize)) + ' Mb</b><br/>\n')
+						zippedSceneSize = getZippedSize(sceneFilePath)/(1024. * 1024.);
+						report.write('<b><i>ZippedSceneSize</i>: ' + ('%.2f' % (zippedSceneSize)) + ' Mb</b><br/>\n')
 
 					elif 'TextureFilesSize' == reportValue:
 						report.write('<b><i>' + reportValue + '</i>: ' + level[reportValue] + '</b><br/>\n')

@@ -41,9 +41,20 @@ template<class T>
 class PropertyLine : public BaseObject
 {
 public:
-	virtual const T & GetValue(float32 t) = 0;
-	virtual PropertyLine<T>* Clone() {return 0;};
 
+	struct PropertyKey
+	{
+		float32 t;
+		T value;
+	};
+
+	Vector<PropertyKey> keys;
+	Vector<PropertyKey> & GetValues() { return keys; };
+
+
+	virtual const T & GetValue(float32 t) = 0;
+
+	virtual PropertyLine<T>* Clone() {return 0;};
 };
 
 class PropertyLineYamlReader
@@ -87,17 +98,21 @@ template<class T>
 class PropertyLineValue : public PropertyLine<T>
 {
 public:
-	T value;
+
 	PropertyLineValue(T _value)
 	{
-		value = _value;
+		typename PropertyLine<T>::PropertyKey v;
+		v.t = 0;
+		v.value = _value;
+		PropertyLine<T>::keys.push_back(v);
 	}	
 
-	const T & GetValue(float32 /*t*/) { return value; }
+	const T & GetValue(float32 /*t*/) { return PropertyLine<T>::keys[0].value; }
+
 	PropertyLine<T>* Clone()
 	{	
 		if (this == 0)return 0;
-		return new PropertyLineValue<T>(value); 
+		return new PropertyLineValue<T>(PropertyLine<T>::keys[0].value); 
 	}	
 };
 
@@ -105,41 +120,35 @@ template<class T>
 class PropertyLineKeyframes : public PropertyLine<T>
 {
 public:
-	struct PropertyKey
-	{
-		float32 t;
-		T value;
-	};
-	std::vector<PropertyKey> keys;
 	T resultValue;
 	
 	const T & GetValue(float32 t) 
 	{
-		int32 keysSize = (int32)keys.size();
-		if(t > keys[keysSize - 1].t)
+		int32 keysSize = (int32)PropertyLine<T>::keys.size();
+		if(t > PropertyLine<T>::keys[keysSize - 1].t)
 		{
-			return keys[keysSize - 1].value;
+			return PropertyLine<T>::keys[keysSize - 1].value;
 		}
-		if (keys.size() == 2)
+		if (PropertyLine<T>::keys.size() == 2)
 		{
-			if (t < keys[1].t)
+			if (t < PropertyLine<T>::keys[1].t)
 			{
-				float ti = (t - keys[0].t) / (keys[1].t - keys[0].t);
-				resultValue = keys[0].value + (keys[1].value - keys[0].value) * ti;
+				float ti = (t - PropertyLine<T>::keys[0].t) / (PropertyLine<T>::keys[1].t - PropertyLine<T>::keys[0].t);
+				resultValue = PropertyLine<T>::keys[0].value + (PropertyLine<T>::keys[1].value - PropertyLine<T>::keys[0].value) * ti;
 				return resultValue;
 			}
             else 
 			{
-                return keys[1].value;
+                return PropertyLine<T>::keys[1].value;
 			}
 		}
-		else if (keys.size() == 1) return keys[0].value; 
+		else if (PropertyLine<T>::keys.size() == 1) return PropertyLine<T>::keys[0].value; 
 		else
 		{
-			int32 l = BinaryFind(t, 0, (int32)keys.size() - 1);
+			int32 l = BinaryFind(t, 0, (int32)PropertyLine<T>::keys.size() - 1);
 
-			float ti = (t - keys[l].t) / (keys[l + 1].t - keys[l].t);
-			resultValue = keys[l].value + (keys[l + 1].value - keys[l].value) * ti;
+			float ti = (t - PropertyLine<T>::keys[l].t) / (PropertyLine<T>::keys[l + 1].t - PropertyLine<T>::keys[l].t);
+			resultValue = PropertyLine<T>::keys[l].value + (PropertyLine<T>::keys[l + 1].value - PropertyLine<T>::keys[l].value) * ti;
 		}
 		return resultValue;
 	}
@@ -152,23 +161,23 @@ public:
 		}
 
 		int32 m = (l + r) >> 1; //l + (r - l) / 2 = l + r / 2 - l / 2 = (l + r) / 2; 
-		if (t <= keys[m].t)return BinaryFind(t, l, m);
+		if (t <= PropertyLine<T>::keys[m].t)return BinaryFind(t, l, m);
 		else return BinaryFind(t, m, r);
 	}
 
 	void AddValue(float32 t, T value)
 	{
-		PropertyKey key;
+		typename PropertyLine<T>::PropertyKey key;
 		key.t = t;
 		key.value = value;
-		keys.push_back(key);
+		PropertyLine<T>::keys.push_back(key);
 	}
 	
 	PropertyLine<T>* Clone()
 	{ 
 		if (this == 0)return 0;
 		PropertyLineKeyframes<T>* clone =  new PropertyLineKeyframes<T>();
-		clone->keys = keys;
+		clone->keys = PropertyLine<T>::keys;
 		return clone;
 	}	
 };

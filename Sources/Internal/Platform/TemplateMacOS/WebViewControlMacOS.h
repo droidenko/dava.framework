@@ -31,6 +31,7 @@ public:
 	virtual void SetVisible(bool isVisible, bool hierarchic);
 
 	virtual void SetDelegate(DAVA::IUIWebViewDelegate *delegate, DAVA::UIWebView* webView);
+	virtual void SetBackgroundTransparency(bool enabled);
 
 protected:
 	//A pointer to MacOS WebView.

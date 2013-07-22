@@ -206,3 +206,8 @@ void WebViewControl::SetVisible(bool isVisible, bool hierarchic)
 	[(WebView*)webViewPtr setHidden:!isVisible];
 }
 
+void WebViewControl::SetBackgroundTransparency(bool enabled)
+{
+	WebView* webView = (WebView*)webViewPtr;
+	[webView setDrawsBackground:(enabled ? NO : YES)];
+}

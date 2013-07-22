@@ -788,25 +788,12 @@ void ParticleEmitter::InvertEmissionVectorCoordinates()
 		return;
 	}
 
-	PropertyLineValue<Vector3> *pv;
-    PropertyLineKeyframes<Vector3> *pk;
-
-    pk = dynamic_cast< PropertyLineKeyframes<Vector3> *>(this->emissionVector.Get());
-    if (pk)
-    {
-        for (uint32 i = 0; i < pk->keys.size(); ++i)
-        {
-			pk->keys[i].value *= -1;
-        }
-		
-		return;
-    }
-
-	pv = dynamic_cast< PropertyLineValue<Vector3> *>(this->emissionVector.Get());
-	if (pv)
-    {
-		pv->value *= -1;
-    }
+	PropertyLine<Vector3> *pvk = emissionVector.Get();
+	uint32 keysSize = pvk->keys.size();
+	for (uint32 i = 0; i < keysSize; ++i)
+	{
+		pvk->keys[i].value *= -1;
+	}
 }
 
 int32 ParticleEmitter::GetActiveParticlesCount()

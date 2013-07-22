@@ -89,7 +89,9 @@ void ResultScreen::SaveResults()
     }
     
     FilePath levelName = FilePath::CreateWithNewExtension(filename, "").GetFilename();
-    GameCore::Instance()->FlushToDB(levelName, results, saveFileName);
+
+    if(!GameCore::Instance()->FlushToDB(levelName, results, saveFileName))
+        Logger::Debug("Error sending data to DB (connection is lost) !!!");
     
     state = RESULT_STATE_FINISHED;
 }

@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 
 #include "FileSystem/FileSystem.h"
+#include "FramePathHelper.h"
 
 namespace DAVA
 {
@@ -44,7 +45,7 @@ void DefinitionFile::LoadPNG(const FilePath & _filename, const FilePath & pathTo
 	frameRects[0].dx = spriteWidth;
 	frameRects[0].dy = spriteHeight;
 
-	FilePath fileWrite = pathToProcess + (nameWithoutExt + "0" + String(".png"));
+	FilePath fileWrite = FramePathHelper::GetFramePathAbsolute(pathToProcess, nameWithoutExt, 0);
 	FileSystem::Instance()->CopyFile(_filename, fileWrite);
 }
 
@@ -89,9 +90,7 @@ bool DefinitionFile::LoadPNGDef(const FilePath & _filename, const FilePath & pat
 		frameX2.Create(reducedRect.dx, reducedRect.dy);
 		frameX2.DrawImage(0, 0, &frameX, reducedRect);
 		
-		char number[10];
-		sprintf(number, "%d", k);
-		FilePath fileWrite = pathToProcess + (nameWithoutExt + String(number) + String(".png"));
+		FilePath fileWrite = FramePathHelper::GetFramePathAbsolute(pathToProcess, nameWithoutExt, k);
 		frameX2.Write(fileWrite);		
 	
 		frameRects[k].x = reducedRect.x;

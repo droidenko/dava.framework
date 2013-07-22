@@ -13,7 +13,7 @@
 #include <magick/MagickCore.h>
 #include <magick/property.h>
 
-#include "Render/GPUFamilyDescriptor.h"
+#include "FramePathHelper.h"
 
 namespace DAVA
 {
@@ -38,19 +38,13 @@ void ResourcePacker2D::InitFolders(const FilePath & inputPath,const FilePath & o
 	excludeDirectory = inputPath + "../";
 }
     
-void ResourcePacker2D::PackResources(eGPUFamily forGPU)
+void ResourcePacker2D::PackResources()
 {
-	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s\n",
+	Logger::Debug("Input: %s \nOutput: %s \nExclude: %s",
                   inputGfxDirectory.GetAbsolutePathname().c_str(),
                   outputGfxDirectory.GetAbsolutePathname().c_str(),
                   excludeDirectory.GetAbsolutePathname().c_str());
-
-    if(CommandLineParser::Instance()->GetVerbose())
-        printf("For GPU: %s \n", GPUFamilyDescriptor::GetGPUName(forGPU).c_str());
-
-    
-	requestedGPUFamily = forGPU;
-    
+	
 	isGfxModified = false;
 
     gfxDirName = inputGfxDirectory.GetLastDirectoryName();
@@ -172,11 +166,7 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 {
     DVASSERT(processDirectoryPath.IsDirectoryPathname());
     
-	int32 maxTextureSize = 1024;
-	if (CommandLineParser::Instance()->IsFlagSet("--tsize2048"))
-	{
-		maxTextureSize = 2048;
-	}
+	int32 maxTextureSize = TexturePacker::TEXTURE_SIZE;
 	
 	// TODO: Check CRC32
 	Vector<Magick::Image> layers;
@@ -210,24 +200,10 @@ DefinitionFile * ResourcePacker2D::ProcessPSD(const FilePath & processDirectoryP
 			
 			currentLayer.crop(Magick::Geometry(width,height, 0, 0));
 			currentLayer.magick("PNG");
-			FilePath outputFile = FilePath::CreateWithNewExtension(psdNameWithoutExtension, String(Format("%d.png", k - 1)));
-			
-			// Yuri Coder, 2013/07/08. Check whether this file exists - overlapping png files
-			// can cause issues like DF-1426.
-			if (FileSystem::Instance()->IsFile(outputFile.GetAbsolutePathname()))
-			{
-				String errorMessage = Format("File %s already exists. ", outputFile.GetAbsolutePathname().c_str());
-				errorMessage += Format("PSD file name %s conflicts with other PSD files, ", psdName.c_str());
-				errorMessage += Format("terminating packing in %s directory.", processDirectoryPath.GetAbsolutePathname().c_str());
-				Logger::Error(errorMessage.c_str());
-
-				return NULL;
-			}
-
+			FilePath outputFile = FramePathHelper::GetFramePathRelative(psdNameWithoutExtension, k - 1);
 			currentLayer.write(outputFile.GetAbsolutePathname());
 		}
-		
-		
+
 		DefinitionFile * defFile = new DefinitionFile;
 		defFile->filename = FilePath::CreateWithNewExtension(psdNameWithoutExtension, ".txt");
 		defFile->spriteWidth = width;
@@ -349,17 +325,17 @@ void ResourcePacker2D::ProcessFlags(const FilePath & flagsPathname)
 			Logger::Debug("Token: %s", tokens[k].c_str());
 		}
 
-//	if (Core::Instance()->IsConsoleMode())
-//	{
-//		for (int k = 0; k < (int) tokens.size(); ++k)
-//		{
-//			String sub = tokens[k].substr(0, 2);
-//			if (sub != "--")
-//				printf("\n[WARNING: flag %s incorrect]\n", tokens[k].c_str());
-//		}
-//	}
+	if (Core::Instance()->IsConsoleMode())
+	{
+		for (int k = 0; k < (int) tokens.size(); ++k)
+		{
+			String sub = tokens[k].substr(0, 2);
+			if (sub != "--")
+				printf("\n[WARNING: flag %s incorrect]\n", tokens[k].c_str());
+		}
+	}
 	
-	CommandLineParser::Instance()->SetArguments(tokens);
+	CommandLineParser::Instance()->SetFlags(tokens);
 	
 	SafeRelease(file);
 }
@@ -391,7 +367,7 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 		//Logger::Error("Can't create directory: %s", outputPath.c_str());
 	}
 	
-	CommandLineParser::Instance()->Clear();
+	CommandLineParser::Instance()->ClearFlags();
 	List<DefinitionFile *> definitionFileList;
 
 	// Find flags and setup them
@@ -474,11 +450,11 @@ void ResourcePacker2D::RecursiveTreeWalk(const FilePath & inputPath, const FileP
 
 			if (CommandLineParser::Instance()->IsFlagSet("--split"))
 			{
-				packer.PackToTexturesSeparate(excludeDirectory, outputPath, definitionFileList, requestedGPUFamily);
+				packer.PackToTexturesSeparate(excludeDirectory, outputPath, definitionFileList);
 			}
 			else
 			{
-				packer.PackToTextures(excludeDirectory, outputPath, definitionFileList, requestedGPUFamily);
+				packer.PackToTextures(excludeDirectory, outputPath, definitionFileList);
 			}
 		}
 	}	

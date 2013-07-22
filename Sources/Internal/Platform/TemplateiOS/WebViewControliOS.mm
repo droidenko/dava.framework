@@ -133,6 +133,8 @@ WebViewControl::~WebViewControl()
 	WebViewURLDelegate* w = (WebViewURLDelegate*)webViewURLDelegatePtr;
 	[w release];
 	webViewURLDelegatePtr = nil;
+
+	RestoreSubviewImages();
 }
 	
 void WebViewControl::SetDelegate(IUIWebViewDelegate *delegate, DAVAWebView* webView)
@@ -244,6 +246,54 @@ float WebViewControl::GetScaleDivider()
 	}
 
 	return scaleDivider;
+}
+
+void WebViewControl::SetBackgroundTransparency(bool enabled)
+{
+	UIWebView* webView = (UIWebView*)webViewPtr;
+	[webView setOpaque: (enabled ? NO : YES)];
+
+	UIColor* color = [webView backgroundColor];
+	CGFloat r, g, b, a;
+	[color getRed:&r green:&g blue:&b alpha:&a];
+
+	if (enabled)
+	{
+		[webView setBackgroundColor:[UIColor colorWithRed:r green:g blue:b alpha:0.f]];
+		HideSubviewImages(webView);
+	}
+	else
+	{
+		[webView setBackgroundColor:[UIColor colorWithRed:r green:g blue:b alpha:1.0f]];
+		RestoreSubviewImages();
+	}
+}
+
+void WebViewControl::HideSubviewImages(void* view)
+{
+	UIView* uiview = (UIView*)view;
+	for (UIView* subview in [uiview subviews])
+	{
+		if ([subview isKindOfClass:[UIImageView class]])
+		{
+			subviewVisibilityMap[subview] = [subview isHidden];
+			[subview setHidden:YES];
+			[subview retain];
+		}
+		HideSubviewImages(subview);
+	}
+}
+
+void WebViewControl::RestoreSubviewImages()
+{
+	Map<void*, bool>::iterator it;
+	for (it = subviewVisibilityMap.begin(); it != subviewVisibilityMap.end(); ++it)
+	{
+		UIView* view = (UIView*)it->first;
+		[view setHidden:it->second];
+		[view release];
+	}
+	subviewVisibilityMap.clear();
 }
     
 };

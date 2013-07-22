@@ -31,6 +31,7 @@ public:
 	virtual void SetVisible(bool isVisible, bool hierarchic = true);
 
 	void SetDelegate(IUIWebViewDelegate* delegate);
+	void SetBackgroundTransparency(bool enabled);
 
 protected:
 

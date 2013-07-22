@@ -8,8 +8,7 @@
 #include "Render/Texture.h"
 #include "TextureCompression/PVRConverter.h"
 #include "TextureCompression/DXTConverter.h"
-#include "Render/GPUFamilyDescriptor.h"
-
+#include "FramePathHelper.h"
 
 #ifdef WIN32
 #define snprintf _snprintf
@@ -20,17 +19,17 @@ namespace DAVA
 
 TexturePacker::TexturePacker()
 {
-	maxTextureSize = 1024;
-	if (CommandLineParser::Instance()->IsFlagSet("--tsize2048"))
-	{
-		maxTextureSize = 2048;
-	}
-
+	maxTextureSize = TEXTURE_SIZE;
 	onlySquareTextures = false;
 }
 
 bool TexturePacker::TryToPack(const Rect2i & textureRect, List<DefinitionFile*> & /*defsList*/)
 {
+	if (CommandLineParser::Instance()->GetVerbose())
+    {
+        Logger::Info("%d x %d, ", textureRect.dx, textureRect.dy);
+    }
+    
 	ImagePacker * packer = new ImagePacker(textureRect);
 	
 	// Packing of sorted by size images
@@ -102,7 +101,7 @@ bool sortFn(const SizeSortItem & a, const SizeSortItem & b)
 	return a.imageSize > b.imageSize;	
 }
 
-void TexturePacker::PackToTexturesSeparate(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList, eGPUFamily forGPU)
+void TexturePacker::PackToTexturesSeparate(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList)
 {
 	lastPackedPacker = 0;
 	int textureIndex = 0;
@@ -162,14 +161,11 @@ void TexturePacker::PackToTexturesSeparate(const FilePath & excludeFolder, const
 				Rect2i *destRect = lastPackedPacker->SearchRectForPtr(&defFile->frameRects[frame]);
 				if (!destRect)Logger::Error("*** ERROR Can't find rect for frame\n");
 				
-				char name[256];
 				FilePath withoutExt(defFile->filename);
                 withoutExt.TruncateExtension();
-                
-				snprintf(name, 256, "%s%d.png", withoutExt.GetAbsolutePathname().c_str(), frame);
-				
+
 				PngImageExt image;
-				image.Read(name);
+				image.Read(FramePathHelper::GetFramePathRelative(withoutExt, frame));
 				finalImage.DrawImage(destRect->x, destRect->y, &image);
 			}
 			
@@ -179,12 +175,12 @@ void TexturePacker::PackToTexturesSeparate(const FilePath & excludeFolder, const
 			}
 
             textureName.ReplaceExtension(".png");
-            ExportImage(&finalImage, FilePath(textureName), forGPU);
+            ExportImage(&finalImage, FilePath(textureName));
 		}
 	}
 }
 
-void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList, eGPUFamily forGPU)
+void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defsList)
 {
 	lastPackedPacker = 0;
 	for (List<DefinitionFile*>::iterator dfi = defsList.begin(); dfi != defsList.end(); ++dfi)
@@ -209,11 +205,14 @@ void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePat
 	if (CommandLineParser::Instance()->GetVerbose())
 		Logger::Info("* Packing tries started: ");
 	
-    bool needOnlySquareTexture = onlySquareTextures || NeedSquareTextureForCompression(forGPU);
+	bool isPvr = CommandLineParser::Instance()->IsFlagSet("--pvr");
+	bool isDxt = CommandLineParser::Instance()->IsFlagSet("--dxt");
 	for (int yResolution = 8; yResolution <= maxTextureSize; yResolution *= 2)
 		 for (int xResolution = 8; xResolution <= maxTextureSize; xResolution *= 2)
 		 {
-			 if (needOnlySquareTexture && (xResolution != yResolution))continue;
+			 if ((isPvr || isDxt) && (xResolution != yResolution))continue;
+
+			 if ((onlySquareTextures) && (xResolution != yResolution))continue;
 			 
 			 Rect2i textureRect = Rect2i(0, 0, xResolution, yResolution);
 			 
@@ -245,14 +244,11 @@ void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePat
 				Rect2i *destRect = lastPackedPacker->SearchRectForPtr(&defFile->frameRects[frame]);
 				if (!destRect)Logger::Error("*** ERROR Can't find rect for frame\n");
 				
-				char name[256];
                 FilePath withoutExt(defFile->filename);
                 withoutExt.TruncateExtension();
 
-				snprintf(name, 256, "%s%d.png", withoutExt.GetAbsolutePathname().c_str(), frame);
-
 				PngImageExt image;
-				image.Read(name);
+				image.Read(FramePathHelper::GetFramePathRelative(withoutExt, frame));
 				finalImage.DrawImage(destRect->x, destRect->y, &image);
 
 				if (CommandLineParser::Instance()->IsFlagSet("--debug"))
@@ -268,15 +264,15 @@ void TexturePacker::PackToTextures(const FilePath & excludeFolder, const FilePat
 		}
 
         textureName.ReplaceExtension(".png");
-        ExportImage(&finalImage, textureName, forGPU);
+        ExportImage(&finalImage, textureName);
 	}else
 	{
 		// 
-		PackToMultipleTextures(excludeFolder, outputPath, defsList, forGPU);
+		PackToMultipleTextures(excludeFolder, outputPath, defsList);
 	}
 }
 
-void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defList, eGPUFamily forGPU)
+void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const FilePath & outputPath, List<DefinitionFile*> & defList)
 {
 	if (defList.size() != 1)
 		if (CommandLineParser::Instance()->GetVerbose())Logger::Error("* ERROR: failed to pack to multiple textures\n");
@@ -304,11 +300,14 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 		ImagePacker * bestPackerForThisStep = 0;
 		Vector<SizeSortItem> newWorkVector;
 		
-        bool needOnlySquareTexture = onlySquareTextures || NeedSquareTextureForCompression(forGPU);
+        bool isPvr = CommandLineParser::Instance()->IsFlagSet("--pvr");
+		bool isDxt = CommandLineParser::Instance()->IsFlagSet("--dxt");
 		for (int yResolution = 8; yResolution <= maxTextureSize; yResolution *= 2)
 			for (int xResolution = 8; xResolution <= maxTextureSize; xResolution *= 2)
 			{
-				if (needOnlySquareTexture && (xResolution != yResolution))continue;
+				if ( (isPvr || isDxt) && (xResolution != yResolution))continue;
+
+				if ((onlySquareTextures) && (xResolution != yResolution))continue;
 				
 				Rect2i textureRect = Rect2i(0, 0, xResolution, yResolution);
 				ImagePacker * packer = new ImagePacker(textureRect);
@@ -350,7 +349,7 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 			Rect2i * destRect;
 			ImagePacker * foundPacker = 0;
 			int packerIndex = 0;
-			char name[256];
+			FilePath imagePath;
 			
 			for (packerIndex = 0; packerIndex < (int)packers.size(); ++packerIndex)
 			{
@@ -362,7 +361,7 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
                     FilePath withoutExt(defFile->filename);
                     withoutExt.TruncateExtension();
 
-					snprintf(name, 256, "%s%d.png", withoutExt.GetAbsolutePathname().c_str(), frame);
+					imagePath = FramePathHelper::GetFramePathRelative(withoutExt, frame);
 					break;
 				}
 			}
@@ -371,7 +370,7 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 			{
 				if (CommandLineParser::Instance()->GetVerbose())Logger::Info("[MultiPack] pack to texture: %d\n", packerIndex);
 				PngImageExt image;
-				image.Read(name);
+				image.Read(imagePath);
 				finalImages[packerIndex]->DrawImage(destRect->x, destRect->y, &image);
 				if (CommandLineParser::Instance()->IsFlagSet("--debug"))
 				{
@@ -386,7 +385,7 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
 		char temp[256];
 		sprintf(temp, "texture%d.png", image);
 		FilePath textureName = outputPath + temp;
-        ExportImage(finalImages[image], textureName, forGPU);
+        ExportImage(finalImages[image], textureName);
 	}
 
 	for (List<DefinitionFile*>::iterator defi = defList.begin(); defi != defList.end(); ++defi)
@@ -564,88 +563,92 @@ void TexturePacker::SetMaxTextureSize(int32 _maxTextureSize)
 	maxTextureSize = _maxTextureSize;
 }
 
-void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname, eGPUFamily forGPU)
+void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPathname)
 {
-    TextureDescriptor *descriptor = CreateDescriptor(forGPU);
-    descriptor->pathname = TextureDescriptor::GetDescriptorPathname(exportedPathname);
-    descriptor->Export(descriptor->pathname);
+    TextureDescriptor *descriptor = CreateDescriptor();
 
     image->DitherAlpha();
     image->Write(exportedPathname);
-
-    eGPUFamily gpuFamily = (eGPUFamily)descriptor->exportedAsGpuFamily;
-    if(gpuFamily != GPU_UNKNOWN)
+    
+    if (NULL != descriptor  )
     {
-        const String & extension = GPUFamilyDescriptor::GetCompressedFileExtension(gpuFamily, (PixelFormat)descriptor->exportedAsPixelFormat);
-        if(extension == ".pvr")
-        {
-            PVRConverter::Instance()->ConvertPngToPvr(*descriptor, gpuFamily);
-        }
-        else if(extension == ".dds")
-        {
-            DXTConverter::ConvertPngToDxt(*descriptor, gpuFamily);
-        }
-        else
-        {
-            DVASSERT(false);
-        }
+		if(FORMAT_INVALID != descriptor->pvrCompression.format)
+		{
+			PVRConverter::Instance()->ConvertPngToPvr(exportedPathname, *descriptor);
+			FileSystem::Instance()->DeleteFile(exportedPathname);
+		}
+		else if(FORMAT_INVALID != descriptor->dxtCompression.format)
+		{
+			DXTConverter::ConvertPngToDxt(exportedPathname, *descriptor);
+			FileSystem::Instance()->DeleteFile(exportedPathname);
+		}
         
-        FileSystem::Instance()->DeleteFile(exportedPathname);
     }
 
+    
+#if defined TEXTURE_SPLICING_ENABLED
+    //TODO: need to enable texture splicing of 2D resources
+    //        descriptor->ExportAndSlice(descriptorPathname, texturePathname);
+#else //#if defined TEXTURE_SPLICING_ENABLED
+    descriptor->Export(TextureDescriptor::GetDescriptorPathname(exportedPathname));
+#endif //#if defined TEXTURE_SPLICING_ENABLED
+    
     SafeRelease(descriptor);
 }
 
 
-TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU)
+TextureDescriptor * TexturePacker::CreateDescriptor()
 {
     TextureDescriptor *descriptor = new TextureDescriptor();
-
-    descriptor->settings.wrapModeS = descriptor->settings.wrapModeT = Texture::WRAP_CLAMP_TO_EDGE;
-    descriptor->settings.generateMipMaps = CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
-    if(descriptor->settings.generateMipMaps)
+    if(descriptor)
     {
-        descriptor->settings.minFilter = Texture::FILTER_LINEAR_MIPMAP_LINEAR;
-        descriptor->settings.magFilter = Texture::FILTER_LINEAR;
-    }
-    else
-    {
-        descriptor->settings.minFilter = Texture::FILTER_LINEAR;
-        descriptor->settings.magFilter = Texture::FILTER_LINEAR;
-    }
-    
-    if(forGPU == GPU_UNKNOWN)   // not need compression
-        return descriptor;
-    
-    
-    descriptor->exportedAsGpuFamily = forGPU;
-
-    const String gpuNameFlag = "--" + GPUFamilyDescriptor::GetGPUName(forGPU);
-    if(CommandLineParser::Instance()->IsFlagSet(gpuNameFlag))
-    {
-        String formatName = CommandLineParser::Instance()->GetParamForFlag(gpuNameFlag);
-        PixelFormat format = Texture::GetPixelFormatByName(formatName);
+        descriptor->wrapModeS = descriptor->wrapModeT = Texture::WRAP_CLAMP_TO_EDGE;
+        descriptor->generateMipMaps = CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
+        if(descriptor->generateMipMaps)
+        {
+            descriptor->minFilter = Texture::FILTER_LINEAR_MIPMAP_LINEAR;
+            descriptor->magFilter = Texture::FILTER_LINEAR;
+        }
+        else
+        {
+            descriptor->minFilter = Texture::FILTER_LINEAR;
+            descriptor->magFilter = Texture::FILTER_LINEAR;
+        }
         
-        descriptor->exportedAsPixelFormat = format;
-        descriptor->compression[forGPU].format = format;
-    }
-    else
-    {
-        Logger::Warning("params for GPU %s were not set.\n", gpuNameFlag.c_str());
-        
-        descriptor->exportedAsGpuFamily = GPU_UNKNOWN;
+        if(CommandLineParser::Instance()->IsFlagSet("--pvr"))
+        {
+            descriptor->textureFileFormat = PVR_FILE;
+
+            descriptor->pvrCompression.format = DetectPixelFormatFromFlags();
+        }
+        else if(CommandLineParser::Instance()->IsFlagSet("--dxt"))
+        {
+            descriptor->textureFileFormat = DXT_FILE;
+            
+            descriptor->dxtCompression.format = DetectPixelFormatFromFlags();
+        }
+        else
+        {
+            descriptor->textureFileFormat = PNG_FILE;
+        }
     }
     
     return descriptor;
 }
-    
-bool TexturePacker::NeedSquareTextureForCompression(eGPUFamily forGPU)
+
+PixelFormat TexturePacker::DetectPixelFormatFromFlags()
 {
-    if(forGPU == GPU_UNKNOWN)   // not need compression
-        return false;
+    for(int32 i = FORMAT_INVALID; i < FORMAT_COUNT; ++i)
+    {
+        PixelFormat format = (PixelFormat)i;
+        String formatFlag = String("--") + String(Texture::GetPixelFormatString(format));
+        if(CommandLineParser::Instance()->IsFlagSet(formatFlag))
+        {
+            return format;
+        }
+    }
     
-    const String gpuNameFlag = "--" + GPUFamilyDescriptor::GetGPUName(forGPU);
-    return (CommandLineParser::Instance()->IsFlagSet(gpuNameFlag));
+    return FORMAT_INVALID;
 }
 
 };

@@ -55,6 +55,9 @@
     <ClCompile Include="Classes\GameCore.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.cpp">
+      <Filter>Sources\Tools\TexturePacker</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win32Specific\stdafx.h">
@@ -89,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="Classes\GameCore.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Tools\TexturePacker\FramePathHelper.h">
+      <Filter>Sources\Tools\TexturePacker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

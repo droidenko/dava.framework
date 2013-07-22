@@ -72,3 +72,8 @@ void UIWebView::SetVisible(bool isVisible, bool hierarchic)
 	UIControl::SetVisible(isVisible, hierarchic);
 	this->webViewControl->SetVisible(isVisible, hierarchic);
 }
+
+void UIWebView::SetBackgroundTransparency(bool enabled)
+{
+	this->webViewControl->SetBackgroundTransparency(enabled);
+}

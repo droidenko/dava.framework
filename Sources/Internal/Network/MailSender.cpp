@@ -38,6 +38,7 @@ bool MailSender::SendEmail(const WideString& email, const WideString& subject, c
 #elif defined(__DAVAENGINE_ANDROID__)
 #include "JniExtensions.h"
 #include "Utils/Utils.h"
+#include "Utils/UTF8Utils.h"
 
 namespace DAVA
 {
@@ -89,9 +90,9 @@ bool MailSender::SendEmail(const WideString& email, const WideString& subject, c
 	if (!JniMailSender::jniMailSender)
 		JniMailSender::jniMailSender = new JniMailSender();
 
-	return JniMailSender::jniMailSender->SendEmail(WStringToString(email), WStringToString(subject), WStringToString(messageText));
+	return JniMailSender::jniMailSender->SendEmail(UTF8Utils::EncodeToUTF8(email), UTF8Utils::EncodeToUTF8(subject), UTF8Utils::EncodeToUTF8(messageText));
 }
-    
+
 };
 
 #endif

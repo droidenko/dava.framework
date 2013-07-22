@@ -51,6 +51,7 @@ public:
 	virtual void SetVisible(bool isVisible, bool hierarchic) = 0;
 	
 	virtual void SetDelegate(DAVA::IUIWebViewDelegate *delegate, DAVA::UIWebView* webView) = 0;
+	virtual void SetBackgroundTransparency(bool enabled) { };
 };
 
 };
