@@ -235,6 +235,11 @@ void CustomColorsSystem::UpdateCursorPosition()
 
 		drawSystem->SetCursorPosition(cursorPosition);
 	}
+	else
+	{
+		// hide cursor
+		drawSystem->SetCursorPosition(DAVA::Vector2(-100, -100));
+	}
 }
 
 void CustomColorsSystem::UpdateToolImage(bool force)

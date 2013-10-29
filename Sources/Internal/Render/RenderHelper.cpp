@@ -141,7 +141,28 @@ void RenderHelper::DrawLine(const Vector2 &start, const Vector2 &end)
     RenderManager::Instance()->SetRenderData(renderDataObject);
     RenderManager::Instance()->DrawArrays(PRIMITIVETYPE_LINESTRIP, 0, 2);
 }
-    
+
+	void RenderHelper::DrawLine(const Vector2 &start, const Vector2 &end, float32 lineWidth)
+	{
+		vertices[0] = start.x;
+		vertices[1] = start.y;
+		vertices[2] = end.x;
+		vertices[3] = end.y;
+		
+		vertexStream->Set(TYPE_FLOAT, 2, 0, vertices);
+		
+		RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
+		RenderManager::Instance()->SetRenderData(renderDataObject);
+#ifdef __DAVAENGINE_OPENGL__
+		glLineWidth(lineWidth);
+#endif
+		RenderManager::Instance()->DrawArrays(PRIMITIVETYPE_LINESTRIP, 0, 2);
+#ifdef __DAVAENGINE_OPENGL__
+		glLineWidth(1.f);
+#endif
+	}
+
+	
     
 void RenderHelper::DrawLine(const Vector3 & start, const Vector3 & end, float32 lineWidth)
 {
@@ -799,7 +820,17 @@ void RenderHelper::DrawCornerBox(const AABBox3 & bbox, float32 lineWidth)
 		if(0 != lineWidth && from != to)
 		{
 			Vector3 d = to - from;
-			Vector3 c = to - d / Min(arrowLength, d.Length());
+			float32 ln = Min(arrowLength, d.Length());
+
+			Vector3 c;
+			if(ln < 1)
+			{
+				c = to - d * ln;
+			}
+			else
+			{
+				c = to - d / ln;
+			}
 
 			DAVA::float32 k = (to - c).Length() / 4;
 

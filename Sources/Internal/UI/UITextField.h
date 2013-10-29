@@ -353,8 +353,8 @@ private:
 #elif defined(__DAVAENGINE_ANDROID__)
 	UITextFieldAndroid* textFieldAndroid;
 #else
-    Font * textFont;
     UIStaticText * staticText;
+    Font * textFont;
 #endif
     float32 cursorTime;
 };

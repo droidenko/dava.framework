@@ -36,7 +36,6 @@
 namespace DAVA 
 {
 	
-REGISTER_CLASS(UIScrollView);
 
 static const String UISCROLL_VIEW_CONTAINER_NAME = "scrollContainerControl";
 

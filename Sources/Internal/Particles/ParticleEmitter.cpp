@@ -44,8 +44,6 @@ namespace DAVA
 
 #define PARTICLE_EMITTER_DEFAULT_LIFE_TIME 100.0f
 #define PARTICLE_EMITTER_DEFERRED_UPDATE_INTERVAL 0.1f // in seconds
-	
-REGISTER_CLASS(ParticleEmitter);
 
 ParticleEmitter::ParticleEmitter()
 {

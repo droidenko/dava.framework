@@ -55,6 +55,10 @@ private:
     Shader * shader;
     Texture * texture;
 
+    int32 uniformWorldTranslate;
+    int32 uniformTexture0;
+    int32 uniformWorldScale;
+
 public:
     INTROSPECTION_EXTEND(SpeedTreeLeafBatch, RenderBatch, NULL);
 

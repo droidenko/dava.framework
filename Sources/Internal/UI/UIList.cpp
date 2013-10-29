@@ -36,7 +36,6 @@
 
 namespace DAVA 
 {
-	REGISTER_CLASS(UIList);
 	
 int32 UIListDelegate::CellWidth(UIList* /*list*/, int32 /*index*/)
 {
@@ -497,6 +496,8 @@ void UIList::Input(UIEvent *currentInput)
 		}
 			break;
 	}
+
+	currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_HARD); // Drag is handled - see please DF-2508.
 }
 
 bool UIList::SystemInput(UIEvent *currentInput)

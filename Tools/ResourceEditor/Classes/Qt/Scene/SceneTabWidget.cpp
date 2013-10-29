@@ -169,7 +169,13 @@ int SceneTabWidget::OpenTab(const DAVA::FilePath &scenePapth)
 {
 	HideScenePreview();
 
-	int tabIndex = -1;
+	int tabIndex = FindTab(scenePapth);
+	if(tabIndex != -1)
+	{
+		SetCurrentTab(tabIndex);
+		return tabIndex;
+	}
+
 	SceneEditor2 *scene = new SceneEditor2();
 
 	QtMainWindow::Instance()->WaitStart("Opening scene...", scenePapth.GetAbsolutePathname().c_str());
@@ -506,6 +512,20 @@ void SceneTabWidget::AddTopToolWidget(QWidget *widget)
 DavaGLWidget * SceneTabWidget::GetDavaWidget() const
 {
 	return davaWidget;
+}
+
+int SceneTabWidget::FindTab( const DAVA::FilePath & scenePath )
+{
+	for(int i = 0; i < tabBar->count(); ++i)
+	{
+		SceneEditor2 *tabScene = GetTabScene(i);
+		if(tabScene->GetScenePath() == scenePath)
+		{
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 

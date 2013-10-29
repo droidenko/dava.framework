@@ -34,8 +34,6 @@
 namespace DAVA 
 {
 
-REGISTER_CLASS(UISwitch);
-
 //use these names for children controls to define UISwitch in .yaml
 static const String UISWITCH_BUTTON_LEFT_NAME = "buttonLeft";
 static const String UISWITCH_BUTTON_RIGHT_NAME = "buttonRight";
@@ -316,6 +314,8 @@ void UISwitch::Input(UIEvent *currentInput)
         Animation * animation = new TogglePositionAnimation(causedByTap, this, &(toggle->relativePosition.x), toggleX, SWITCH_ANIMATION_TIME, Interpolation::EASY_IN);
         animation->Start(MOVE_ANIMATION_TRACK);
     }
+
+    currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_HARD); // Drag is handled - see please DF-2508.
 }
 
 void UISwitch::SetIsLeftSelected(bool aIsLeftSelected)

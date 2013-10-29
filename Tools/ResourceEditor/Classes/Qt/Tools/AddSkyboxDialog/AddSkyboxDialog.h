@@ -60,7 +60,7 @@ protected:
 
 protected slots:
 	void OnSceneActivated(SceneEditor2 *sceneEditor);
-    void CommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo);
+    virtual void CommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo);
     
 	void OnCreateButtonClicked();
 	void OnDeleteButtonClicked();

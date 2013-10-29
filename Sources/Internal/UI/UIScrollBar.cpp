@@ -34,7 +34,6 @@
 namespace DAVA 
 {
 
-REGISTER_CLASS(UIScrollBar);
 
 //use these names for children controls to define UIScrollBar in .yaml
 static const String UISCROLLBAR_SLIDER_NAME = "slider";
@@ -217,10 +216,11 @@ void UIScrollBar::Input(UIEvent *currentInput)
 		}
 
 		// Clamp.
-        newPos = Min(Max(0.0f, newPos), delegate->TotalAreaSize(this) - delegate->VisibleAreaSize(this));
-        
-        delegate->OnViewPositionChanged(this, newPos);
-    }
+		newPos = Min(Max(0.0f, newPos), delegate->TotalAreaSize(this) - delegate->VisibleAreaSize(this));
+		delegate->OnViewPositionChanged(this, newPos);
+
+		currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_HARD); // Drag is handled - see please DF-2508.
+	}
 }
 
 void UIScrollBar::CalculateStartOffset(const Vector2& inputPoint)

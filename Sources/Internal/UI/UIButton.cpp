@@ -39,7 +39,6 @@
 
 namespace DAVA 
 {
-	REGISTER_CLASS(UIButton);
 
     const int32 stateArray[] = {UIControl::STATE_NORMAL, UIControl::STATE_PRESSED_INSIDE, UIControl::STATE_PRESSED_OUTSIDE, UIControl::STATE_DISABLED, UIControl::STATE_SELECTED, UIControl::STATE_HOVER};
     const String statePostfix[] = {"Normal", "PressedInside", "PressedOutside", "Disabled", "Selected", "Hover"};
@@ -516,7 +515,13 @@ namespace DAVA
             BringChildBack(selectedText);
 		}
 	}
-	
+
+	void UIButton::Input(UIEvent *currentInput)
+	{
+		UIControl::Input(currentInput);
+		currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_SOFT); // Drag is not handled - see please DF-2508.
+	}
+
 	void UIButton::SetBackground(UIControlBackground *newBg)
 	{
 		DVASSERT(false);

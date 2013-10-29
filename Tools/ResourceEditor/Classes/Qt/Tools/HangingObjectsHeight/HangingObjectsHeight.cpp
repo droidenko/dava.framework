@@ -35,6 +35,7 @@
 
 #include <QObject>
 #include <QHBoxLayout>
+#include <QLabel>
 
 using namespace DAVA;
 
@@ -42,12 +43,13 @@ HangingObjectsHeight::HangingObjectsHeight(QWidget *parent /*= 0*/)
 	: QWidget(parent)
 {
 	heightValue = new EventFilterDoubleSpinBox(this);
-	heightValue->setToolTip("Height for hanging objects");
+	heightValue->setToolTip("Min height for hanging objects");
 	heightValue->setMinimum(-100);
 	heightValue->setMaximum(100);	
 	heightValue->setSingleStep(0.1);
 	heightValue->setDecimals(2);
 
+	QLabel *caption = new QLabel("Min height:", this);
 
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setMargin(0);
@@ -55,7 +57,9 @@ HangingObjectsHeight::HangingObjectsHeight(QWidget *parent /*= 0*/)
 
 	setLayout(layout);
 
+	layout->addWidget(caption);
 	layout->addWidget(heightValue);
+
 
 	QObject::connect(heightValue, SIGNAL(valueChanged(double)), this, SLOT(ValueChanged(double)));
 }

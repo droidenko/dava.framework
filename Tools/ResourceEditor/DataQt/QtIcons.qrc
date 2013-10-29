@@ -1,5 +1,13 @@
 <RCC>
   <qresource prefix="/">
+    <file>QtIcons/land_settings.png</file>
+    <file>QtIcons/land_visibility.png</file>
+    <file>QtIcons/land_custcolor.png</file>
+    <file>QtIcons/land_ruler.png</file>
+    <file>QtIcons/land_unpassable.png</file>
+    <file>QtIcons/land_height.png</file>
+    <file>QtIcons/land_tile.png</file>
+    <file>QtIcons/cloud.png</file>
     <file>QtIcons/customcolors.png</file>
     <file>QtIcons/visibilitytool.png</file>
     <file>QtIcons/eye.png</file>
@@ -93,8 +101,8 @@
     <file>QtIcons/btn_rotate_ccw.png</file>
     <file>QtIcons/btn_rotate_cw.png</file>
     <file>QtIcons/skybox.png</file>
-    <file>QtIcons/landscapesettings.png</file>
     <file>QtIcons/hangingobjects.png</file>
+    <file>QtIcons/map.png</file>
     <file>QtImages/sky_example0.png</file>
     <file>QtImages/sky_example1.png</file>
     <file>QtImages/sky_example2.png</file>

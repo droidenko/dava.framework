@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021414161819851100925E51 /* DAVAClassRegistrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 021414141819851100925E51 /* DAVAClassRegistrator.cpp */; };
+		021414171819851100925E51 /* DAVAClassRegistrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 021414151819851100925E51 /* DAVAClassRegistrator.h */; };
 		0224B7331598AC2800CDEF9E /* libtheora_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7311598AC2800CDEF9E /* libtheora_ios.a */; };
 		0224B7341598AC2800CDEF9E /* libtheora_macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7321598AC2800CDEF9E /* libtheora_macos.a */; };
 		0224B74A1598B40100CDEF9E /* libogg_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7481598B40100CDEF9E /* libogg_ios.a */; };
@@ -716,6 +718,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		021414141819851100925E51 /* DAVAClassRegistrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DAVAClassRegistrator.cpp; sourceTree = "<group>"; };
+		021414151819851100925E51 /* DAVAClassRegistrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAVAClassRegistrator.h; sourceTree = "<group>"; };
 		0224B7311598AC2800CDEF9E /* libtheora_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora_ios.a; path = ../../Libs/libs/libtheora_ios.a; sourceTree = "<group>"; };
 		0224B7321598AC2800CDEF9E /* libtheora_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora_macos.a; path = ../../Libs/libs/libtheora_macos.a; sourceTree = "<group>"; };
 		0224B7481598B40100CDEF9E /* libogg_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg_ios.a; path = ../../Libs/libs/libogg_ios.a; sourceTree = "<group>"; };
@@ -2414,6 +2418,8 @@
 				E8B3C7EA16B9326D002BD35F /* Collision */,
 				E8B3C7F116B9326D002BD35F /* Core */,
 				E8B3C7FC16B9326D002BD35F /* Database */,
+				021414141819851100925E51 /* DAVAClassRegistrator.cpp */,
+				021414151819851100925E51 /* DAVAClassRegistrator.h */,
 				E8B3C80116B9326D002BD35F /* DAVAConfig.h */,
 				E8B3C80216B9326D002BD35F /* DAVAEngine.cpp */,
 				E8B3C80316B9326D002BD35F /* DAVAEngine.h */,
@@ -2631,6 +2637,7 @@
 				E8B3CC1316B9326E002BD35F /* LibPngHelpers.h in Headers */,
 				E8B3CC1516B9326E002BD35F /* LibPVRHelper.h in Headers */,
 				E8B3CC1716B9326E002BD35F /* MaterialCompiler.h in Headers */,
+				021414171819851100925E51 /* DAVAClassRegistrator.h in Headers */,
 				E8B3CC1916B9326E002BD35F /* MaterialGraph.h in Headers */,
 				E8B3CC1B16B9326E002BD35F /* MaterialGraphNode.h in Headers */,
 				E8B3CC1D16B9326E002BD35F /* NMaterial.h in Headers */,
@@ -2809,7 +2816,8 @@
 				02AF979D17EB596D005A62F2 /* SpeedTreeLeafBatch.h in Headers */,
 				EA84E17617FAC20100304C3C /* SpatialTree.h in Headers */,
 				7A8F772A17E73E720048A43D /* AutotestingDB.h in Headers */,
-				7A8F772C17E73E720048A43D /* GameAPI.h in Headers */,			);
+				7A8F772C17E73E720048A43D /* GameAPI.h in Headers */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
@@ -3034,6 +3042,7 @@
 				E8B3CC3B16B9326E002BD35F /* Shader.cpp in Sources */,
 				E8B3CC3D16B9326E002BD35F /* ShaderDX.cpp in Sources */,
 				E8B3CC3E16B9326E002BD35F /* ShaderGL.cpp in Sources */,
+				021414161819851100925E51 /* DAVAClassRegistrator.cpp in Sources */,
 				E8B3CC4016B9326E002BD35F /* SharedFBO.cpp in Sources */,
 				E8B3CC4216B9326E002BD35F /* StaticIndexBuffer.cpp in Sources */,
 				E8B3CC4416B9326E002BD35F /* StaticVertexBuffer.cpp in Sources */,
@@ -3195,7 +3204,8 @@
 				02AF979C17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp in Sources */,
 				EA84E17517FAC20100304C3C /* SpatialTree.cpp in Sources */,
 				7A8F772917E73E720048A43D /* AutotestingDB.cpp in Sources */,
-				7A8F772B17E73E720048A43D /* GameAPI.cpp in Sources */,			);
+				7A8F772B17E73E720048A43D /* GameAPI.cpp in Sources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */

@@ -35,7 +35,6 @@
 namespace DAVA
 {
 
-REGISTER_CLASS(RenderObject)
 
 static const int32 DEFAULT_FLAGS = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH;
 

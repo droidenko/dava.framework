@@ -62,14 +62,12 @@ protected:
 	void Draw();
 	void Draw(DAVA::Entity *entity);
 
-	inline void DrawObjectBoxesByType(DAVA::Entity *entity);
-	inline void DrawUserNode(DAVA::Entity *entity);
-	inline void DrawLightNode(DAVA::Entity *entity);
-	inline void DrawSoundNode(DAVA::Entity *entity);
-	inline void DrawHangingObjects(DAVA::Entity *entity);
-
-
-	inline void DrawEntityBox(DAVA::Entity *entity, const DAVA::Color &color);
+	void DrawObjectBoxesByType(DAVA::Entity *entity);
+	void DrawUserNode(DAVA::Entity *entity);
+	void DrawLightNode(DAVA::Entity *entity);
+	void DrawSoundNode(DAVA::Entity *entity);
+	void DrawHangingObjects(DAVA::Entity *entity);
+	void DrawEntityBox(DAVA::Entity *entity, const DAVA::Color &color);
 
 	//hanging objects 
 	bool IsObjectHanging(DAVA::Entity * entity);

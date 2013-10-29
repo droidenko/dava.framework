@@ -37,8 +37,6 @@
 namespace DAVA 
 {
     
-REGISTER_CLASS(Camera);
-
 
 Camera::Camera()
 :	orthoWidth(35.f)

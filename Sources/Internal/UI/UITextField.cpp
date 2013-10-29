@@ -47,8 +47,6 @@ extern void CloseKeyboard();
 namespace DAVA 
 {
 
-REGISTER_CLASS(UITextField);
-
 void UITextFieldDelegate::TextFieldShouldReturn(UITextField * /*textField*/)
 {
 }
@@ -172,7 +170,8 @@ UITextField::~UITextField()
 #elif defined (__DAVAENGINE_IPHONE__)
 	SafeDelete(textFieldiPhone);
 #else
-	SafeRelease(textFont);    
+    SafeRelease(textFont);
+
     RemoveAllControls();
     SafeRelease(staticText);
 #endif
@@ -501,6 +500,7 @@ void UITextField::Input(UIEvent *currentInput)
         }
     }
 
+    currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_SOFT); // Drag is not handled - see please DF-2508.
 #endif
 }
     

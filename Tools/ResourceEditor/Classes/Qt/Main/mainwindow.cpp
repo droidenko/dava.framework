@@ -51,7 +51,7 @@
 #include "Tools/QtFileDialog/QtFileDialog.h"
 
 #ifdef __DAVAENGINE_SPEEDTREE__
-#include "SpeedTreeImporter.h"
+#include "Classes/Qt/SpeedTreeImport/SpeedTreeImportDialog.h"
 #endif
 
 #include "Tools/SelectPathWidget/SelectEntityPathWidget.h"
@@ -314,9 +314,8 @@ void QtMainWindow::SetGPUFormat(DAVA::eGPUFamily gpu)
 
 			WaitStop();
 		}
-
-		LoadGPUFormat();
 	}
+	LoadGPUFormat();
 }
 
 void QtMainWindow::WaitStart(const QString &title, const QString &message, int min /* = 0 */, int max /* = 100 */)
@@ -463,6 +462,7 @@ void QtMainWindow::SetupToolBars()
 		hangingBtn->setMinimumWidth(ResourceEditor::DEFAULT_TOOLBAR_CONTROL_SIZE_WITH_ICON);
 		ui->sceneToolBar->addSeparator();
 		ui->sceneToolBar->addWidget(hangingBtn);
+		hangingBtn->setAutoRaise(false);
 	}
 
 	// outline by object type
@@ -482,8 +482,9 @@ void QtMainWindow::SetupToolBars()
 		}
 
 		objectTypesWidget->setCurrentIndex(ResourceEditor::ESOT_NONE + 1);
-
 		QObject::connect(objectTypesWidget, SIGNAL(currentIndexChanged(int)), this, SLOT(OnObjectsTypeChanged(int)));
+
+		ui->sceneToolBar->addSeparator();
 		ui->sceneToolBar->addWidget(objectTypesWidget);
 	}
 }
@@ -965,9 +966,7 @@ void QtMainWindow::OnCloseTabRequest(int tabIndex, Request *closeRequest)
         return;
 	}
 
-    int answer = QMessageBox::question(NULL, "Scene was changed", "Do you want to save changes, made to scene?",
-                                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Cancel);
-    
+    int answer = QMessageBox::warning(NULL, "Scene was changed", "Do you want to save changes, made to scene?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Cancel);
     if(answer == QMessageBox::Cancel)
     {
         closeRequest->Cancel();
@@ -1016,13 +1015,8 @@ void QtMainWindow::ExportMenuTriggered(QAction *exportAsAction)
 void QtMainWindow::OnImportSpeedTreeXML()
 {
 #ifdef __DAVAENGINE_SPEEDTREE__
-    QString projectPath = ProjectManager::Instance()->CurProjectPath();
-    QString path = QtFileDialog::getOpenFileName(this, "Import SpeedTree", projectPath, "SpeedTree RAW File (*.xml)");
-    if (!path.isEmpty())
-    {
-        DAVA::FilePath filePath = DAVA::SpeedTreeImporter::ImportSpeedTreeFromXML(path.toStdString(), ProjectManager::Instance()->CurProjectDataSourcePath().toStdString() + "Trees/");
-        QMessageBox::information(this, "SpeedTree Import", QString(("SpeedTree model was imported to " + filePath.GetAbsolutePathname()).c_str()), QMessageBox::Ok);
-    }
+    SpeedTreeImportDialog importDialog(this);
+    importDialog.exec();
 #endif //__DAVAENGINE_SPEEDTREE__
 }
 
@@ -1560,11 +1554,21 @@ void QtMainWindow::OnSaveHeightmapToPNG()
 	}
 
 	SceneEditor2* scene = GetCurrentScene();
-    if(!scene) return;
-
+	
     Landscape *landscape = FindLandscape(scene);
-    if(!landscape) return;
-    
+	QString titleString = "Saving is not allowed";
+	
+	if (!landscape)
+	{
+		QMessageBox::warning(this, titleString, "There is no landscape in scene!");
+		return;
+	}
+	if (!landscape->GetHeightmap()->Size())
+	{
+		QMessageBox::warning(this, titleString, "There is no heightmap in landscape!");
+		return;
+	}
+	
     Heightmap * heightmap = landscape->GetHeightmap();
     FilePath heightmapPath = landscape->GetHeightmapPathname();
     FilePath requestedPngPath = FilePath::CreateWithNewExtension(heightmapPath, ".png");
@@ -1845,6 +1849,10 @@ void QtMainWindow::OnCustomColorsEditor()
 		{
 			sceneEditor->Exec(new ActionEnableCustomColors(sceneEditor));
 		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
+		}
 	}
 }
 
@@ -1865,6 +1873,10 @@ void QtMainWindow::OnHeightmapEditor()
 		if (LoadAppropriateTextureFormat())
 		{
 			sceneEditor->Exec(new ActionEnableHeightmapEditor(sceneEditor));
+		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
 		}
 	}
 }
@@ -1887,6 +1899,10 @@ void QtMainWindow::OnRulerTool()
 		{
 			sceneEditor->Exec(new ActionEnableRulerTool(sceneEditor));
 		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
+		}
 	}
 }
 
@@ -1907,6 +1923,10 @@ void QtMainWindow::OnTilemaskEditor()
 		if (LoadAppropriateTextureFormat())
 		{
 			sceneEditor->Exec(new ActionEnableTilemaskEditor(sceneEditor));
+		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
 		}
 	}
 }
@@ -1929,26 +1949,34 @@ void QtMainWindow::OnVisibilityTool()
 		{
 			sceneEditor->Exec(new ActionEnableVisibilityTool(sceneEditor));
 		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
+		}
 	}
 }
 
 void QtMainWindow::OnNotPassableTerrain()
 {
-	SceneEditor2* scene = GetCurrentScene();
-	if (!scene)
+	SceneEditor2* sceneEditor = GetCurrentScene();
+	if (!sceneEditor)
 	{
 		return;
 	}
 	
-	if (scene->landscapeEditorDrawSystem->IsNotPassableTerrainEnabled())
+	if (sceneEditor->landscapeEditorDrawSystem->IsNotPassableTerrainEnabled())
 	{
-		scene->Exec(new ActionDisableNotPassable(scene));
+		sceneEditor->Exec(new ActionDisableNotPassable(sceneEditor));
 	}
 	else
 	{
 		if (LoadAppropriateTextureFormat())
 		{
-			scene->Exec(new ActionEnableNotPassable(scene));
+			sceneEditor->Exec(new ActionEnableNotPassable(sceneEditor));
+		}
+		else
+		{
+			OnLandscapeEditorToggled(sceneEditor);
 		}
 	}
 }
@@ -1994,24 +2022,13 @@ void QtMainWindow::OnRemoveActionComponent()
 bool QtMainWindow::IsSavingAllowed()
 {
 	SceneEditor2* scene = GetCurrentScene();
-	QString titleString = "Saving is not allowed";
+	
 	if (!scene || scene->GetEnabledTools() != 0)
 	{
-		QMessageBox::warning(this, titleString, "Disable landscape editing before save!");
+		QMessageBox::warning(this, "Saving is not allowed", "Disable landscape editing before save!");
 		return false;
 	}
-	Landscape* sceneLandscape = FindLandscape(scene);
-	if (!sceneLandscape)
-	{
-		QMessageBox::warning(this, titleString, "There is no landscape in scene!");
-		return false;
-	}
-	if (!sceneLandscape->GetHeightmap()->Size())
-	{
-		QMessageBox::warning(this, titleString, "There is no heightmap in landscape!");
-		return false;
-	}
-
+	
 	return true;
 }
 
@@ -2197,8 +2214,8 @@ void QtMainWindow::DiableUIForFutureUsing()
 	ui->actionAddNewComponent->setVisible(false);
 	ui->actionRemoveComponent->setVisible(false);
 	ui->actionUniteEntitiesWithLODs->setVisible(false);
-
-	ui->menuFile->removeAction(ui->menuImport->menuAction());
+	
+	ui->actionSaveTiledTexture->setVisible(false);
 	//<--
 }
 
@@ -2234,8 +2251,33 @@ bool QtMainWindow::LoadAppropriateTextureFormat()
 	return (GetGPUFormat() == GPU_UNKNOWN);
 }
 
+bool QtMainWindow::IsTilemaskModificationCommand(const Command2* cmd)
+{
+	if (cmd->GetId() == CMDID_TILEMASK_MODIFY)
+	{
+		return true;
+	}
+
+	if (cmd->GetId() == CMDID_BATCH)
+	{
+		CommandBatch* batch = (CommandBatch*)cmd;
+		for (int32 i = 0; i < batch->Size(); ++i)
+		{
+			if (IsTilemaskModificationCommand(batch->GetCommand(i)))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool QtMainWindow::SaveTilemask()
 {
+	const QMessageBox::StandardButtons longButtons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel | QMessageBox::YesToAll | QMessageBox::NoToAll;
+	const QMessageBox::StandardButtons shortButtons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+
 	SceneTabWidget *sceneWidget = GetSceneWidget();
 	
 	int lastSceneTab = sceneWidget->GetCurrentTab();
@@ -2251,7 +2293,7 @@ bool QtMainWindow::SaveTilemask()
 			for(size_t j = cmdStack->GetCleanIndex(); j < cmdStack->GetNextIndex(); j++)
 			{
 				const Command2 *cmd = cmdStack->GetCommand(j);
-				if(cmd->GetId() == CMDID_TILEMASK_MODIFY)
+				if(IsTilemaskModificationCommand(cmd))
 				{
 					// ask user about saving tilemask changes
 					sceneWidget->SetCurrentTab(i);
@@ -2261,7 +2303,15 @@ bool QtMainWindow::SaveTilemask()
 						QString message = tabEditor->GetScenePath().GetFilename().c_str();
 						message += " has unsaved tilemask changes.\nDo you want to save?";
 
-						answer = QMessageBox::warning(this, "", message, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel | QMessageBox::YesToAll | QMessageBox::NoToAll, QMessageBox::NoButton);
+						// if more than one scene to precess
+						if((i + 1) < sceneWidget->GetCurrentTab())
+						{
+							answer = QMessageBox::warning(this, "", message, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel | QMessageBox::YesToAll | QMessageBox::NoToAll, QMessageBox::Cancel);
+						}
+						else
+						{
+							answer = QMessageBox::warning(this, "", message, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Cancel);
+						}
 					}
 
 					switch(answer)
@@ -2273,9 +2323,8 @@ bool QtMainWindow::SaveTilemask()
 							// turn off editor
 							tabEditor->DisableTools(SceneEditor2::LANDSCAPE_TOOLS_ALL);
 
-							// save and reset
+							// save
 							tabEditor->landscapeEditorDrawSystem->SaveTileMaskTexture();
-							tabEditor->landscapeEditorDrawSystem->ResetTileMaskTexture();
 						}
 						break;
 
@@ -2285,9 +2334,6 @@ bool QtMainWindow::SaveTilemask()
 						{
 							// turn off editor
 							tabEditor->DisableTools(SceneEditor2::LANDSCAPE_TOOLS_ALL);
-
-							// nothing to do with tilemask, just reset it
-							tabEditor->landscapeEditorDrawSystem->ResetTileMaskTexture();
 						}
 						break;
 
@@ -2299,8 +2345,14 @@ bool QtMainWindow::SaveTilemask()
 						}
 						break;
 					}
+
+					// finish for cycle going through commands
+					break;
 				}
 			}
+
+			//reset tilemask
+			tabEditor->landscapeEditorDrawSystem->ResetTileMaskTexture();
 
 			// clear all tilemask commands in commandStack because they will be
 			// invalid after tilemask reloading

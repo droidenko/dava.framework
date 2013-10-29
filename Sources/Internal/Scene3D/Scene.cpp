@@ -80,7 +80,6 @@
 namespace DAVA 
 {
     
-REGISTER_CLASS(Scene);
     
 Scene::Scene()
 	:   Entity()

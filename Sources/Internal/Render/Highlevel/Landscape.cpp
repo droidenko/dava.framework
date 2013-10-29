@@ -48,7 +48,6 @@
 
 namespace DAVA
 {
-REGISTER_CLASS(Landscape);
 
 //#define DRAW_OLD_STYLE
 // const float32 LandscapeNode::TEXTURE_TILE_FULL_SIZE = 2048;

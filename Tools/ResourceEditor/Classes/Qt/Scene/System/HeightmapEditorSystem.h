@@ -38,6 +38,7 @@ class SceneCollisionSystem;
 class SceneSelectionSystem;
 class EntityModificationSystem;
 class LandscapeEditorDrawSystem;
+class HoodSystem;
 
 class HeightmapEditorSystem: public DAVA::SceneSystem
 {
@@ -90,6 +91,7 @@ protected:
 	SceneSelectionSystem* selectionSystem;
 	EntityModificationSystem* modifSystem;
 	LandscapeEditorDrawSystem* drawSystem;
+	HoodSystem *hoodSystem;
 	
 	int32 landscapeSize;
 	Texture* cursorTexture;

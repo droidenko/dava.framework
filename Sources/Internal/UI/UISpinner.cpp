@@ -33,8 +33,6 @@
 namespace DAVA 
 {
 
-REGISTER_CLASS(UISpinner);
-
 //use these names for children buttons to define UISpinner in .yaml
 static const String UISPINNER_BUTTON_NEXT_NAME = "buttonNext";
 static const String UISPINNER_BUTTON_PREVIOUS_NAME = "buttonPrevious";
@@ -239,6 +237,8 @@ void UISpinner::Input(UIEvent *currentInput)
             totalGestureDx = 0;
         }
     }
+
+    currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_HARD); // Drag is handled - see please DF-2508.
 }
     
 void UISpinner::OnSelectWithSlide(bool isPrevious)

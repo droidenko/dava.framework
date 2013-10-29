@@ -38,7 +38,6 @@
 namespace DAVA 
 {
     
-REGISTER_CLASS(Light);
 
 Light::Light()
 :	BaseObject(),

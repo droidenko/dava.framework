@@ -125,6 +125,8 @@ protected:
 
 	ScenePreviewDialog *previewDialog;
 
+	int FindTab(const DAVA::FilePath & scenePath);
+
 private:
 	int newSceneCounter;
 	SceneEditor2 *curScene;

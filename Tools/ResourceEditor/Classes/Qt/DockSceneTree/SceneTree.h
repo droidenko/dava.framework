@@ -124,7 +124,7 @@ protected slots:
 	void SyncSelectionToTree();
 	void SyncSelectionFromTree();
 
-	void ShowContextMenuEntity(DAVA::Entity *entity, const QPoint &pos);
+	void ShowContextMenuEntity(DAVA::Entity *entity, int entityCustomFlags, const QPoint &pos);
 	void ShowContextMenuLayer(DAVA::ParticleLayer *layer, const QPoint &pos);
 	void ShowContextMenuForce(DAVA::ParticleLayer *layer, DAVA::ParticleForce *force, const QPoint &pos);
 	void ShowContextMenuInnerEmitter(DAVA::ParticleEmitter *emitter, DAVA::ParticleLayer *parentLayer, const QPoint &pos);
@@ -144,8 +144,6 @@ protected:
 
 	// Cleanup the selected Particle Editor items.
 	void CleanupParticleEditorSelectedItems();
-
-	bool IsAnyEditorEntityIsSelected();
 
 private:
 	// Selected Particle Layer.

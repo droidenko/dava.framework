@@ -41,6 +41,7 @@
 #include "../../../Commands2/TilemaskEditorCommands.h"
 #include "../../Main/QtUtils.h"
 #include "../../../SceneEditor/EditorSettings.h"
+#include "HoodSystem.h"
 
 HeightmapEditorSystem::HeightmapEditorSystem(Scene* scene)
 :	SceneSystem(scene)
@@ -76,6 +77,7 @@ HeightmapEditorSystem::HeightmapEditorSystem(Scene* scene)
 	selectionSystem = ((SceneEditor2 *) GetScene())->selectionSystem;
 	modifSystem = ((SceneEditor2 *) GetScene())->modifSystem;
 	drawSystem = ((SceneEditor2 *) GetScene())->landscapeEditorDrawSystem;
+	hoodSystem = ((SceneEditor2 *) GetScene())->hoodSystem;
 }
 
 HeightmapEditorSystem::~HeightmapEditorSystem()
@@ -112,7 +114,9 @@ bool HeightmapEditorSystem::EnableLandscapeEditing()
 	}
 
 	selectionSystem->SetLocked(true);
+	selectionSystem->LockSelection(true);
 	modifSystem->SetLocked(true);
+	hoodSystem->Show(false);
 
 	landscapeSize = drawSystem->GetHeightmapProxy()->Size();
 	copyPasteFrom = Vector2(-1.f, -1.f);
@@ -137,8 +141,14 @@ bool HeightmapEditorSystem::DisableLandscapeEdititing()
 
 	FinishEditing();
 
+	selectionSystem->LockSelection(false);
 	selectionSystem->SetLocked(false);
 	modifSystem->SetLocked(false);
+
+	if(selectionSystem->GetSelectionCount() > 0)
+	{
+		hoodSystem->Show(true);
+	}
 	
 	drawSystem->DisableCursor();
 	drawSystem->DisableCustomDraw();
@@ -193,6 +203,7 @@ void HeightmapEditorSystem::ProcessUIEvent(DAVA::UIEvent *event)
 						{
 							copyPasteFrom = cursorPosition;
 							copyPasteTo = Vector2(-1.f, -1.f);
+							return;
 						}
 						else
 						{
@@ -272,6 +283,11 @@ void HeightmapEditorSystem::UpdateCursorPosition()
 		cursorPosition.y = (int32)cursorPosition.y;
 
 		drawSystem->SetCursorPosition(cursorPosition);
+	}
+	else
+	{
+		// hide cursor
+		drawSystem->SetCursorPosition(DAVA::Vector2(-100, -100));
 	}
 }
 

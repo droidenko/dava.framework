@@ -46,7 +46,6 @@ AddSkyboxDialog::AddSkyboxDialog(QWidget* parent)
 	ui->lowerLayOut->addWidget(ui->buttonBox, 0, 1);
 
 	connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditor2 *)), this, SLOT(OnSceneActivated(SceneEditor2 *)));
-	connect(SceneSignals::Instance(), SIGNAL(CommandExecuted(SceneEditor2 *, const Command2*, bool)), this, SLOT(CommandExecuted(SceneEditor2 *, const Command2*, bool)));
 }
 
 AddSkyboxDialog::~AddSkyboxDialog()
@@ -160,12 +159,14 @@ void AddSkyboxDialog::OnSceneActivated(SceneEditor2 *sceneEditor)
 
 void AddSkyboxDialog::CommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo)
 {
+    BaseAddEntityDialog::CommandExecuted(scene, command, redo);
+    
     if(NULL == GetSkybox(command->GetEntity()))
     {
         return;
     }
 
-    int id = command->GetId() ;
+    int id = command->GetId();
     if((id == CMDID_ENTITY_ADD && redo) || (id == CMDID_ENTITY_REMOVE && !redo))
     {
         SetEntity(command->GetEntity());

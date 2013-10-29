@@ -82,11 +82,11 @@ void SceneTreeDelegate::customDraw(QPainter *painter, QStyleOptionViewItem *opti
 			}
 
 			int flags = model->GetCustomFlags(realIndex);
-			if(SceneTreeModel::None != flags)
+			if(SceneTreeModel::CF_Invisible & flags || SceneTreeModel::CF_Disabled & flags)
 			{
+				// change text color
 				QColor c = option->palette.text().color();
 				c.setAlpha(100);
-
 				option->palette.setColor(QPalette::Text, c);
 			}
 		}

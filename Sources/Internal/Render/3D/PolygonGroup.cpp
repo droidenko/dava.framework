@@ -36,8 +36,6 @@
 namespace DAVA 
 {
     
-REGISTER_CLASS(PolygonGroup);
-	
 PolygonGroup::PolygonGroup()
 :	DataNode(),
     vertexCount(0),
@@ -92,12 +90,10 @@ void PolygonGroup::UpdateDataPointersAndStreams()
 	}
 	if (vertexFormat & EVF_COLOR)
 	{
-		colorArray = reinterpret_cast<RGBColor*>(meshData + baseShift);
+		colorArray = reinterpret_cast<uint32*>(meshData + baseShift);
 		baseShift += GetVertexSize(EVF_COLOR);
         
-        // need DWORD color support  
-        // renderDataObject->SetStream(EVF_COLOR, TYPE_FLOAT, 3, vertexStride, vertexArray);
-        //
+        renderDataObject->SetStream(EVF_COLOR, TYPE_UNSIGNED_BYTE, 4, vertexStride, colorArray);
     }
 	if (vertexFormat & EVF_TEXCOORD0)
 	{

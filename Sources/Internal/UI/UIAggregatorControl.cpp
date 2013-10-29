@@ -35,8 +35,6 @@ using namespace DAVA;
 
 #define AGGREGATOR_PATH "aggregatorPath"
 
-REGISTER_CLASS(UIAggregatorControl);
-
 UIAggregatorControl::UIAggregatorControl(const Rect &rect, bool rectInAbsoluteCoordinates) :
 	UIControl(rect, rectInAbsoluteCoordinates)
 {

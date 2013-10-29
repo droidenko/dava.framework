@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		0211D551177C26D600EB7011 /* OpenUDIDApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 846CFE5E174D1A64004ECE3C /* OpenUDIDApple.mm */; };
 		0211D552177C26E000EB7011 /* OpenUDIDMacOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 846CFE62174D1A75004ECE3C /* OpenUDIDMacOS.mm */; };
+		02141407181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02141405181984D600925E51 /* DAVAClassRegistrator.cpp */; };
+		02141408181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02141405181984D600925E51 /* DAVAClassRegistrator.cpp */; };
+		02141409181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02141405181984D600925E51 /* DAVAClassRegistrator.cpp */; };
+		0214140A181984D600925E51 /* DAVAClassRegistrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 02141406181984D600925E51 /* DAVAClassRegistrator.h */; };
+		0214140B181984D600925E51 /* DAVAClassRegistrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 02141406181984D600925E51 /* DAVAClassRegistrator.h */; };
+		0214140C181984D600925E51 /* DAVAClassRegistrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 02141406181984D600925E51 /* DAVAClassRegistrator.h */; };
 		0224B70015989F7400CDEF9E /* libtheora_macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B6FF15989F7400CDEF9E /* libtheora_macos.a */; };
 		02E9E3AB17296D4200C501BC /* FMODUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 02E9E3AA17296D4200C501BC /* FMODUtils.h */; };
 		02E9E40A17395FDD00C501BC /* libfmodevent.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E9E40817395FDD00C501BC /* libfmodevent.dylib */; };
@@ -2078,6 +2084,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02141405181984D600925E51 /* DAVAClassRegistrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DAVAClassRegistrator.cpp; sourceTree = "<group>"; };
+		02141406181984D600925E51 /* DAVAClassRegistrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAVAClassRegistrator.h; sourceTree = "<group>"; };
 		0224B6FF15989F7400CDEF9E /* libtheora_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora_macos.a; path = ../../Libs/libs/libtheora_macos.a; sourceTree = "<group>"; };
 		02E9E3AA17296D4200C501BC /* FMODUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMODUtils.h; sourceTree = "<group>"; };
 		02E9E40817395FDD00C501BC /* libfmodevent.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmodevent.dylib; path = ../../Libs/fmod/lib/macos/libfmodevent.dylib; sourceTree = "<group>"; };
@@ -3880,6 +3888,8 @@
 				E8989B0616BD24E400732C04 /* Collision */,
 				E8989B0D16BD24E400732C04 /* Core */,
 				E8989B1816BD24E400732C04 /* Database */,
+				02141405181984D600925E51 /* DAVAClassRegistrator.cpp */,
+				02141406181984D600925E51 /* DAVAClassRegistrator.h */,
 				E8989B1D16BD24E400732C04 /* DAVAConfig.h */,
 				E8989B1E16BD24E400732C04 /* DAVAEngine.cpp */,
 				E8989B1F16BD24E400732C04 /* DAVAEngine.h */,
@@ -4075,6 +4085,7 @@
 				176DE994174B5561007A983B /* ImageConvert.h in Headers */,
 				176DE995174B5561007A983B /* ImageLoader.h in Headers */,
 				176DE996174B5561007A983B /* IndexBuffer.h in Headers */,
+				0214140C181984D600925E51 /* DAVAClassRegistrator.h in Headers */,
 				176DE997174B5561007A983B /* LibDxtHelper.h in Headers */,
 				176DE998174B5561007A983B /* LibPngHelpers.h in Headers */,
 				176DE999174B5561007A983B /* LibPVRHelper.h in Headers */,
@@ -4279,6 +4290,7 @@
 				E8989DA816BD24E500732C04 /* NamedAnimationsList.h in Headers */,
 				E8989DAE16BD24E500732C04 /* AutotestingSystem.h in Headers */,
 				E8989DAF16BD24E500732C04 /* Config.h in Headers */,
+				0214140A181984D600925E51 /* DAVAClassRegistrator.h in Headers */,
 				E8989DB116BD24E500732C04 /* MongodbUpdateObject.h in Headers */,
 				E8989DB516BD24E500732C04 /* BaseMath.h in Headers */,
 				E8989DB716BD24E500732C04 /* BaseObject.h in Headers */,
@@ -4696,6 +4708,7 @@
 				E898A09B16BD265400732C04 /* Bitstream.h in Headers */,
 				E898A09C16BD265400732C04 /* DynamicMemoryFile.h in Headers */,
 				E898A09D16BD265400732C04 /* File.h in Headers */,
+				0214140B181984D600925E51 /* DAVAClassRegistrator.h in Headers */,
 				E898A09E16BD265400732C04 /* FileList.h in Headers */,
 				E898A09F16BD265400732C04 /* FilePath.h in Headers */,
 				E898A0A016BD265400732C04 /* FileSystem.h in Headers */,
@@ -5277,6 +5290,7 @@
 				176DEB06174B5561007A983B /* TransformSystem.cpp in Sources */,
 				176DEB07174B5561007A983B /* UserNode.cpp in Sources */,
 				176DEB08174B5561007A983B /* Sound.cpp in Sources */,
+				02141409181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */,
 				176DEB09174B5561007A983B /* SoundGroup.cpp in Sources */,
 				176DEB0A174B5561007A983B /* SoundSystem.cpp in Sources */,
 				176DEB0B174B5561007A983B /* ScrollHelper.cpp in Sources */,
@@ -5645,6 +5659,7 @@
 				C151B1B916D4FF6A00E09BAF /* MailSenderMacOS.mm in Sources */,
 				CC24800816DD174E00183D40 /* UserComponent.cpp in Sources */,
 				E9EA496C16DF93FA00C44B6F /* UISpinner.cpp in Sources */,
+				02141407181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */,
 				E8B4F8CF16EF377D0072442A /* UTF8UtilsMac.mm in Sources */,
 				E9E798A916F0BE7600745AF5 /* UISwitch.cpp in Sources */,
 				CCC7A42516F1D6170061EA5D /* Camera.cpp in Sources */,
@@ -5842,6 +5857,7 @@
 				E898A22E16BD265400732C04 /* MaterialGraph.cpp in Sources */,
 				E898A22F16BD265400732C04 /* MaterialGraphNode.cpp in Sources */,
 				E898A23016BD265400732C04 /* NMaterial.cpp in Sources */,
+				02141408181984D600925E51 /* DAVAClassRegistrator.cpp in Sources */,
 				E898A23116BD265400732C04 /* Material.cpp in Sources */,
 				E898A23216BD265400732C04 /* RenderBase.cpp in Sources */,
 				E898A23316BD265400732C04 /* RenderDataObject.cpp in Sources */,

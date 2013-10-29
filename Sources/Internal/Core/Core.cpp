@@ -26,6 +26,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
+#include "DAVAClassRegistrator.h"
 
 #include "FileSystem/FileSystem.h"
 #include "Base/ObjectFactory.h"
@@ -152,6 +153,7 @@ void Core::CreateSingletons()
 	Thread::InitMainThread();
 #endif
     
+    RegisterDAVAClasses();
     
     CheckDataTypeSizes();
 }

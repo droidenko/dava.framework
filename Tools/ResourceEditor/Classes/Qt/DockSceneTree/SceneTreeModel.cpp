@@ -170,15 +170,19 @@ QVector<QIcon> SceneTreeModel::GetCustomIcons(const QModelIndex &index) const
 
 int SceneTreeModel::GetCustomFlags(const QModelIndex &index) const
 {
-	int ret = None;
+	int ret = 0;
 
 	SceneTreeItem *item = GetItem(index);
-
 	DAVA::Entity *entity = SceneTreeItemEntity::GetEntity(item);
+
 	if(NULL != entity)
 	{
-		// TODO:
-		// ...
+		if( entity->GetName().find("editor.") != DAVA::String::npos ||
+			NULL != DAVA::GetLandscape(entity) ||
+			NULL != DAVA::GetSkybox(entity))
+		{
+			ret |= CF_Disabled;
+		}
 	}
 	else
 	{
@@ -193,7 +197,7 @@ int SceneTreeModel::GetCustomFlags(const QModelIndex &index) const
 				{
 					if(!layer->IsLodActive(lodComp->currentLod))
 					{
-						ret |= InvisibleLOD;
+						ret |= CF_Invisible;
 					}
 				}
 			}
@@ -431,8 +435,13 @@ bool SceneTreeModel::DropCanBeAccepted(const QMimeData * data, Qt::DropAction ac
 		{
 			ret = true;
 
-			// 1. don't accept entity to be dropped anywhere except other entity
+			// don't accept entity to be dropped anywhere except other entity
 			if(NULL != parentItem && parentItem->ItemType() != SceneTreeItem::EIT_Entity)
+			{
+				ret = false;
+			}
+			// don't accept drops inside disabled (by custom flags) entity 
+			else if(GetCustomFlags(parent) & CF_Disabled)
 			{
 				ret = false;
 			}
@@ -442,22 +451,29 @@ bool SceneTreeModel::DropCanBeAccepted(const QMimeData * data, Qt::DropAction ac
 				QVector<void*> *entities = DecodeMimeData(data, mimeFormatEntity);
 				if(NULL != entities)
 				{
-					DAVA::Entity *parentEntity = SceneTreeItemEntity::GetEntity(parentItem);
+					DAVA::Entity *targetEntity = SceneTreeItemEntity::GetEntity(parentItem);
 
 					for (int i = 0; i < entities->size(); ++i)
 					{
 						DAVA::Entity *entity = (DAVA::Entity *) entities->at(i);
 						QModelIndex entityIndex = GetIndex(entity);
 
-						// 2. we don't accept drops if it has locked items
+						// 1. we don't accept drops if it has locked items
 						if(NULL != entity && entity->GetLocked()) 
 						{
 							ret = false;
 							break;
 						}
 
+						// 2. or it has entity with CF_Disabled flag
+						if(GetCustomFlags(entityIndex) & CF_Disabled)
+						{
+							ret = false;
+							break;
+						}
+
 						// 3. or this is self-drop
-						if( parentEntity == entity || // dropping into
+						if( targetEntity == entity || // dropping into
 							entityIndex == index(row, column, parent) || // dropping above
 							entityIndex == index(row - 1, column, parent)) // dropping below
 						{
@@ -466,7 +482,7 @@ bool SceneTreeModel::DropCanBeAccepted(const QMimeData * data, Qt::DropAction ac
 						}
 
 						// 4. or we are dropping last element to the bottom of the list
-						if( NULL == parentEntity && row == -1 && // dropping to be bottom of the list
+						if( NULL == targetEntity && row == -1 && // dropping to be bottom of the list
 							!entityIndex.parent().isValid() && // no parent
 							entityIndex.row() == (rowCount(entityIndex.parent()) - 1)) // dropped item is already bottom
 						{

@@ -50,6 +50,7 @@
 SceneEditor2::SceneEditor2()
 	: Scene()
 	, isLoaded(false)
+	, isHUDVisible(true)
 {
 	renderStats.Clear();
 
@@ -293,6 +294,16 @@ bool SceneEditor2::IsLoaded() const
 	return isLoaded;
 }
 
+void SceneEditor2::SetHUDVisible(bool visible)
+{
+	isHUDVisible = visible;
+}
+
+bool SceneEditor2::IsHUDVisible() const
+{
+	return isHUDVisible;
+}
+
 bool SceneEditor2::IsChanged() const
 {
 	return ((!commandStack.IsClean()) || wasChanged);
@@ -383,9 +394,12 @@ void SceneEditor2::Draw()
 	debugDrawSystem->Draw();
 
 	// should be last
-	selectionSystem->Draw();
-	hoodSystem->Draw();
-	textDrawSystem->Draw();
+	if(isHUDVisible)
+	{
+		selectionSystem->Draw();
+		hoodSystem->Draw();
+		textDrawSystem->Draw();
+	}
 }
 
 void SceneEditor2::EditorCommandProcess(const Command2 *command, bool redo)

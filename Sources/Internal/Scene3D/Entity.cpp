@@ -55,7 +55,6 @@ namespace DAVA
 {
     
     
-REGISTER_CLASS(Entity);
 
 // Property Names.
 const char* Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME = "editor.isSolid";

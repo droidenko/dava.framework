@@ -59,8 +59,9 @@ public:
 
 	enum CustomFlags
 	{
-		None			= 0x0000,
-		InvisibleLOD	= 0x0001,
+		CF_None			= 0x0000,
+		CF_Disabled		= 0x0001,
+		CF_Invisible	= 0x0002,
 	};
 
 	static const char* mimeFormatEntity;

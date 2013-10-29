@@ -40,8 +40,6 @@
 namespace DAVA 
 {
 	
-REGISTER_CLASS(UIStaticText);
-
 UIStaticText::UIStaticText(const Rect &rect, bool rectInAbsoluteCoordinates/* = FALSE*/) 
 :	UIControl(rect, rectInAbsoluteCoordinates)
 	, textColor(1.0f, 1.0f, 1.0f, 1.0f)

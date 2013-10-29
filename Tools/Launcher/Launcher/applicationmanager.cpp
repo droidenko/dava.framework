@@ -162,7 +162,7 @@ void ApplicationManager::DownloadFinished()
             QString webPageUrl = remoteConfig->GetWebpageURL();
             if(!webPageUrl.isEmpty())
                 localConfig->SetWebpageURL(webPageUrl);
-            localConfig->CopyStringsFromConfig(*remoteConfig);
+            localConfig->CopyStringsAndFavsFromConfig(*remoteConfig);
             localConfig->SaveToYamlFile(localConfigFilePath);
         }
     }

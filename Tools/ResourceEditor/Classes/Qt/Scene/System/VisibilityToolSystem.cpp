@@ -232,6 +232,11 @@ void VisibilityToolSystem::UpdateCursorPosition(int32 landscapeSize)
 
 		drawSystem->SetCursorPosition(cursorPosition);
 	}
+	else
+	{
+		// hide cursor
+		drawSystem->SetCursorPosition(DAVA::Vector2(-100, -100));
+	}
 }
 
 void VisibilityToolSystem::ResetAccumulatorRect()

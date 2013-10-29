@@ -47,7 +47,6 @@
 namespace DAVA 
 {
 
-REGISTER_CLASS(InstanceMaterialState)
     
 InstanceMaterialState::InstanceMaterialState()
     :   flatColor(1.0f, 1.0f, 1.0f, 1.0f)
@@ -214,7 +213,6 @@ void InstanceMaterialState::InitFromState(const InstanceMaterialState * state)
 
 
 
-REGISTER_CLASS(Material);
     
 UberShader * Material::uberShader = 0;
     

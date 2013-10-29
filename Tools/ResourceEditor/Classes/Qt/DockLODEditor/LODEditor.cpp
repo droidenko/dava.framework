@@ -300,7 +300,7 @@ void LODEditor::SetForceLayerValues(int layersCount)
     }
     
     int requestedIndex = editedLODData->GetForceLayer() + 1;
-    if(requestedIndex < layersCount)
+    if(requestedIndex <= layersCount)
     {
         ui->forceLayer->setCurrentIndex(requestedIndex);
     }

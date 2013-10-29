@@ -312,6 +312,10 @@ void HoodSystem::Draw()
 
 			curHood->Draw(showAsSelected, moseOverAxis, textDrawSys);
 
+			// zero pos point
+			DAVA::RenderManager::Instance()->SetColor(DAVA::Color(1.0f, 1.0f, 1.0f, 1.0f));
+			DAVA::RenderHelper::Instance()->DrawPoint(GetPosition(), 1.0f);
+			
 			// debug draw axis collision word
 			//collWorld->debugDrawWorld();
 		}

@@ -28,45 +28,44 @@
 
 
 
+#ifndef __RESOURCEEDITORQT__SPEEDTREEIMPORTDIALOG__
+#define __RESOURCEEDITORQT__SPEEDTREEIMPORTDIALOG__
 
-#ifndef __DAVAENGINE_UISPRITEEDITOR_H__
-#define __DAVAENGINE_UISPRITEEDITOR_H__
+#include "DAVAEngine.h"
+#include <QDialog>
 
-#include "Base/BaseTypes.h"
-#include "UI/UIList.h"
-#include "UIScrollView.h"
+namespace Ui {
+	class QtTreeImportDialog;
+}
 
-namespace DAVA 
+class SpeedTreeImportDialog: public QDialog
 {
-	
-// comment: use namespace and standard prefix because probably this class can be moved to framework later
-class UISpriteEditor: public UIControl
-{
+	Q_OBJECT
+
 public:
-	UISpriteEditor(const Rect &rect = Rect(), bool rectInAbsoluteCoordinates = false);
-	~UISpriteEditor();
-	
-	UIControl * GetSpritePreview();
-//	UISlider * GetFrameSlider();
-	
-	void SetRect(const Rect &rect, bool rectInAbsoluteCoordinates = false);
-	void SetPreviewSprite(const FilePath & spriteName);
-	
-	void LoadFromYamlNode(const YamlNode * node, UIYamlLoader * loader);
-	void LoadFromYamlNodeCompleted();
-	
-	
+	SpeedTreeImportDialog(QWidget *parent = 0);
+	~SpeedTreeImportDialog();
+
+public slots:
+    int exec();
+
+private slots:
+    void OnCancel();
+    void OnOk();
+
+    void OnXMLSelect();
+    void OnSc2Select();
+    void OnImagesSelect();
+
 private:
-	void OnCurrentFrameChanged(BaseObject * obj, void * userData, void * systemData);
-	
+    void UpdateEditLines(bool makeSc2PathDefault = true, bool makeTexturesDirDefault = true);
+    QString GetDefaultDialogPath(const DAVA::FilePath & forPath);
 
-	// UIGrid * grid;
-	UIScrollView * spriteScrollView;
-	UIControl * spritePreview;
-	UIStaticText * frameCount;
-	UIStaticText * currentFrame;
-	UISlider * frameSlider;
-};
+	Ui::QtTreeImportDialog *ui;
+
+    DAVA::FilePath xmlFilePath;
+    DAVA::FilePath sc2FilePath;
+    DAVA::FilePath texturesDirPath;
 };
 
-#endif // __DAVAENGINE_UISPRITEEDITOR_H__
+#endif // __RESOURCEEDITORQT__SPEEDTREEIMPORTDIALOG__

@@ -33,7 +33,6 @@
 
 namespace DAVA
 {
-	REGISTER_CLASS(SkyboxRenderObject);
 
 	//do not create lower cube face
 	const int SKYBOX_VERTEX_COUNT = (5 * 6);

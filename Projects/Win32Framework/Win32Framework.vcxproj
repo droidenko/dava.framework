@@ -238,6 +238,7 @@
     <ClInclude Include="..\..\Sources\Internal\Core\PerformanceSettings.h" />
     <ClInclude Include="..\..\Sources\Internal\Database\MongodbClient.h" />
     <ClInclude Include="..\..\Sources\Internal\Database\MongodbObject.h" />
+    <ClInclude Include="..\..\Sources\Internal\DAVAClassRegistrator.h" />
     <ClInclude Include="..\..\Sources\Internal\DAVAConfig.h" />
     <ClInclude Include="..\..\Sources\Internal\DAVAEngine.h" />
     <ClInclude Include="..\..\Sources\Internal\DAVAVersion.h" />
@@ -646,6 +647,7 @@
     <ClCompile Include="..\..\Sources\Internal\Core\PerformanceSettings.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Database\MongodbClient.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Database\MongodbObject.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\DAVAClassRegistrator.cpp" />
     <ClCompile Include="..\..\Sources\Internal\DAVAEngine.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Animation\AnimatedObject.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Animation\Animation.cpp" />

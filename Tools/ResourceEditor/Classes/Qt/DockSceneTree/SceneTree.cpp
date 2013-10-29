@@ -298,7 +298,7 @@ void SceneTree::ShowContextMenu(const QPoint &pos)
 		switch (item->ItemType())
 		{
 		case SceneTreeItem::EIT_Entity:
-			ShowContextMenuEntity(SceneTreeItemEntity::GetEntity(item), mapToGlobal(pos));
+			ShowContextMenuEntity(SceneTreeItemEntity::GetEntity(item), treeModel->GetCustomFlags(index), mapToGlobal(pos));
 			break;
 
 		case SceneTreeItem::EIT_Layer:
@@ -332,7 +332,7 @@ void SceneTree::ShowContextMenu(const QPoint &pos)
 	}
 }
 
-void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, const QPoint &pos)
+void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, int entityCustomFlags, const QPoint &pos)
 {
 	if(NULL != entity)
 	{
@@ -341,10 +341,10 @@ void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, const QPoint &pos)
 		SceneSelectionSystem *selSystem = scene->selectionSystem;
 		size_t selectionSize = selSystem->GetSelectionCount();
 
-
 		QMenu contextMenu;
-		if(IsAnyEditorEntityIsSelected())
+		if(entityCustomFlags & SceneTreeModel::CF_Disabled)
 		{
+			// disabled entities can only be removed
 			contextMenu.addAction(QIcon(":/QtIcons/remove.png"), "Remove entity", this, SLOT(RemoveSelection()));
 		}
 		else
@@ -1278,26 +1278,4 @@ void SceneTree::OnFindSameEntity()
 
 	Entity *entity = selection.GetEntity(0);
 	QtMainWindow::Instance()->GetUI()->sceneTreeFilterEdit->setText(entity->GetName().c_str());
-}
-
-bool SceneTree::IsAnyEditorEntityIsSelected()
-{
-	SceneEditor2 *sceneEditor = treeModel->GetScene();
-	if(!sceneEditor)
-	{
-		return false;
-	}
-
-	EntityGroup selection = sceneEditor->selectionSystem->GetSelection();
-	for(size_t i = 0; i < selection.Size(); ++i)
-	{
-		String name = selection.GetEntity(i)->GetName();
-		if(0 == name.find(ResourceEditor::EDITOR_BASE))
-		{
-			return true;
-		}
-	}
-
-	return false;
-
 }

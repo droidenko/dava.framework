@@ -125,8 +125,13 @@ public:
 	bool IsChanged() const;
 	void SetChanged(bool changed);
 
+	// enable/disable drawing custom HUD
+	void SetHUDVisible(bool visible);
+	bool IsHUDVisible() const;
+
 	// DAVA events
 	void PostUIEvent(DAVA::UIEvent *event);
+	virtual void Update(float timeElapsed);
 
 	// this function should be called each time UI3Dview changes its position
 	// viewport rect is used to calc. ray from camera to any 2d point on this viewport
@@ -148,8 +153,6 @@ public:
 	bool IsToolsEnabled(int32 toolFlags);
 	int32 GetEnabledTools();
 
-	virtual void Update(float timeElapsed);
-
 	SceneEditor2 *CreateCopyForExport();	//Need to prevent changes of original scene
 	virtual Entity* Clone(Entity *dstNode = NULL);
 
@@ -157,6 +160,7 @@ public:
 
 protected:
 	bool isLoaded;
+	bool isHUDVisible;
 
 	DAVA::FilePath curScenePath;
 	CommandStack commandStack;

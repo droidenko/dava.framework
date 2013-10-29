@@ -270,6 +270,11 @@ void TilemaskEditorSystem::UpdateCursorPosition()
 		
 		drawSystem->SetCursorPosition(cursorPosition);
 	}
+	else
+	{
+		// hide cursor
+		drawSystem->SetCursorPosition(DAVA::Vector2(-100, -100));
+	}
 }
 
 void TilemaskEditorSystem::UpdateToolImage(bool force)

@@ -41,8 +41,6 @@ namespace DAVA
 {
 	
 	
-REGISTER_CLASS(UISlider);
-
 // Use these names for children buttons to define UISlider in .yaml
 static const String UISLIDER_THUMB_SPRITE_CONTROL_NAME = "thumbSpriteControl";
 static const String UISLIDER_MIN_SPRITE_CONTROL_NAME = "minSpriteControl";
@@ -111,16 +109,19 @@ void UISlider::AddControl(DAVA::UIControl *control)
 
 	if (control->GetName() == UISLIDER_THUMB_SPRITE_CONTROL_NAME)
 	{
-		thumbButton = control;
+        DVASSERT(!thumbButton);
+		thumbButton = SafeRetain(control);
 	}
 	else if (control->GetName() == UISLIDER_MIN_SPRITE_CONTROL_NAME)
 	{
-		bgMin = control;
+        DVASSERT(!bgMin);
+		bgMin = SafeRetain(control);
 		PostInitBackground(bgMin);
 	}
 	else if (control->GetName() == UISLIDER_MAX_SPRITE_CONTROL_NAME)
 	{
-		bgMax = control;
+        DVASSERT(!bgMax);
+		bgMax = SafeRetain(control);
 		PostInitBackground(bgMax);
 	}
 }
@@ -192,7 +193,7 @@ void UISlider::SetThumb(UIControl *newThumb)
 	thumbButton->relativePosition.y = size.y * 0.5f;
     thumbButton->pivotPoint = thumbButton->size*0.5f;
 	
-	AddControl(thumbButton);
+	UIControl::AddControl(thumbButton);
 	
 	SetValue(currentValue);
 }
@@ -335,9 +336,9 @@ void UISlider::Input(UIEvent *currentInput)
 		/* if not continuos always perform event because last move position almost always the same as end pos */
 		PerformEvent(EVENT_VALUE_CHANGED);
 	}
-			  
-			  
+
 	RecalcButtonPos();
+	currentInput->SetInputHandledType(UIEvent::INPUT_HANDLED_HARD); // Drag is handled - see please DF-2508.
 }
 
 void UISlider::Draw(const UIGeometricData &geometricData)
@@ -589,28 +590,26 @@ void UISlider::CopyDataFrom(UIControl *srcControl)
 	
 	currentValue = t->currentValue;
 
+    ReleaseAllSubcontrols();
 	if (t->thumbButton)
 	{
-		RemoveControl(thumbButton);
-		thumbButton = t->thumbButton->Clone();
-		AddControl(thumbButton);
-		thumbButton->Release();
+		UIControl *c = t->thumbButton->Clone();
+		AddControl(c);
+		c->Release();
 	}
 	if (t->bgMin)
 	{
-		RemoveControl(bgMin);
-		bgMin = t->bgMin->Clone();
-		AddControl(bgMin);
-		bgMin->Release();
+		UIControl *c = t->bgMin->Clone();
+		AddControl(c);
+		c->Release();
 
 		PostInitBackground(bgMin);
 	}
 	if (t->bgMax)
 	{
-		RemoveControl(bgMax);
-		bgMax = t->bgMax->Clone();
-		AddControl(bgMax);
-		bgMax->Release();
+		UIControl *c = t->bgMax->Clone();
+		AddControl(c);
+		c->Release();
 
 		PostInitBackground(bgMax);
 	}
@@ -632,6 +631,8 @@ void UISlider::AttachToSubcontrols()
 	{
 		thumbButton = FindByName(UISLIDER_THUMB_SPRITE_CONTROL_NAME);
 		DVASSERT(thumbButton);
+        thumbButton->Retain();
+        
 		InitInactiveParts(thumbButton->GetBackground()->GetSprite());
 	}
 	
@@ -639,21 +640,20 @@ void UISlider::AttachToSubcontrols()
 	{
 		bgMin = FindByName(UISLIDER_MIN_SPRITE_CONTROL_NAME);
 		DVASSERT(bgMin);
+        
+        bgMin->Retain();
 	}
 	
 	if (!bgMax)
 	{
 		bgMax = FindByName(UISLIDER_MAX_SPRITE_CONTROL_NAME);
 		DVASSERT(bgMax);
+        
+        bgMax->Retain();
 	}
 
 	PostInitBackground(bgMin);
 	PostInitBackground(bgMax);
-
-	// All the controls will be released in the destructor, so need to addref.
-	SafeRetain(thumbButton);
-	SafeRetain(bgMin);
-	SafeRetain(bgMax);
 }
 
 List<UIControl*> UISlider::GetSubcontrols()

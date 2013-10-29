@@ -141,7 +141,9 @@ protected:
     
 	void ValidateLandscapeTexture(Landscape *landscape, Landscape::eTextureLevel texLevel, Set<String> &errorsLog);
 	void ValidateCustomColorsTexture(Entity *landscapeEntity, Set<String> &errorsLog);
-    
+
+	bool ValidateColor(Color& color);
+
     int32 EnumerateSceneNodes(Entity *node);
     
 	void ValidateScalesInternal(Entity *sceneNode, Set<String> &errorsLog);

@@ -36,8 +36,6 @@
 namespace DAVA
 {
 
-REGISTER_CLASS(ParticleEmitter3D);
-
 ParticleEmitter3D::ParticleEmitter3D()
 {
 	is3D = true;

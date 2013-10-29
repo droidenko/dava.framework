@@ -7,7 +7,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -76,10 +78,8 @@ public class JNIWebView {
 				return false;
 			}
 			else if (res == 1) {
-
-				final JNIActivity activity = JNIActivity.GetActivity();
-				WebView webView = new WebView(activity);
-				webView.loadUrl(url);
+				Intent exWeb = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				JNIActivity.GetActivity().startActivity(exWeb);
 				return true;
 			}
 			return true;
