@@ -299,6 +299,8 @@ void UIScrollBar::Draw(const UIGeometricData &geometricData)
                 if (slider->relativePosition.y < 0) 
                 {
                     slider->size.y += slider->relativePosition.y;
+					// DF-1998 - Don't allow to set size of slider less than minimum size
+					slider->size.y = GetValidSliderSize(slider->size.y);
                     slider->relativePosition.y = 0;
                 }
                 else if(slider->relativePosition.y + slider->size.y > size.y)
@@ -309,7 +311,6 @@ void UIScrollBar::Draw(const UIGeometricData &geometricData)
 					slider->size.y = GetValidSliderSize(slider->size.y);
 					slider->relativePosition.y = size.y - slider->size.y;
                 }
-
             }
                 break;
             case ORIENTATION_HORIZONTAL:
@@ -331,6 +332,8 @@ void UIScrollBar::Draw(const UIGeometricData &geometricData)
                 if (slider->relativePosition.x < 0) 
                 {
                     slider->size.x += slider->relativePosition.x;
+					// DF-1998 - Don't allow to set size of slider less than minimum size
+					slider->size.x = GetValidSliderSize(slider->size.x);
                     slider->relativePosition.x = 0;
                 }
                 else if(slider->relativePosition.x + slider->size.x > size.x)
