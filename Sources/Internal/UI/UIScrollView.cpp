@@ -130,16 +130,9 @@ Vector2 UIScrollView::GetControlOffset(UIControl *parentControl, Vector2 current
 		float32 controlPosX = currentContentOffset.x + childRect.x;
 		float32 controlPosY = currentContentOffset.y + childRect.y;
 		
-		if (currentOffset.x >= controlPosX)
-		{
-			currentOffset.x = controlPosX;
-		}
-		if (currentOffset.y >= controlPosY)
-		{
-			currentOffset.y = controlPosY;
-		}
-		
-		currentOffset = GetControlOffset(childControl, currentOffset);
+		Vector2 tmpOffset = GetControlOffset(childControl, Vector2(controlPosX, controlPosY));
+		currentOffset.x = Min(currentOffset.x, tmpOffset.x);
+		currentOffset.y = Min(currentOffset.y, tmpOffset.y);
 	}
 	return currentOffset;
 }
@@ -313,9 +306,9 @@ void UIScrollView::RecalculateContentSize()
 									Vector2(0, 0));
 									
 	// Update scroll view content size
-	scrollContainer->SetRect(Rect(contentRect.x, contentRect.y, maxSize.dx, maxSize.dy));
-	scrollHorizontal->SetElementSize(maxSize.dx);
-	scrollVertical->SetElementSize(maxSize.dy);
+	scrollContainer->SetRect(Rect(contentRect.x, contentRect.y, maxSize.x, maxSize.y));
+	scrollHorizontal->SetElementSize(maxSize.x);
+	scrollVertical->SetElementSize(maxSize.y);
 }
 
 void UIScrollView::SetReturnSpeed(float32 speedInSeconds)
