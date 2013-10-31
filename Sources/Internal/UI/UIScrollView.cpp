@@ -130,9 +130,9 @@ Vector2 UIScrollView::GetControlOffset(UIControl *parentControl, Vector2 current
 		float32 controlPosX = currentContentOffset.x + childRect.x;
 		float32 controlPosY = currentContentOffset.y + childRect.y;
 		
-		Vector2 tmpOffset = GetControlOffset(childControl, Vector2(controlPosX, controlPosY));
-		currentOffset.x = Min(currentOffset.x, tmpOffset.x);
-		currentOffset.y = Min(currentOffset.y, tmpOffset.y);
+		Vector2 controlOffset = GetControlOffset(childControl, Vector2(controlPosX, controlPosY));
+		currentOffset.x = Min(currentOffset.x, controlOffset.x);
+		currentOffset.y = Min(currentOffset.y, controlOffset.y);
 	}
 	return currentOffset;
 }
