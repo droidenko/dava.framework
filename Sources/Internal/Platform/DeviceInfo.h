@@ -60,6 +60,7 @@ public:
 	static String GetTimeZone();
     static String GetUDID();
     static WideString GetName();
+    static int GetZBufferSize();
 };
 
 };

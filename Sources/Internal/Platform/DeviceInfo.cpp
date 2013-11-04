@@ -94,4 +94,10 @@ String DeviceInfo::GetPlatformString()
 	return res;
 }
 
+#ifndef __DAVAENGINE_ANDROID__
+int DeviceInfo::GetZBufferSize()
+{
+	return 24;
+}
+#endif
 }
