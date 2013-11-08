@@ -48,7 +48,7 @@ UIControlSystem::UIControlSystem()
 {
 	frameSkip = 0;
 	transitionType = 0;
-	
+	transition = 0;
 	currentScreen = 0;
 	nextScreen = 0;
 	prevScreen = NULL;
@@ -79,7 +79,23 @@ void UIControlSystem::SetScreen(UIScreen *_nextScreen, UIScreenTransition * _tra
 		return;
 	}
 
+    if (transition)
+    {
+       if (transition->IsLoadingTransition())
+        {
+            UILoadingTransition * loadingTransition = dynamic_cast<UILoadingTransition*> (transition);
+
+            if(loadingTransition->IsTransitionInProcess())
+            {
+                UnlockInput();
+            }
+        }
+    }
+
 	LockInput();
+
+
+ //   SafeRelease(transition);
 	transition = SafeRetain(_transition);
 	
 	if (_nextScreen == 0)

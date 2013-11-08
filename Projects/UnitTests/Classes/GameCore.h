@@ -88,6 +88,8 @@ protected:
     void FinishTests();
     void FlushTestResults();
     
+	UILoadingTransition* CreateLoadingTransition();
+	
     int32 TestCount();
     
     void CreateDocumentsFolder();
