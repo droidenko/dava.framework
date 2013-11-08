@@ -64,25 +64,6 @@
 
 using namespace DAVA;
 
-class LoadingTransition : public UILoadingTransition
-{
-public:
-
- virtual void WillAppear()
- {
-  RenderManager::Instance()->SetFPS(5);
-  UILoadingTransition::WillAppear();
- }
-
- virtual void WillDisappear()
- {
-  RenderManager::Instance()->SetFPS(60);
-  UILoadingTransition::WillDisappear();
- }
-
-};
-
-
 GameCore::GameCore()
 {
     logFile = NULL;
@@ -107,38 +88,37 @@ void GameCore::OnAppStarted()
     
 	new UIMovieTest();
 	
-//	new InputTest();
+	new InputTest();
 	
-//    new FormatsTest();
-//	new DeviceInfoTest();
-//	new TransparentWebViewTest();
- //   new FilePathTest();
-  //  new FileListTest();
-  //  new FileSystemTest();
-  //  new LocalizationTest();
+    new FormatsTest();
+	new DeviceInfoTest();
+	new TransparentWebViewTest();
+    new FilePathTest();
+    new FileListTest();
+    new FileSystemTest();
+    new LocalizationTest();
 
-//	new SampleTest();
-//	new EntityTest();
-//	new MemoryAllocatorsTest();
-//	new HashMapTest();
+	new SampleTest();
+	new EntityTest(); 
+	new MemoryAllocatorsTest();
+	new HashMapTest();
 //	new SoundTest();
-//	new SplitTest();
-//	new AlignTest();
+	new SplitTest();
+	new AlignTest();
 	new EMailTest();
-//	new DPITest();
-/*	new MaterialCompilerTest();
+	new DPITest();
+	new MaterialCompilerTest();
 	new CloneTest();
 	new PVRTest();
 	new DXTTest();
 	new EntityTest();	
 	new MemoryAllocatorsTest();
 	new HashMapTest();
+	new SplitTest();
 	new KeyedArchiveYamlTest();
-	new DLCTest();*/
-//	new UIListTest();
+	new DLCTest();
+	new UIListTest();
 	new UIScrollViewTest();
-    new DPITest();
-    new UIListTest();
 
     new ThreadSyncTest();
     
@@ -327,53 +307,13 @@ void GameCore::ProcessTests()
                 {
                     currentScreen = screens[currentScreenIndex];
                     currentTestIndex = 0;
-                    UIScreenManager::Instance()->SetScreen(currentScreen->GetScreenId(), CreateLoadingTransition());
-					Update(0.5f);
-                    ++currentScreenIndex;
-					if(currentScreenIndex == screens.size())
-                	{
-                    	FinishTests();
-					}
-					else
-                    {
-                       currentScreen = screens[currentScreenIndex];
-                       currentTestIndex = 0;
-                       UIScreenManager::Instance()->SetScreen(currentScreen->GetScreenId(), CreateLoadingTransition());
-                    }
+                    UIScreenManager::Instance()->SetScreen(currentScreen->GetScreenId());
                 }
             }
         }
     }
 }
 
-UILoadingTransition* GameCore::CreateLoadingTransition()
-{
-	 static UILoadingTransition* loading = NULL;
-
- 	if(loading != NULL)
- 	{
-	 return loading;
-	 }
-
-	 loading = new LoadingTransition();
-//	 loading->SetBackgroundSprite(Sprite::Create(WOTGLayoutLoader::ResolvePath("~res:/Gfx/~layout/battlefield/logo_page.txt")));
-
- //	loading->SetAnimationSprite(Sprite::Create("~res:/UI/bluebox.txt"));
- 	{
- 	 UIFadeTransition* fade = new UIFadeTransition();
-  	loading->SetInTransition(fade);
-	 }
-	 {
- 	 UIFadeTransition* fade = new UIFadeTransition();
-	  loading->SetOutTransition(fade);
-	 }
-	 //fade = new UIFadeTransition();
-	 //loading->SetOutTransition(fade);
-	 loading->SetAnimationDuration(3);
-	 loading->Update(0.5f);
-
-	return loading;
-}
 
 void GameCore::FlushTestResults()
 {
