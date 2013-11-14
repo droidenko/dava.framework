@@ -284,7 +284,7 @@ private:
 		
 	float32* tilesVertices;
 	float32* tilesTexCoords;
-	uint32 *tilesIndeces;
+	uint16 *tilesIndeces;
 	bool generateTilesArrays;
 	
 public:

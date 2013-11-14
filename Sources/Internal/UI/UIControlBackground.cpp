@@ -691,11 +691,11 @@ void UIControlBackground::InitTilesArrays(int32 vertexCount, int32 trianglesCoun
 	
 	tilesVertices = new float32[vertexCount];
 	tilesTexCoords = new float32[vertexCount];
-	tilesIndeces = new uint32[trianglesCount];
+	tilesIndeces = new uint16[trianglesCount];
 	 
 	memset(tilesVertices, 0,  vertexCount * sizeof(float32));
 	memset(tilesTexCoords, 0, vertexCount * sizeof(float32));
-	memset(tilesIndeces, 0, trianglesCount * sizeof(uint32));
+	memset(tilesIndeces, 0, trianglesCount * sizeof(uint16));
 }
 
 void UIControlBackground::DeleteTilesArrays()
@@ -870,7 +870,9 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 	
 
 		// Generate triangles points - first 2 triangles -  0,1,2, 1,3,2
-		int32 a = 0;
+		int16 a = 0;
+		uint32 maxIndex = (cellsHCount * cellsVCount - 1) * 4 - 1;
+		DVASSERT(maxIndex <= (uint16)-1 && "Indices count exceeds uint16 limit");
 		for (int32 i1 = 0; i1 < cellsVCount; ++i1)
 		{
 			for (int32 i2 = 0; i2 < cellsHCount; ++i2)
@@ -894,7 +896,7 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 	RenderManager::Instance()->SetTexture(texture);
 	RenderManager::Instance()->SetRenderEffect(RenderManager::TEXTURE_MUL_FLAT_COLOR);
 	RenderManager::Instance()->SetRenderData(rdoObject);
-	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, vertInTriCount, EIF_32, tilesIndeces);
+	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, vertInTriCount, EIF_16, tilesIndeces);
 }
 
 void UIControlBackground::SetLeftRightStretchCap(float32 _leftStretchCap)
