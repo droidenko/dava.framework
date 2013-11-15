@@ -870,7 +870,7 @@ void UIControlBackground::DrawTiled(const Rect &drawRect)
 	
 
 		// Generate triangles points - first 2 triangles -  0,1,2, 1,3,2
-		int16 a = 0;
+		uint16 a = 0;
 		uint32 maxIndex = (cellsHCount * cellsVCount - 1) * 4 - 1;
 		DVASSERT(maxIndex <= (uint16)-1 && "Indices count exceeds uint16 limit");
 		for (int32 i1 = 0; i1 < cellsVCount; ++i1)
