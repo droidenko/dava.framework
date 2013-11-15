@@ -35,6 +35,8 @@
 #include "Render/RenderManager.h"
 #include "Render/RenderHelper.h"
 
+#include <limits>
+
 namespace DAVA
 {
 
