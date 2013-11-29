@@ -63,9 +63,8 @@ public:
 	virtual void UpdateAABBoxFromSource();
 
 private:
-	Shader * shader;
-
-    int32 uniformLightPosition0;
+	static Shader * shader;
+	static int32 uniformLightPosition0;
 
 	//shadow mesh generation
 	PolygonGroup * shadowPolygonGroup;

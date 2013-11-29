@@ -157,8 +157,8 @@ public:
 	void SetLodVisible(bool isLodVisible);
 	void SetSwitchVisible(bool isSwitchVisible);
 	inline Entity * GetParent();
-	void SetUpdatable(bool isUpdatable);
-	inline bool GetUpdatable(void);
+	DAVA_DEPRECATED(void SetUpdatable(bool isUpdatable));
+	DAVA_DEPRECATED(inline bool GetUpdatable(void));
 	inline bool IsLodPart(void);
     virtual bool IsLodMain(Entity *childToCheck = NULL);//if childToCheck is NULL checks the caller node
 	
@@ -380,7 +380,7 @@ public:
         MEMBER(tag, "Tag", I_SAVE | I_VIEW | I_EDIT)
         MEMBER(flags, "Flags", I_SAVE | I_VIEW | I_EDIT)
 
-        PROPERTY("isVisible", "isVisible", GetVisible, SetVisible, I_VIEW | I_EDIT)
+        PROPERTY("visible", "Visible", GetVisible, SetVisible, I_VIEW | I_EDIT)
 
 		//COLLECTION(components, "Components", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
 		//COLLECTION(children, "Children nodes", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)

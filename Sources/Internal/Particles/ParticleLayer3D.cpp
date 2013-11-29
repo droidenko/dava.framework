@@ -49,7 +49,8 @@ ParticleLayer3D::ParticleLayer3D(ParticleEmitter* parent)
 
 	//TODO: set material from outside
 	
-	Material * material = new Material();
+	
+	Material *material = new Material();
 	material->SetType(Material::MATERIAL_VERTEX_COLOR_ALPHABLENDED);	
 	material->SetAlphablend(true);
 	material->SetBlendSrc(BLEND_SRC_ALPHA);
@@ -57,6 +58,8 @@ ParticleLayer3D::ParticleLayer3D(ParticleEmitter* parent)
 	material->SetName("ParticleLayer3D_material");
 	material->SetFog(true);
 	material->SetTwoSided(true); //as particles can now be not camera facing
+	
+	
 
 	renderBatch->SetMaterial(material);
 	
@@ -412,12 +415,12 @@ void ParticleLayer3D::CalcLong(Particle* current,
 	Particle* parent = emitter->GetParentParticle();		
 	if ((NULL != parent)&&inheritPosition)
 	{		
-		currDirection = current->direction*current->speed*current->velocityOverLife + parent->direction*parent->speed*parent->velocityOverLife;
-		currDirection.Normalize();
+		currDirection = current->speed*current->velocityOverLife + parent->speed*parent->velocityOverLife;		
 	}else
 	{
-		currDirection = current->direction;
+		currDirection = current->speed;
 	}
+	currDirection.Normalize();
 
 	Vector3 vecShort = currDirection.CrossProduct(direction);
 	vecShort.Normalize();			
@@ -450,7 +453,9 @@ ParticleLayer * ParticleLayer3D::Clone(ParticleLayer * dstLayer /*= 0*/)
 			parentFor3DLayer = (dynamic_cast<ParticleLayer3D*>(dstLayer))->GetParent();
 		}
 
-		dstLayer = new ParticleLayer3D(parentFor3DLayer);
+		ParticleLayer3D *dst = new ParticleLayer3D(parentFor3DLayer);		
+		GetMaterial()->Clone(dst->GetMaterial());
+		dstLayer = dst; 
 		dstLayer->SetLong(this->isLong);
 	}
 

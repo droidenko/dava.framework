@@ -306,6 +306,10 @@
     <ClInclude Include="..\..\Sources\Internal\Input\InputCallback.h" />
     <ClInclude Include="..\..\Sources\Internal\Input\InputSystem.h" />
     <ClInclude Include="..\..\Sources\Internal\Input\KeyboardDevice.h" />
+    <ClInclude Include="..\..\Sources\Internal\Job\Job.h" />
+    <ClInclude Include="..\..\Sources\Internal\Job\JobManager.h" />
+    <ClInclude Include="..\..\Sources\Internal\Job\JobQueue.h" />
+    <ClInclude Include="..\..\Sources\Internal\Job\JobWaiter.h" />
     <ClInclude Include="..\..\Sources\Internal\Math\AABBox2.h" />
     <ClInclude Include="..\..\Sources\Internal\Math\AABBox3.h" />
     <ClInclude Include="..\..\Sources\Internal\Math\BezierSpline.h" />
@@ -411,7 +415,6 @@
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\ShadowVolumeRenderPass.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SkyboxRenderObject.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpatialTree.h" />
-    <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpeedTreeLeafBatch.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpriteObject.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpriteRenderBatch.h" />
     <ClInclude Include="..\..\Sources\Internal\Render\Image.h" />
@@ -701,6 +704,10 @@
     <ClCompile Include="..\..\Sources\Internal\Input\Accelerometer.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Input\InputSystem.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Input\KeyboardDevice.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\Job\Job.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\Job\JobManager.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\Job\JobQueue.cpp" />
+    <ClCompile Include="..\..\Sources\Internal\Job\JobWaiter.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Math\AABBox2.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Math\AABBox3.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Math\BezierSpline.cpp" />
@@ -780,7 +787,6 @@
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\ShadowVolumeRenderPass.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SkyboxRenderObject.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpatialTree.cpp" />
-    <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpeedTreeLeafBatch.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpriteObject.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpriteRenderBatch.cpp" />
     <ClCompile Include="..\..\Sources\Internal\Render\Image.cpp" />

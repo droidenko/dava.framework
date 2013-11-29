@@ -76,7 +76,7 @@ public:
 	virtual int32 Release();
 
 private:
-	static RefPtr<Mutex> drawStringMutex;
+	static Mutex drawStringMutex;
 
 	struct Glyph
 	{
@@ -275,7 +275,7 @@ int32 FTInternalFont::Release()
 	return BaseObject::Release();
 }
 
-RefPtr<Mutex> FTInternalFont::drawStringMutex( new Mutex() );
+Mutex FTInternalFont::drawStringMutex;
 
 Size2i FTInternalFont::DrawString(const WideString& str, void * buffer, int32 bufWidth, int32 bufHeight, 
 					uint8 r, uint8 g, uint8 b, uint8 a,  
@@ -285,7 +285,7 @@ Size2i FTInternalFont::DrawString(const WideString& str, void * buffer, int32 bu
 					Vector<int32> *charSizes,
 					bool contentScaleIncluded )
 {
-	drawStringMutex->Lock();
+	drawStringMutex.Lock();
 
 	FT_Error error;
 
@@ -438,7 +438,7 @@ Size2i FTInternalFont::DrawString(const WideString& str, void * buffer, int32 bu
 	}
 
 	SafeDeleteArray(advances);
-	drawStringMutex->Unlock();
+	drawStringMutex.Unlock();
 	
 	if(contentScaleIncluded) 
 	{

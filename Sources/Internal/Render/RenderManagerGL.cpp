@@ -273,11 +273,7 @@ void RenderManager::MakeGLScreenShot()
     
     // picture is rotated (framebuffer coordinates start from bottom left)
     Image *image = NULL;
-#if defined(__DAVAENGINE_IPHONE__)    
-    image = Image::Create(height, width, formatDescriptor.formatID);
-#else
     image = Image::Create(width, height, formatDescriptor.formatID);
-#endif
     uint8 *imageData = image->GetData();
     
     int32 formatSize = Texture::GetPixelFormatSizeInBytes(formatDescriptor.formatID);
@@ -286,8 +282,7 @@ void RenderManager::MakeGLScreenShot()
     uint32 imageDataSize = width * height * formatSize;
     tempData = new uint8[imageDataSize];
 
-    LockNonMain();
-    glBindFramebuffer(GL_FRAMEBUFFER, fboViewRenderbuffer);
+    RENDER_VERIFY(glBindFramebuffer(GL_FRAMEBUFFER, fboViewRenderbuffer));
 //#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
 //    glBindFramebuffer(GL_FRAMEBUFFER_BINDING_OES, fboViewRenderbuffer);
 //#else
@@ -296,26 +291,13 @@ void RenderManager::MakeGLScreenShot()
     
     RENDER_VERIFY(glPixelStorei( GL_UNPACK_ALIGNMENT, 1 ));
     RENDER_VERIFY(glReadPixels(0, 0, width, height, formatDescriptor.format, formatDescriptor.type, (GLvoid *)tempData));
-    UnlockNonMain();
     
     //TODO: optimize (ex. use pre-allocated buffer instead of dynamic allocation)
     
     // iOS frame buffer starts from bottom left corner, but we need from top left, so we rotate picture here
     uint32 newIndex = 0;
     uint32 oldIndex = 0;
-#if defined(__DAVAENGINE_IPHONE__)
-    for(int32 w = 0; w < width; ++w)
-    {
-        for(int32 h = 0; h < height; ++h)
-        {
-            for(int32 b = 0; b < formatSize; ++b)
-            {
-                oldIndex = formatSize*width*h + formatSize*w + b;
-                imageData[newIndex++] = tempData[oldIndex];
-            }
-        }
-    }
-#else
+
     //MacOS
     //TODO: test on Windows and android
 
@@ -331,7 +313,6 @@ void RenderManager::MakeGLScreenShot()
         }
     }
     
-#endif
     SafeDeleteArray(tempData);
     
     if(screenShotCallback)
@@ -863,7 +844,6 @@ void RenderManager::AttachRenderData()
     const int DEBUG = 0;
 	Shader * shader = hardwareState.shader;
     
-    RenderManager::Instance()->LockNonMain();
     if (!shader)
     {
         // TODO: should be moved to RenderManagerGL
@@ -1028,7 +1008,6 @@ void RenderManager::AttachRenderData()
         enabledAttribCount = currentEnabledAttribCount;
         //pointerArraysRendererState = pointerArraysCurrentState;
     }
-    RenderManager::Instance()->UnlockNonMain();
 }
 
 

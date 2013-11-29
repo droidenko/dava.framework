@@ -222,6 +222,8 @@ namespace ResourceEditor
 	static const String LANDSCAPE_EDITOR_SYSTEM_HEIGHTMAP_ABSENT		= "Error: heightmap is absent.";
 
 	static const String ADD_SWITCH_NODE_DIALOG_NO_CHILDREN			= "Error: switch node must be created with state nodes.";
+	static const String SCENE_TREE_WRONG_REF_TO_OWNER				= "Wrong reference(s) to owner: ";
+
 }
 
 #endif //#ifndef __STRING_CONSTANTS_H__

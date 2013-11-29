@@ -127,6 +127,9 @@
     <Filter Include="Internal\DLC">
       <UniqueIdentifier>{8b6654bd-b8b7-4415-97cd-58c934760ce1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Internal\Job">
+      <UniqueIdentifier>{94116b3a-757d-4e56-95a2-a621c48f12e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Sources\External\Box2D\Box2D.h">
@@ -1308,9 +1311,6 @@
     <ClInclude Include="..\..\Sources\Internal\UI\UIMovieView.h">
       <Filter>Internal\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpeedTreeLeafBatch.h">
-      <Filter>Internal\Render\Highlevel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Sources\Internal\Render\Highlevel\SpatialTree.h">
       <Filter>Internal\Render\Highlevel</Filter>
     </ClInclude>
@@ -1328,6 +1328,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Sources\Internal\DAVAClassRegistrator.h">
       <Filter>Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Job\JobWaiter.h">
+      <Filter>Internal\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Job\Job.h">
+      <Filter>Internal\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Job\JobManager.h">
+      <Filter>Internal\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Internal\Job\JobQueue.h">
+      <Filter>Internal\Job</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2348,9 +2360,6 @@
     <ClCompile Include="..\..\Sources\Internal\UI\UIMovieView.cpp">
       <Filter>Internal\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpeedTreeLeafBatch.cpp">
-      <Filter>Internal\Render\Highlevel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Sources\Internal\Render\Highlevel\SpatialTree.cpp">
       <Filter>Internal\Render\Highlevel</Filter>
     </ClCompile>
@@ -2368,6 +2377,18 @@
     </ClCompile>
     <ClCompile Include="..\..\Sources\Internal\DAVAClassRegistrator.cpp">
       <Filter>Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Job\Job.cpp">
+      <Filter>Internal\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Job\JobManager.cpp">
+      <Filter>Internal\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Job\JobQueue.cpp">
+      <Filter>Internal\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Internal\Job\JobWaiter.cpp">
+      <Filter>Internal\Job</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -19,8 +19,18 @@
 
 #import "Platform/TemplateiOS/EAGLViewController.h"
 
+@implementation BackgroundView
+
+- (void)drawRect:(CGRect)rect
+{
+    // Do nothing to reduce fill usage.
+}
+
+@end
 
 @implementation EAGLViewController
+
+@synthesize backgroundView;
 
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -36,6 +46,7 @@
     if (self = [super init])
     {
         glView = nil;
+        backgroundView = nil;
         [self createGLView];
     }
     return self;
@@ -55,10 +66,24 @@
 	// To Hottych: Here should be proper initialization code ??? I mean, size of this view for iPhone / iPhone 4 / iPad
 	// Check please what should be here
 	[self createGLView];
-    
+
+    // Add the background view needed to place native iOS components on it.
+    backgroundView = [[BackgroundView alloc] initWithFrame:[glView frame]];
+    [backgroundView setBackgroundColor:[UIColor clearColor]];
+    [backgroundView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [backgroundView setMultipleTouchEnabled:YES]; // to pass touches to framework, see please DF-2796.
+
+    [glView addSubview:backgroundView];
+    [backgroundView release];
+
     self.view = glView;
 //	[glView release];
 //   glView = nil;
+}
+
+-(UIView*) getBackgroundView
+{
+    return backgroundView;
 }
 
 /*

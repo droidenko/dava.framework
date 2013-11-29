@@ -74,15 +74,7 @@ ParticleLayer::ParticleLayer()
 	spinVariation = 0;
 	spinOverLife = 0;
 	animSpeedOverLife = 0;
-	randomSpinDirection = false;
-
-	motionRandom = 0;		
-	motionRandomVariation = 0;
-	motionRandomOverLife = 0;
-
-	bounce = 0;				
-	bounceVariation = 0;
-	bounceOverLife = 0;
+	randomSpinDirection = false;	
 	
 	colorOverLife = 0;
 	colorRandom = 0;
@@ -200,26 +192,7 @@ ParticleLayer * ParticleLayer::Clone(ParticleLayer * dstLayer)
 	dstLayer->randomSpinDirection = randomSpinDirection;
 
 	if (animSpeedOverLife)
-		dstLayer->animSpeedOverLife.Set(animSpeedOverLife->Clone());
-
-	
-	if (motionRandom)
-		dstLayer->motionRandom.Set(motionRandom->Clone());
-	
-	if (motionRandomVariation)
-		dstLayer->motionRandomVariation.Set(motionRandomVariation->Clone());
-	
-	if (motionRandomOverLife)
-		dstLayer->motionRandomOverLife.Set(motionRandomOverLife->Clone());
-	
-	if (bounce)
-		dstLayer->bounce.Set(bounce->Clone());
-	
-	if (bounceVariation)
-		dstLayer->bounceVariation.Set(bounceVariation->Clone());
-	
-	if (bounceOverLife)
-		dstLayer->bounceOverLife.Set(bounceOverLife->Clone());
+		dstLayer->animSpeedOverLife.Set(animSpeedOverLife->Clone());		
 	
 	if (colorOverLife)
 		dstLayer->colorOverLife.Set(colorOverLife->Clone());
@@ -361,18 +334,18 @@ void ParticleLayer::UpdateLayerTime(float32 startTime, float32 endTime)
 	this->startTime = startTime;
 	this->endTime = endTime;
 	/*validate all time depended property lines*/	
-	UpdatePropertyLineKeys(life.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(lifeVariation.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(number.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(numberVariation.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(size.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(sizeVariation.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(velocity.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(velocityVariation.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(spin.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(spinVariation.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(angle.Get(), startTime, translateTime, endTime);
-	UpdatePropertyLineKeys(angleVariation.Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(life).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(lifeVariation).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(number).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(numberVariation).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(size).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(sizeVariation).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(velocity).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(velocityVariation).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(spin).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(spinVariation).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(angle).Get(), startTime, translateTime, endTime);
+	UpdatePropertyLineKeys(PropertyLineHelper::GetValueLine(angleVariation).Get(), startTime, translateTime, endTime);
 }
 
 ParticleEmitter* ParticleLayer::GetEmitter() const
@@ -563,7 +536,7 @@ void ParticleLayer::RestartLayerIfNeed()
 	float32 layerRestartTime = (endTime + currentLoopVariation) + (deltaTime + currentDeltaVariation);
 	// Restart layer effect if auto restart option is on and layer time exceeds its endtime
 	// Endtime can be increased by DeltaTime
-	if(isLooped && (layerTime > layerRestartTime) && !emitter->IsPaused())
+	if(isLooped && (layerTime > layerRestartTime) && (emitter->GetState()==ParticleEmitter::STATE_PLAYING))
 	{
 		RestartLoop(false);
 	}
@@ -620,7 +593,7 @@ void ParticleLayer::Update(float32 timeElapsed, bool generateNewParticles)
 			}
 			
 			if ((layerTime >= startTime) && (layerTime < (endTime + currentLoopVariation)) &&
-				!emitter->IsPaused() && !useLoopStop)
+				(emitter->GetState()==ParticleEmitter::STATE_PLAYING) && !useLoopStop)
 			{
 				float32 newParticles = 0.0f;
 				if (generateNewParticles)
@@ -656,7 +629,7 @@ void ParticleLayer::Update(float32 timeElapsed, bool generateNewParticles)
 		{
 			bool needUpdate = true;
 			if ((layerTime >= startTime) && (layerTime < (endTime + currentLoopVariation)) &&
-				!emitter->IsPaused() && !useLoopStop)
+				(emitter->GetState()==ParticleEmitter::STATE_PLAYING) && !useLoopStop)
 			{
 				if(!head)
 				{
@@ -677,7 +650,7 @@ void ParticleLayer::Update(float32 timeElapsed, bool generateNewParticles)
 					DVASSERT(0 == count);
 					head = 0;
 					if ((layerTime >= startTime) && (layerTime < (endTime + currentLoopVariation)) &&
-						!emitter->IsPaused() && !useLoopStop)
+						(emitter->GetState()==ParticleEmitter::STATE_PLAYING) && !useLoopStop)
 					{
 						if (generateNewParticles)
 							GenerateSingleParticle();
@@ -993,14 +966,7 @@ void ParticleLayer::LoadFromYaml(const FilePath & configPath, const YamlNode * n
 // 	PropertyLine<float32> * spin;				// spin of angle / second
 // 	PropertyLine<float32> * spinVariation;
 // 	PropertyLine<float32> * spinOverLife;
-// 
-// 	PropertyLine<float32> * motionRandom;		//
-// 	PropertyLine<float32> * motionRandomVariation;
-// 	PropertyLine<float32> * motionRandomOverLife;
-// 
-// 	PropertyLine<float32> * bounce;				//
-// 	PropertyLine<float32> * bounceVariation;
-// 	PropertyLine<float32> * bounceOverLife;	
+
 	
 	
 	type = TYPE_PARTICLES;
@@ -1041,9 +1007,9 @@ void ParticleLayer::LoadFromYaml(const FilePath & configPath, const YamlNode * n
 	}
 
 
-	colorOverLife = PropertyLineYamlReader::CreateColorPropertyLineFromYamlNode(node, "colorOverLife");
-	colorRandom = PropertyLineYamlReader::CreateColorPropertyLineFromYamlNode(node, "colorRandom");
-	alphaOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "alphaOverLife");
+	colorOverLife = PropertyLineYamlReader::CreatePropertyLine<Color>(node->Get("colorOverLife"));
+	colorRandom = PropertyLineYamlReader::CreatePropertyLine<Color>(node->Get("colorRandom"));
+	alphaOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("alphaOverLife"));
 	
 	const YamlNode* frameOverLifeEnabledNode = node->Get("frameOverLifeEnabled");
 	if (frameOverLifeEnabledNode)
@@ -1087,20 +1053,22 @@ void ParticleLayer::LoadFromYaml(const FilePath & configPath, const YamlNode * n
 		scaleVelocityFactor = scaleVelocityFactorNode->AsFloat();
 	}
 
-	life = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "life");	
-	lifeVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "lifeVariation");	
+	life = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("life"));	
+	lifeVariation = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("lifeVariation"));	
 
-	number = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "number");	
-	numberVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "numberVariation");	
+	number = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("number"));	
+	numberVariation = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("numberVariation"));	
 
-	size = PropertyLineYamlReader::CreateVector2PropertyLineFromYamlNode(node, "size");
-	sizeVariation = PropertyLineYamlReader::CreateVector2PropertyLineFromYamlNode(node, "sizeVariation");
+	
+	size = PropertyLineYamlReader::CreatePropertyLine<Vector2>(node->Get("size"));		
 
-	sizeOverLifeXY = PropertyLineYamlReader::CreateVector2PropertyLineFromYamlNode(node, "sizeOverLifeXY");
+	sizeVariation = PropertyLineYamlReader::CreatePropertyLine<Vector2>(node->Get("sizeVariation"));
+
+	sizeOverLifeXY = PropertyLineYamlReader::CreatePropertyLine<Vector2>(node->Get("sizeOverLifeXY"));
 
 	// Yuri Coder, 2013/04/03. sizeOverLife is outdated and kept here for the backward compatibility only.
 	// New property is sizeOverlifeXY and contains both X and Y components.
-	RefPtr< PropertyLine<float32> > sizeOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "sizeOverLife");
+	RefPtr< PropertyLine<float32> > sizeOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("sizeOverLife"));
 	if (sizeOverLife)
 	{
 		if (sizeOverLifeXY)
@@ -1117,12 +1085,12 @@ void ParticleLayer::LoadFromYaml(const FilePath & configPath, const YamlNode * n
 		}
 	}
 
-	velocity = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "velocity");
-	velocityVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "velocityVariation");	
-	velocityOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "velocityOverLife");
+	velocity = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("velocity"));
+	velocityVariation = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("velocityVariation"));	
+	velocityOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("velocityOverLife"));
 	
-	angle = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "angle");
-	angleVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "angleVariation");
+	angle = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("angle"));
+	angleVariation = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("angleVariation"));
 	
 	int32 forceCount = 0;
 	const YamlNode * forceCountNode = node->Get("forceCount");
@@ -1132,27 +1100,24 @@ void ParticleLayer::LoadFromYaml(const FilePath & configPath, const YamlNode * n
 	for (int k = 0; k < forceCount; ++k)
 	{
         // Any of the Force Parameters might be NULL, and this is acceptable.
-		RefPtr< PropertyLine<Vector3> > force = PropertyLineYamlReader::CreateVector3PropertyLineFromYamlNode(node, Format("force%d", k) );
-		RefPtr< PropertyLine<Vector3> > forceVariation = PropertyLineYamlReader::CreateVector3PropertyLineFromYamlNode(node, Format("forceVariation%d", k));
-		RefPtr< PropertyLine<float32> > forceOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, Format("forceOverLife%d", k));
+		RefPtr< PropertyLine<Vector3> > force = PropertyLineYamlReader::CreatePropertyLine<Vector3>(node->Get(Format("force%d", k) ));
+		RefPtr< PropertyLine<Vector3> > forceVariation = PropertyLineYamlReader::CreatePropertyLine<Vector3>(node->Get(Format("forceVariation%d", k)));
+		RefPtr< PropertyLine<float32> > forceOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get(Format("forceOverLife%d", k)));
 
 		ParticleForce* particleForce = new ParticleForce(force, forceVariation, forceOverLife);
 		AddForce(particleForce);
+        particleForce->Release();
 	}
 
-	spin = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "spin");
-	spinVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "spinVariation");	
-	spinOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "spinOverLife");	
-	animSpeedOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "animSpeedOverLife");	
+	spin = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("spin"));
+	spinVariation = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("spinVariation"));	
+	spinOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("spinOverLife"));	
+	animSpeedOverLife = PropertyLineYamlReader::CreatePropertyLine<float32>(node->Get("animSpeedOverLife"));	
 	const YamlNode* randomSpinDirectionNode = node->Get("randomSpinDirection");
 	if (randomSpinDirectionNode)
 	{
 		randomSpinDirection = randomSpinDirectionNode->AsBool();
-	}
-
-	motionRandom = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "motionRandom");	
-	motionRandomVariation = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "motionRandomVariation");	
-	motionRandomOverLife = PropertyLineYamlReader::CreateFloatPropertyLineFromYamlNode(node, "motionRandomOverLife");	
+	}	
 
 	//read blend node for backward compatibility with old effect files
 	const YamlNode * blend = node->Get("blend");
@@ -1318,22 +1283,14 @@ void ParticleLayer::SaveToYamlNode(YamlNode* parentNode, int32 layerIndex)
     PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "spinOverLife", this->spinOverLife);
 	PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "animSpeedOverLife", this->animSpeedOverLife);
 	PropertyLineYamlWriter::WritePropertyValueToYamlNode<bool>(layerNode, "randomSpinDirection", this->randomSpinDirection);
-
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "motionRandom", this->motionRandom);
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "motionRandomVariation", this->motionRandomVariation);
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "motionRandomOverLife", this->motionRandomOverLife);
-
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "bounce", this->bounce);
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "bounceVariation", this->bounceVariation);
-    PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "bounceOverLife", this->bounceOverLife);
-	
+    
 	PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "angle", this->angle);
 	PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "angleVariation", this->angleVariation);
 
-    PropertyLineYamlWriter::WriteColorPropertyLineToYamlNode(layerNode, "colorRandom", this->colorRandom);
+    PropertyLineYamlWriter::WritePropertyLineToYamlNode<Color>(layerNode, "colorRandom", this->colorRandom);
     PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, "alphaOverLife", this->alphaOverLife);
 
-    PropertyLineYamlWriter::WriteColorPropertyLineToYamlNode(layerNode, "colorOverLife", this->colorOverLife);
+    PropertyLineYamlWriter::WritePropertyLineToYamlNode<Color>(layerNode, "colorOverLife", this->colorOverLife);
 	PropertyLineYamlWriter::WritePropertyValueToYamlNode<bool>(layerNode, "frameOverLifeEnabled", this->frameOverLifeEnabled);
 	PropertyLineYamlWriter::WritePropertyValueToYamlNode<float32>(layerNode, "frameOverLifeFPS", this->frameOverLifeFPS);
 	PropertyLineYamlWriter::WritePropertyValueToYamlNode<bool>(layerNode, "randomFrameOnStart", this->randomFrameOnStart);
@@ -1396,6 +1353,37 @@ void ParticleLayer::SaveForcesToYamlNode(YamlNode* layerNode)
         forceDataName = Format("forceOverLife%d", i);
         PropertyLineYamlWriter::WritePropertyLineToYamlNode<float32>(layerNode, forceDataName, currentForce->GetForceOverlife());
     }
+}
+
+
+void ParticleLayer::GetModifableLines(List<ModifiablePropertyLineBase *> &modifiables)
+{
+	PropertyLineHelper::AddIfModifiable(life.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(lifeVariation.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(number.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(numberVariation.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(size.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(sizeVariation.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(sizeOverLifeXY.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(velocity.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(velocityVariation.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(velocityOverLife.Get(), modifiables);	
+	PropertyLineHelper::AddIfModifiable(spin.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(spinVariation.Get(), modifiables);
+	PropertyLineHelper::AddIfModifiable(spinOverLife.Get(), modifiables);	
+	PropertyLineHelper::AddIfModifiable(colorRandom.Get(), modifiables);	
+	PropertyLineHelper::AddIfModifiable(alphaOverLife.Get(), modifiables);	
+	PropertyLineHelper::AddIfModifiable(colorOverLife.Get(), modifiables);	
+	PropertyLineHelper::AddIfModifiable(angle.Get(), modifiables);		
+	PropertyLineHelper::AddIfModifiable(angleVariation.Get(), modifiables);		
+	PropertyLineHelper::AddIfModifiable(animSpeedOverLife.Get(), modifiables);	
+
+	int32 forceCount = (int32)this->forces.size();	
+	for (int32 i = 0; i < forceCount; i ++)
+	{
+		forces[i]->GetModifableLines(modifiables);
+	}
+
 }
 
 Particle * ParticleLayer::GetHeadParticle()
@@ -1672,9 +1660,18 @@ void ParticleLayer::RemoveInnerEmitter()
 
 void ParticleLayer::PauseInnerEmitter(bool _isPaused)
 {
-	if (innerEmitter)
+	/*if (innerEmitter)
 	{
 		innerEmitter->Pause(_isPaused);
+	}*/
+
+	//guess pause inner emitter means pausing all particles emitters instead
+	Particle * current = head;
+	while(current)
+	{
+		if (current->GetInnerEmitter())
+			current->GetInnerEmitter()->Pause(_isPaused);		
+		current = current->next;
 	}
 }
 

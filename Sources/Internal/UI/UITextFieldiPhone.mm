@@ -590,7 +590,7 @@ namespace DAVA
     {
         UITextFieldHolder * textFieldHolder = (UITextFieldHolder*)objcClassPtr;
         HelperAppDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
-        [[[appDelegate glController] view] addSubview:textFieldHolder];
+        [[appDelegate glController].backgroundView addSubview:textFieldHolder];
         //[[[UIApplication sharedApplication] keyWindow] addSubview: textFieldHolder];
     }
     

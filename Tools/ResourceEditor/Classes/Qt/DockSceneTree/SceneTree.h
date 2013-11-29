@@ -107,6 +107,8 @@ public slots:
 	void ReloadModel();
 	void ReloadModelAs();
 	void SaveEntityAs();
+	
+	void CollapseAll();
 
 protected slots:
 	void SceneActivated(SceneEditor2 *scene);

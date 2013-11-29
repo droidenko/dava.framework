@@ -110,7 +110,7 @@ void Core::CreateSingletons()
     // check types size
 	new Logger();
 	new AllocatorFactory();
-
+	new JobManager();
 	new FileSystem();
     FilePath::InitializeBundleName();
 	
@@ -135,6 +135,7 @@ void Core::CreateSingletons()
 	new UIControlSystem();
 	new SoundSystem(64);
 	new InputSystem();
+	new RenderHelper();
 	new PerformanceSettings();
 	
 #if defined __DAVAENGINE_IPHONE__
@@ -169,6 +170,7 @@ void Core::CreateRenderManager()
 void Core::ReleaseSingletons()
 {
 	PerformanceSettings::Instance()->Release();
+	RenderHelper::Instance()->Release();
 	UIScreenManager::Instance()->Release();
 	UIControlSystem::Instance()->Release();
 	SoundSystem::Instance()->Release();
@@ -189,6 +191,7 @@ void Core::ReleaseSingletons()
 #endif
 
 	InputSystem::Instance()->Release();
+	JobManager::Instance()->Release();
 	AllocatorFactory::Instance()->Release();
 	Logger::Instance()->Release();
 }
@@ -679,6 +682,7 @@ void Core::SystemProcessFrame()
 			}
 		}
 		
+		JobManager::Instance()->Update();
 		core->Update(frameDelta);
         InputSystem::Instance()->OnAfterUpdate();
 		core->Draw();

@@ -110,6 +110,37 @@ public:
 		unrotatedRect.dy = size.y * scale.y;
 	}
 
+	void BuildTransformMatrix( Matrix3 &transformMatr ) const
+	{
+		Matrix3 pivotMatr;
+		pivotMatr.BuildTranslation( -pivotPoint );
+
+		Matrix3 translateMatr;
+		translateMatr.BuildTranslation( position );
+
+		Matrix3 rotateMatr;
+		rotateMatr.BuildRotation( cosA, sinA );
+
+		Matrix3 scaleMatr;
+		scaleMatr.BuildScale( scale );
+
+		transformMatr = pivotMatr * scaleMatr * rotateMatr * translateMatr;
+	}
+
+	void GetPolygon( Polygon2 &polygon ) const
+	{
+		polygon.Clear();
+		polygon.points.reserve( 4 );
+		polygon.AddPoint( Vector2() );
+		polygon.AddPoint( Vector2( size.x, 0 ) );
+		polygon.AddPoint( size );
+		polygon.AddPoint( Vector2( 0, size.y ) );
+
+		Matrix3 transformMtx;
+		BuildTransformMatrix( transformMtx );
+		polygon.Transform( transformMtx );
+	}
+
 	const Rect &GetUnrotatedRect() const
 	{
 		return unrotatedRect;
@@ -646,7 +677,7 @@ public:
 	 \param[in] recursive use true if you want fro recursive search.
 	 \returns first control with given name.
 	 */
-	UIControl * FindByName(const String & name, bool recursive = true);
+	UIControl * FindByName(const String & name, bool recursive = true) const;
 	
 	/**
 	 \brief Returns control state bit mask.
@@ -1160,7 +1191,7 @@ public:
 
 	// Get/set visible flag for UI editor. Should not be serialized.
 	bool GetVisibleForUIEditor() const { return visibleForUIEditor; };
-	void SetVisibleForUIEditor(bool value, bool hierarchic = true);
+	virtual void SetVisibleForUIEditor(bool value, bool hierarchic = true);
 
 public:
 
@@ -1258,11 +1289,9 @@ private:
 	void RecalculateChildsSize();
 	void RecalculatePivotPoint(const Rect &newRect);
 
-	void DrawDebugRect(const Rect &drawRect, bool useAlpha = false);
+	void DrawDebugRect(const UIGeometricData &geometricData, bool useAlpha = false);
 	void DrawPivotPoint(const Rect &drawRect);
 	
-	void SetGenerateTilesArraysFlag(bool hierarchic = true);
-
 	float32 GetSizeX(UIControl *parent, int32 leftAlign, int32 rightAlign, bool useHalfParentSize = false);
 	float32 GetSizeY(UIControl *parent, int32 topAlign, int32 bottomAlign, bool useHalfParentSize = false);
 	

@@ -107,7 +107,7 @@ void RenderBatch::Draw(Camera * camera)
 	
     Matrix4 finalMatrix = (*worldTransformPtr) * camera->GetMatrix();
     RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix);
-    material->Draw(dataSource,  materialInstance);
+    material->Draw(dataSource,  materialInstance, worldTransformPtr);
 }
     
     

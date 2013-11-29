@@ -73,6 +73,7 @@ LOCAL_SRC_FILES := \
                      $(wildcard $(LOCAL_PATH)/Sound/*.cpp) \
                      $(wildcard $(LOCAL_PATH)/UI/*.cpp) \
                      $(wildcard $(LOCAL_PATH)/Utils/*.cpp) \
+                     $(wildcard $(LOCAL_PATH)/Job/*.cpp) \
                      $(wildcard $(LOCAL_PATH)/DLC/*.cpp))
 
 # set build flags

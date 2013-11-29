@@ -325,9 +325,9 @@ namespace DAVA
 	}
 	
 	// return first control with given name
-	UIControl * UIControl::FindByName(const String & name, bool recursive)
+	UIControl * UIControl::FindByName(const String & name, bool recursive) const
 	{
-		List<UIControl*>::iterator it = childs.begin();
+		List<UIControl*>::const_iterator it = childs.begin();
 		for(; it != childs.end(); ++it)
 		{
 			UIControl * c = (*it);
@@ -834,22 +834,6 @@ namespace DAVA
 				relativePosition = absolutePosition = position;
 			}
 		}
-		// DF-1482 - Each time we change control's position - we have to re-generate tiles arrays for DRAW_TILED option				
-		SetGenerateTilesArraysFlag();
-	}
-	
-	void UIControl::SetGenerateTilesArraysFlag(bool hierarchic)
-	{
-		GetBackground()->SetGenerateTilesArraysFlag();
-		// DF-2525 - Set generateTilesArrays flag for all children
-		if(hierarchic)
-		{
-			List<UIControl*>::iterator it = childs.begin();
-			for(; it != childs.end(); ++it)
-			{
-				(*it)->SetGenerateTilesArraysFlag();
-			}
-		}
 	}
 	
 	const Vector2 &UIControl::GetSize() const
@@ -861,8 +845,6 @@ namespace DAVA
 		size = newSize;
 		// Update size and align of childs		
 		RecalculateChildsSize();
-		// DF-1482 - Each time we resize control - we have to reset tiles arrays for DRAW_TILED option
-		GetBackground()->ResetTilesArrays();
 	}
 	
 	float32 UIControl::GetAngle() const
@@ -948,8 +930,6 @@ namespace DAVA
 			scale.y = rect.dy / (size.y * gd.scale.y);
 			SetPosition(Vector2(rect.x + pivotPoint.x * scale.x, rect.y + pivotPoint.y * scale.y), rectInAbsoluteCoordinates);
 		}
-		// DF-1482 - Each time we change control rect - we have to reset tiles arrays for DRAW_TILED option
-		GetBackground()->ResetTilesArrays();
 	}
 
 	
@@ -1601,7 +1581,7 @@ namespace DAVA
 	
 		if (debugDrawEnabled && !clipContents)
 		{	//TODO: Add debug draw for rotated controls
-			DrawDebugRect(unrotatedRect);
+			DrawDebugRect(drawData);
 		}
 		DrawPivotPoint(unrotatedRect);
 		
@@ -1624,7 +1604,7 @@ namespace DAVA
 			
 			if(debugDrawEnabled)
 			{ //TODO: Add debug draw for rotated controls
-				DrawDebugRect(unrotatedRect);
+				DrawDebugRect(drawData);
 			}
 		}
 		
@@ -1634,12 +1614,12 @@ namespace DAVA
 		{	
 			RenderManager::Instance()->ClipPush();
 			RenderManager::Instance()->ClipRect(Rect(0, 0, -1, -1));
-			DrawDebugRect(unrotatedRect, true);
+			DrawDebugRect(drawData, true);
 			RenderManager::Instance()->ClipPop();
 		}
 	}
 	
-	void UIControl::DrawDebugRect(const Rect &drawRect, bool useAlpha)
+	void UIControl::DrawDebugRect(const UIGeometricData &gd, bool useAlpha)
 	{
 		Color oldColor = RenderManager::Instance()->GetColor();
 		RenderManager::Instance()->ClipPush();
@@ -1654,7 +1634,18 @@ namespace DAVA
 		{
 			RenderManager::Instance()->SetColor(debugDrawColor);
 		}
-		RenderHelper::Instance()->DrawRect(drawRect);
+
+		if( gd.angle != 0.0f )
+		{
+			Polygon2 poly;
+			gd.GetPolygon( poly );
+
+			RenderHelper::Instance()->DrawPolygon( poly, true );
+		}
+		else
+		{
+			RenderHelper::Instance()->DrawRect( gd.GetUnrotatedRect() );
+		}
 
 		RenderManager::Instance()->ClipPop();
 		RenderManager::Instance()->SetColor(oldColor);
@@ -1709,7 +1700,7 @@ namespace DAVA
             point.y = Core::Instance()->GetVirtualScreenHeight() / 2;
 		}
         
-		UIGeometricData gd = GetGeometricData();
+		const UIGeometricData &gd = GetGeometricData();
 		Rect rect = gd.GetUnrotatedRect();
 		if(expandWithFocus)
 		{
@@ -1718,7 +1709,7 @@ namespace DAVA
 			rect.x -= CONTROL_TOUCH_AREA;
 			rect.y -= CONTROL_TOUCH_AREA;
 		}
-		if(gd.angle != 0)
+		if( gd.angle != 0 )
 		{
 			Vector2 testPoint;
 			testPoint.x = (point.x - gd.position.x) * gd.cosA  + (gd.position.y - point.y) * -gd.sinA + gd.position.x;

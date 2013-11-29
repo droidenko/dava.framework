@@ -32,7 +32,7 @@
 
 #include "Base/BaseTypes.h"
 #include "Base/BaseMath.h"
-#include "Base/StaticSingleton.h"
+#include "Base/Singleton.h"
 #include "Render/RenderBase.h"
 
 #include "Render/Texture.h"
@@ -51,7 +51,7 @@ class RenderDataStream;
     Keep in mind that output of all line-drawing functions can depend on hardware and look differently on different systems
  */
 
-class RenderHelper : public StaticSingleton<RenderHelper>
+class RenderHelper : public Singleton<RenderHelper>
 {
 public:
 	RenderHelper();
@@ -94,13 +94,6 @@ public:
         \param pt2 ending point
 	 */ 
     void FillRect(const Rect & rect);
-	
-    /**
-        \brief Fills given rect in 2D space and rotates it to specefied angle around pivotpoint
-        \param pivotPoint rotation point 
-        \param angle rotation angle in radians
-	 */ 	
-	void FillRotatedRect(const Rect & rect, const Vector2& pivotPoint, float32 angle);
     
 	// point helpers
     

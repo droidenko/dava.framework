@@ -66,17 +66,15 @@ CommandUpdateEffect::CommandUpdateEffect(ParticleEffectComponent* particleEffect
 	this->particleEffect = particleEffect;
 }
 
-void CommandUpdateEffect::Init(float32 playbackSpeed, bool stopOnLoad)
+void CommandUpdateEffect::Init(float32 playbackSpeed)
 {
-	this->playbackSpeed = playbackSpeed;
-	this->stopOnLoad = stopOnLoad;
+	this->playbackSpeed = playbackSpeed;	
 }
 
 void CommandUpdateEffect::Redo()
 {
 	DVASSERT(particleEffect);
-	particleEffect->SetPlaybackSpeed(playbackSpeed);
-	particleEffect->SetStopOnLoad(stopOnLoad);
+	particleEffect->SetPlaybackSpeed(playbackSpeed);	
 }
 
 CommandUpdateEmitter::CommandUpdateEmitter(ParticleEmitter* emitter):
@@ -111,11 +109,11 @@ void CommandUpdateEmitter::Redo()
 	DVASSERT(emitter);
 
 	emitter->emitterType = emitterType;
-	emitter->emissionRange = emissionRange;
-	emitter->emissionVector = emissionVector;
-	emitter->radius = radius;
-	emitter->colorOverLife = colorOverLife;
-	emitter->size = size;
+	PropertyLineHelper::SetValueLine(emitter->emissionRange, emissionRange);
+	PropertyLineHelper::SetValueLine(emitter->emissionVector, emissionVector);
+	PropertyLineHelper::SetValueLine(emitter->radius, radius);
+	PropertyLineHelper::SetValueLine(emitter->colorOverLife, colorOverLife);
+	PropertyLineHelper::SetValueLine(emitter->size, size);
 	emitter->SetLifeTime(life);
 	emitter->SetPlaybackSpeed(playbackSpeed);
 	emitter->SetShortEffect(isShortEffect);
@@ -209,8 +207,7 @@ void CommandUpdateParticleLayer::Init(const String& layerName,
 
 	this->colorRandom = colorRandom;
 	this->alphaOverLife = alphaOverLife;
-	this->colorOverLife = colorOverLife;
-	this->frameOverLife = frameOverLife;
+	this->colorOverLife = colorOverLife;	
 	this->angle = angle;
 	this->angleVariation = angleVariation;
 
@@ -243,34 +240,34 @@ void CommandUpdateParticleLayer::Redo()
 	layer->SetBlendMode(srcFactor, dstFactor);
 	layer->SetFog(enableFog);
 	layer->SetFrameBlend(enableFrameBlending);
-	layer->life = life;
-	layer->lifeVariation = lifeVariation;
-	layer->number = number;
-	layer->numberVariation = numberVariation;
-	layer->size = size;
-	layer->sizeVariation = sizeVariation;
-	layer->sizeOverLifeXY = sizeOverLife;
-	layer->velocity = velocity;
-	layer->velocityVariation = velocityVariation;
-	layer->velocityOverLife = velocityOverLife;
-	layer->spin = spin;
-	layer->spinVariation = spinVariation;
-	layer->spinOverLife = spinOverLife;
+	PropertyLineHelper::SetValueLine(layer->life , life);
+	PropertyLineHelper::SetValueLine(layer->lifeVariation, lifeVariation);
+	PropertyLineHelper::SetValueLine(layer->number, number);
+	PropertyLineHelper::SetValueLine(layer->numberVariation, numberVariation);
+	PropertyLineHelper::SetValueLine(layer->size, size);
+	PropertyLineHelper::SetValueLine(layer->sizeVariation, sizeVariation);
+	PropertyLineHelper::SetValueLine(layer->sizeOverLifeXY, sizeOverLife);
+	PropertyLineHelper::SetValueLine(layer->velocity, velocity);
+	PropertyLineHelper::SetValueLine(layer->velocityVariation, velocityVariation);
+	PropertyLineHelper::SetValueLine(layer->velocityOverLife, velocityOverLife);
+	PropertyLineHelper::SetValueLine(layer->spin, spin);
+	PropertyLineHelper::SetValueLine(layer->spinVariation, spinVariation);
+	PropertyLineHelper::SetValueLine(layer->spinOverLife, spinOverLife);
 	layer->randomSpinDirection = randomSpinDirection;
 	layer->particleOrientation = particleOrientation;
 
-	layer->colorRandom = colorRandom;
-	layer->alphaOverLife = alphaOverLife;
-	layer->colorOverLife = colorOverLife;
+	PropertyLineHelper::SetValueLine(layer->colorRandom, colorRandom);
+	PropertyLineHelper::SetValueLine(layer->alphaOverLife, alphaOverLife);
+	PropertyLineHelper::SetValueLine(layer->colorOverLife, colorOverLife);
 	
 	layer->frameOverLifeEnabled = frameOverLifeEnabled;
 	layer->frameOverLifeFPS = frameOverLifeFPS;
 	layer->randomFrameOnStart = randomFrameOnStart;
 	layer->loopSpriteAnimation = loopSpriteAnimation;
-	layer->animSpeedOverLife = animSpeedOverLife;
+	PropertyLineHelper::SetValueLine(layer->animSpeedOverLife, animSpeedOverLife);
 
-	layer->angle = angle;
-	layer->angleVariation = angleVariation;
+	PropertyLineHelper::SetValueLine(layer->angle, angle);
+	PropertyLineHelper::SetValueLine(layer->angleVariation, angleVariation);
 
 	layer->UpdateLayerTime(startTime, endTime);	
 	layer->deltaTime = deltaTime;
@@ -393,9 +390,9 @@ void CommandUpdateParticleForce::Init(RefPtr< PropertyLine<Vector3> > force,
 									  RefPtr< PropertyLine<Vector3> > forcesVariation,
 									RefPtr< PropertyLine<float32> > forcesOverLife)
 {
-	this->force = force;
-	this->forcesVariation = forcesVariation;
-	this->forcesOverLife = forcesOverLife;
+	PropertyLineHelper::SetValueLine(this->force,force);
+	PropertyLineHelper::SetValueLine(this->forcesVariation, forcesVariation);
+	PropertyLineHelper::SetValueLine(this->forcesOverLife, forcesOverLife);
 }
 
 void CommandUpdateParticleForce::Redo()

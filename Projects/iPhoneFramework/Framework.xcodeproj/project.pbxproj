@@ -13,8 +13,6 @@
 		0224B7341598AC2800CDEF9E /* libtheora_macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7321598AC2800CDEF9E /* libtheora_macos.a */; };
 		0224B74A1598B40100CDEF9E /* libogg_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7481598B40100CDEF9E /* libogg_ios.a */; };
 		0224B74B1598B40100CDEF9E /* libogg_macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0224B7491598B40100CDEF9E /* libogg_macos.a */; };
-		02AF979C17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02AF979A17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp */; };
-		02AF979D17EB596D005A62F2 /* SpeedTreeLeafBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 02AF979B17EB596D005A62F2 /* SpeedTreeLeafBatch.h */; };
 		02E9E3A11729669200C501BC /* FMODUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 02E9E3A01729669200C501BC /* FMODUtils.h */; };
 		02E9E3DA1734176200C501BC /* SoundEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E9E3D41734176100C501BC /* SoundEvent.cpp */; };
 		02E9E3DB1734176200C501BC /* SoundEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 02E9E3D51734176200C501BC /* SoundEvent.h */; };
@@ -97,6 +95,14 @@
 		CC24801516DD17F300183D40 /* UserComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC24801316DD17F300183D40 /* UserComponent.cpp */; };
 		CC24801616DD17F300183D40 /* UserComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = CC24801416DD17F300183D40 /* UserComponent.h */; };
 		CC24804616E0E34300183D40 /* VectorSpinnerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = CC24804516E0E34300183D40 /* VectorSpinnerAdapter.h */; };
+		CC84B03E18211BCE00934482 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC84B03618211BCE00934482 /* Job.cpp */; };
+		CC84B03F18211BCE00934482 /* Job.h in Headers */ = {isa = PBXBuildFile; fileRef = CC84B03718211BCE00934482 /* Job.h */; };
+		CC84B04018211BCE00934482 /* JobManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC84B03818211BCE00934482 /* JobManager.cpp */; };
+		CC84B04118211BCE00934482 /* JobManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CC84B03918211BCE00934482 /* JobManager.h */; };
+		CC84B04218211BCE00934482 /* JobQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC84B03A18211BCE00934482 /* JobQueue.cpp */; };
+		CC84B04318211BCE00934482 /* JobQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CC84B03B18211BCE00934482 /* JobQueue.h */; };
+		CC84B04418211BCE00934482 /* JobWaiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC84B03C18211BCE00934482 /* JobWaiter.cpp */; };
+		CC84B04518211BCE00934482 /* JobWaiter.h in Headers */ = {isa = PBXBuildFile; fileRef = CC84B03D18211BCE00934482 /* JobWaiter.h */; };
 		CCB4C44616CBC65D00F2B085 /* ComponentHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCB4C44416CBC65D00F2B085 /* ComponentHelpers.cpp */; };
 		CCB4C44716CBC65D00F2B085 /* ComponentHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB4C44516CBC65D00F2B085 /* ComponentHelpers.h */; };
 		CCC7A49F16F1D80C0061EA5D /* Frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC7A49A16F1D80C0061EA5D /* Frustum.cpp */; };
@@ -724,8 +730,6 @@
 		0224B7321598AC2800CDEF9E /* libtheora_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora_macos.a; path = ../../Libs/libs/libtheora_macos.a; sourceTree = "<group>"; };
 		0224B7481598B40100CDEF9E /* libogg_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg_ios.a; path = ../../Libs/libs/libogg_ios.a; sourceTree = "<group>"; };
 		0224B7491598B40100CDEF9E /* libogg_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg_macos.a; path = ../../Libs/libs/libogg_macos.a; sourceTree = "<group>"; };
-		02AF979A17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeedTreeLeafBatch.cpp; sourceTree = "<group>"; };
-		02AF979B17EB596D005A62F2 /* SpeedTreeLeafBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeedTreeLeafBatch.h; sourceTree = "<group>"; };
 		02E9E3A01729669200C501BC /* FMODUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMODUtils.h; sourceTree = "<group>"; };
 		02E9E3A2172967F300C501BC /* libfmodex_iphoneos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfmodex_iphoneos.a; path = ../../Libs/fmod/lib/iphone/libfmodex_iphoneos.a; sourceTree = "<group>"; };
 		02E9E3A3172967F300C501BC /* libfmodex_iphonesimulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfmodex_iphonesimulator.a; path = ../../Libs/fmod/lib/iphone/libfmodex_iphonesimulator.a; sourceTree = "<group>"; };
@@ -792,17 +796,12 @@
 		A6E4FDFA1761D83100B48E41 /* ActionUpdateSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionUpdateSystem.h; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Framework_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		C1DC1F071717FD3C001C5EC3 /* libTextureConverter_macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTextureConverter_macos.a; path = ../../Libs/libs/libTextureConverter_macos.a; sourceTree = "<group>"; };
-		C70B56581753CB5E008966FA /* KeyedArchive_wrap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedArchive_wrap.cxx; sourceTree = "<group>"; };
 		C70B56591753CB5E008966FA /* KeyedArchiveSwig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedArchiveSwig.cpp; sourceTree = "<group>"; };
-		C7E76D1F16DF69370041ED9A /* AutotestingSystem_wrap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutotestingSystem_wrap.cxx; sourceTree = "<group>"; };
 		C7E76D2116DF69370041ED9A /* AutotestingSystemLua.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutotestingSystemLua.cpp; sourceTree = "<group>"; };
 		C7E76D2216DF69370041ED9A /* AutotestingSystemLua.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutotestingSystemLua.h; sourceTree = "<group>"; };
 		C7E76D2316DF69370041ED9A /* AutotestingSystemSwig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutotestingSystemSwig.cpp; sourceTree = "<group>"; };
-		C7E76D2616DF69370041ED9A /* Rect_wrap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rect_wrap.cxx; sourceTree = "<group>"; };
 		C7E76D2816DF69370041ED9A /* RectSwig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectSwig.cpp; sourceTree = "<group>"; };
-		C7E76D2916DF69370041ED9A /* UIControl_wrap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIControl_wrap.cxx; sourceTree = "<group>"; };
 		C7E76D2B16DF69370041ED9A /* UIControlSwig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIControlSwig.cpp; sourceTree = "<group>"; };
-		C7E76D2C16DF69370041ED9A /* Vector_wrap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector_wrap.cxx; sourceTree = "<group>"; };
 		C7E76D2E16DF69370041ED9A /* VectorSwig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VectorSwig.cpp; sourceTree = "<group>"; };
 		C7E76D4216DF6CC70041ED9A /* liblua_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua_ios.a; path = ../../Libs/libs/liblua_ios.a; sourceTree = "<group>"; };
 		CC247FEC16D69F1700183D40 /* DVAssertMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DVAssertMessage.cpp; sourceTree = "<group>"; };
@@ -813,6 +812,14 @@
 		CC24801316DD17F300183D40 /* UserComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserComponent.cpp; sourceTree = "<group>"; };
 		CC24801416DD17F300183D40 /* UserComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserComponent.h; sourceTree = "<group>"; };
 		CC24804516E0E34300183D40 /* VectorSpinnerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorSpinnerAdapter.h; sourceTree = "<group>"; };
+		CC84B03618211BCE00934482 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = Job/Job.cpp; sourceTree = "<group>"; };
+		CC84B03718211BCE00934482 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = Job/Job.h; sourceTree = "<group>"; };
+		CC84B03818211BCE00934482 /* JobManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobManager.cpp; path = Job/JobManager.cpp; sourceTree = "<group>"; };
+		CC84B03918211BCE00934482 /* JobManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JobManager.h; path = Job/JobManager.h; sourceTree = "<group>"; };
+		CC84B03A18211BCE00934482 /* JobQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobQueue.cpp; path = Job/JobQueue.cpp; sourceTree = "<group>"; };
+		CC84B03B18211BCE00934482 /* JobQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JobQueue.h; path = Job/JobQueue.h; sourceTree = "<group>"; };
+		CC84B03C18211BCE00934482 /* JobWaiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobWaiter.cpp; path = Job/JobWaiter.cpp; sourceTree = "<group>"; };
+		CC84B03D18211BCE00934482 /* JobWaiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JobWaiter.h; path = Job/JobWaiter.h; sourceTree = "<group>"; };
 		CCB4C44416CBC65D00F2B085 /* ComponentHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentHelpers.cpp; sourceTree = "<group>"; };
 		CCB4C44516CBC65D00F2B085 /* ComponentHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentHelpers.h; sourceTree = "<group>"; };
 		CCC7A49A16F1D80C0061EA5D /* Frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Frustum.cpp; sourceTree = "<group>"; };
@@ -1503,6 +1510,21 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		CC84B03518211BB600934482 /* Job */ = {
+			isa = PBXGroup;
+			children = (
+				CC84B03618211BCE00934482 /* Job.cpp */,
+				CC84B03718211BCE00934482 /* Job.h */,
+				CC84B03818211BCE00934482 /* JobManager.cpp */,
+				CC84B03918211BCE00934482 /* JobManager.h */,
+				CC84B03A18211BCE00934482 /* JobQueue.cpp */,
+				CC84B03B18211BCE00934482 /* JobQueue.h */,
+				CC84B03C18211BCE00934482 /* JobWaiter.cpp */,
+				CC84B03D18211BCE00934482 /* JobWaiter.h */,
+			);
+			name = Job;
+			sourceTree = "<group>";
+		};
 		E8B3C7A116B9326D002BD35F /* Animation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1532,17 +1554,12 @@
 				7A8F772617E73E720048A43D /* AutotestingDB.h */,
 				7A8F772717E73E720048A43D /* GameAPI.cpp */,
 				7A8F772817E73E720048A43D /* GameAPI.h */,
-				C70B56581753CB5E008966FA /* KeyedArchive_wrap.cxx */,
 				C70B56591753CB5E008966FA /* KeyedArchiveSwig.cpp */,
-				C7E76D1F16DF69370041ED9A /* AutotestingSystem_wrap.cxx */,
 				C7E76D2116DF69370041ED9A /* AutotestingSystemLua.cpp */,
 				C7E76D2216DF69370041ED9A /* AutotestingSystemLua.h */,
 				C7E76D2316DF69370041ED9A /* AutotestingSystemSwig.cpp */,
-				C7E76D2616DF69370041ED9A /* Rect_wrap.cxx */,
 				C7E76D2816DF69370041ED9A /* RectSwig.cpp */,
-				C7E76D2916DF69370041ED9A /* UIControl_wrap.cxx */,
 				C7E76D2B16DF69370041ED9A /* UIControlSwig.cpp */,
-				C7E76D2C16DF69370041ED9A /* Vector_wrap.cxx */,
 				C7E76D2E16DF69370041ED9A /* VectorSwig.cpp */,
 				E8B3C7B616B9326D002BD35F /* AutotestingSystem.cpp */,
 				E8B3C7B716B9326D002BD35F /* AutotestingSystem.h */,
@@ -2041,8 +2058,6 @@
 			children = (
 				EA84E17317FAC20100304C3C /* SpatialTree.cpp */,
 				EA84E17417FAC20100304C3C /* SpatialTree.h */,
-				02AF979A17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp */,
-				02AF979B17EB596D005A62F2 /* SpeedTreeLeafBatch.h */,
 				A679102717B3CF2D000AA2F2 /* SkyboxRenderObject.cpp */,
 				A679102817B3CF2D000AA2F2 /* SkyboxRenderObject.h */,
 				CCC7A49A16F1D80C0061EA5D /* Frustum.cpp */,
@@ -2429,6 +2444,7 @@
 				E8B3C81A16B9326D002BD35F /* Entity */,
 				E8B3C83C16B9326D002BD35F /* FileSystem */,
 				E8B3C86716B9326D002BD35F /* Input */,
+				CC84B03518211BB600934482 /* Job */,
 				E8B3C87216B9326D002BD35F /* Math */,
 				E8B3C89716B9326D002BD35F /* Network */,
 				E8B3C8A816B9326D002BD35F /* Particles */,
@@ -2557,6 +2573,7 @@
 				E8B3CB4E16B9326E002BD35F /* MathDefines.h in Headers */,
 				E8B3CB4F16B9326E002BD35F /* MathHelpers.h in Headers */,
 				E8B3CB5016B9326E002BD35F /* Matrix2.h in Headers */,
+				CC84B04518211BCE00934482 /* JobWaiter.h in Headers */,
 				E8B3CB5116B9326E002BD35F /* Matrix3.h in Headers */,
 				E8B3CB5316B9326E002BD35F /* Matrix4.h in Headers */,
 				E8B3CB5516B9326E002BD35F /* NeonMath.h in Headers */,
@@ -2732,6 +2749,7 @@
 				E8B3CCF416B9326E002BD35F /* UIControlSystem.h in Headers */,
 				E8B3CCF616B9326E002BD35F /* UIEvent.h in Headers */,
 				E8B3CCF816B9326E002BD35F /* UIFadeTransition.h in Headers */,
+				CC84B04318211BCE00934482 /* JobQueue.h in Headers */,
 				E8B3CCFA16B9326E002BD35F /* UIFileSystemDialog.h in Headers */,
 				E8B3CCFC16B9326E002BD35F /* UIHierarchy.h in Headers */,
 				E8B3CCFE16B9326E002BD35F /* UIHierarchyCell.h in Headers */,
@@ -2755,6 +2773,7 @@
 				E843506017FA12BE00A25F04 /* TeamcityOutput.h in Headers */,
 				E8B3CD2416B9326E002BD35F /* UITextFieldiPhone.h in Headers */,
 				E8B3CD2716B9326E002BD35F /* UIYamlLoader.h in Headers */,
+				CC84B03F18211BCE00934482 /* Job.h in Headers */,
 				E8B3CD2816B9326E002BD35F /* HTTPDownloader.h in Headers */,
 				E8B3CD2C16B9326E002BD35F /* MD5.h in Headers */,
 				E8B3CD2D16B9326E002BD35F /* Random.h in Headers */,
@@ -2810,10 +2829,10 @@
 				EA56555417CE00E100426EB8 /* PerformanceSettings.h in Headers */,
 				E8C0A6FB17D5D8B300F8F93C /* UIScrollView.h in Headers */,
 				E8C0A6FF17D5D8EC00F8F93C /* UIScrollViewContainer.h in Headers */,
+				CC84B04118211BCE00934482 /* JobManager.h in Headers */,
 				17DC600A17DE16D40075813E /* IMovieViewControl.h in Headers */,
 				17DC600C17DE16D40075813E /* UIMovieView.h in Headers */,
 				17DC601017DE18460075813E /* MovieViewControliOS.h in Headers */,
-				02AF979D17EB596D005A62F2 /* SpeedTreeLeafBatch.h in Headers */,
 				EA84E17617FAC20100304C3C /* SpatialTree.h in Headers */,
 				7A8F772A17E73E720048A43D /* AutotestingDB.h in Headers */,
 				7A8F772C17E73E720048A43D /* GameAPI.h in Headers */,
@@ -3025,6 +3044,7 @@
 				E8B3CC1416B9326E002BD35F /* LibPVRHelper.cpp in Sources */,
 				E8B3CC1616B9326E002BD35F /* MaterialCompiler.cpp in Sources */,
 				E8B3CC1816B9326E002BD35F /* MaterialGraph.cpp in Sources */,
+				CC84B04218211BCE00934482 /* JobQueue.cpp in Sources */,
 				E8B3CC1A16B9326E002BD35F /* MaterialGraphNode.cpp in Sources */,
 				E8B3CC1C16B9326E002BD35F /* NMaterial.cpp in Sources */,
 				E8B3CC1F16B9326E002BD35F /* Material.cpp in Sources */,
@@ -3078,7 +3098,9 @@
 				E8B3CC8B16B9326E002BD35F /* MeshInstanceNode.cpp in Sources */,
 				E8B3CC8D16B9326E002BD35F /* ParticleEffectNode.cpp in Sources */,
 				E8B3CC8F16B9326E002BD35F /* ParticleEmitterNode.cpp in Sources */,
+				CC84B04418211BCE00934482 /* JobWaiter.cpp in Sources */,
 				E8B3CC9116B9326E002BD35F /* PathManip.cpp in Sources */,
+				CC84B04018211BCE00934482 /* JobManager.cpp in Sources */,
 				E8B3CC9316B9326E002BD35F /* PolygonGroupInstance.cpp in Sources */,
 				E8B3CC9516B9326E002BD35F /* ProxyNode.cpp in Sources */,
 				E8B3CC9D16B9326E002BD35F /* Scene.cpp in Sources */,
@@ -3201,10 +3223,10 @@
 				1AD7C35E17D8951C00B9977C /* Vector.cpp in Sources */,
 				17DC600B17DE16D40075813E /* UIMovieView.cpp in Sources */,
 				17DC600F17DE18460075813E /* MovieViewControliOS.mm in Sources */,
-				02AF979C17EB596D005A62F2 /* SpeedTreeLeafBatch.cpp in Sources */,
 				EA84E17517FAC20100304C3C /* SpatialTree.cpp in Sources */,
 				7A8F772917E73E720048A43D /* AutotestingDB.cpp in Sources */,
 				7A8F772B17E73E720048A43D /* GameAPI.cpp in Sources */,
+				CC84B03E18211BCE00934482 /* Job.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

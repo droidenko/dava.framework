@@ -39,24 +39,31 @@
 namespace DAVA
 {
 
+Shader * ShadowVolume::shader = 0;
+int32 ShadowVolume::uniformLightPosition0 = 0;
 
 ShadowVolume::ShadowVolume()
 :   shadowPolygonGroup(0)
 {
-	shader = new Shader();
-	shader->LoadFromYaml("~res:/Shaders/ShadowVolume/shadowvolume.shader");
-	shader->Recompile();
+	if(!shader)
+	{
+		//TODO: shader is never deleted on old materials
+		shader = new Shader();
+		shader->LoadFromYaml("~res:/Shaders/ShadowVolume/shadowvolume.shader");
+		shader->Recompile();
+		uniformLightPosition0 = shader->FindUniformIndexByName("lightPosition0");
+	}
+
 
     SetOwnerLayerName(LAYER_SHADOW_VOLUME);
     
     aabbox = AABBox3(Vector3(), Vector3());
 
-    uniformLightPosition0 = shader->FindUniformIndexByName("lightPosition0");;
+    
 }
 
 ShadowVolume::~ShadowVolume()
 {
-	SafeRelease(shader);
 	SafeRelease(shadowPolygonGroup);
 }
 

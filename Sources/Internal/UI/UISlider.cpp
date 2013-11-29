@@ -146,7 +146,7 @@ void UISlider::InitMaxBackground()
 		bgMax->SetName(UISLIDER_MAX_SPRITE_CONTROL_NAME);
 		UIControl::AddControl(bgMax);
 		
-		PostInitBackground(bgMin);
+		PostInitBackground(bgMax);
 	}
 }
 
@@ -330,7 +330,7 @@ void UISlider::Draw(const UIGeometricData &geometricData)
 {
 	const Rect & aRect =  thumbButton->GetGeometricData().GetUnrotatedRect();
 	float32 clipPointAbsolute = aRect.x + aRect.dx * 0.5f;
-	if (bgMin && bgMin->GetVisible())
+	if (bgMin && bgMin->GetVisible() && bgMin->GetVisibleForUIEditor())
 	{
 		bgMin->GetBackground()->SetParentColor(GetBackground()->GetDrawColor());
 		RenderManager::Instance()->ClipPush();
@@ -338,7 +338,7 @@ void UISlider::Draw(const UIGeometricData &geometricData)
 		bgMin->Draw(geometricData);
 		RenderManager::Instance()->ClipPop();
 	}
-	if (bgMax && bgMax->GetVisible())
+	if (bgMax && bgMax->GetVisible() && bgMax->GetVisibleForUIEditor())
 	{
 		bgMax->GetBackground()->SetParentColor(GetBackground()->GetDrawColor());
 		RenderManager::Instance()->ClipPush();
@@ -675,5 +675,25 @@ void UISlider::RemoveAndReleaseControl(UIControl* &control)
     RemoveControl(control);
     SafeRelease(control);
 }
+    
+void UISlider::SetVisibleForUIEditor(bool value, bool hierarchic/* = true*/)
+{
+    UIControl::SetVisibleForUIEditor(value, hierarchic);
+    if (bgMin)
+    {
+        bgMin->SetVisibleForUIEditor(value, hierarchic);
+    }
+
+    if (bgMax)
+    {
+        bgMax->SetVisibleForUIEditor(value, hierarchic);
+    }
+
+    if (thumbButton)
+    {
+        thumbButton->SetVisibleForUIEditor(value, hierarchic);
+    }
+}
+
 	
 } // ns

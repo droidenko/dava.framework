@@ -228,8 +228,8 @@ public:
     void SetWireframe(bool isWireframe);
     bool GetWireframe();
     
-    void SetFog(bool _fogEnabled);
-    bool IsFogEnabled() const;
+    void SetFog(const bool & _fogEnabled);
+    const bool & IsFogEnabled() const;
     void SetFogDensity(float32 _fogDensity);
     float32 GetFogDensity() const;
     void SetFogColor(const Color & _fogColor);
@@ -245,7 +245,7 @@ public:
     void SetDiffuseColor(const Color & color);
     void SetSpecularColor(const Color & color);
     void SetEmissiveColor(const Color & color);
-        
+
     const Color & GetAmbientColor() const;
     const Color & GetDiffuseColor() const;
     const Color & GetSpecularColor() const;
@@ -267,8 +267,8 @@ public:
         Function should be used if you want to render something with this material.
      */
     //void BindMaterial();
-	void PrepareRenderState(InstanceMaterialState * instanceMaterialState = 0);
-    void Draw(PolygonGroup * group, InstanceMaterialState * state);
+	void PrepareRenderState(InstanceMaterialState * instanceMaterialState = 0, Matrix4 * worldMxPtr = 0);
+    void Draw(PolygonGroup * group, InstanceMaterialState * state, Matrix4 * worldMxPtr);
     
     // TODO: remove const &
     const bool & IsExportOwnerLayerEnabled();
@@ -355,7 +355,11 @@ private:
 	Color diffuseColor;
 	Color specularColor;
 	Color emissiveColor;
-    
+    Color treeLeafColor;
+
+    float32 treeLeafOcclusionOffset;
+    float32 treeLeafOcclusionMul;
+
     bool    isFogEnabled;
     float32 fogDensity;
     Color   fogColor;
@@ -386,6 +390,10 @@ private:
     int32 uniformFogColor;
     int32 uniformFlatColor;
     int32 uniformTexture0Shift;
+    int32 uniformWorldTranslate;
+    int32 uniformWorldScale;
+    int32 uniformTreeLeafColorMul;
+    int32 uniformTreeLeafOcclusionOffset;
 
 	RenderState renderStateBlock;
     
@@ -413,7 +421,11 @@ public:
         MEMBER(specularColor, "Specular Color", I_SAVE | I_VIEW | I_EDIT)
         MEMBER(emissiveColor, "Emissive Color", I_SAVE | I_VIEW | I_EDIT)
 
-        MEMBER(isFogEnabled, "Is Fog Enabled", I_SAVE | I_VIEW | I_EDIT)
+        MEMBER(treeLeafColor, "Tree Leaf Color", I_SAVE | I_VIEW | I_EDIT)
+        MEMBER(treeLeafOcclusionOffset, "Tree Leaf Occlusion Offset", I_SAVE | I_VIEW | I_EDIT)
+        MEMBER(treeLeafOcclusionMul, "Tree Leaf Occlusion Multiply", I_SAVE | I_VIEW | I_EDIT)
+
+        PROPERTY("isFogEnabled", "Is Fog Enabled", IsFogEnabled, SetFog, I_SAVE | I_VIEW | I_EDIT)
         MEMBER(fogDensity, "Fog Density", I_SAVE | I_VIEW | I_EDIT)
         MEMBER(fogColor, "Fog Color", I_SAVE | I_VIEW | I_EDIT)
                          

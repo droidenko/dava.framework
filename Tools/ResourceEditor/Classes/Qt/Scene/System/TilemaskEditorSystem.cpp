@@ -458,8 +458,6 @@ void TilemaskEditorSystem::UpdateBrushTool()
 
 Image* TilemaskEditorSystem::CreateToolImage(int32 sideSize, const FilePath& filePath)
 {
-	RenderManager::Instance()->LockNonMain();
-	
 	Sprite *dstSprite = Sprite::CreateAsRenderTarget(sideSize, sideSize, FORMAT_RGBA8888);
 	Texture *srcTex = Texture::CreateFromFile(filePath);
 	Sprite *srcSprite = Sprite::CreateFromTexture(srcTex, 0, 0, (float32)srcTex->GetWidth(), (float32)srcTex->GetHeight());
@@ -484,8 +482,6 @@ Image* TilemaskEditorSystem::CreateToolImage(int32 sideSize, const FilePath& fil
 	SafeRelease(srcSprite);
 	SafeRelease(srcTex);
 	SafeRelease(dstSprite);
-	
-	RenderManager::Instance()->UnlockNonMain();
 	
 	return retImage;
 }
@@ -584,7 +580,6 @@ void TilemaskEditorSystem::CreateMaskFromTexture(Texture* texture)
 
 	if(texture)
 	{
-		RenderManager::Instance()->LockNonMain();
 		RenderManager::Instance()->SetBlendMode(BLEND_ONE, BLEND_ZERO);
 		
 		Sprite *oldMask = Sprite::CreateFromTexture(texture, 0, 0,
@@ -596,8 +591,6 @@ void TilemaskEditorSystem::CreateMaskFromTexture(Texture* texture)
 		RenderManager::Instance()->RestoreRenderTarget();
 		
 		SafeRelease(oldMask);
-		
-		RenderManager::Instance()->UnlockNonMain();
 	}
 	
 	sprite->GetTexture()->GenerateMipmaps();

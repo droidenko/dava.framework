@@ -41,6 +41,7 @@ namespace DAVA
 {
 
 class ParticleEmitter;
+class ModifiablePropertyLineBase;
 class ParticleEffectComponent : public Component
 {
 protected:
@@ -71,6 +72,12 @@ public:
 	 */
 	void Pause(bool isPaused = true);
 
+
+	bool IsPaused();
+
+
+	void Step(float32 delta);
+
     /**
      \brief Function marks that all the emitters must be stopped after N repeats of emitter animation.
      \param[in] numberOfRepeats number of times we need to repeat emitter animation before stop.
@@ -100,18 +107,21 @@ public:
 	float32 GetPlaybackSpeed();
 	void SetPlaybackSpeed(float32 value);
 
+
+	void SetExtertnalValue(const String& name, float32 value);
+	float32 GetExternalValue(const String& name);
+	
+	Set<String> EnumerateVariables();
+
+	void RebuildEffectModifiables();
+	void RegisterModifiable(ModifiablePropertyLineBase *propertyLine);
+	void UnRegisterModifiable(ModifiablePropertyLineBase *propertyLine);
+
 	/**
      \brief Returns the total active particles count for the whole effect.
      */
 	int32 GetActiveParticlesCount();
-
-	/**
-     \brief Set/reset the "stop Particle Effect on load" flag.
-	 // TODO: Yuri Coder, 2013/06/05 - this logic is temporary, since all the effects
-	 // should be loaded in "stopped" state.
-     */
-	DAVA_DEPRECATED(void SetStopOnLoad(bool value));
-	DAVA_DEPRECATED(bool IsStopOnLoad() const);
+	
 
 protected:
 	// Update the duration for all the child nodes.
@@ -121,7 +131,7 @@ protected:
 	bool IsStopEmitter(ParticleEmitter * emitter) const;
 
 	// Check the "Playback Complete", emit a message, if needed.
-	void CheckPlaybackComplete();
+	void CheckPlaybackComplete();	
 
 private:
 	// "Stop after N repeats" value.
@@ -140,20 +150,18 @@ private:
 	float32 effectDuration;
 
 	// Count of emitters currently stopped.
-	int32 emittersCurrentlyStopped;
+	int32 emittersCurrentlyStopped;		
 
-	// Whether the effect should be stopped immediately after load.
-	// TODO: Yuri Coder, 2013/06/05 - this logic is temporary, since all the effects
-	// should be loaded in "stopped" state.
-	bool stopOnLoad;
+	 bool requireRebuildEffectModifiables;
+	MultiMap<String, ModifiablePropertyLineBase *> externalModifiables;	
+	Map<String, float32> externalValues;
 
 public:
 	INTROSPECTION_EXTEND(ParticleEffectComponent, Component,
-		MEMBER(stopAfterNRepeats, "stopAfterNRepeats", I_VIEW | I_SAVE)
-        MEMBER(stopWhenEmpty, "stopWhenEmpty",  I_VIEW | I_SAVE)
+		MEMBER(stopAfterNRepeats, "stopAfterNRepeats", I_VIEW | I_EDIT | I_SAVE)
+        MEMBER(stopWhenEmpty, "stopWhenEmpty",  I_VIEW | I_EDIT | I_SAVE)
 //        MEMBER(needEmitPlaybackComplete, "needEmitPlaybackComplete", INTROSPECTION_SERIALIZABLE)
-        MEMBER(effectDuration, "effectDuration",  I_VIEW | I_SAVE)
-		MEMBER(stopOnLoad, "stopOnLoad",  I_VIEW | I_SAVE)
+        MEMBER(effectDuration, "effectDuration",  I_VIEW | I_SAVE)		
 
     );
 };

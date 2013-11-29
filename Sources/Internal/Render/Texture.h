@@ -243,8 +243,6 @@ public:
 	static void GenerateCubeFaceNames(const String& baseName, Vector<String>& faceNames);
 	static void GenerateCubeFaceNames(const String& baseName, const Vector<String>& faceNameSuffixes, Vector<String>& faceNames);
 
-    TextureDescriptor * CreateDescriptor() const;
-
     void Reload();
     void ReloadAs(eGPUFamily gpuFamily);
 	void SetInvalidater(TextureInvalidater* invalidater);
@@ -298,6 +296,13 @@ public:							// properties for fast access
     int32 GetDataSize() const;
     
     void ReleaseTextureData();
+	struct ReleaseTextureDataContainer
+	{
+		uint32 textureType;
+		uint32 id;
+		uint32 fboID;
+		uint32 rboID;
+	};
 
     void GenerateID();
     
@@ -306,6 +311,7 @@ public:							// properties for fast access
     
     
     inline const eGPUFamily GetSourceFileGPUFamily() const;
+    inline TextureDescriptor * GetDescritor() const;
     
 private:
     
@@ -315,22 +321,25 @@ private:
     
 	static Texture * CreateFromImage(TextureDescriptor *descriptor, eGPUFamily gpu);
 
-	void ReloadAs(eGPUFamily gpuFamily, TextureDescriptor *descriptor);
-
 
 	Vector<Image *> images;
 	bool LoadImages(eGPUFamily gpu);
 	void SetParamsFromImages();
+	void FlushDataToRendererInternal(BaseObject * caller, void * param, void *callerData);
 	void FlushDataToRenderer();
 	void ReleaseImages();
 
     void MakePink(TextureType requestedType = Texture::TEXTURE_2D);
+	void ReleaseTextureDataInternal(BaseObject * caller, void * param, void *callerData);
+
+	void GeneratePixelesationInternal(BaseObject * caller, void * param, void *callerData);
 
     static bool CheckImageSize(const Vector<Image *> &imageSet);
     static bool IsCompressedFormat(PixelFormat format);
     
 	static uint32 ConvertToPower2FBOValue(uint32 value);
 
+	void GenerateMipmapsInternal(BaseObject * caller, void * param, void *callerData);
 
 	static PixelFormat defaultRGBAFormat;
 	Texture();
@@ -345,6 +354,7 @@ private:
     
 #if defined(__DAVAENGINE_OPENGL__)
 	void HWglCreateFBOBuffers();
+	void HWglCreateFBOBuffersInternal(BaseObject * caller, void * param, void *callerData);
 
     static GLint HWglFilterToGLFilter(TextureFilter filter);
     static GLint HWglConvertWrapMode(TextureWrap wrap);
@@ -382,6 +392,11 @@ inline const eGPUFamily Texture::GetSourceFileGPUFamily() const
 inline Texture::TextureState Texture::GetState() const
 {
 	return state;
+}
+
+inline TextureDescriptor * Texture::GetDescritor() const
+{
+    return texDescriptor;
 }
 
 

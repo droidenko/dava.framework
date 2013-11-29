@@ -211,8 +211,12 @@ void DAEConvertWithSettingsAction::CopyGeometry(DAVA::Entity *srcEntity, DAVA::E
 	RenderObject *dstRo = GetRenderObject(dstEntity);
 	if(srcRo && dstRo)
 	{
-		bool ret = CopyRenderObjects(srcRo, dstRo);	
-		if(!ret)
+		bool ret = CopyRenderObjects(srcRo, dstRo);
+        if(ret)
+        {
+            dstEntity->SetLocalTransform(srcEntity->GetLocalTransform());
+        }
+		else
 		{
 			Logger::Error("Can't copy geometry from %s to %s", srcEntity->GetName().c_str(), dstEntity->GetName().c_str());
 		}

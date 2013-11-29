@@ -628,9 +628,12 @@ const Color & Landscape::GetTileColor(eTextureLevel level)
     
 void Landscape::SetTexture(eTextureLevel level, const FilePath & textureName)
 {
-    SafeRelease(textures[level]);
-    textureNames[level] = String("");
-    
+	SafeRelease(textures[level]);
+	textureNames[level] = String("");
+
+	if((TILED_MODE_TILEMASK == tiledShaderMode || TILED_MODE_TILE_DETAIL_MASK == tiledShaderMode) && TEXTURE_TILE_FULL == level)
+		return;
+
     Texture * texture = CreateTexture(level, textureName);
     if (texture)
     {
@@ -638,7 +641,7 @@ void Landscape::SetTexture(eTextureLevel level, const FilePath & textureName)
     }
     textures[level] = texture;
     
-    if(TEXTURE_TILE_FULL == level)
+    if((TEXTURE_TILE_FULL == level) && ((tiledShaderMode == TILED_MODE_MIXED) || (tiledShaderMode == TILED_MODE_TEXTURE)))
     {
         UpdateFullTiledTexture();
     }
@@ -1526,6 +1529,9 @@ void Landscape::Load(KeyedArchive * archive, SceneFileV2 * sceneFile)
     for (int32 k = 0; k < TEXTURE_COUNT; ++k)
     {
         if(TEXTURE_DETAIL == k) continue;
+        
+        if(TEXTURE_TILE_FULL == k && tiledShaderMode != TILED_MODE_TEXTURE && tiledShaderMode != TILED_MODE_MIXED)
+            continue;
 
         // load textures
         if(!(tiledShaderMode == TILED_MODE_TILE_DETAIL_MASK && (TEXTURE_TILE1 == k || TEXTURE_TILE2 == k || TEXTURE_TILE3 == k)))
@@ -1753,12 +1759,10 @@ void Landscape::UpdateFullTiledTexture()
 {
     if(textureNames[TEXTURE_TILE_FULL].IsEmpty())
     {
-		RenderManager::Instance()->LockNonMain();
         Texture *t = CreateFullTiledTexture();
         t->GenerateMipmaps();
         SetTexture(TEXTURE_TILE_FULL, t);
         SafeRelease(t);
-		RenderManager::Instance()->UnlockNonMain();
     }
 }
     
@@ -1791,7 +1795,6 @@ void Landscape::SetTiledShaderMode(DAVA::Landscape::eTiledShaderMode _tiledShade
             break;
     }
     // Reload shaders to
-    ReleaseShaders();
     InitShaders();
 }
     

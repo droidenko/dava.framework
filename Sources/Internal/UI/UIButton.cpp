@@ -1,4 +1,4 @@
-/*==================================================================================
+ /*==================================================================================
     Copyright (c) 2008, binaryzebra
     All rights reserved.
 
@@ -1036,5 +1036,16 @@ namespace DAVA
 			}
 		}
 	}
-
+    
+    void UIButton::SetVisibleForUIEditor(bool value, bool hierarchic/* = true*/)
+	{
+        UIControl::SetVisibleForUIEditor(value, hierarchic);
+        for(int i = 0; i < DRAW_STATE_COUNT; i++)
+		{
+            if (stateTexts[i])
+            {
+                stateTexts[i]->SetVisibleForUIEditor(value, hierarchic);
+            }
+		}
+    }
 };

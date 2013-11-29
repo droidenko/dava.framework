@@ -55,8 +55,7 @@ RenderManager::RenderManager(Core::eRenderer _renderer)
     currentState(),
     hardwareState(),
     needGLScreenShot(false),
-    screenShotCallback(NULL),
-    glMutex( new Mutex() )
+    screenShotCallback(NULL)
 {
 //	Logger::FrameworkDebug("[RenderManager] created");
 
@@ -100,7 +99,6 @@ RenderManager::RenderManager(Core::eRenderer _renderer)
 
 	fps = 60;
 
-	lockCount = 0;
 	debugEnabled = false;
 	fboViewRenderbuffer = 0;
 	fboViewFramebuffer = 0;
@@ -217,29 +215,27 @@ void RenderManager::Init(int32 _frameBufferWidth, int32 _frameBufferHeight)
 	currentState.direct3DDevice = GetD3DDevice();
 #endif
     
-    RenderManager::LockNonMain();
 	currentState.Reset(false);
     hardwareState.Reset(true);
 
 #if defined(__DAVAENGINE_OPENGL__)
 #if !defined(__DAVAENGINE_IPHONE__) && !defined(__DAVAENGINE_ANDROID__)//Dizz: glDisableClientState functions are not supported by GL ES 2.0
-    glDisableClientState(GL_VERTEX_ARRAY);
+    RENDER_VERIFY(glDisableClientState(GL_VERTEX_ARRAY));
     oldVertexArrayEnabled = 0;                      
 
-    glDisableClientState(GL_NORMAL_ARRAY);
+    RENDER_VERIFY(glDisableClientState(GL_NORMAL_ARRAY));
     oldNormalArrayEnabled = 0;                      
 	for (int k = 0; k < RenderState::MAX_TEXTURE_LEVELS; ++k)
     {
-        glClientActiveTexture(GL_TEXTURE0 + k);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        RENDER_VERIFY(glClientActiveTexture(GL_TEXTURE0 + k));
+        RENDER_VERIFY(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
         oldTextureCoordArrayEnabled[k] = 0;                
     }
-    glClientActiveTexture(GL_TEXTURE0);
+    RENDER_VERIFY(glClientActiveTexture(GL_TEXTURE0));
     
-    glDisableClientState(GL_COLOR_ARRAY);
+    RENDER_VERIFY(glDisableClientState(GL_COLOR_ARRAY));
     oldColorArrayEnabled = 0;                       
 
-    RenderManager::UnlockNonMain();
 #endif    
 #endif
     
@@ -529,40 +525,11 @@ void RenderManager::DrawArrays(ePrimitiveType type, int32 first, int32 count)
 
 void RenderManager::Lock()
 {
-	glMutex->Lock();
+	glMutex.Lock();
 }
 void RenderManager::Unlock()
 {
-	glMutex->Unlock();
-}
-	
-void RenderManager::LockNonMain()
-{
-	if(!Thread::IsMainThread())
-	{
-		if(!lockCount)
-		{
-			Lock();
-		}
-		lockCount++;
-	}
-}
-	
-int32 RenderManager::GetNonMainLockCount()
-{
-	return lockCount;
-}
-
-void RenderManager::UnlockNonMain()
-{
-	if(!Thread::IsMainThread())
-	{
-		lockCount--;
-		if(!lockCount)
-		{
-			Unlock();
-		}
-	}
+	glMutex.Unlock();
 }
 
 void RenderManager::SetFPS(int32 newFps)

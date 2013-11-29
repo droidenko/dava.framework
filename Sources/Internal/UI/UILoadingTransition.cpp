@@ -33,6 +33,7 @@
 #include "Platform/SystemTimer.h"
 #include "UI/UIControlSystem.h"
 #include "Debug/Replay.h"
+#include "Job/JobWaiter.h"
 
 namespace DAVA 
 {
@@ -120,7 +121,6 @@ void UILoadingTransition::DidAppear()
 	if (!thread)
 	{
 		thread = Thread::Create(Message(this, &UILoadingTransition::ThreadMessage));
-		thread->EnableCopyContext();
 		thread->Start();
 	}
 }
@@ -129,6 +129,9 @@ void UILoadingTransition::Update(float32 timeElapsed)
 {
 	if ((thread) && (thread->GetState() == Thread::STATE_ENDED))
 	{
+		ThreadIdJobWaiter waiter(thread->GetThreadId());
+		waiter.Wait();
+
 		UIControlSystem::Instance()->SetScreen(nextScreen, outTransition);
         if (!inTransition) 
         {

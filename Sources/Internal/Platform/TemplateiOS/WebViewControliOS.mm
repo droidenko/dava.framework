@@ -122,7 +122,7 @@ WebViewControl::WebViewControl()
 
 	UIWebView* localWebView = (UIWebView*)webViewPtr;
 	HelperAppDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
-	[[[appDelegate glController] view] addSubview:localWebView];
+	[[appDelegate glController].backgroundView addSubview:localWebView];
 
 	webViewURLDelegatePtr = [[WebViewURLDelegate alloc] init];
 	[localWebView setDelegate:(WebViewURLDelegate*)webViewURLDelegatePtr];

@@ -26,45 +26,47 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#ifndef ___SPEEDTREE_LEAF_BATCH_H__
-#define ___SPEEDTREE_LEAF_BATCH_H__
+#ifndef __DAVAENGINE_JOB_WAITER_H__
+#define __DAVAENGINE_JOB_WAITER_H__
 
-#include "Render/Highlevel/RenderBatch.h"
+#include "Base/BaseTypes.h"
+#include "Platform/Thread.h"
 
 namespace DAVA
 {
 
-class Texture;
-class Camera;
-class Shader;
-class SpeedTreeLeafBatch : public RenderBatch
+class Job;
+
+class ThreadIdJobWaiter
 {
-protected:
-    virtual ~SpeedTreeLeafBatch();
 public:
-    SpeedTreeLeafBatch(DAVA::Texture * tex = 0);
+	ThreadIdJobWaiter(Thread::ThreadId threadId = Thread::GetCurrentThreadId());
+	~ThreadIdJobWaiter();
+	void Wait();
 
-    void SetTexture(Texture * texture);
-
-    virtual void Draw(DAVA::Camera * camera);
-
-    virtual RenderBatch * Clone(RenderBatch * dstNode = 0);
-    virtual void Save(KeyedArchive *archive, SceneFileV2 *sceneFile);
-    virtual void Load(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	Thread::ThreadId & GetThreadId();
+	ConditionalVariable * GetConditionalVariable();
 
 private:
-    Shader * shader;
-    Texture * texture;
+	Thread::ThreadId threadId;
+	ConditionalVariable cv;
+};
 
-    int32 uniformWorldTranslate;
-    int32 uniformTexture0;
-    int32 uniformWorldScale;
-
+class JobInstanceWaiter
+{
 public:
-    INTROSPECTION_EXTEND(SpeedTreeLeafBatch, RenderBatch, NULL);
+	JobInstanceWaiter(Job * job);
+	~JobInstanceWaiter();
+	void Wait();
 
+	ConditionalVariable * GetConditionalVariable();
+	Job * GetJob();
+
+private:
+	Job * job;
+	ConditionalVariable cv;
 };
 
 }
 
-#endif //___SPEEDTREE_BATCH_H__
+#endif //__DAVAENGINE_JOB_WAITER_H__

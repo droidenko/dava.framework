@@ -94,7 +94,9 @@ public:
 
 	virtual UIControl *Clone();
 	virtual void CopyDataFrom(UIControl *srcControl);
-	
+
+	virtual void SetVisibleForUIEditor(bool value, bool hierarchic = true);
+
 protected:
 	bool isEventsContinuos;
 	

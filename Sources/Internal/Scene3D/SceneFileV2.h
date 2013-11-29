@@ -151,10 +151,7 @@ private:
     void LoadHierarchy(Scene * scene, Entity * node, File * file, int32 level);
 
     bool ReplaceNodeAfterLoad(Entity * node);
-	void ReplaceOldNodes(Entity * currentNode);
-
-	// Stop all the Particle Effect Components for which appropriate flag is set.
-	void StopParticleEffectComponents(Entity* rootNode);
+	void ReplaceOldNodes(Entity * currentNode);	
 
     bool isDebugLogEnabled;
     bool isSaveForGame;

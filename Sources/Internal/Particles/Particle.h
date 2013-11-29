@@ -72,8 +72,8 @@ public:
 	Vector3 position;
 	Vector2 size;
 
-	Vector3 direction;
-	float32 speed;
+	//Vector3 direction;
+	Vector3 speed;
 
 	float32 angle;
 	float32 spin;

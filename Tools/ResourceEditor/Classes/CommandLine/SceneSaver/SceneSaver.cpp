@@ -194,10 +194,30 @@ void SceneSaver::ReleaseTextures()
 void SceneSaver::CopyTexture(const FilePath &texturePathname, Set<String> &errorLog)
 {
     FilePath descriptorPathname = TextureDescriptor::GetDescriptorPathname(texturePathname);
-    FilePath pngPathname = GPUFamilyDescriptor::CreatePathnameForGPU(texturePathname, GPU_UNKNOWN, FORMAT_RGBA8888);
+	
+	TextureDescriptor* desc = TextureDescriptor::CreateFromFile(descriptorPathname);
+	if(desc->IsCubeMap())
+	{
+		sceneUtils.CopyFile(descriptorPathname, errorLog);
+		
+		Vector<String> faceNames;
+		Texture::GenerateCubeFaceNames(descriptorPathname.GetAbsolutePathname().c_str(), faceNames);
+		for(Vector<String>::iterator it = faceNames.begin();
+			it != faceNames.end();
+			++it)
+		{
+			sceneUtils.CopyFile(*it, errorLog);
+		}
+	}
+	else
+	{
+		FilePath pngPathname = GPUFamilyDescriptor::CreatePathnameForGPU(texturePathname, GPU_UNKNOWN, FORMAT_RGBA8888);
 
-    sceneUtils.CopyFile(descriptorPathname, errorLog);
-    sceneUtils.CopyFile(pngPathname, errorLog);
+		sceneUtils.CopyFile(descriptorPathname, errorLog);
+		sceneUtils.CopyFile(pngPathname, errorLog);
+	}
+	
+	SafeRelease(desc);
 }
 
 void SceneSaver::CopyReferencedObject( Entity *node, Set<String> &errorLog )

@@ -614,6 +614,8 @@
        </property>
        <addaction name="actionAddNewEntity"/>
        <addaction name="actionRemoveEntity"/>
+       <addaction name="actionExpandSceneTree"/>
+       <addaction name="actionCollapseSceneTree"/>
       </widget>
      </item>
      <item>
@@ -1667,6 +1669,30 @@
    </property>
    <property name="text">
     <string>On Scene Selection</string>
+   </property>
+  </action>
+  <action name="actionExpandSceneTree">
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/expand_all.png</normaloff>:/QtIcons/expand_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Expand all.</string>
+   </property>
+   <property name="toolTip">
+    <string>Expand all.</string>
+   </property>
+  </action>
+  <action name="actionCollapseSceneTree">
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/collapse_all.png</normaloff>:/QtIcons/collapse_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Collapse all.</string>
+   </property>
+   <property name="toolTip">
+    <string>Collapse all.</string>
    </property>
   </action>
  </widget>

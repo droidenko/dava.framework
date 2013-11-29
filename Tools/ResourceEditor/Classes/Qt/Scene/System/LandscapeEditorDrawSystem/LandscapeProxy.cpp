@@ -175,8 +175,6 @@ void LandscapeProxy::SetRulerToolTextureEnabled(bool enabled)
 
 void LandscapeProxy::UpdateDisplayedTexture()
 {
-	RenderManager::Instance()->LockNonMain();
-
 	Texture* fullTiledTexture = baseLandscape->GetTexture(Landscape::TEXTURE_TILE_FULL);
 
 	int32 fullTiledWidth = fullTiledTexture->GetWidth();
@@ -247,8 +245,6 @@ void LandscapeProxy::UpdateDisplayedTexture()
 	SafeRelease(dstSprite);
 	
 	RenderManager::Instance()->SetBlendMode(srcBlend, dstBlend);
-	
-	RenderManager::Instance()->UnlockNonMain();
 
 	displayingTexture->GenerateMipmaps();
 	customLandscape->SetTexture(Landscape::TEXTURE_TILE_FULL, displayingTexture);

@@ -75,7 +75,7 @@ void TransformSystem::Process()
 
 	if(passedNodes)
 	{
-//		Logger::Info("TransformSystem %d passed %d multiplied", passedNodes, multipliedNodes);
+		//Logger::Info("TransformSystem %d passed %d multiplied", passedNodes, multipliedNodes);
 	}
 }
 
@@ -98,7 +98,7 @@ void TransformSystem::HierahicFindUpdatableTransform(Entity * entity, bool force
 	uint32 size = entity->GetChildrenCount();
 	for(uint32 i = 0; i < size; ++i)
 	{
-		if(forcedUpdate || entity->GetFlags() & Entity::TRANSFORM_DIRTY)
+		if(forcedUpdate || entity->GetChild(i)->GetFlags() & Entity::TRANSFORM_DIRTY)
 		{
 			HierahicFindUpdatableTransform(entity->GetChild(i), forcedUpdate);
 		}

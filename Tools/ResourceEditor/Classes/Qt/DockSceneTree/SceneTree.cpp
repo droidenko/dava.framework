@@ -606,6 +606,10 @@ void SceneTree::EditModel()
 				{
 					QtMainWindow::Instance()->OpenScene(entityRefPath.GetAbsolutePathname().c_str());
 				}
+				else
+				{
+					ShowErrorDialog(ResourceEditor::SCENE_TREE_WRONG_REF_TO_OWNER + entityRefPath.GetAbsolutePathname());
+				}
 			}
 		}
 	}
@@ -637,6 +641,21 @@ void SceneTree::ReloadModel()
 		if(QDialog::Accepted == dlg->exec())
 		{
 			EntityGroup selection = sceneEditor->selectionSystem->GetSelection();
+			String wrongPathes;
+			for(int i = 0; i < selection.Size(); ++i)
+			{
+				DAVA::Entity *entity = selection.GetEntity(i);
+				DAVA::FilePath pathToReload(entity->GetCustomProperties()->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER));
+				if(!pathToReload.Exists())
+				{
+					wrongPathes += Format("\r\n%s : %s",entity->GetName().c_str(),
+										  pathToReload.GetAbsolutePathname().c_str());
+				}
+			}
+			if(!wrongPathes.empty())
+			{
+				ShowErrorDialog(ResourceEditor::SCENE_TREE_WRONG_REF_TO_OWNER + wrongPathes);
+			}
 			sceneEditor->structureSystem->ReloadEntities(selection, lightmapsChBox->isChecked());
 		}
 
@@ -695,6 +714,27 @@ void SceneTree::SaveEntityAs()
 				sceneEditor->Exec(new SaveEntityAsAction(&selection, filePath.toStdString()));
 			}
 		}
+	}
+}
+
+void SceneTree::CollapseAll()
+{
+	QTreeView::collapseAll();
+	bool needSync = false;
+	QModelIndexList indexList = selectionModel()->selection().indexes();
+	for (int i = 0; i < indexList.size(); ++i)
+	{
+		QModelIndex childIndex = indexList[i];
+		if(childIndex.parent().isValid())
+		{
+			selectionModel()->select(childIndex, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+			needSync = true;
+		}
+	}
+
+	if(needSync)
+	{
+		SyncSelectionFromTree();
 	}
 }
 

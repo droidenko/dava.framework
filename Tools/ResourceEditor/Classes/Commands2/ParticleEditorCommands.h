@@ -141,14 +141,13 @@ class CommandUpdateEffect: public CommandAction
 {
 public:
 	CommandUpdateEffect(ParticleEffectComponent* particleEffect);
-	void Init(float32 playbackSpeed, bool stopOnLoad);
+	void Init(float32 playbackSpeed);
 	virtual void Redo();
 
 protected:
 	ParticleEffectComponent* particleEffect;
 
-	float32 playbackSpeed;
-	bool stopOnLoad;
+	float32 playbackSpeed;	
 };
 
 class CommandUpdateEmitter: public CommandAction
@@ -286,8 +285,7 @@ protected:
 
 	RefPtr< PropertyLine<Color> > colorRandom;
 	RefPtr< PropertyLine<float32> > alphaOverLife;
-	RefPtr< PropertyLine<Color> > colorOverLife;
-	RefPtr< PropertyLine<float32> > frameOverLife;
+	RefPtr< PropertyLine<Color> > colorOverLife;	
 	RefPtr< PropertyLine<float32> > angle;
 	RefPtr< PropertyLine<float32> > angleVariation;
 

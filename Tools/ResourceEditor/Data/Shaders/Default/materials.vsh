@@ -33,7 +33,7 @@ attribute vec4 inColor;
 #if defined(VERTEX_LIT)
 #endif
 
-#if defined(PIXEL_LIT)
+#if defined(PIXEL_LIT) || defined(MATERIAL_SPEED_TREE_LEAF)
 attribute vec3 inTangent;
 #endif
 
@@ -43,6 +43,7 @@ attribute float inTime;
 
 // UNIFORMS
 uniform mat4 modelViewProjectionMatrix;
+uniform mat4 projectionMatrix;
 
 #if defined(VERTEX_LIT) || defined(PIXEL_LIT) || defined(VERTEX_FOG)
 uniform mat4 modelViewMatrix;
@@ -64,6 +65,10 @@ uniform mediump vec2 uvOffset;
 uniform mediump vec2 uvScale;
 #endif
 
+#if defined(MATERIAL_SPEED_TREE_LEAF)
+uniform vec3 worldTranslate;
+uniform vec3 worldScale;
+#endif
 
 // OUTPUT ATTRIBUTES
 #if defined(MATERIAL_SKYBOX)
@@ -115,6 +120,8 @@ void main()
 #if defined(MATERIAL_SKYBOX)
 	vec4 vecPos = (modelViewProjectionMatrix * inPosition);
 	gl_Position = vec4(vecPos.xy, vecPos.w - 0.0001, vecPos.w);
+#elif defined(MATERIAL_SPEED_TREE_LEAF)
+	gl_Position = projectionMatrix * vec4(worldScale * (inPosition.xyz - inTangent) + worldTranslate, inPosition.w) + modelViewProjectionMatrix * vec4(inTangent, 0.0);
 #else
 	gl_Position = modelViewProjectionMatrix * inPosition;
 #endif

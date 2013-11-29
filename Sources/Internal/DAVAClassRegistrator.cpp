@@ -33,14 +33,16 @@ using namespace DAVA;
 
 void DAVA::RegisterDAVAClasses()
 {
-    Logger::FrameworkDebug("RegisterDAVAClasses");
+    //this code do nothing. Needed to compiler generate code from this cpp file
+    Logger * log = Logger::Instance();
+    if(log)
+        log->Log(Logger::LEVEL__DISABLE, "");
 }
 
 #if !defined(__DAVAENGINE_ANDROID__)
 REGISTER_CLASS(TheoraPlayer);
 #endif
 
-REGISTER_CLASS(SpeedTreeLeafBatch);
 REGISTER_CLASS(ParticleEmitter);
 REGISTER_CLASS(ParticleEmitter3D);
 REGISTER_CLASS(PolygonGroup);

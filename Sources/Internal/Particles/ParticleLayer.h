@@ -293,6 +293,8 @@ public:
 	bool IsLodActive(int32 lod);
 	void SetLodActive(int32 lod, bool active);	
 
+	void GetModifableLines(List<ModifiablePropertyLineBase *> &modifiables);
+
 protected:
 	void GenerateNewParticle(int32 emitIndex);
 	void GenerateSingleParticle();
@@ -361,6 +363,8 @@ protected:
 
 	Vector<bool> activeLODS;	
 
+	List<std::pair<String, ModifiablePropertyLineBase *> > modifiables;
+
 public:
 	String			layerName;
 
@@ -388,14 +392,7 @@ public:
 	RefPtr< PropertyLine<float32> > spinVariation;
 	RefPtr< PropertyLine<float32> > spinOverLife;
 	bool randomSpinDirection;
-	
-	RefPtr< PropertyLine<float32> > motionRandom;		//
-	RefPtr< PropertyLine<float32> > motionRandomVariation;
-	RefPtr< PropertyLine<float32> > motionRandomOverLife;
-	
-	RefPtr< PropertyLine<float32> > bounce;				//
-	RefPtr< PropertyLine<float32> > bounceVariation;
-	RefPtr< PropertyLine<float32> > bounceOverLife;	
+		
 	
 	RefPtr< PropertyLine<Color> > colorRandom;		
 	RefPtr< PropertyLine<float32> > alphaOverLife;	
@@ -482,14 +479,6 @@ public:
 //        MEMBER(spinVariation, "Spin Variation", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
 //        MEMBER(spinOverLife, "Spin Over Life", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
 //
-//        MEMBER(motionRandom, "Motion Random", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//        MEMBER(motionRandomVariation, "Motion Random Variation", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//        MEMBER(motionRandomOverLife, "Motion Random Over Life", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//                         
-//        MEMBER(bounce, "Bounce", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//        MEMBER(bounceVariation, "Bounce Variation", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//        MEMBER(bounceOverLife, "Bounce Over Life", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
-//                         
 //        MEMBER(colorRandom, "Color Random", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
 //        MEMBER(alphaOverLife, "Alpha Over Life", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)
 //        MEMBER(colorOverLife, "Color Over Life", INTROSPECTION_SERIALIZABLE | INTROSPECTION_EDITOR)

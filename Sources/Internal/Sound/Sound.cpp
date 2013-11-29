@@ -104,7 +104,7 @@ Sound * Sound::CreateWithFlags(const FilePath & fileName, eType type, const Fast
 
 #if !defined DONT_USE_DEFAULT_3D_SOUND_SETTINGS
         if( sound->is3d && sound->fmodSound )
-            FMOD_VERIFY( sound->fmodSound->set3DMinMaxDistance(5.0f, 100.0f) );
+            FMOD_VERIFY( sound->fmodSound->set3DMinMaxDistance(12.0f, 1000.0f) );
 #endif
 
         soundMap[sound->fileName.GetAbsolutePathname()] = sound->fmodSound;

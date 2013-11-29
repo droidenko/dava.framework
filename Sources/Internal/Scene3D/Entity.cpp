@@ -627,6 +627,8 @@ Entity* Entity::Clone(Entity *dstNode)
     
     dstNode->name = name;
     dstNode->tag = tag;
+    
+    dstNode->SetVisible(GetVisible());
     //dstNode->flags = flags;
     
     dstNode->nodeAnimations = nodeAnimations;
