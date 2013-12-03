@@ -36,7 +36,7 @@ const BackgroundGridWidgetHelper::DrawTypesData BackgroundGridWidgetHelper::draw
     {UIControlBackground::DRAW_ALIGNED,                  "Aligned"},
     {UIControlBackground::DRAW_SCALE_TO_RECT,            "Scale to rect"},
     {UIControlBackground::DRAW_SCALE_PROPORTIONAL,       "Scale Proportional"},
-    {UIControlBackground::DRAW_SCALE_PROPORTIONAL_ONE,   "Scale Proportional One (\?\?\?)"},
+    {UIControlBackground::DRAW_SCALE_PROPORTIONAL_ONE,   "Scale Proportional One"},
     {UIControlBackground::DRAW_FILL,                     "Fill"},
     {UIControlBackground::DRAW_STRETCH_HORIZONTAL,       "Stretch Horizontal"},
     {UIControlBackground::DRAW_STRETCH_VERTICAL,         "Stretch Vertical"},

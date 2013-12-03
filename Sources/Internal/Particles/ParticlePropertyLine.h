@@ -470,7 +470,7 @@ public:
 		if (modifiable) dest.push_back(modifiable);
 	}
 
-	template <class T> static RefPtr<PropertyLine<T> > GetValueLine(RefPtr<PropertyLine<T> > &src)
+	template <class T> static RefPtr<PropertyLine<T> > GetValueLine(const RefPtr<PropertyLine<T> > &src)
 	{
 		ModifiablePropertyLine<T> *modifiable = dynamic_cast<ModifiablePropertyLine<T> *> (src.Get());
 		if (modifiable) 

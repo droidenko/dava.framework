@@ -63,7 +63,7 @@ public:
 
 	void GetModifableLines(List<ModifiablePropertyLineBase *> &modifiables);
 	
-protected:
+public:
 	RefPtr<PropertyLine<Vector3> > force;
 	RefPtr<PropertyLine<Vector3> > forceVariation;
 	RefPtr<PropertyLine<float32> > forceOverLife;

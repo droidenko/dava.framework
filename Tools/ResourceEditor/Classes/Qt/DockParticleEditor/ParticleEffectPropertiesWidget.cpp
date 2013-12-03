@@ -495,11 +495,11 @@ ModifiablePropertyLineBase* ParticleEffectPropertiesWidget::GetForceLine(Particl
 	switch(lineId)
 	{
 	case EF_FORCE:
-		return dynamic_cast<ModifiablePropertyLineBase*>(force->GetForce().Get());
+		return dynamic_cast<ModifiablePropertyLineBase*>(force->force.Get());
 	case EF_FORCE_VARIATION:
-		return dynamic_cast<ModifiablePropertyLineBase*>(force->GetForceVariation().Get());
+		return dynamic_cast<ModifiablePropertyLineBase*>(force->forceVariation.Get());
 	case EF_FORCE_OVERLIFE:
-		return dynamic_cast<ModifiablePropertyLineBase*>(force->GetForceOverlife().Get());
+		return dynamic_cast<ModifiablePropertyLineBase*>(force->forceOverLife.Get());
 	}
 	return NULL;
 }
@@ -569,11 +569,11 @@ void ParticleEffectPropertiesWidget::SetForceLineModifiable(ParticleForce *force
 	switch(lineId)
 	{
 	case EF_FORCE:
-		force->SetForce(PropertyLineHelper::MakeModifiable(force->GetForce())); break;
+		PropertyLineHelper::MakeModifiable(force->force); break;
 	case EF_FORCE_VARIATION:
-		force->SetForceVariation(PropertyLineHelper::MakeModifiable(force->GetForceVariation())); break;
+		PropertyLineHelper::MakeModifiable(force->forceVariation); break;
 	case EF_FORCE_OVERLIFE:
-		force->SetForceOverLife(PropertyLineHelper::MakeModifiable(force->GetForceOverlife())); break;
+		PropertyLineHelper::MakeModifiable(force->forceOverLife); break;
 	}
 }
 
@@ -642,11 +642,11 @@ void ParticleEffectPropertiesWidget::RemoveForceLineModifiable(ParticleForce *fo
 	switch(lineId)
 	{
 	case EF_FORCE:
-		force->SetForce(PropertyLineHelper::RemoveModifiable(force->GetForce())); break;
+		PropertyLineHelper::RemoveModifiable(force->force); break;
 	case EF_FORCE_VARIATION:
-		force->SetForceVariation(PropertyLineHelper::RemoveModifiable(force->GetForceVariation())); break;
+		PropertyLineHelper::RemoveModifiable(force->forceVariation); break;
 	case EF_FORCE_OVERLIFE:
-		force->SetForceOverLife(PropertyLineHelper::RemoveModifiable(force->GetForceOverlife())); break;
+		PropertyLineHelper::RemoveModifiable(force->forceOverLife); break;
 	}
 }
 
@@ -716,11 +716,11 @@ void ParticleEffectPropertiesWidget::EditForceModifiable(ParticleForce *force, F
 	switch(lineId)
 	{
 	case EF_FORCE:
-		EditModificationLine(force->GetForce(), onAdd); break;
+		EditModificationLine(force->force, onAdd); break;
 	case EF_FORCE_VARIATION:
-		EditModificationLine(force->GetForceVariation(), onAdd); break;
+		EditModificationLine(force->forceVariation, onAdd); break;
 	case EF_FORCE_OVERLIFE:
-		EditModificationLine(force->GetForceOverlife(), onAdd); break;
+		EditModificationLine(force->forceOverLife, onAdd); break;
 	}
 }
 

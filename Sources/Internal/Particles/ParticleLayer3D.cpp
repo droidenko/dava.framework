@@ -484,6 +484,7 @@ void ParticleLayer3D::SetFog(bool enable)
 
 void ParticleLayer3D::SetFrameBlend(bool enable)
 {
+	if (enableFrameBlend==enable) return; 
 	ParticleLayer::SetFrameBlend(enable);
 	if (enableFrameBlend)
 	{
@@ -492,9 +493,8 @@ void ParticleLayer3D::SetFrameBlend(bool enable)
 	else
 	{
 		renderBatch->GetMaterial()->SetType(Material::MATERIAL_VERTEX_COLOR_ALPHABLENDED);	
-		SafeRelease(renderData); //to remove unnecessary vertex streams
-		renderData = new RenderDataObject();
-		renderBatch->SetRenderDataObject(renderData);
+		renderData->RemoveStream(EVF_TEXCOORD1);
+		renderData->RemoveStream(EVF_TIME);
 		textures2.resize(0);
 		times.resize(0);		
 	}
