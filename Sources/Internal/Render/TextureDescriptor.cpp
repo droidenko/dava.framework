@@ -34,6 +34,8 @@
 #include "FileSystem/DynamicMemoryFile.h"
 #include "Render/Texture.h"
 #include "Utils/Utils.h"
+#include "Render/LibPVRHelper.h"
+#include "Render/LibDxtHelper.h"
 
 #include "Render/GPUFamilyDescriptor.h"
 
@@ -571,7 +573,21 @@ uint32 TextureDescriptor::ReadSourceCRC() const
     
 uint32 TextureDescriptor::ReadConvertedCRC(eGPUFamily forGPU) const
 {
-    return CRC32::ForFile(GPUFamilyDescriptor::CreatePathnameForGPU(this, forGPU));
+	const String& outExtension = GPUFamilyDescriptor::GetCompressedFileExtension(forGPU, (DAVA::PixelFormat)compression[forGPU].format);
+	FilePath filePath = GPUFamilyDescriptor::CreatePathnameForGPU(this, forGPU);
+	if(outExtension == ".pvr")
+	{
+		uint32 CRC;
+		LibPVRHelper::GetCRCFromFile(filePath, &CRC);
+		return CRC;
+	}
+	else if(outExtension == ".dds")
+	{
+		uint32 CRC;
+		LibDxtHelper::GetCRCFromFile(filePath, &CRC);
+		return CRC;
+	}
+	return CRC32::ForFile(GPUFamilyDescriptor::CreatePathnameForGPU(this, forGPU));
 }
 
     

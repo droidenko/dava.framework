@@ -47,6 +47,8 @@
 //    #include "libpvr/PVRTexture.h"
 #endif //#if defined (__DAVAENGINE_IPHONE__) || defined (__DAVAENGINE_ANDROID__)
 
+#define METADATA_CRC_TAG		0x5f435243  // equivalent of 'C''R''C''_'
+
 namespace DAVA
 {
 
@@ -118,10 +120,35 @@ public:
     
     static PixelFormat GetPixelFormat(const FilePath &filePathname);
     static uint32 GetDataSize(const FilePath &filePathname);
+	
+	static bool AddCRCIntoMetaData(const FilePath &filePathname);
+	static bool GetCRCFromFile(const FilePath &filePathname, uint32* outputCRC);
     
 protected:
+	
+	struct HeaderMetadataCRC32
+	{
+		uint32	u32FourCC;
+		uint32	u32Key;
+		uint32	u32MetadataSize;
+		uint32	u32MetadataValue;
+				
+		HeaderMetadataCRC32() : u32FourCC(0), u32Key(0), u32MetadataSize(4),
+			u32MetadataValue(0)
+		{}
+		
+		HeaderMetadataCRC32(uint32 crc) : u32FourCC(METADATA_CRC_TAG), u32Key(0),
+			u32MetadataSize(4), u32MetadataValue(crc)
+		{}
+	};
+	
+	static uint32 ProcessMetaData(DAVA::File* file, uint32* crc);
+	
+	static bool GetCRCFromMetaData(const FilePath &filePathname, uint32* outputCRC);
 
     static bool PreparePVRData(const char* pvrData, const int32 pvrDataSize);
+
+	static bool AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePathname, const PVRHeaderV3& pvrHeader, const uint8 *presentMetaData, const HeaderMetadataCRC32& metaData, const uint8 *textureData, const uint32 textureDataSize);
 
     static uint32 GetBitsPerPixel(uint64 pixelFormat);
     static void GetFormatMinDims(uint64 pixelFormat, uint32 &minX, uint32 &minY, uint32 &minZ);

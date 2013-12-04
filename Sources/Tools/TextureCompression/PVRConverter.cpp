@@ -34,6 +34,7 @@
 #include "Platform/Process.h"
 
 #include "Render/GPUFamilyDescriptor.h"
+#include "Render/LibPVRHelper.h"
 
 namespace DAVA
 {
@@ -111,6 +112,7 @@ FilePath PVRConverter::ConvertPngToPvr(const TextureDescriptor &descriptor, eGPU
 		CleanupCubemapAfterConversion(descriptor);
 	}
 		
+	LibPVRHelper::AddCRCIntoMetaData(outputName);
 	return outputName;
 }
 

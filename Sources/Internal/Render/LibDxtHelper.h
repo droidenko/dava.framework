@@ -67,8 +67,17 @@ public:
 
 	static uint32 GetDataSize(const FilePath & fileName);
 	static uint32 GetDataSize(File * file);
+
+	static bool AddCRCIntoMetaData(const FilePath &filePathname);
+	static bool GetCRCFromFile(const FilePath &filePathname, uint32* outputCRC);
 	
 private:
+
+	static bool GetCRCFromDDSHeader(const FilePath &filePathname, uint32* tag, uint32* outputCRC);
+	
+	static bool AssembleDDSFileWithCRC(const FilePath &filePathname, uint8 *firstPart, uint32 firstPartSize,uint8 *secondPart, uint32 secondPartSize);
+
+	
 	//input data only in RGBA8888
 	static bool WriteDxtFile(const FilePath & fileName, int32 width, int32 height, uint8 ** data, uint32 dataCount, PixelFormat compressionFormat, bool generateMipmaps);
 	static bool WriteAtcFile(const FilePath & fileName, int32 width, int32 height, uint8 ** data, uint32 dataCount, PixelFormat compressionFormat, bool generateMipmaps);
