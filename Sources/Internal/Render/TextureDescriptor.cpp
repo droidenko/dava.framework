@@ -573,19 +573,14 @@ uint32 TextureDescriptor::ReadSourceCRC() const
     
 uint32 TextureDescriptor::ReadConvertedCRC(eGPUFamily forGPU) const
 {
-	const String& outExtension = GPUFamilyDescriptor::GetCompressedFileExtension(forGPU, (DAVA::PixelFormat)compression[forGPU].format);
 	FilePath filePath = GPUFamilyDescriptor::CreatePathnameForGPU(this, forGPU);
-	if(outExtension == ".pvr")
+	if(filePath.GetExtension() == ".pvr")
 	{
-		uint32 CRC;
-		LibPVRHelper::GetCRCFromFile(filePath, &CRC);
-		return CRC;
+		return LibPVRHelper::GetCRCFromFile(filePath);
 	}
-	else if(outExtension == ".dds")
+	else if(filePath.GetExtension() == ".dds")
 	{
-		uint32 CRC;
-		LibDxtHelper::GetCRCFromFile(filePath, &CRC);
-		return CRC;
+		return LibDxtHelper::GetCRCFromFile(filePath);
 	}
 	return CRC32::ForFile(GPUFamilyDescriptor::CreatePathnameForGPU(this, forGPU));
 }

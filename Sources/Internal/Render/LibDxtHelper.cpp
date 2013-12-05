@@ -45,7 +45,7 @@
 
 #include <libatc/TextureConverter.h>
 
-#define DDS_HEADER_CRC_OFFSET	46
+#define DDS_HEADER_CRC_OFFSET	54			//offset  to 10th element of dwReserved1 array(dds header)
 #define METADATA_CRC_TAG		0x5f435243  // equivalent of 'C''R''C''_'
 
 using namespace nvtt;
@@ -896,8 +896,7 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 	String fileNameStr = filePathname.GetAbsolutePathname();
 
 	uint32 tag = 0, crc = 0;
-	bool success = GetCRCFromDDSHeader(filePathname, &tag, &crc);
-	if(success)
+	if(GetCRCFromDDSHeader(filePathname, &tag, &crc))
 	{
 		Logger::Error("[LibDxtHelper::AddCRCIntoMetaData] CRC is already added into %s", fileNameStr.c_str());
 		return false;
@@ -930,8 +929,7 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 		SafeRelease(fileRead);
 		return false;
 	}
-	
-	uint32 restOfFileSize = fileRead->GetSize() - DDS_HEADER_CRC_OFFSET - 8; // 8 = crc + tag
+	uint32 restOfFileSize = fileRead->GetSize() - DDS_HEADER_CRC_OFFSET;
 	uint8 *textureData = new uint8[restOfFileSize];
 	if(!textureData)
 	{
@@ -940,21 +938,27 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 		SafeDeleteArray(headerData);
 		return false;
 	}
-	fileRead->Seek(DDS_HEADER_CRC_OFFSET + 8, File::SEEK_FROM_START);
-		
+	fileRead->Seek(DDS_HEADER_CRC_OFFSET, File::SEEK_FROM_START);
+	
+	bool retValue = false;
 	if(fileRead->Read(textureData, restOfFileSize) == restOfFileSize)
 	{
-		success = AssembleDDSFileWithCRC(filePathname, headerData, DDS_HEADER_CRC_OFFSET, textureData, restOfFileSize);
+		uint8 modifiedBytesSize = 2 * sizeof(uint32);// 8 = crc + tag
+		uint32* modificationMetaDataPointer = (uint32*)&headerData[DDS_HEADER_CRC_OFFSET - modifiedBytesSize];
+		*modificationMetaDataPointer = METADATA_CRC_TAG;
+		modificationMetaDataPointer++;
+		*modificationMetaDataPointer = CRC32::ForFile(filePathname);
+		retValue = AssembleDDSFileWithCRC(filePathname, headerData, DDS_HEADER_CRC_OFFSET, textureData, restOfFileSize);
 	}
 	else
 	{
 		Logger::Error("[LibDxtHelper::AddCRCIntoMetaData]: cannot read from file %s", fileNameStr.c_str());
-		success = false;
+		retValue = false;
 	}
 	SafeRelease(fileRead);
 	SafeDeleteArray(headerData);
 	SafeDeleteArray(textureData);
-	return success;
+	return retValue;
 }
 
 bool LibDxtHelper::AssembleDDSFileWithCRC(const FilePath &filePathname, uint8 *firstPart, uint32 firstPartSize,uint8 *secondPart, uint32 secondPartSize)
@@ -969,23 +973,13 @@ bool LibDxtHelper::AssembleDDSFileWithCRC(const FilePath &filePathname, uint8 *f
 		return false;
 	}
 	
-	if(fileWrite->Write(firstPart, firstPartSize) == firstPartSize)
+	if(fileWrite->Write(firstPart, firstPartSize) == firstPartSize &&
+	   fileWrite->Write(secondPart, secondPartSize) == secondPartSize)
 	{
-		uint32 tag = METADATA_CRC_TAG;
-		uint32 crc = CRC32::ForFile(filePathname);
-		if(fileWrite->Write(&tag, sizeof(tag)) == sizeof(tag))
-		{
-			if(fileWrite->Write(&crc, sizeof(crc)) == sizeof(crc))
-			{
-				if(fileWrite->Write(secondPart, secondPartSize) == secondPartSize)
-				{
-					SafeRelease(fileWrite);
-					FileSystem::Instance()->DeleteFile(filePathname);
-					FileSystem::Instance()->MoveFile(tempFile, filePathname, true);
-					return true;
-				}
-			}
-		}
+		SafeRelease(fileWrite);
+		FileSystem::Instance()->DeleteFile(filePathname);
+		FileSystem::Instance()->MoveFile(tempFile, filePathname, true);
+		return true;
 	}
 	Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot write to file %s",
 				  tempFile.GetAbsolutePathname().c_str());
@@ -1036,13 +1030,12 @@ bool LibDxtHelper::GetCRCFromDDSHeader(const FilePath &filePathname, uint32* out
 	return tag == METADATA_CRC_TAG;
 }
 
-bool LibDxtHelper::GetCRCFromFile(const FilePath &filePathname, uint32* outputCRC)
+uint32 LibDxtHelper::GetCRCFromFile(const FilePath &filePathname)
 {
 	uint32 tag;
 	uint32 crc;
 	bool success = GetCRCFromDDSHeader(filePathname, &tag, &crc);
-	*outputCRC = success ? crc : CRC32::ForFile(filePathname);
-	return success;
+	return success ? crc : CRC32::ForFile(filePathname);
 }
 
 PixelFormat NvttHelper::GetPixelFormat(nvtt::Decompressor & dec)

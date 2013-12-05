@@ -48,7 +48,9 @@
 #include "libpvr/PVRTexture.h"
 #endif //#if defined (__DAVAENGINE_MACOS__) || defined (__DAVAENGINE_WIN32__)
 
-#define METADATA_SIZE		16			//size for meta data with CRC32
+#define METADATA_CRC_SIZE		16			//size for meta data with CRC32
+#define METADATA_CRC_TAG		0x5f435243  // equivalent of 'C''R''C''_'
+
 
 namespace DAVA 
 {
@@ -2288,8 +2290,7 @@ bool LibPVRHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 	}
 	
 	uint32 presentCRC = 0;
-	bool success = GetCRCFromMetaData(filePathname, &presentCRC);
-	if(success)
+	if(GetCRCFromMetaData(filePathname, &presentCRC))
 	{
 		Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] CRC is already added into file %s", fileNameStr.c_str());
 		return false;
@@ -2331,22 +2332,22 @@ bool LibPVRHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 	fileRead->Seek(textureDataOffset , File::SEEK_FROM_START);
 	uint32 readSize = fileRead->Read(textureData, textureDataSize);
 	SafeRelease(fileRead);
+		
+	bool retValue = false;
 	if(readSize == textureDataSize)
 	{
-		header.u32MetaDataSize += METADATA_SIZE;
-		HeaderMetadataCRC32 metaDataCRC(CRC32::ForFile(filePathname));
-		
-		success = AssembleHeaderMetadataTexturesIntoFile(filePathname, header, presentMetaData, metaDataCRC, textureData, textureDataSize);
+		header.u32MetaDataSize += METADATA_CRC_SIZE;// increase field in header with value of crc metadata size
+		retValue = AssembleHeaderMetadataTexturesIntoFile(filePathname, header, presentMetaData,  textureData, textureDataSize);
 	}
 	else
 	{
 		Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot read from file %s", fileNameStr.c_str());
-		success = false;
+		retValue = false;
 	}
 		
 	SafeDeleteArray(textureData);
 	SafeDeleteArray(presentMetaData);
-	return success;
+	return retValue;
 }
 
 bool LibPVRHelper::GetCRCFromMetaData(const FilePath &filePathname, uint32* outputCRC)
@@ -2370,11 +2371,11 @@ bool LibPVRHelper::GetCRCFromMetaData(const FilePath &filePathname, uint32* outp
 
 	if(header.u32MetaDataSize != 0)
 	{
-		uint32 crc = 0, redSize = 0;
+		uint32 crc = 0, readSize = 0;
 		fileRead->Seek(sizeof(header), File::SEEK_FROM_START);
-		while (crc == 0 && redSize != header.u32MetaDataSize)
+		while (crc == 0 && readSize != header.u32MetaDataSize)
 		{
-			redSize += ProcessMetaData(fileRead, &crc);
+			readSize += ReadNextMetadata(fileRead, &crc);
 		}
 		
 		if(crc != 0)
@@ -2388,41 +2389,36 @@ bool LibPVRHelper::GetCRCFromMetaData(const FilePath &filePathname, uint32* outp
 	return retValue;
 }
 
-uint32 LibPVRHelper::ProcessMetaData(DAVA::File* file, uint32* outputCRC)
+uint32 LibPVRHelper::ReadNextMetadata(DAVA::File* file, uint32* outputCRC)
 {
 	*outputCRC = 0;
-	uint32 redSize = 0, fourCC = 0,key = 0, dataSize = 0, data = 0;
+	uint32 readSize = 0, fourCC = 0,key = 0, dataSize = 0, data = 0;
 	
-	redSize = file->Read(&fourCC, sizeof(fourCC));
-	redSize += file->Read(&key, sizeof(key));
-	redSize += file->Read(&dataSize, sizeof(dataSize));
+	readSize = file->Read(&fourCC, sizeof(fourCC));
+	readSize += file->Read(&key, sizeof(key));
+	readSize += file->Read(&dataSize, sizeof(dataSize));
 	if(fourCC == METADATA_CRC_TAG)
 	{
-		redSize += file->Read(&data, sizeof(data));
+		readSize += file->Read(&data, sizeof(data));
 		*outputCRC = data;
 	}
 	else
 	{
-		redSize += dataSize;
+		readSize += dataSize;
 		file->Seek(file->GetPos() + dataSize, File::SEEK_FROM_START);
 	}
 	
-	return redSize;
+	return readSize;
 }
 	
-bool LibPVRHelper::GetCRCFromFile(const FilePath &filePathname, uint32* outputCRC)
+uint32 LibPVRHelper::GetCRCFromFile(const FilePath &filePathname)
 {
-	if(!filePathname.Exists())
-	{
-		return false;
-	}
 	uint32 crc = 0;
 	bool success = GetCRCFromMetaData(filePathname, &crc);
-	*outputCRC = success ? crc : CRC32::ForFile(filePathname);
-	return true;
+	return success ? crc : CRC32::ForFile(filePathname);
 }
 
-bool LibPVRHelper::AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePathname, const PVRHeaderV3& pvrHeader, const uint8 *presentMetaData, const HeaderMetadataCRC32& metaData, const uint8 *textureData, const uint32 textureDataSize)
+bool LibPVRHelper::AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePathname, const PVRHeaderV3& pvrHeader, const uint8 *presentMetaData, const uint8 *textureData, const uint32 textureDataSize)
 {
 	FilePath filePathnameTmp(filePathname.GetAbsolutePathname() + "_");
 	
@@ -2439,23 +2435,26 @@ bool LibPVRHelper::AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePa
 	{
 		if(presentMetaData != NULL)
 		{
-			uint32 presentMetaDataSize = pvrHeader.u32MetaDataSize - METADATA_SIZE;
+			uint32 presentMetaDataSize = pvrHeader.u32MetaDataSize - METADATA_CRC_SIZE;//write only present metadata
 			fileWrite->Write(presentMetaData, presentMetaDataSize);
 		}
-		if(fileWrite->Write(&metaData, sizeof(metaData)) == sizeof(metaData))
+		
+		//FourCC = 'C''R''C''_' | key =0 | size = 16 | value = CRC
+		uint32 metadata[4] = { METADATA_CRC_TAG, 0, 0, CRC32::ForFile(filePathname) };
+		metadata[2] = sizeof(metadata);
+		
+		if(fileWrite->Write(&metadata, sizeof(metadata)) == sizeof(metadata) &&
+		   fileWrite->Write(textureData, textureDataSize) == textureDataSize)
 		{
-			if(fileWrite->Write(textureData, textureDataSize) == textureDataSize)
+			SafeRelease(fileWrite);
+			FileSystem::Instance()->DeleteFile(filePathname);
+			if(FileSystem::Instance()->MoveFile(filePathnameTmp, filePathname, true))
 			{
-				SafeRelease(fileWrite);
-				FileSystem::Instance()->DeleteFile(filePathname);
-				if(FileSystem::Instance()->MoveFile(filePathnameTmp, filePathname, true))
-				{
-					retValue = true;
-				}
-				else
-				{
-					Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] Temporary file ( %s) renamig failed.", filePathnameTmp.GetAbsolutePathname().c_str());
-				}
+				retValue = true;
+			}
+			else
+			{
+				Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] Temporary file ( %s) renamig failed.", filePathnameTmp.GetAbsolutePathname().c_str());
 			}
 		}
 	}

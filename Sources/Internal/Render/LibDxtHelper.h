@@ -69,7 +69,7 @@ public:
 	static uint32 GetDataSize(File * file);
 
 	static bool AddCRCIntoMetaData(const FilePath &filePathname);
-	static bool GetCRCFromFile(const FilePath &filePathname, uint32* outputCRC);
+	static uint32 GetCRCFromFile(const FilePath &filePathname);
 	
 private:
 
