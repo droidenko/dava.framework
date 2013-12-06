@@ -45,8 +45,9 @@
 
 #include <libatc/TextureConverter.h>
 
-#define DDS_HEADER_CRC_OFFSET	54			//offset  to 10th element of dwReserved1 array(dds header)
-#define METADATA_CRC_TAG		0x5f435243  // equivalent of 'C''R''C''_'
+#define DDS_HEADER_CRC_OFFSET		54			//offset  to 10th element of dwReserved1 array(dds header)
+#define METADATA_CRC_TAG			0x5f435243  // equivalent of 'C''R''C''_'
+#define CRC_MODIFIED_BYTES_NUMBER	2*sizeof(uint32)// 8 = crc + tag
 
 using namespace nvtt;
 
@@ -943,8 +944,7 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 	bool retValue = false;
 	if(fileRead->Read(textureData, restOfFileSize) == restOfFileSize)
 	{
-		uint8 modifiedBytesSize = 2 * sizeof(uint32);// 8 = crc + tag
-		uint32* modificationMetaDataPointer = (uint32*)&headerData[DDS_HEADER_CRC_OFFSET - modifiedBytesSize];
+		uint32* modificationMetaDataPointer = (uint32*)&headerData[DDS_HEADER_CRC_OFFSET - CRC_MODIFIED_BYTES_NUMBER];
 		*modificationMetaDataPointer = METADATA_CRC_TAG;
 		modificationMetaDataPointer++;
 		*modificationMetaDataPointer = CRC32::ForFile(filePathname);
@@ -1006,7 +1006,7 @@ bool LibDxtHelper::GetCRCFromDDSHeader(const FilePath &filePathname, uint32* out
 		return false;
 	}
 
-	fileRead->Seek(DDS_HEADER_CRC_OFFSET , File::SEEK_FROM_START);
+	fileRead->Seek(DDS_HEADER_CRC_OFFSET - CRC_MODIFIED_BYTES_NUMBER , File::SEEK_FROM_START);
 	uint32 tag = 0;
 	if(fileRead->Read(&tag,sizeof(tag)) != sizeof(tag))
 	{
@@ -1032,8 +1032,7 @@ bool LibDxtHelper::GetCRCFromDDSHeader(const FilePath &filePathname, uint32* out
 
 uint32 LibDxtHelper::GetCRCFromFile(const FilePath &filePathname)
 {
-	uint32 tag;
-	uint32 crc;
+	uint32 tag = 0, crc = 0;
 	bool success = GetCRCFromDDSHeader(filePathname, &tag, &crc);
 	return success ? crc : CRC32::ForFile(filePathname);
 }
