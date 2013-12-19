@@ -47,6 +47,9 @@ using namespace DAVA;
 UIWebView::UIWebView()
 {
 	webViewControl = new WebViewControl();
+	// Initialize web view with empty rect
+	// This will allow to avoid crash after calling SetDelegate
+	webViewControl->Initialize(Rect());
 }
 
 UIWebView::~UIWebView()
@@ -71,6 +74,16 @@ void UIWebView::OpenURL(const String& urlToOpen)
 	this->webViewControl->OpenURL(urlToOpen);
 }
 
+void UIWebView::LoadHtmlString(const WideString& htmlString)
+{
+	this->webViewControl->LoadHtmlString(htmlString);
+}
+
+void UIWebView::DeleteApplicationCookies(const String& targetUrl)
+{
+	this->webViewControl->DeleteApplicationCookies(targetUrl);
+}
+
 void UIWebView::SetPosition(const Vector2 &position, bool positionInAbsoluteCoordinates)
 {
 	UIControl::SetPosition(position, positionInAbsoluteCoordinates);
@@ -93,6 +106,11 @@ void UIWebView::SetVisible(bool isVisible, bool hierarchic)
 {
 	UIControl::SetVisible(isVisible, hierarchic);
 	this->webViewControl->SetVisible(isVisible, hierarchic);
+}
+
+void UIWebView::SetScalesPageToFit(bool isScalesToFit)
+{
+	this->webViewControl->SetScalesPageToFit(isScalesToFit);
 }
 
 void UIWebView::SetBackgroundTransparency(bool enabled)

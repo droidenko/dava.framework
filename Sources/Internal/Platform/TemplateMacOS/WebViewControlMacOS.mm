@@ -193,6 +193,30 @@ void WebViewControl::OpenURL(const String& urlToOpen)
 	[(WebView*)webViewPtr setMainFrameURL:nsURLPathToOpen];
 }
 
+void WebViewControl::LoadHtmlString(const WideString& htlmString)
+{
+	NSString* htmlPageToLoad = [[[NSString alloc] initWithBytes: htlmString.data()
+													   length: htlmString.size() * sizeof(wchar_t)
+													 encoding:NSUTF32LittleEndianStringEncoding] autorelease];
+    [[(WebView*)webViewPtr mainFrame] loadHTMLString:htmlPageToLoad baseURL:nil];
+}
+
+void WebViewControl::DeleteApplicationCookies(const String& targetUrl)
+{
+	NSString *targetUrlString = [NSString stringWithUTF8String:targetUrl.c_str()];
+	NSHTTPCookieStorage* cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+	// Delete all cookies for specified URL
+	for(NSHTTPCookie *cookie in [cookies cookies])
+	{
+		if([[cookie domain] rangeOfString:targetUrlString].location != NSNotFound)
+	  	{
+       		[cookies deleteCookie:cookie];
+   	 	}
+	}
+	// Syncronized all changes with file system
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 void WebViewControl::SetRect(const Rect& rect)
 {
 	NSRect webViewRect = [(WebView*)webViewPtr frame];

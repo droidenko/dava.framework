@@ -30,6 +30,7 @@
 
 #include "WebViewControl.h"
 #include "FileSystem/Logger.h"
+#include "Utils/UTF8Utils.h"
 
 namespace DAVA
 {
@@ -77,6 +78,28 @@ void JniWebView::OpenURL(int id, const String& urlToOpen)
 		jstring jUrlToOpen = GetEnvironment()->NewStringUTF(urlToOpen.c_str());
 		GetEnvironment()->CallStaticVoidMethod(GetJavaClass(), mid, id, jUrlToOpen);
 		GetEnvironment()->DeleteLocalRef(jUrlToOpen);
+	}
+}
+
+void JniWebView::LoadHtmlString(int id, const String& htmlString)
+{
+	jmethodID mid = GetMethodID("LoadHtmlString", "(ILjava/lang/String;)V");
+	if (mid)
+	{
+		jstring jHtmlStringToOpen = GetEnvironment()->NewStringUTF(htmlString.c_str());
+		GetEnvironment()->CallStaticVoidMethod(GetJavaClass(), mid, id, jHtmlStringToOpen);
+		GetEnvironment()->DeleteLocalRef(jHtmlStringToOpen);
+	}
+}
+
+void JniWebView::DeleteApplicationCookies(int id, const String& targetURL)
+{
+	jmethodID mid = GetMethodID("DeleteApplicationCookies", "(ILjava/lang/String;)V");
+	if (mid)
+	{
+		jstring jTargetURL = GetEnvironment()->NewStringUTF(targetURL.c_str());
+		GetEnvironment()->CallStaticVoidMethod(GetJavaClass(), mid, id, jTargetURL);
+		GetEnvironment()->DeleteLocalRef(jTargetURL);
 	}
 }
 
@@ -166,6 +189,18 @@ void WebViewControl::OpenURL(const String& urlToOpen)
 {
 	JniWebView jniWebView;
 	jniWebView.OpenURL(webViewId, urlToOpen);
+}
+
+void WebViewControl::LoadHtmlString(const WideString& urlToOpen)
+{
+	JniWebView jniWebView;
+	jniWebView.LoadHtmlString(webViewId, UTF8Utils::EncodeToUTF8(urlToOpen));
+}
+
+void WebViewControl::DeleteApplicationCookies(const String& targetUrl)
+{
+	JniWebView jniWebView;
+	jniWebView.DeleteApplicationCookies(webViewId, targetUrl);
 }
 
 void WebViewControl::SetRect(const Rect& rect)

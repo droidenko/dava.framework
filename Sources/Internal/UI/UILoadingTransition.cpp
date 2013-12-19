@@ -46,6 +46,7 @@ UILoadingTransition::UILoadingTransition()
 	animationSprite = 0;
 	inTransition = 0;
 	outTransition = 0;
+    transitionInProcess = false;
 }
 
 UILoadingTransition::~UILoadingTransition()
@@ -96,6 +97,7 @@ void UILoadingTransition::StartTransition(UIScreen * _prevScreen, UIScreen * _ne
 	nextScreen = _nextScreen;
 	thread = 0;
 	animationTime = 0;
+    transitionInProcess = true;
 }	
 
 int32 UILoadingTransition::GetGroupId()
@@ -129,6 +131,7 @@ void UILoadingTransition::Update(float32 timeElapsed)
 {
 	if ((thread) && (thread->GetState() == Thread::STATE_ENDED))
 	{
+        transitionInProcess = false;
 		ThreadIdJobWaiter waiter(thread->GetThreadId());
 		waiter.Wait();
 
@@ -164,6 +167,11 @@ void UILoadingTransition::Draw(const UIGeometricData &geometricData)
 	}
 }
 	
+bool UILoadingTransition::IsTransitionInProcess()
+{
+    return transitionInProcess;
+}
+
 bool UILoadingTransition::IsLoadingTransition()
 {
 	return true;

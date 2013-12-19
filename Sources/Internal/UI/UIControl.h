@@ -490,7 +490,7 @@ public:
 	 \brief Returns actual control transformation and metrics.
 	 \returns control geometric data.
 	 */
-	virtual const UIGeometricData &GetGeometricData();
+	virtual const UIGeometricData &GetGeometricData() const;
 
 	/**
 	 \brief Sets the scaled control rect.
@@ -1156,7 +1156,7 @@ public:
 	 \param[in] expandWithFocus Is area should be expanded with focus.
 	 \returns True if inside the control rect.
 	 */
-	virtual bool IsPointInside(const Vector2 &point, bool expandWithFocus = false);
+	virtual bool IsPointInside(const Vector2 &point, bool expandWithFocus = false) const;
 
     virtual bool IsLostFocusAllowed(UIControl *newFocus);
 
@@ -1251,7 +1251,7 @@ protected:
 	int32 bottomAlign;
 
 	Rect returnedRect;
-	UIGeometricData tempGeometricData;
+	mutable UIGeometricData tempGeometricData;
 
 	EventDispatcher *eventDispatcher;
 	
@@ -1289,7 +1289,7 @@ private:
 
 	void DrawDebugRect(const UIGeometricData &geometricData, bool useAlpha = false);
 	void DrawPivotPoint(const Rect &drawRect);
-	
+
 	float32 GetSizeX(UIControl *parent, int32 leftAlign, int32 rightAlign, bool useHalfParentSize = false);
 	float32 GetSizeY(UIControl *parent, int32 topAlign, int32 bottomAlign, bool useHalfParentSize = false);
 	
