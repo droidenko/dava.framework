@@ -43,6 +43,7 @@ void UIAggregatorMetadata::InitializeControl(const String& controlName, const Ve
 		
         control->SetName(controlName);
         control->SetPosition(position);
+        control->SetInputEnabled(GetInitialInputFlag());
         
         control->GetBackground()->SetDrawType(UIControlBackground::DRAW_ALIGNED);
     }

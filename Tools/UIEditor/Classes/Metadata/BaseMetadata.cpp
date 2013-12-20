@@ -123,7 +123,10 @@ void BaseMetadata::InitializeControl(const String& controlName, const Vector2& p
         control->SetName(controlName);
         control->SetSize(INITIAL_CONTROL_SIZE);
         control->SetPosition(position);
-        
+
+        // Default Flags.
+        control->SetInputEnabled(GetInitialInputFlag());
+
         control->GetBackground()->SetDrawType(UIControlBackground::DRAW_FILL);
     }
 }
