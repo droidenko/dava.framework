@@ -119,6 +119,8 @@
 		1767C4301636C8F5008D25BD /* UIStaticTextMetadata.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1767C42E1636C8F5008D25BD /* UIStaticTextMetadata.cpp */; };
 		176834A816510788004800D7 /* uitextfieldpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */; };
 		176834AB16510910004800D7 /* uitextfieldpropertygridwidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176834A916510910004800D7 /* uitextfieldpropertygridwidget.cpp */; };
+		176B4EDC18682B1F0020798C /* GridController.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176B4EDA18682B1F0020798C /* GridController.cpp */; };
+		176B4EFF186845A70020798C /* SpritesHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176B4EFD186845A70020798C /* SpritesHelper.cpp */; };
 		176D3944162C2F7C0099AACF /* HierarchyTreeNode.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176D3942162C2F7C0099AACF /* HierarchyTreeNode.cpp */; };
 		176D3947162C2F960099AACF /* HierarchyTreeRootNode.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176D3945162C2F960099AACF /* HierarchyTreeRootNode.cpp */; };
 		176D394A162C2FAE0099AACF /* HierarchyTreePlatformNode.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176D3948162C2FAE0099AACF /* HierarchyTreePlatformNode.cpp */; };
@@ -470,6 +472,10 @@
 		176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = uitextfieldpropertygridwidget.ui; sourceTree = "<group>"; };
 		176834A916510910004800D7 /* uitextfieldpropertygridwidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uitextfieldpropertygridwidget.cpp; path = PropertyGridWidgets/uitextfieldpropertygridwidget.cpp; sourceTree = "<group>"; };
 		176834AA16510910004800D7 /* uitextfieldpropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uitextfieldpropertygridwidget.h; path = PropertyGridWidgets/uitextfieldpropertygridwidget.h; sourceTree = "<group>"; };
+		176B4EDA18682B1F0020798C /* GridController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridController.cpp; path = Grid/GridController.cpp; sourceTree = "<group>"; };
+		176B4EDB18682B1F0020798C /* GridController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridController.h; path = Grid/GridController.h; sourceTree = "<group>"; };
+		176B4EFD186845A70020798C /* SpritesHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpritesHelper.cpp; path = Helpers/SpritesHelper.cpp; sourceTree = "<group>"; };
+		176B4EFE186845A70020798C /* SpritesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpritesHelper.h; path = Helpers/SpritesHelper.h; sourceTree = "<group>"; };
 		176D3942162C2F7C0099AACF /* HierarchyTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HierarchyTreeNode.cpp; path = Models/HierarchyTreeNode.cpp; sourceTree = "<group>"; };
 		176D3943162C2F7C0099AACF /* HierarchyTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HierarchyTreeNode.h; path = Models/HierarchyTreeNode.h; sourceTree = "<group>"; };
 		176D3945162C2F960099AACF /* HierarchyTreeRootNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HierarchyTreeRootNode.cpp; path = Models/HierarchyTreeRootNode.cpp; sourceTree = "<group>"; };
@@ -955,6 +961,8 @@
 				178F303D165677BF008678AD /* StringUtils.h */,
 				174D916C184E15EC00A30453 /* UIControlResizeHelper.cpp */,
 				174D916D184E15EC00A30453 /* UIControlResizeHelper.h */,
+				176B4EFD186845A70020798C /* SpritesHelper.cpp */,
+				176B4EFE186845A70020798C /* SpritesHelper.h */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -973,6 +981,15 @@
 				179D0ECB17C5F65B006F59CA /* AlignDistributeEnums.h */,
 			);
 			name = AlignDistribute;
+			sourceTree = "<group>";
+		};
+		176B4ED418682ADE0020798C /* Grid */ = {
+			isa = PBXGroup;
+			children = (
+				176B4EDA18682B1F0020798C /* GridController.cpp */,
+				176B4EDB18682B1F0020798C /* GridController.h */,
+			);
+			name = Grid;
 			sourceTree = "<group>";
 		};
 		176D3941162C2F5D0099AACF /* Models */ = {
@@ -1249,6 +1266,7 @@
 		C15C2FDF162AD6E400818631 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				176B4ED418682ADE0020798C /* Grid */,
 				171FA7EC17C4A3EA00C7F7F2 /* AlignDistribute */,
 				C1C62A3A162D371E000C1B32 /* DefaultScreen.cpp */,
 				C1C62A3B162D371E000C1B32 /* DefaultScreen.h */,
@@ -1613,6 +1631,7 @@
 				17607FEF16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp in Build Sources */,
 				7484342B1648024700920BBD /* StateComboBoxItemDelegate.cpp in Build Sources */,
 				17F6F49E1647B234003FFA0E /* HierarchyTreeNodeExtraData.cpp in Build Sources */,
+				176B4EFF186845A70020798C /* SpritesHelper.cpp in Build Sources */,
 				C1BBE3531647C74100EF3CA9 /* CopyPasteController.cpp in Build Sources */,
 				C1BBE3561647DAC300EF3CA9 /* PasteCommand.cpp in Build Sources */,
 				748E2E5C1649684300C77EB8 /* UITextFieldMetadata.cpp in Build Sources */,
@@ -1699,6 +1718,7 @@
 				02D69CE916F08CEE00F3803F /* statepropertygridwidget_moc.cpp in Build Sources */,
 				02D69CEB16F08CEE00F3803F /* uitextfieldpropertygridwidget_moc.cpp in Build Sources */,
 				02D69CEC16F08CEE00F3803F /* QColorButton_moc.cpp in Build Sources */,
+				176B4EDC18682B1F0020798C /* GridController.cpp in Build Sources */,
 				02D69CED16F08CEE00F3803F /* StateComboBoxItemDelegate_moc.cpp in Build Sources */,
 				C18593D616F30B56005D30E2 /* LibraryController.cpp in Build Sources */,
 				C18593E216F30C06005D30E2 /* HierarchyTreeAggregatorControlNode.cpp in Build Sources */,

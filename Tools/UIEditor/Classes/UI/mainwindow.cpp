@@ -48,6 +48,8 @@
 #include "ImportCommands.h"
 #include "AlignDistribute/AlignDistributeEnums.h"
 
+#include "Grid/GridController.h"
+
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -276,8 +278,8 @@ void MainWindow::UpdateScaleControls()
 		this->ui->scaleCombo->setEditText(QString("%1 %").arg(scaleInPercents));
 	}
 
-	// Re-update the scale on the Screen Wrapper level to sync everything.
-	ScreenWrapper::Instance()->SetScale(newScale);
+    // Re-update the scale on the Screen Wrapper level to sync everything.
+    NotifyScaleUpdated(newScale);
 }
 
 void MainWindow::OnUpdateScaleRequest(float scaleDelta)
@@ -391,7 +393,7 @@ void MainWindow::UpdateScale(int32 newScalePercents)
 	Vector2 cursorPos = ScreenWrapper::Instance()->GetCursorPosition();
 	Vector2 scenePosition = CalculateScenePositionForPoint(ui->davaGlWidget->rect(), cursorPos, prevScale);
 
-	ScreenWrapper::Instance()->SetScale(newScale);
+    NotifyScaleUpdated(newScale);
 
 	UpdateSliders();
 	UpdateScreenPosition();
@@ -648,6 +650,9 @@ void MainWindow::InitMenu()
     // Reload.
     connect(ui->actionRepack_And_Reload, SIGNAL(triggered()), this, SLOT(OnRepackAndReloadSprites()));
 
+    // Pixelization.
+    ui->actionPixelized->setChecked(EditorSettings::Instance()->IsPixelized());
+    connect(ui->actionPixelized, SIGNAL(triggered()), this, SLOT(OnPixelizationStateChanged()));
 	UpdateMenu();
 }
 
@@ -991,6 +996,12 @@ void MainWindow::UpdateProjectSettings(const QString& projectPath)
 
 	// Update window title
 	this->setWindowTitle(ResourcesManageHelper::GetProjectTitle(projectPath));
+    
+    // Apply the pixelization, if needed.
+    if (EditorSettings::Instance()->IsPixelized())
+    {
+        HierarchyTreeController::Instance()->ApplyPixelizationForAllSprites();
+    }
 }
 
 void MainWindow::OnUndoRequested()
@@ -1165,7 +1176,29 @@ void MainWindow::OnDistributeEqualDistanceBetweenY()
 
 void MainWindow::OnRepackAndReloadSprites()
 {
+    // Force repack and reload here.
+    RepackAndReloadSprites(true);
+}
+
+void MainWindow::NotifyScaleUpdated(float32 newScale)
+{
+    ScreenWrapper::Instance()->SetScale(newScale);
+    GridController::Instance()->SetScale(newScale);
+}
+
+void MainWindow::OnPixelizationStateChanged()
+{
+    bool isPixelized = ui->actionPixelized->isChecked();
+    EditorSettings::Instance()->SetPixelized(isPixelized);
+
+    // No repack is needed here - reload only.
+    RepackAndReloadSprites(false);
+}
+
+void MainWindow::RepackAndReloadSprites(bool needRepack)
+{
     ScreenWrapper::Instance()->SetApplicationCursor(Qt::WaitCursor);
-    HierarchyTreeController::Instance()->RepackAndReloadSprites();
+
+    HierarchyTreeController::Instance()->RepackAndReloadSprites(needRepack, EditorSettings::Instance()->IsPixelized());
     ScreenWrapper::Instance()->RestoreApplicationCursor();
 }

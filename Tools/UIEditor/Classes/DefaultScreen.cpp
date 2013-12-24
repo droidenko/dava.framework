@@ -35,6 +35,8 @@
 #include "CopyPasteController.h"
 #include "HierarchyTreeAggregatorControlNode.h"
 
+#include "Grid/GridController.h"
+
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
@@ -1140,7 +1142,7 @@ void DefaultScreen::KeyboardInput(const DAVA::UIEvent* event)
 
 Vector2 DefaultScreen::GetInputDelta(const Vector2& point, bool applyScale) const
 {
-	Vector2 delta = point - inputPos;
+	Vector2 delta = GridController::Instance()->RecalculateMousePos(point - inputPos);
 
 	if (applyScale)
 	{

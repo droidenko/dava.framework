@@ -35,6 +35,7 @@
 #include "CommandsController.h"
 #include "CopyPasteController.h"
 #include "UndoRedoController.h"
+#include "GridController.h"
 
 #include "ScreenWrapper.h"
 #include "MetadataFactory.h"
@@ -65,6 +66,8 @@ GameCore::GameCore()
 	new EditorSettings();
 	new UndoRedoController();
 	new LibraryController();
+
+    new GridController();
 
 	// Unpack the help data, if needed.
 	UnpackHelp();

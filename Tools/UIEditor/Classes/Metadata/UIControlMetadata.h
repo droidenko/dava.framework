@@ -249,6 +249,9 @@ protected:
     // Refresh the thumb size for UISlider.
     void UpdateThumbSizeForUIControlThumb();
 
+    // Apply the pixelization settings.
+    void ApplyPixelization(Sprite* sprite);
+
 private:
 	void ResizeScrollViewContent(UIControl *control);
 

@@ -260,6 +260,7 @@
    <addaction name="actionEqualBetweenYObjects"/>
    <addaction name="separator"/>
    <addaction name="actionRepack_And_Reload"/>
+   <addaction name="actionPixelized"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="propertiesDockWidget">
@@ -685,6 +686,21 @@
    </property>
    <property name="toolTip">
     <string>Adjust control size to fit its sprite size</string>
+   </property>
+  </action>
+  <action name="actionPixelized">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Data/icons.qrc">
+     <normaloff>:/Icons/pixelated.png</normaloff>:/Icons/pixelated.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pixelized</string>
+   </property>
+   <property name="toolTip">
+    <string>Pixelized/Smooth Graphics</string>
    </property>
   </action>
  </widget>
