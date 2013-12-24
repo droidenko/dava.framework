@@ -43,7 +43,10 @@
 
 #define SIZE_CURSOR_DELTA 5
 #define MIN_DRAG_DELTA 3
-#define KEY_MOVE_DELTA 5
+
+// Coarse/Fine Control Move delta.
+#define COARSE_CONTROL_MOVE_DELTA 10
+#define FINE_CONTROL_MOVE_DELTA 1
 
 #define MOVE_SCREEN_KEY DVKEY_SPACE
 
@@ -1077,19 +1080,19 @@ void DefaultScreen::KeyboardInput(const DAVA::UIEvent* event)
 		}break;
 		case DVKEY_UP:
 		{
-			MoveControl(Vector2(0, -KEY_MOVE_DELTA));
+			MoveControl(Vector2(0, -GetControlMoveDelta()));
 		}break;
 		case DVKEY_DOWN:
 		{
-			MoveControl(Vector2(0, KEY_MOVE_DELTA));
+			MoveControl(Vector2(0, GetControlMoveDelta()));
 		}break;
 		case DVKEY_LEFT:
 		{
-			MoveControl(Vector2(-KEY_MOVE_DELTA, 0));
+			MoveControl(Vector2(-GetControlMoveDelta(), 0));
 		}break;
 		case DVKEY_RIGHT:
 		{
-			MoveControl(Vector2(KEY_MOVE_DELTA, 0));
+			MoveControl(Vector2(GetControlMoveDelta(), 0));
 		}break;
 		case DVKEY_DELETE:
 		case DVKEY_BACKSPACE:
@@ -1239,6 +1242,12 @@ bool DefaultScreen::IsMoveScreenKeyPressed()
 	//return InputSystem::Instance()->GetKeyboard()->IsKeyPressed(MOVE_SCREEN_KEY);
 	Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
 	return (modifiers & Qt::AltModifier);
+}
+
+int32 DefaultScreen::GetControlMoveDelta()
+{
+	Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
+	return (modifiers & Qt::ShiftModifier) ? COARSE_CONTROL_MOVE_DELTA : FINE_CONTROL_MOVE_DELTA;
 }
 
 void DefaultScreen::HandleScreenMove(const DAVA::UIEvent* event)

@@ -175,6 +175,9 @@ private:
 	// Get the state of the "Move Screen" key.
 	bool IsMoveScreenKeyPressed();
 
+	// Get the control move delta (coarse/fine, depending on whether Shift key is pressed).
+	int32 GetControlMoveDelta();
+
 	// Check control's visibility in a recursive way.
 	bool IsControlVisible(UIControl* uiControl);
 	void IsControlVisibleRecursive(const UIControl* uiControl, bool& isVisible);
