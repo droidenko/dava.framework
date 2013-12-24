@@ -1246,7 +1246,7 @@ bool DefaultScreen::IsMoveScreenKeyPressed()
 
 int32 DefaultScreen::GetControlMoveDelta()
 {
-	Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
+	Qt::KeyboardModifiers modifiers = QApplication::queryKeyboardModifiers();
 	return (modifiers & Qt::ShiftModifier) ? COARSE_CONTROL_MOVE_DELTA : FINE_CONTROL_MOVE_DELTA;
 }
 
