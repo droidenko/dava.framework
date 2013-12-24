@@ -35,7 +35,8 @@
 #include "CommandsController.h"
 #include "CopyPasteController.h"
 #include "UndoRedoController.h"
-#include "GridController.h"
+
+#include "Grid/GridController.h"
 
 #include "ScreenWrapper.h"
 #include "MetadataFactory.h"
