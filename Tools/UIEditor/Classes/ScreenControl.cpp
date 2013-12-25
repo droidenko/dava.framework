@@ -32,6 +32,8 @@
 #include <QString>
 #include "HierarchyTreeNode.h"
 
+#include "Grid/GridVisualizer.h"
+
 ScreenControl::ScreenControl()
 {
 	UIControlBackground* bkg = new UIControlBackground();
@@ -50,4 +52,10 @@ bool ScreenControl::IsPointInside(const Vector2& /*point*/, bool/* expandWithFoc
 	//YZ:
 	//input must be handled by screen
 	return false;
+}
+
+void ScreenControl::SystemDraw(const UIGeometricData &geometricData)
+{
+    UIControl::SystemDraw(geometricData);
+    GridVisualizer::Instance()->DrawGridIfNeeded(GetRect());
 }

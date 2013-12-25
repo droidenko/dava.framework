@@ -37,6 +37,7 @@
 #include "UndoRedoController.h"
 
 #include "Grid/GridController.h"
+#include "Grid/GridVisualizer.h"
 
 #include "ScreenWrapper.h"
 #include "MetadataFactory.h"
@@ -69,6 +70,7 @@ GameCore::GameCore()
 	new LibraryController();
 
     new GridController();
+    new GridVisualizer();
 
 	// Unpack the help data, if needed.
 	UnpackHelp();

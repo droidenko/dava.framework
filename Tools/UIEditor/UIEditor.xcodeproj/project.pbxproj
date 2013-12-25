@@ -116,6 +116,7 @@
 		174E1FC617F3485A00C7EC10 /* regexpinputdialog_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 174E1FC517F3485A00C7EC10 /* regexpinputdialog_moc.cpp */; };
 		17607FC2164121FB004E36DE /* LocalizationSystemHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17607FC0164121FB004E36DE /* LocalizationSystemHelper.cpp */; };
 		17607FEF16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17607FED16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp */; };
+		17660BAB186AE97B00CF7A14 /* GridVisualizer.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BA9186AE97B00CF7A14 /* GridVisualizer.cpp */; };
 		1767C4301636C8F5008D25BD /* UIStaticTextMetadata.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1767C42E1636C8F5008D25BD /* UIStaticTextMetadata.cpp */; };
 		176834A816510788004800D7 /* uitextfieldpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */; };
 		176834AB16510910004800D7 /* uitextfieldpropertygridwidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176834A916510910004800D7 /* uitextfieldpropertygridwidget.cpp */; };
@@ -467,6 +468,8 @@
 		17607FC1164121FB004E36DE /* LocalizationSystemHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalizationSystemHelper.h; path = Helpers/LocalizationSystemHelper.h; sourceTree = "<group>"; };
 		17607FED16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundGridWidgetHelper.cpp; path = Helpers/BackgroundGridWidgetHelper.cpp; sourceTree = "<group>"; };
 		17607FEE16415B7C004E36DE /* BackgroundGridWidgetHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundGridWidgetHelper.h; path = Helpers/BackgroundGridWidgetHelper.h; sourceTree = "<group>"; };
+		17660BA9186AE97B00CF7A14 /* GridVisualizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridVisualizer.cpp; path = Grid/GridVisualizer.cpp; sourceTree = "<group>"; };
+		17660BAA186AE97B00CF7A14 /* GridVisualizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridVisualizer.h; path = Grid/GridVisualizer.h; sourceTree = "<group>"; };
 		1767C42E1636C8F5008D25BD /* UIStaticTextMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIStaticTextMetadata.cpp; path = Metadata/UIStaticTextMetadata.cpp; sourceTree = "<group>"; };
 		1767C42F1636C8F5008D25BD /* UIStaticTextMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIStaticTextMetadata.h; path = Metadata/UIStaticTextMetadata.h; sourceTree = "<group>"; };
 		176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = uitextfieldpropertygridwidget.ui; sourceTree = "<group>"; };
@@ -988,6 +991,8 @@
 			children = (
 				176B4EDA18682B1F0020798C /* GridController.cpp */,
 				176B4EDB18682B1F0020798C /* GridController.h */,
+				17660BA9186AE97B00CF7A14 /* GridVisualizer.cpp */,
+				17660BAA186AE97B00CF7A14 /* GridVisualizer.h */,
 			);
 			name = Grid;
 			sourceTree = "<group>";
@@ -1706,6 +1711,7 @@
 				02D69CDD16F08CEE00F3803F /* AlignsPropertyGridWidget_moc.cpp in Build Sources */,
 				02D69CDE16F08CEE00F3803F /* backgroundpropertygridwidget_moc.cpp in Build Sources */,
 				02D69CDF16F08CEE00F3803F /* basepropertygridwidget_moc.cpp in Build Sources */,
+				17660BAB186AE97B00CF7A14 /* GridVisualizer.cpp in Build Sources */,
 				02D69CE016F08CEE00F3803F /* controlpropertygridwidget_moc.cpp in Build Sources */,
 				02D69CE116F08CEE00F3803F /* flagspropertygridwidget_moc.cpp in Build Sources */,
 				02D69CE216F08CEE00F3803F /* platformpropertygridwidget_moc.cpp in Build Sources */,

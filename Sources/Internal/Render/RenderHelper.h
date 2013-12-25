@@ -94,7 +94,15 @@ public:
         \param pt2 ending point
 	 */ 
     void FillRect(const Rect & rect);
-    
+
+    /**
+     \brief Draws grid in the given rect
+     \param rect rect to fill grid with
+     \param gridSize distance between grid lines
+     \param color grid color
+	 */
+    void DrawGrid(const Rect & rect, const Vector2& gridSize, const Color& color);
+
 	// point helpers
     
     /**

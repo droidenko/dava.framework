@@ -49,6 +49,7 @@
 #include "AlignDistribute/AlignDistributeEnums.h"
 
 #include "Grid/GridController.h"
+#include "Grid/GridVisualizer.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -1184,6 +1185,7 @@ void MainWindow::NotifyScaleUpdated(float32 newScale)
 {
     ScreenWrapper::Instance()->SetScale(newScale);
     GridController::Instance()->SetScale(newScale);
+    GridVisualizer::Instance()->SetScale(newScale);
 }
 
 void MainWindow::OnPixelizationStateChanged()
