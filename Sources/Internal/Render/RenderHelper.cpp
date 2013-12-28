@@ -134,7 +134,7 @@ void RenderHelper::DrawGrid(const Rect & rect, const Vector2& gridSize, const Co
     Vector<float32> gridVertices;
     int32 verLinesCount = (int32)ceilf(rect.dx / gridSize.x);
     int32 horLinesCount = (int32)ceilf(rect.dy / gridSize.y);
-    gridVertices.reserve((horLinesCount + verLinesCount) * 4);
+    gridVertices.resize((horLinesCount + verLinesCount) * 4);
     
     float32 curPos = 0;
     int32 curVertexIndex = 0;

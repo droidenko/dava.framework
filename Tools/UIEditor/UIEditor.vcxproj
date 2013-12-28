@@ -36,6 +36,7 @@
     <ClCompile Include="Classes\FrameworkMain.cpp" />
     <ClCompile Include="Classes\GameCore.cpp" />
     <ClCompile Include="Classes\Grid\GridController.cpp" />
+    <ClCompile Include="Classes\Grid\GridVisualizer.cpp" />
     <ClCompile Include="Classes\Helpers\BackgroundGridWidgetHelper.cpp" />
     <ClCompile Include="Classes\Helpers\ListPropertyGridWidgetHelper.cpp" />
     <ClCompile Include="Classes\Helpers\LocalizationSystemHelper.cpp" />
@@ -76,6 +77,8 @@
     <ClCompile Include="Classes\Models\HierarchyTreePlatformNode.cpp" />
     <ClCompile Include="Classes\Models\HierarchyTreeRootNode.cpp" />
     <ClCompile Include="Classes\Models\HierarchyTreeScreenNode.cpp" />
+    <ClCompile Include="Classes\Ruler\RulerController.cpp" />
+    <ClCompile Include="Classes\Ruler\RulerWidget.cpp" />
     <ClCompile Include="Classes\ScaleSlider.cpp" />
     <ClCompile Include="Classes\ScreenControl.cpp" />
     <ClCompile Include="Classes\ScreenManager.cpp" />
@@ -133,6 +136,8 @@
     <ClCompile Include="GeneratedFiles\EditorSettings_moc.cpp" />
     <ClCompile Include="GeneratedFiles\FrameworkMain_moc.cpp" />
     <ClCompile Include="GeneratedFiles\GameCore_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\Grid\GridController_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\Grid\GridVisualizer_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Helpers\BackgroundGridWidgetHelper_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Helpers\LocalizationSystemHelper_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Helpers\PropertiesHelper_moc.cpp" />
@@ -167,6 +172,9 @@
     <ClCompile Include="GeneratedFiles\Models\HierarchyTreeRootNode_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Models\HierarchyTreeScreenNode_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Models\HierarchyTree_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\Ruler\RulerController_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\Ruler\RulerSettings_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\Ruler\RulerWidget_moc.cpp" />
     <ClCompile Include="GeneratedFiles\ScaleSlider_moc.cpp" />
     <ClCompile Include="GeneratedFiles\ScreenControl_moc.cpp" />
     <ClCompile Include="GeneratedFiles\ScreenManager_moc.cpp" />
@@ -277,6 +285,7 @@
     <ClInclude Include="Classes\FrameworkMain.h" />
     <ClInclude Include="Classes\GameCore.h" />
     <ClInclude Include="Classes\Grid\GridController.h" />
+    <ClInclude Include="Classes\Grid\GridVisualizer.h" />
     <ClInclude Include="Classes\Helpers\BackgroundGridWidgetHelper.h" />
     <ClInclude Include="Classes\Helpers\ListPropertyGridWidgetHelper.h" />
     <ClInclude Include="Classes\Helpers\LocalizationSystemHelper.h" />
@@ -387,6 +396,9 @@
     <ClInclude Include="Classes\Models\HierarchyTreePlatformNode.h" />
     <ClInclude Include="Classes\Models\HierarchyTreeRootNode.h" />
     <ClInclude Include="Classes\Models\HierarchyTreeScreenNode.h" />
+    <ClInclude Include="Classes\Ruler\RulerController.h" />
+    <ClInclude Include="Classes\Ruler\RulerSettings.h" />
+    <ClInclude Include="Classes\Ruler\RulerWidget.h" />
     <ClInclude Include="Classes\ScaleSlider.h" />
     <ClInclude Include="Classes\ScreenControl.h" />
     <ClInclude Include="Classes\ScreenWrapper.h">

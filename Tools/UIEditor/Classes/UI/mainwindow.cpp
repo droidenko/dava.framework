@@ -488,6 +488,9 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 	Vector2 newViewPortCenter = Vector2(widgetSize.width() / 2, widgetSize.height() / 2);
 
 	ScrollToScenePositionAndPoint(viewPortSceneCenter, newViewPortCenter, curScale);
+
+	// Update the rulers to take new window size int account.
+	RulerController::Instance()->UpdateRulers();
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
