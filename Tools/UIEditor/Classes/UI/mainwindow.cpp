@@ -47,9 +47,12 @@
 #include "Dialogs/importdialog.h"
 #include "ImportCommands.h"
 #include "AlignDistribute/AlignDistributeEnums.h"
+#include "DefaultScreen.h"
 
 #include "Grid/GridController.h"
 #include "Grid/GridVisualizer.h"
+
+#include "Ruler/RulerController.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -101,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	{
 		ui->scaleCombo->addItem(QString(PERCENTAGE_FORMAT).arg(SCALE_PERCENTAGES[i]));
 	}
+
 	ui->scaleCombo->setCurrentIndex(DEFAULT_SCALE_PERCENTAGE_INDEX);
 	ui->scaleCombo->lineEdit()->setMaxLength(6);
 	ui->scaleCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -113,6 +117,30 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->menuView->addAction(ui->hierarchyDockWidget->toggleViewAction());
 	ui->menuView->addAction(ui->libraryDockWidget->toggleViewAction());
 	ui->menuView->addAction(ui->propertiesDockWidget->toggleViewAction());
+
+    // Setup rulers.
+    ui->horizontalRuler->SetOrientation(RulerWidget::Horizontal);
+    ui->verticalRuler->SetOrientation(RulerWidget::Vertical);
+
+    connect(RulerController::Instance(),
+            SIGNAL(HorisontalRulerSettingsChanged(const RulerSettings &)),
+            ui->horizontalRuler,
+            SLOT(OnRulerSettingsChanged(const RulerSettings &)));
+    connect(RulerController::Instance(),
+            SIGNAL(VerticalRulerSettingsChanged(const RulerSettings &)),
+            ui->verticalRuler,
+            SLOT(OnRulerSettingsChanged(const RulerSettings &)));
+    
+    connect(RulerController::Instance(),
+            SIGNAL(HorisontalRulerMarkPositionChanged(int)),
+            ui->horizontalRuler,
+            SLOT(OnMarkerPositionChanged(int)));
+    connect(RulerController::Instance(),
+            SIGNAL(VerticalRulerMarkPositionChanged(int)),
+            ui->verticalRuler,
+            SLOT(OnMarkerPositionChanged(int)));
+    
+    RulerController::Instance()->UpdateRulers();
 
     connect(ui->actionFontManager, SIGNAL(triggered()), this, SLOT(OnOpenFontManager()));
     connect(ui->actionLocalizationManager, SIGNAL(triggered()), this, SLOT(OnOpenLocalizationManager()));
@@ -544,6 +572,14 @@ void MainWindow::UpdateScreenPosition()
 	int valueV = ui->verticalScrollBar->value();
 	int valueH = ui->horizontalScrollBar->value();
 	ScreenWrapper::Instance()->SetViewPos(valueH, valueV, ui->davaGlWidget->rect());
+
+    DefaultScreen* currentScreen = ScreenWrapper::Instance()->GetActiveScreen();
+    if (currentScreen)
+    {
+        Vector2 viewPos = -currentScreen->GetPos();
+        viewPos *= ScreenWrapper::Instance()->GetScale();
+        RulerController::Instance()->SetViewPos(viewPos);
+    }
 }
 
 void MainWindow::OnUpdateScreenPositionRequest(const QPoint& posDelta)
@@ -1184,8 +1220,10 @@ void MainWindow::OnRepackAndReloadSprites()
 void MainWindow::NotifyScaleUpdated(float32 newScale)
 {
     ScreenWrapper::Instance()->SetScale(newScale);
-    GridController::Instance()->SetScale(newScale);
     GridVisualizer::Instance()->SetScale(newScale);
+
+    GridController::Instance()->SetScale(newScale);
+    RulerController::Instance()->SetScale(newScale);
 }
 
 void MainWindow::OnPixelizationStateChanged()

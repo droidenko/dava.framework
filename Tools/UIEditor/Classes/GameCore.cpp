@@ -39,6 +39,8 @@
 #include "Grid/GridController.h"
 #include "Grid/GridVisualizer.h"
 
+#include "Ruler/RulerController.h"
+
 #include "ScreenWrapper.h"
 #include "MetadataFactory.h"
 #include "EditorFontManager.h"
@@ -71,6 +73,7 @@ GameCore::GameCore()
 
     new GridController();
     new GridVisualizer();
+    new RulerController();
 
 	// Unpack the help data, if needed.
 	UnpackHelp();

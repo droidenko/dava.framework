@@ -117,6 +117,11 @@
 		17607FC2164121FB004E36DE /* LocalizationSystemHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17607FC0164121FB004E36DE /* LocalizationSystemHelper.cpp */; };
 		17607FEF16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17607FED16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp */; };
 		17660BAB186AE97B00CF7A14 /* GridVisualizer.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BA9186AE97B00CF7A14 /* GridVisualizer.cpp */; };
+		17660BBC186B1DD700CF7A14 /* RulerWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BBA186B1DD700CF7A14 /* RulerWidget.cpp */; };
+		17660BBF186B221200CF7A14 /* RulerWidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BBE186B221200CF7A14 /* RulerWidget_moc.cpp */; };
+		17660BC5186C1DA000CF7A14 /* RulerController.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BC3186C1DA000CF7A14 /* RulerController.cpp */; };
+		17660BC8186C22B400CF7A14 /* RulerController_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BC6186C22B400CF7A14 /* RulerController_moc.cpp */; };
+		17660BC9186C22B400CF7A14 /* RulerSettings_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17660BC7186C22B400CF7A14 /* RulerSettings_moc.cpp */; };
 		1767C4301636C8F5008D25BD /* UIStaticTextMetadata.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1767C42E1636C8F5008D25BD /* UIStaticTextMetadata.cpp */; };
 		176834A816510788004800D7 /* uitextfieldpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */; };
 		176834AB16510910004800D7 /* uitextfieldpropertygridwidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176834A916510910004800D7 /* uitextfieldpropertygridwidget.cpp */; };
@@ -470,6 +475,14 @@
 		17607FEE16415B7C004E36DE /* BackgroundGridWidgetHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundGridWidgetHelper.h; path = Helpers/BackgroundGridWidgetHelper.h; sourceTree = "<group>"; };
 		17660BA9186AE97B00CF7A14 /* GridVisualizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridVisualizer.cpp; path = Grid/GridVisualizer.cpp; sourceTree = "<group>"; };
 		17660BAA186AE97B00CF7A14 /* GridVisualizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridVisualizer.h; path = Grid/GridVisualizer.h; sourceTree = "<group>"; };
+		17660BBA186B1DD700CF7A14 /* RulerWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerWidget.cpp; path = Ruler/RulerWidget.cpp; sourceTree = "<group>"; };
+		17660BBB186B1DD700CF7A14 /* RulerWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RulerWidget.h; path = Ruler/RulerWidget.h; sourceTree = "<group>"; };
+		17660BBE186B221200CF7A14 /* RulerWidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerWidget_moc.cpp; path = Ruler/RulerWidget_moc.cpp; sourceTree = "<group>"; };
+		17660BC1186C1D8900CF7A14 /* RulerSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RulerSettings.h; path = Ruler/RulerSettings.h; sourceTree = "<group>"; };
+		17660BC3186C1DA000CF7A14 /* RulerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerController.cpp; path = Ruler/RulerController.cpp; sourceTree = "<group>"; };
+		17660BC4186C1DA000CF7A14 /* RulerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RulerController.h; path = Ruler/RulerController.h; sourceTree = "<group>"; };
+		17660BC6186C22B400CF7A14 /* RulerController_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerController_moc.cpp; path = Ruler/RulerController_moc.cpp; sourceTree = "<group>"; };
+		17660BC7186C22B400CF7A14 /* RulerSettings_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RulerSettings_moc.cpp; path = Ruler/RulerSettings_moc.cpp; sourceTree = "<group>"; };
 		1767C42E1636C8F5008D25BD /* UIStaticTextMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIStaticTextMetadata.cpp; path = Metadata/UIStaticTextMetadata.cpp; sourceTree = "<group>"; };
 		1767C42F1636C8F5008D25BD /* UIStaticTextMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIStaticTextMetadata.h; path = Metadata/UIStaticTextMetadata.h; sourceTree = "<group>"; };
 		176834A716510788004800D7 /* uitextfieldpropertygridwidget.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = uitextfieldpropertygridwidget.ui; sourceTree = "<group>"; };
@@ -986,6 +999,28 @@
 			name = AlignDistribute;
 			sourceTree = "<group>";
 		};
+		17660BB4186B1D8D00CF7A14 /* Ruler */ = {
+			isa = PBXGroup;
+			children = (
+				17660BBA186B1DD700CF7A14 /* RulerWidget.cpp */,
+				17660BBB186B1DD700CF7A14 /* RulerWidget.h */,
+				17660BC1186C1D8900CF7A14 /* RulerSettings.h */,
+				17660BC3186C1DA000CF7A14 /* RulerController.cpp */,
+				17660BC4186C1DA000CF7A14 /* RulerController.h */,
+			);
+			name = Ruler;
+			sourceTree = "<group>";
+		};
+		17660BBD186B21EF00CF7A14 /* Ruler */ = {
+			isa = PBXGroup;
+			children = (
+				17660BC6186C22B400CF7A14 /* RulerController_moc.cpp */,
+				17660BC7186C22B400CF7A14 /* RulerSettings_moc.cpp */,
+				17660BBE186B221200CF7A14 /* RulerWidget_moc.cpp */,
+			);
+			name = Ruler;
+			sourceTree = "<group>";
+		};
 		176B4ED418682ADE0020798C /* Grid */ = {
 			isa = PBXGroup;
 			children = (
@@ -1214,6 +1249,7 @@
 		C15C2FC9162AD5DD00818631 /* GeneratedFiles */ = {
 			isa = PBXGroup;
 			children = (
+				17660BBD186B21EF00CF7A14 /* Ruler */,
 				02D69C2D16F08CED00F3803F /* Commands */,
 				02D69C3316F08CED00F3803F /* Controllers */,
 				02D69C3916F08CED00F3803F /* DefaultScreen_moc.cpp */,
@@ -1272,6 +1308,7 @@
 			isa = PBXGroup;
 			children = (
 				176B4ED418682ADE0020798C /* Grid */,
+				17660BB4186B1D8D00CF7A14 /* Ruler */,
 				171FA7EC17C4A3EA00C7F7F2 /* AlignDistribute */,
 				C1C62A3A162D371E000C1B32 /* DefaultScreen.cpp */,
 				C1C62A3B162D371E000C1B32 /* DefaultScreen.h */,
@@ -1605,6 +1642,7 @@
 				173AC33A1630137400A773F5 /* controlpropertygridwidget.cpp in Build Sources */,
 				173AC33B1630137400A773F5 /* flagspropertygridwidget.cpp in Build Sources */,
 				173AC3441630285B00A773F5 /* PropertyGridWidgetsFactory.cpp in Build Sources */,
+				17660BC8186C22B400CF7A14 /* RulerController_moc.cpp in Build Sources */,
 				173AC3471631458000A773F5 /* PropertyGridWidgetData.cpp in Build Sources */,
 				749D71271636920600C99861 /* textpropertygridwidget.cpp in Build Sources */,
 				17DF04D916368040001F7ED2 /* PlatformMetadata.cpp in Build Sources */,
@@ -1623,6 +1661,7 @@
 				C10740DF163A94360069A640 /* createscreendlg.cpp in Build Sources */,
 				C10740E4163A94450069A640 /* ScreenControl.cpp in Build Sources */,
 				C10740E5163A94450069A640 /* ScreenManager.cpp in Build Sources */,
+				17660BBF186B221200CF7A14 /* RulerWidget_moc.cpp in Build Sources */,
 				C10740FF163A960D0069A640 /* BaseMetadataParams.cpp in Build Sources */,
 				17CED76C163ABD3B00F9B02D /* propertygridcontainerwidget.cpp in Build Sources */,
 				C1074160163E7B740069A640 /* ItemsCommand.cpp in Build Sources */,
@@ -1633,6 +1672,7 @@
 				17607FC2164121FB004E36DE /* LocalizationSystemHelper.cpp in Build Sources */,
 				C15D3E5116415A3600161684 /* ControlCommands.cpp in Build Sources */,
 				748955FD1641620200070AE1 /* QColorButton.cpp in Build Sources */,
+				17660BBC186B1DD700CF7A14 /* RulerWidget.cpp in Build Sources */,
 				17607FEF16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp in Build Sources */,
 				7484342B1648024700920BBD /* StateComboBoxItemDelegate.cpp in Build Sources */,
 				17F6F49E1647B234003FFA0E /* HierarchyTreeNodeExtraData.cpp in Build Sources */,
@@ -1669,6 +1709,7 @@
 				02D69CAD16F08CEE00F3803F /* LocalizationSystemHelper_moc.cpp in Build Sources */,
 				02D69CAE16F08CEE00F3803F /* PropertiesHelper_moc.cpp in Build Sources */,
 				02D69CAF16F08CEE00F3803F /* ResourcesManageHelper_moc.cpp in Build Sources */,
+				17660BC9186C22B400CF7A14 /* RulerSettings_moc.cpp in Build Sources */,
 				02D69CB016F08CEE00F3803F /* UIControlStateHelper_moc.cpp in Build Sources */,
 				02D69CB116F08CEE00F3803F /* WidgetSignalsBlocker_moc.cpp in Build Sources */,
 				02D69CB216F08CEE00F3803F /* icons_qrc.cpp in Build Sources */,
@@ -1704,6 +1745,7 @@
 				02D69CD616F08CEE00F3803F /* davaglwidget_moc.cpp in Build Sources */,
 				02D69CD716F08CEE00F3803F /* localizationeditordialog_moc.cpp in Build Sources */,
 				02D69CD816F08CEE00F3803F /* fontmanagerdialog_moc.cpp in Build Sources */,
+				17660BC5186C1DA000CF7A14 /* RulerController.cpp in Build Sources */,
 				02D69CD916F08CEE00F3803F /* hierarchytreecontrol_moc.cpp in Build Sources */,
 				02D69CDA16F08CEE00F3803F /* hierarchytreewidget_moc.cpp in Build Sources */,
 				02D69CDB16F08CEE00F3803F /* librarywidget_moc.cpp in Build Sources */,

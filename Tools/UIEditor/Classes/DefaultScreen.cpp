@@ -36,6 +36,7 @@
 #include "HierarchyTreeAggregatorControlNode.h"
 
 #include "Grid/GridController.h"
+#include "Ruler/RulerController.h"
 
 #include <QMenu>
 #include <QAction>
@@ -148,6 +149,7 @@ void DefaultScreen::Input(DAVA::UIEvent* event)
 		case UIEvent::PHASE_MOVE:
 		{
 			ScreenWrapper::Instance()->SetCursor(event->point, GetCursor(event->point));
+            RulerController::Instance()->UpdateRulerMarkers(event->point);
 		}break;
 		case UIEvent::PHASE_ENDED:
 		{
