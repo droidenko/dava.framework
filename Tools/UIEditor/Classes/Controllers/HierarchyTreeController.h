@@ -121,6 +121,15 @@ public:
 	// Align/Distribute logic.
 	void AlignSelectedControls(eAlignControlsType alignType);
 	void DistributeSelectedControls(eDistributeControlsType distributeType);
+	
+	// Adjust control size logic
+	void AdjustSelectedControlsSize();
+
+    // Repack and reload sprites.
+    void RepackAndReloadSprites(bool needRepack, bool pixelized);
+
+    // Apply the pixelization.
+    void ApplyPixelizationForAllSprites();
 
 private:
 	void DeleteNodesInternal(const HierarchyTreeNode::HIERARCHYTREENODESLIST& nodes);

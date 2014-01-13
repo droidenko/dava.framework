@@ -49,9 +49,8 @@ LodSystem::LodSystem(Scene * scene)
 	UpdatePartialUpdateIndices();
 }
 
-void LodSystem::Process()
+void LodSystem::Process(float32 timeElapsed)
 {
-	float32 timeElapsed = SystemTimer::Instance()->FrameDelta();
 	float32 currFps = 1.0f/timeElapsed;
 
 	float32 currPSValue = (currFps - PerformanceSettings::Instance()->GetPsPerformanceMinFPS())/(PerformanceSettings::Instance()->GetPsPerformanceMaxFPS()-PerformanceSettings::Instance()->GetPsPerformanceMinFPS());
@@ -215,7 +214,8 @@ bool LodSystem::RecheckLod(Entity * entity, float32 psLodOffsetSq, float32 psLod
 	if (usePsSettings)
 	{
 		layersCount = LodComponent::MAX_LOD_LAYERS;
-		dst = dst*psLodMultSq+psLodOffsetSq;
+		if (dst>lodComponent->GetLodLayerFarSquare(0)) //preserv lod 0 from degrade
+			dst = dst*psLodMultSq+psLodOffsetSq;
 	}
 
 	int32 layer = FindProperLayer(dst, lodComponent, layersCount);

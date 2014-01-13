@@ -35,13 +35,19 @@
 #include "CopyPasteController.h"
 #include "HierarchyTreeAggregatorControlNode.h"
 
+#include "Grid/GridController.h"
+#include "Ruler/RulerController.h"
+
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
 
 #define SIZE_CURSOR_DELTA 5
 #define MIN_DRAG_DELTA 3
-#define KEY_MOVE_DELTA 5
+
+// Coarse/Fine Control Move delta.
+#define COARSE_CONTROL_MOVE_DELTA 10
+#define FINE_CONTROL_MOVE_DELTA 1
 
 #define MOVE_SCREEN_KEY DVKEY_SPACE
 
@@ -143,6 +149,7 @@ void DefaultScreen::Input(DAVA::UIEvent* event)
 		case UIEvent::PHASE_MOVE:
 		{
 			ScreenWrapper::Instance()->SetCursor(event->point, GetCursor(event->point));
+            RulerController::Instance()->UpdateRulerMarkers(event->point);
 		}break;
 		case UIEvent::PHASE_ENDED:
 		{
@@ -336,8 +343,7 @@ void DefaultScreen::SmartGetSelectedControl(SmartSelection* list, const Hierarch
 			continue;
 		}
 
-		Rect controlRect = GetControlRect(controlNode);
-		if (controlRect.PointInside(point))
+		if (control->IsPointInside(point))
 		{
 			SmartSelection* newList = new SmartSelection(node->GetId());
 			list->childs.push_back(newList);
@@ -358,9 +364,12 @@ HierarchyTreeControlNode* DefaultScreen::GetSelectedControl(const Vector2& point
 		 ++iter)
 	{
 		HierarchyTreeControlNode* control = (*iter);
-			
-		Rect controlRect = GetControlRect(control);
-		if (controlRect.PointInside(point) || GetResizeType(control, point) != ResizeTypeNoResize)
+        if (!control || !control->GetUIObject())
+        {
+            continue;
+        }
+
+		if (control->GetUIObject()->IsPointInside(point) || (GetResizeType(control, point) != ResizeTypeNoResize))
 		{
 			return control;
 		}
@@ -393,6 +402,9 @@ void DefaultScreen::GetSelectedControl(HierarchyTreeNode::HIERARCHYTREENODESLIST
 		
 		UIControl* control = controlNode->GetUIObject();
 		if (!control->GetVisible())
+			continue;
+        
+        if (!control->GetVisibleForUIEditor())
 			continue;
 		
 		Rect controlRect = GetControlRect(controlNode);
@@ -526,7 +538,7 @@ Qt::CursorShape DefaultScreen::GetCursor(const Vector2& point)
 		return Qt::OpenHandCursor;
 		
 	if (inputState == InputStateSize)
-		return ResizeTypeToQt(resizeType);
+		return ResizeTypeToQt(resizeType, lastSelectedControl);
 	
 	Vector2 pos = LocalToInternal(point);
 	
@@ -541,24 +553,19 @@ Qt::CursorShape DefaultScreen::GetCursor(const Vector2& point)
 		if (!node)
 			continue;
 		
-		Rect rect = GetControlRect(node);
-		
-		if (!IsPointInsideRectWithDelta(rect, pos, SIZE_CURSOR_DELTA))
-			continue;
-		
 		cursor = Qt::SizeAllCursor;
 		
 		ResizeType resize = GetResizeType(node, pos);
 		if (resize == ResizeTypeNoResize)
 			continue;
 		
-		return ResizeTypeToQt(resize);
+		return ResizeTypeToQt(resize, node);
 	}
 
 	return cursor;
 }
 
-DefaultScreen::ResizeType DefaultScreen::GetResizeType(const HierarchyTreeControlNode* selectedControlNode, const Vector2& pos) const
+ResizeType DefaultScreen::GetResizeType(const HierarchyTreeControlNode* selectedControlNode, const Vector2& pos) const
 {
 	UIControl* selectedControl = selectedControlNode->GetUIObject();
 	if (!selectedControl)
@@ -567,24 +574,29 @@ DefaultScreen::ResizeType DefaultScreen::GetResizeType(const HierarchyTreeContro
 	}
 	 
 	//check is resize
-	Rect rect = GetControlRect(selectedControlNode);
-
-	if (!IsPointInsideRectWithDelta(rect, pos, SIZE_CURSOR_DELTA))
-		return ResizeTypeNoResize;
-	
 	bool horLeft = false;
 	bool horRight = false;
 	bool verTop = false;
 	bool verBottom = false;
-	if ((pos.x >= rect.x - SIZE_CURSOR_DELTA) && (pos.x <= (rect.x + SIZE_CURSOR_DELTA)))
-		horLeft = true;
-	if ((pos.x <= (rect.x + rect.dx + SIZE_CURSOR_DELTA)) && (pos.x >= (rect.x + rect.dx - SIZE_CURSOR_DELTA)))
-		horRight = true;
-	if ((pos.y >= rect.y - SIZE_CURSOR_DELTA) && (pos.y <= (rect.y + SIZE_CURSOR_DELTA)))
-		verTop = true;
-	if ((pos.y <= (rect.y + rect.dy + SIZE_CURSOR_DELTA)) && (pos.y >= (rect.y + rect.dy - SIZE_CURSOR_DELTA)))
-		verBottom = true;
-	
+    
+    Vector4 distancesToBounds = CalculateDistancesToControlBounds(selectedControl, pos);
+    if (abs(distancesToBounds.x) < SIZE_CURSOR_DELTA)
+    {
+        verTop = true;
+    }
+    if (abs(distancesToBounds.y) < SIZE_CURSOR_DELTA)
+    {
+        horRight = true;
+    }
+    if (abs(distancesToBounds.z) < SIZE_CURSOR_DELTA)
+    {
+        verBottom = true;
+    }
+    if (abs(distancesToBounds.w) < SIZE_CURSOR_DELTA)
+    {
+        horLeft = true;
+    }
+    
 	if (horLeft && verTop)
 		return ResizeTypeLeftTop;
 	if (horRight && verBottom)
@@ -605,102 +617,73 @@ DefaultScreen::ResizeType DefaultScreen::GetResizeType(const HierarchyTreeContro
 	return ResizeTypeNoResize;
 }
 
-Qt::CursorShape DefaultScreen::ResizeTypeToQt(ResizeType resize)
+Qt::CursorShape DefaultScreen::ResizeTypeToQt(ResizeType resize, const HierarchyTreeControlNode* selectedNode)
 {
-	if (resize == ResizeTypeLeftTop || resize == ResizeTypeRightBottom)
+    if (!selectedNode || !selectedNode->GetUIObject())
+    {
+        return Qt::ArrowCursor;
+    }
+
+    ResizeType rotatedResizeType = UIControlResizeHelper::GetRotatedResizeType(resize, selectedNode->GetUIObject());
+
+	if (rotatedResizeType == ResizeTypeLeftTop || rotatedResizeType == ResizeTypeRightBottom)
 		return Qt::SizeFDiagCursor;
-	if (resize == ResizeTypeRigthTop || resize == ResizeTypeLeftBottom)
+	if (rotatedResizeType == ResizeTypeRigthTop || rotatedResizeType == ResizeTypeLeftBottom)
 		return Qt::SizeBDiagCursor;
-	if (resize == ResizeTypeLeft || resize == ResizeTypeRight)
+	if (rotatedResizeType == ResizeTypeLeft || rotatedResizeType == ResizeTypeRight)
 		return Qt::SizeHorCursor;
-	if (resize == ResizeTypeTop || resize == ResizeTypeBottom)
+	if (rotatedResizeType == ResizeTypeTop || rotatedResizeType == ResizeTypeBottom)
 		return Qt::SizeVerCursor;
 
 	return Qt::ArrowCursor;
 }
 
-bool DefaultScreen::IsPointInsideRectWithDelta(const Rect& rect, const Vector2& point, int32 pointDelta) const
+bool DefaultScreen::IsPointInsideControlWithDelta(UIControl* uiControl, const Vector2& point, int32 pointDelta) const
 {
-    if ((point.x >= (rect.x - pointDelta)) && (point.x <= (rect.x + rect.dx + pointDelta))
-		&& (point.y >= (rect.y - pointDelta)) && (point.y <= (rect.y + rect.dy + pointDelta)))
-			return true;
-	return false;
+    if (!uiControl)
+    {
+        return false;
+    }
+
+    Vector4 distancesToBounds = CalculateDistancesToControlBounds(uiControl, point);
+    return (distancesToBounds.x > pointDelta && distancesToBounds.y > pointDelta &&
+            distancesToBounds.z > pointDelta && distancesToBounds.w > pointDelta);
+}
+
+Vector4 DefaultScreen::CalculateDistancesToControlBounds(UIControl* uiControl, const Vector2& point) const
+{
+    Vector4 resultVector;
+
+    if (!uiControl)
+    {
+        return resultVector;
+    }
+
+    // Convert control's rect to polygon taking rotation into account.
+    const UIGeometricData &gd = uiControl->GetGeometricData();
+    Polygon2 poly;
+    gd.GetPolygon(poly);
+    
+    const Vector2* polygonPoints = poly.GetPoints();
+    
+    // Distances are build in the following order: top, left, right, bottom.
+    resultVector.x = Collisions::Instance()->CalculateDistanceFrom2DPointTo2DLine(polygonPoints[0], polygonPoints[1], point);
+    resultVector.y = Collisions::Instance()->CalculateDistanceFrom2DPointTo2DLine(polygonPoints[1], polygonPoints[2], point);
+    resultVector.z = Collisions::Instance()->CalculateDistanceFrom2DPointTo2DLine(polygonPoints[2], polygonPoints[3], point);
+    resultVector.w = Collisions::Instance()->CalculateDistanceFrom2DPointTo2DLine(polygonPoints[3], polygonPoints[0], point);
+
+    return resultVector;
 }
 
 void DefaultScreen::ApplySizeDelta(const Vector2& delta)
 {
-	if (!lastSelectedControl)
+	if (!lastSelectedControl || !lastSelectedControl->GetUIObject())
+	{
 		return;
-	
-	Rect rect = resizeRect;
-	
-	switch (resizeType)
-	{
-		case ResizeTypeLeft:
-		{
-			rect.x += delta.x;
-			rect.dx -= delta.x;
-		}break;
-		case ResizeTypeRight:
-		{
-			rect.dx += delta.x;
-		}break;
-		case ResizeTypeTop:
-		{
-			rect.y += delta.y;
-			rect.dy -= delta.y;
-		}break;
-		case ResizeTypeBottom:
-		{
-			rect.dy += delta.y;
-		}break;
-		case ResizeTypeLeftTop:
-		{
-			rect.x += delta.x;
-			rect.dx -= delta.x;
-			rect.y += delta.y;
-			rect.dy -= delta.y;
-		}break;
-		case ResizeTypeLeftBottom:
-		{
-			rect.x += delta.x;
-			rect.dx -= delta.x;
-			rect.dy += delta.y;
-		}break;
-		case ResizeTypeRigthTop:
-		{
-			rect.dx += delta.x;
-			rect.y += delta.y;
-			rect.dy -= delta.y;
-		}break;
-		case ResizeTypeRightBottom:
-		{
-			rect.dx += delta.x;
-			rect.dy += delta.y;
-		}break;
-			
-		default:break;
 	}
-	// DF-2009 - Don't allow to "turn out" controls. Now dx and dy can't be less than zero.
-	if (rect.dx < MIN_CONTROL_SIZE)
-	{
-		rect.dx = MIN_CONTROL_SIZE;
-		// Keep control position when current size is equal 1.
-		if ((resizeType == ResizeTypeLeft) || (resizeType == ResizeTypeLeftBottom) || (resizeType == ResizeTypeLeftTop))
-		{
-			rect.x = resizeRect.x + resizeRect.dx - MIN_CONTROL_SIZE;
-		}
-	}
-	
-	if (rect.dy < MIN_CONTROL_SIZE)
-	{
-		rect.dy = MIN_CONTROL_SIZE;
-				
-		if ((resizeType == ResizeTypeTop) || (resizeType == ResizeTypeRigthTop) || (resizeType == ResizeTypeLeftTop))
-		{			
-			rect.y = resizeRect.y + resizeRect.dy - MIN_CONTROL_SIZE;
-		}
-	}
+
+	// The helper will calculate both resize (taking rotation into account) and clamp.
+    Rect rect = UIControlResizeHelper::ResizeControl(resizeType, lastSelectedControl->GetUIObject(), resizeRect,  delta);
 	
 	lastSelectedControl->GetUIObject()->SetRect(rect);
 }
@@ -1099,19 +1082,19 @@ void DefaultScreen::KeyboardInput(const DAVA::UIEvent* event)
 		}break;
 		case DVKEY_UP:
 		{
-			MoveControl(Vector2(0, -KEY_MOVE_DELTA));
+			MoveControl(Vector2(0, -GetControlMoveDelta()));
 		}break;
 		case DVKEY_DOWN:
 		{
-			MoveControl(Vector2(0, KEY_MOVE_DELTA));
+			MoveControl(Vector2(0, GetControlMoveDelta()));
 		}break;
 		case DVKEY_LEFT:
 		{
-			MoveControl(Vector2(-KEY_MOVE_DELTA, 0));
+			MoveControl(Vector2(-GetControlMoveDelta(), 0));
 		}break;
 		case DVKEY_RIGHT:
 		{
-			MoveControl(Vector2(KEY_MOVE_DELTA, 0));
+			MoveControl(Vector2(GetControlMoveDelta(), 0));
 		}break;
 		case DVKEY_DELETE:
 		case DVKEY_BACKSPACE:
@@ -1164,7 +1147,7 @@ void DefaultScreen::KeyboardInput(const DAVA::UIEvent* event)
 
 Vector2 DefaultScreen::GetInputDelta(const Vector2& point, bool applyScale) const
 {
-	Vector2 delta = point - inputPos;
+	Vector2 delta = GridController::Instance()->RecalculateMousePos(point - inputPos);
 
 	if (applyScale)
 	{
@@ -1261,6 +1244,12 @@ bool DefaultScreen::IsMoveScreenKeyPressed()
 	//return InputSystem::Instance()->GetKeyboard()->IsKeyPressed(MOVE_SCREEN_KEY);
 	Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
 	return (modifiers & Qt::AltModifier);
+}
+
+int32 DefaultScreen::GetControlMoveDelta()
+{
+	Qt::KeyboardModifiers modifiers = QApplication::queryKeyboardModifiers();
+	return (modifiers & Qt::ShiftModifier) ? COARSE_CONTROL_MOVE_DELTA : FINE_CONTROL_MOVE_DELTA;
 }
 
 void DefaultScreen::HandleScreenMove(const DAVA::UIEvent* event)

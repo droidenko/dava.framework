@@ -99,7 +99,10 @@ private slots:
 	void OnChangePropertySucceeded();
 
 	void OnUnsavedChangesNumberChanged();
-
+	
+	// Adjust size
+	void OnAdjustSize();
+	
 	// Align block.
 	void OnAlignLeft();
 	void OnAlignHorzCenter();
@@ -118,6 +121,12 @@ private slots:
 	void OnDistributeEqualDistanceBetweenYCenters();
 	void OnDistributeEqualDistanceBetweenBottomEdges();
 	void OnDistributeEqualDistanceBetweenY();
+
+    // Repack and Reload.
+    void OnRepackAndReloadSprites();
+    
+    // Pixelization.
+    void OnPixelizationStateChanged();
 
 private:
 	bool CloseProject();
@@ -150,6 +159,11 @@ private:
 	void ScrollToScenePositionAndPoint(const Vector2& scenePosition, const Vector2& point,
 									   float newScale);
 
+    // Notify external systems that the scale is updated.
+    void NotifyScaleUpdated(float32 newScale);
+
+    // Repack (if needed) and reload sprites.
+    void RepackAndReloadSprites(bool needRepack);
 private:
     Ui::MainWindow *ui;
 	QAction *recentPojectActions[EditorSettings::RECENT_FILES_COUNT];

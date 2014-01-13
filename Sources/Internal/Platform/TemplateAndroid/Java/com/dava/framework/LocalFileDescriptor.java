@@ -16,7 +16,7 @@ public class LocalFileDescriptor {
 	private long length = 0;
 
 	public LocalFileDescriptor(String path) throws IOException {
-		if (path.startsWith("/")) { // path to global file system
+		if (IsLocal(path)) { // path to global file system
 			File file = new File(path);
 			inputStream = new FileInputStream(file);
 			descriptor = inputStream.getFD();
@@ -43,4 +43,7 @@ public class LocalFileDescriptor {
 		return length;
 	}
 	
+	private static boolean IsLocal(String path) {
+		return path.startsWith("/");
+	}
 }

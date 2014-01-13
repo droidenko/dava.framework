@@ -336,8 +336,75 @@ void HierarchyTreeWidget::on_treeWidget_itemSelectionChanged()
 			HierarchyTreeController::Instance()->ResetSelectedControl();
 		}
 
-		HierarchyTreeController::Instance()->SelectControl(selectedControl);
+		// Yuri Coder, 2012/12/19. The focus is on Hierarchy Tree here, so can't ask InputSystem
+		// whether Shift is pressed. Use Qt functions instead. If Shift is pressed - select multiple
+        // items in the tree, from the one previously selected to the current selection.
+		if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
+        {
+            Select(ui->treeWidget->selectedItems());
+        }
+        else
+        {
+            // Switch the selection state of the control instead of just selecting it (see DF-2838).
+            HierarchyTreeController::Instance()->ChangeItemSelection(selectedControl);
+        }
 	}
+}
+
+void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
+{
+    HierarchyTreeControlNode* firstNode = NULL;
+    bool needReselectScreen = false;
+    QList<HierarchyTreeControlNode*> nodesToBeSelected;
+    
+    // There can be situation where first and last items selected belong to the different screens.
+    // So have to implement two-pass approach here - firstly determine the nodes to be selected,
+    // then re-activate the screen from the first node and apply the selection.
+    foreach (QTreeWidgetItem* multiSelectItem, selectedItems)
+    {
+        QVariant data = multiSelectItem->data(ITEM_ID);
+        HierarchyTreeControlNode* multiSelectControlNode = dynamic_cast<HierarchyTreeControlNode* >(HierarchyTreeController::Instance()->GetTree().GetNode(data.toInt()));
+        if (!multiSelectControlNode)
+        {
+            continue;
+        }
+        
+        if (!firstNode)
+        {
+            firstNode = multiSelectControlNode;
+            nodesToBeSelected.append(multiSelectControlNode);
+            continue;
+        }
+        
+        // Select only the nodes which belong to the same screen as first node.
+        if (multiSelectControlNode->GetScreenNode() == firstNode->GetScreenNode())
+        {
+            nodesToBeSelected.append(multiSelectControlNode);
+        }
+        else
+        {
+            // There are selected controls belong to different screens. Need to unselect them in a tree
+            // and re-activate the screen first node belongs to prior to apply actual selection.
+            needReselectScreen = true;
+            multiSelectItem->setSelected(false);
+        }
+    }
+    
+    if (!firstNode || !firstNode->GetScreenNode() || !firstNode->GetScreenNode()->GetPlatform())
+    {
+        return;
+    }
+    
+    if (needReselectScreen)
+    {
+        HierarchyTreeController::Instance()->UpdateSelection(firstNode->GetScreenNode()->GetPlatform(), firstNode->GetScreenNode());
+    }
+    
+    // Second pass - select the controls remembered before.
+    foreach(HierarchyTreeControlNode* nodeToBeSelected, nodesToBeSelected)
+    {
+        HierarchyTreeController::Instance()->SelectControl(nodeToBeSelected);
+    }
 }
 
 void HierarchyTreeWidget::ResetSelection()
@@ -470,7 +537,9 @@ void HierarchyTreeWidget::OnShowCustomMenu(const QPoint& pos)
 	}
 	else if (selectedScreen || selectedControl)
 	{
-		if (CopyPasteController::Instance()->GetCopyType() == CopyPasteController::CopyTypeControl)
+        // Currently don't allow to paste anything to Aggregators.
+		if ((dynamic_cast<HierarchyTreeAggregatorControlNode*>(selectedControl) == NULL) &&
+             CopyPasteController::Instance()->GetCopyType() == CopyPasteController::CopyTypeControl)
 		{
 			QAction* pasteScreenAction = new QAction(MENU_ITEM_PASTE, &menu);
 			connect(pasteScreenAction, SIGNAL(triggered()), this, SLOT(OnPasteAction()));

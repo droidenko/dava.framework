@@ -42,6 +42,7 @@ class JniUtils: public JniExtension
 public:
 	bool DisableSleepTimer();
 	bool EnableSleepTimer();
+	void OpenURL(const String& url);
 
 protected:
 	virtual jclass GetJavaClass() const;

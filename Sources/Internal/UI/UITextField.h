@@ -263,7 +263,10 @@ public:
 
 	void SetTextAlign(int32 align);
 
+    virtual void SetVisible(bool isVisible, bool hierarchic = true);
+
     virtual void SetSize(const DAVA::Vector2 &newSize);
+
     /**
 	 \brief Set control text style hide.
 	 \param[in] isPassword draw text with hide char.
@@ -324,6 +327,10 @@ public:
 	
 	virtual UIControl *Clone();
 	virtual void CopyDataFrom(UIControl *srcControl);
+
+    // Cursor control.
+    uint32 GetCursorPos();
+    void SetCursorPos(uint32 pos);
 
 protected:
 	WideString text;

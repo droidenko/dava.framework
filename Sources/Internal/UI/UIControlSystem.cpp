@@ -168,7 +168,8 @@ void UIControlSystem::ProcessScreenLogic()
 			{
 				// if we got loading transition
 				UILoadingTransition * loadingTransition = dynamic_cast<UILoadingTransition*> (transition);
-				
+                DVASSERT(loadingTransition);
+
 				// Firstly start transition
 				loadingTransition->StartTransition(currentScreen, nextScreen);
 				

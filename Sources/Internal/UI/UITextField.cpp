@@ -919,6 +919,44 @@ void UITextField::SetInputEnabled(bool isEnabled, bool hierarchic)
 #endif
 }
 
+uint32 UITextField::GetCursorPos()
+{
+#ifdef __DAVAENGINE_IPHONE__
+	return textFieldiPhone->GetCursorPos();
+#elif defined(__DAVAENGINE_ANDROID__)
+	return textFieldAndroid->GetCursorPos();
+#endif
+    // TODO! implement for other OS!
+    return 0;
+}
+
+void UITextField::SetCursorPos(uint32 pos)
+{
+#ifdef __DAVAENGINE_IPHONE__
+	textFieldiPhone->SetCursorPos(pos);
+#elif defined(__DAVAENGINE_ANDROID__)
+	textFieldAndroid->SetCursorPos(pos);
+#endif
+    // TODO! implement for other OS!
+}
+
+void UITextField::SetVisible(bool isVisible, bool hierarchic)
+{
+    UIControl::SetVisible(isVisible, hierarchic);
+
+#ifdef __DAVAENGINE_IPHONE__
+	textFieldiPhone->SetVisible(isVisible);
+#elif defined(__DAVAENGINE_ANDROID__)
+    // TODO! Yaroslav - implement for Android!
+	//textFieldAndroid->SetVisible(isVisible);
+#else
+    if (staticText)
+    {
+        staticText->SetVisible(isVisible, hierarchic);
+    }
+#endif
+}
+
 }; // namespace
 
 
