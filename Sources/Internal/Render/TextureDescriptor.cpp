@@ -582,7 +582,7 @@ uint32 TextureDescriptor::ReadConvertedCRC(eGPUFamily forGPU) const
 	{
 		return LibDxtHelper::GetCRCFromFile(filePath);
 	}
-    DVASSERT(0);
+    DVASSERT(0);//converted means only pvr or dds
     return 0;
 }
 

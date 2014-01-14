@@ -45,9 +45,8 @@
 
 #include <libatc/TextureConverter.h>
 
-#define DDS_HEADER_CRC_OFFSET		46			//offset  to 10th element of dwReserved1 array(dds header)
+#define DDS_HEADER_CRC_OFFSET		60			//offset  to 9th element of dwReserved1 array(dds header)
 #define METADATA_CRC_TAG			0x5f435243  // equivalent of 'C''R''C''_'
-//#define CRC_MODIFIED_BYTES_NUMBER	2*sizeof(uint32)// 8 = crc + tag
 
 using namespace nvtt;
 
@@ -934,17 +933,17 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
     SafeRelease(fileRead);
     
     crc = CRC32::ForBuffer(fileBuffer, fileSize);
-    uint32* modificationMetaDataPointer = (uint32*)(&fileBuffer + DDS_HEADER_CRC_OFFSET);
+    uint32* modificationMetaDataPointer = (uint32*)(fileBuffer + DDS_HEADER_CRC_OFFSET);
     *modificationMetaDataPointer = METADATA_CRC_TAG;
     modificationMetaDataPointer++;
     *modificationMetaDataPointer = crc;
-    
+	
     FilePath tempFile(filePathname.GetAbsolutePathname() + "_");
 	
 	File *fileWrite = File::Create(tempFile, File::WRITE | File::CREATE);
 	if(!fileWrite)
 	{
-		Logger::Error("[LibDxtHelper::AddCRCIntoMetaData] cannot create file %s",
+		Logger::Error("[LibDxtHelper::AddCRCIntoMetaData]: cannot create file %s",
 					  tempFile.GetAbsolutePathname().c_str());
 		return false;
 	}
