@@ -959,7 +959,7 @@ bool LibDxtHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 	}
     else
     {
-        Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot write to file %s",
+        Logger::Error("[LibDxtHelper::AddCRCIntoMetaData]: cannot write to file %s",
                       tempFile.GetAbsolutePathname().c_str());
         FileSystem::Instance()->DeleteFile(tempFile);
         return false;

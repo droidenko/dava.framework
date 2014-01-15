@@ -128,8 +128,6 @@ protected:
 	
 	static bool GetCRCFromMetaData(const FilePath &filePathname, uint32* outputCRC);
 
-	static bool AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePathname, const PVRHeaderV3& pvrHeader, const uint8 *presentMetaData, const uint8 *textureData, const uint32 textureDataSize);
-	
     static bool PreparePVRData(const char* pvrData, const int32 pvrDataSize);
 
     static uint32 GetBitsPerPixel(uint64 pixelFormat);

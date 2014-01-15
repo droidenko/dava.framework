@@ -2303,51 +2303,65 @@ bool LibPVRHelper::AddCRCIntoMetaData(const FilePath &filePathname)
 		return false;
 	}
 
-	uint8 *presentMetaData = NULL;
-	if(header.u32MetaDataSize != 0)
-	{
-		presentMetaData = new uint8[header.u32MetaDataSize];
-		fileRead->Seek(sizeof(header), File::SEEK_FROM_START);
-		uint32 readSize = fileRead->Read(presentMetaData, header.u32MetaDataSize);
-		if(readSize != header.u32MetaDataSize)
-		{
-			Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot read from file %s", fileNameStr.c_str());
-			SafeRelease(fileRead);
-			SafeDeleteArray(presentMetaData);
-			return false;
-		}
-	}
-	
-	uint32 textureDataSize = GetDataSize(filePathname);
-	uint8 *textureData = new uint8[textureDataSize];
-	if(!textureData)
+    uint32 originalFileSize = fileRead->GetSize();
+    //create single buffer for incresed data amount
+    uint32 newFileSize = originalFileSize + METADATA_CRC_SIZE;
+    char *fileBuffer = new char[newFileSize];
+	if(!fileBuffer)
 	{
 		Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot allocate buffer for file data");
 		SafeRelease(fileRead);
-		SafeDeleteArray(presentMetaData);
 		return false;
 	}
-	
-	uint32 textureDataOffset = sizeof(header) + header.u32MetaDataSize;
-	fileRead->Seek(textureDataOffset , File::SEEK_FROM_START);
-	uint32 readSize = fileRead->Read(textureData, textureDataSize);
-	SafeRelease(fileRead);
-		
-	bool retValue = false;
-	if(readSize == textureDataSize)
+    
+    uint32 readSize = fileRead->Read(fileBuffer, originalFileSize);
+    if(readSize != originalFileSize)
+    {
+        Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot read from file %s", fileNameStr.c_str());
+        SafeRelease(fileRead);
+        SafeDeleteArray(fileBuffer);
+        return false;
+    }
+    SafeRelease(fileRead);
+    //calculate for only existed part of buffer(fileSize)
+    uint32 newCRC = CRC32::ForBuffer(fileBuffer, originalFileSize);
+    uint32 textureDataSize = originalFileSize - sizeof(header) - header.u32MetaDataSize;
+    char* currentTextureDataPointer = fileBuffer + sizeof(header) + header.u32MetaDataSize;
+    //shift texture data to get space for new crc metadata
+    memmove((currentTextureDataPointer + METADATA_CRC_SIZE), currentTextureDataPointer, textureDataSize);
+    
+    uint32 metadata[4] = {METADATA_CRC_TAG, 0, 0, newCRC};
+    metadata[2] = sizeof(metadata);
+    memcpy(fileBuffer + sizeof(header) + header.u32MetaDataSize, &metadata, metadata[2]);
+    
+    uint32* metaDataSizePointer = (uint32*)(fileBuffer + sizeof(header) - sizeof(header.u32MetaDataSize))	;
+    *metaDataSizePointer = header.u32MetaDataSize + METADATA_CRC_SIZE;
+    
+    FilePath filePathnameTmp(filePathname.GetAbsolutePathname() + "_");
+	File *fileWrite = File::Create(filePathnameTmp, File::WRITE | File::CREATE);
+    if(!fileWrite)
+    {
+        SafeDeleteArray(fileBuffer);
+        Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] cannot open file %s", filePathnameTmp.GetAbsolutePathname().c_str());
+        return false;
+    }
+    
+    bool writeSucces = fileWrite->Write(fileBuffer, newFileSize) == newFileSize;
+    SafeDeleteArray(fileBuffer);
+    SafeRelease(fileWrite);
+    if(writeSucces)
 	{
-		header.u32MetaDataSize += METADATA_CRC_SIZE;// increase field in header with value of crc metadata size
-		retValue = AssembleHeaderMetadataTexturesIntoFile(filePathname, header, presentMetaData,  textureData, textureDataSize);
+		FileSystem::Instance()->DeleteFile(filePathname);
+		FileSystem::Instance()->MoveFile(filePathnameTmp, filePathname, true);
+		return true;
 	}
-	else
-	{
-		Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot read from file %s", fileNameStr.c_str());
-		retValue = false;
-	}
-		
-	SafeDeleteArray(textureData);
-	SafeDeleteArray(presentMetaData);
-	return retValue;
+    else
+    {
+        Logger::Error("[LibPVRHelper::AddCRCIntoMetaData]: cannot write to file %s",
+                      filePathnameTmp.GetAbsolutePathname().c_str());
+        FileSystem::Instance()->DeleteFile(filePathnameTmp);
+        return false;
+    }
 }
 
 bool LibPVRHelper::GetCRCFromMetaData(const FilePath &filePathname, uint32* outputCRC)
@@ -2416,56 +2430,6 @@ uint32 LibPVRHelper::GetCRCFromFile(const FilePath &filePathname)
 	uint32 crc = 0;
 	bool success = GetCRCFromMetaData(filePathname, &crc);
 	return success ? crc : CRC32::ForFile(filePathname);
-}
-
-bool LibPVRHelper::AssembleHeaderMetadataTexturesIntoFile(const FilePath &filePathname, const PVRHeaderV3& pvrHeader, const uint8 *presentMetaData, const uint8 *textureData, const uint32 textureDataSize)
-{
-	FilePath filePathnameTmp(filePathname.GetAbsolutePathname() + "_");
-	
-	File *fileWrite = File::Create(filePathnameTmp, File::WRITE | File::CREATE);
-	if(!fileWrite)
-	{
-		Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] cannot open file %s", filePathnameTmp.GetAbsolutePathname().c_str());
-		return false;
-	}
-
-	uint32 writenSize = fileWrite->Write(&pvrHeader, sizeof(pvrHeader));
-	bool retValue = false;
-	if(writenSize == sizeof(pvrHeader))
-	{
-		if(presentMetaData != NULL)
-		{
-			uint32 presentMetaDataSize = pvrHeader.u32MetaDataSize - METADATA_CRC_SIZE;//write only present metadata
-			fileWrite->Write(presentMetaData, presentMetaDataSize);
-		}
-		
-		//FourCC = 'C''R''C''_' | key =0 | size = 16 | value = CRC
-		uint32 metadata[4] = { METADATA_CRC_TAG, 0, 0, CRC32::ForFile(filePathname) };
-		metadata[2] = sizeof(metadata);
-		
-		if(fileWrite->Write(&metadata, sizeof(metadata)) == sizeof(metadata) &&
-		   fileWrite->Write(textureData, textureDataSize) == textureDataSize)
-		{
-			SafeRelease(fileWrite);
-			FileSystem::Instance()->DeleteFile(filePathname);
-			if(FileSystem::Instance()->MoveFile(filePathnameTmp, filePathname, true))
-			{
-				retValue = true;
-			}
-			else
-			{
-				Logger::Error("[LibPVRHelper::AddCRCIntoMetaData] Temporary file ( %s) renamig failed.", filePathnameTmp.GetAbsolutePathname().c_str());
-			}
-		}
-	}
-	
-	if(!retValue)
-	{
-		SafeRelease(fileWrite);
-		FileSystem::Instance()->DeleteFile(filePathnameTmp);
-	}
-	
-	return retValue;
 }
 
 PVRHeaderV3 LibPVRHelper::GetHeader(const FilePath &filePathname)
