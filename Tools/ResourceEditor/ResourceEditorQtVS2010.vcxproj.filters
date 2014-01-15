@@ -238,6 +238,9 @@
     <Filter Include="Classes\Qt\SpeedTree">
       <UniqueIdentifier>{e22291cd-1e6a-41a0-909a-dc1b06a4a034}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\CommandLine\DDSExtractor">
+      <UniqueIdentifier>{d78a703d-f7ec-4e00-b258-a89871091844}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Classes\Qt\PlaneLODDialog">
       <UniqueIdentifier>{c101b69d-d754-4527-8139-2646654c759f}</UniqueIdentifier>
     </Filter>
@@ -2238,6 +2241,9 @@
     <ClCompile Include="_GeneratedQt\SpeedTreeImport\SpeedTreeImportDialog_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\CommandLine\DDSExtractor\DDSExtractorTool.cpp">
+      <Filter>Classes\CommandLine\DDSExtractor</Filter>
+    </ClCompile>
     <ClCompile Include="Classes\Commands2\CreatePlaneLODCommand.cpp">
       <Filter>Classes\Commands2</Filter>
     </ClCompile>
@@ -3877,6 +3883,9 @@
     </ClInclude>
     <ClInclude Include="_GeneratedQt\ui_treeimportdialog.h">
       <Filter>QtGenerated</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\CommandLine\DDSExtractor\DDSExtractorTool.h">
+      <Filter>Classes\CommandLine\DDSExtractor</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Commands2\CreatePlaneLODCommand.h">
       <Filter>Classes\Commands2</Filter>

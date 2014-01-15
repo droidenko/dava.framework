@@ -330,6 +330,7 @@
     <ClCompile Include="Classes\CommandLine\Beast\BeastCommandLineTool.cpp" />
     <ClCompile Include="Classes\CommandLine\CommandLineManager.cpp" />
     <ClCompile Include="Classes\CommandLine\CommandLineTool.cpp" />
+    <ClCompile Include="Classes\CommandLine\DDSExtractor\DDSExtractorTool.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitter.cpp" />
     <ClCompile Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.cpp" />
     <ClCompile Include="Classes\CommandLine\SceneExporter\SceneExporter.cpp" />
@@ -1024,6 +1025,7 @@
     <ClInclude Include="Classes\CommandLine\Beast\BeastCommandLineTool.h" />
     <ClInclude Include="Classes\CommandLine\CommandLineManager.h" />
     <ClInclude Include="Classes\CommandLine\CommandLineTool.h" />
+    <ClInclude Include="Classes\CommandLine\DDSExtractor\DDSExtractorTool.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitter.h" />
     <ClInclude Include="Classes\CommandLine\ImageSplitter\ImageSplitterTool.h" />
     <ClInclude Include="Classes\CommandLine\SceneExporter\SceneExporter.h" />

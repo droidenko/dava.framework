@@ -459,6 +459,7 @@
 		62AC3F0817E0B7BA008F8299 /* LandscapeDialog_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 62AC3F0717E0B7BA008F8299 /* LandscapeDialog_moc.cpp */; };
 		62AD51C517AF95D4001A4621 /* EntityAddCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 62AD51C317AF95D4001A4621 /* EntityAddCommand.cpp */; };
 		62B805D417CDFDFD0055EF1E /* GroupEntitiesForMultiselectCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 62B805D217CDFDFD0055EF1E /* GroupEntitiesForMultiselectCommand.cpp */; };
+		62BE4B28186EF34400FCCE47 /* DDSExtractorTool.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 62BE4B26186EF34400FCCE47 /* DDSExtractorTool.cpp */; };
 		748E55931761D5EB000E24FF /* ParticlesEditorNodeNameHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748E55911761D5EB000E24FF /* ParticlesEditorNodeNameHelper.cpp */; };
 		74FE1CE5178B117500693D15 /* EditorParticlesSystem.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 74FE1CE3178B117300693D15 /* EditorParticlesSystem.cpp */; };
 		77BDEC8E56A833D3814BC614 /* QtNetwork.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 82153068A36B6EA46DD82A06 /* QtNetwork.framework */; };
@@ -1564,6 +1565,8 @@
 		62AD51C417AF95D4001A4621 /* EntityAddCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityAddCommand.h; sourceTree = "<group>"; };
 		62B805D217CDFDFD0055EF1E /* GroupEntitiesForMultiselectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupEntitiesForMultiselectCommand.cpp; sourceTree = "<group>"; };
 		62B805D317CDFDFD0055EF1E /* GroupEntitiesForMultiselectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupEntitiesForMultiselectCommand.h; sourceTree = "<group>"; };
+		62BE4B26186EF34400FCCE47 /* DDSExtractorTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DDSExtractorTool.cpp; path = Classes/CommandLine/DDSExtractor/DDSExtractorTool.cpp; sourceTree = "<group>"; };
+		62BE4B27186EF34400FCCE47 /* DDSExtractorTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDSExtractorTool.h; path = Classes/CommandLine/DDSExtractor/DDSExtractorTool.h; sourceTree = "<group>"; };
 		6AB05FD3B5F9D1E725443AAE /* QtOpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtOpenGL.framework; path = "~/QtSDK/Desktop/Qt/4.8.1/gcc/lib/QtOpenGL.framework"; sourceTree = "<absolute>"; };
 		6C21256244E578A9DE07EE60 /* xml_macos */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = xml_macos; path = ../../Libs/libs/libxml_macos.a; sourceTree = "<group>"; };
 		748E55911761D5EB000E24FF /* ParticlesEditorNodeNameHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticlesEditorNodeNameHelper.cpp; sourceTree = "<group>"; };
@@ -3523,6 +3526,15 @@
 			name = LandscapeDialog;
 			sourceTree = "<group>";
 		};
+		62BE4B1E186EF30000FCCE47 /* DDSExtractor */ = {
+			isa = PBXGroup;
+			children = (
+				62BE4B26186EF34400FCCE47 /* DDSExtractorTool.cpp */,
+				62BE4B27186EF34400FCCE47 /* DDSExtractorTool.h */,
+			);
+			name = DDSExtractor;
+			sourceTree = "<group>";
+		};
 		841703FF16CBCE9700F1023D /* SpritesPacker */ = {
 			isa = PBXGroup;
 			children = (
@@ -4112,6 +4124,7 @@
 		E8FB1DF7172E867C00D1428F /* CommandLine */ = {
 			isa = PBXGroup;
 			children = (
+				62BE4B1E186EF30000FCCE47 /* DDSExtractor */,
 				E8F799D4179830D500E7C3C8 /* TextureDescriptor */,
 				E8C81386176B19D6003758F3 /* Beast */,
 				E8FB1E19172EABE700D1428F /* SceneExporter */,
@@ -4812,6 +4825,7 @@
 				4FAD0CF51785EC6E00B05A35 /* SceneGraphModelStateHelper_moc.cpp in Build Sources */,
 				4FAD0CF61785EC6E00B05A35 /* SceneInfo_moc.cpp in Build Sources */,
 				4FAD0CF71785EC6E00B05A35 /* SceneTree_moc.cpp in Build Sources */,
+				62BE4B28186EF34400FCCE47 /* DDSExtractorTool.cpp in Build Sources */,
 				4FAD0CF81785EC6E00B05A35 /* SceneTreeDelegate_moc.cpp in Build Sources */,
 				4FAD0CF91785EC6E00B05A35 /* SceneTreeItem_moc.cpp in Build Sources */,
 				4FAD0CFA1785EC6E00B05A35 /* SceneTreeItemEntity_moc.cpp in Build Sources */,
