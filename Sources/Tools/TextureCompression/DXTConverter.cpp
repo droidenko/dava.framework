@@ -128,6 +128,7 @@ FilePath DXTConverter::ConvertCubemapPngToDxt(const TextureDescriptor &descripto
         {
 			SafeDeleteArray(faceData);
             for_each(inputImages.begin(), inputImages.end(), SafeRelease<Image>);
+            LibDxtHelper::AddCRCIntoMetaData(outputName);
             return outputName;
         }
 		
