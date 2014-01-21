@@ -292,8 +292,8 @@ void ImposterNode::UpdateImposter()
 	
 	//Texture * target = fbo->GetTexture();
 
-	RenderManager::Instance()->AppendState(RenderState::STATE_SCISSOR_TEST);
-	RenderManager::Instance()->State()->SetScissorRect(Rect(block->offset.x, block->offset.y, block->size.dx, block->size.dy));
+	//RenderManager::Instance()->AppendState(RenderState::STATE_SCISSOR_TEST);
+	//RenderManager::Instance()->State()->SetScissorRect(Rect(block->offset.x, block->offset.y, block->size.dx, block->size.dy));
 	RenderManager::Instance()->FlushState();
 	//TODO: use one "clear" function instead of two
 	//if(block->size.x == 512.f)
@@ -315,7 +315,7 @@ void ImposterNode::UpdateImposter()
     
 	RenderManager::Instance()->ClearWithColor(.0f, .0f, 0.f, .0f);
 	RenderManager::Instance()->ClearDepthBuffer();
-	RenderManager::Instance()->RemoveState(RenderState::STATE_SCISSOR_TEST);
+	//RenderManager::Instance()->RemoveState(RenderState::STATE_SCISSOR_TEST);
 
 	RenderManager::Instance()->SetViewport(Rect(block->offset.x, block->offset.y, block->size.dx, block->size.dy), true);
 
@@ -381,7 +381,8 @@ void ImposterNode::DrawImposter()
 		return;
 	}
 
-	Matrix4 modelViewMatrix = RenderManager::Instance()->GetMatrix(RenderManager::MATRIX_MODELVIEW); 
+	Matrix4 modelViewMatrix = RenderManager::Instance()->GetMatrix(RenderManager::MATRIX_MODELVIEW);
+    uint32 matrixCache = RenderManager::Instance()->GetModelViewMatrixCache();
 	const Matrix4 & cameraMatrix = scene->GetCurrentCamera()->GetMatrix();
 	Matrix4 meshFinalMatrix;
 
@@ -392,13 +393,13 @@ void ImposterNode::DrawImposter()
 
 	RenderManager::Instance()->SetColor(1.f, 1.f, 1.f, 1.f);
 
-	RenderManager::Instance()->RemoveState(RenderState::STATE_CULL);
-	eBlendMode src = RenderManager::Instance()->GetSrcBlend();
-	eBlendMode dst = RenderManager::Instance()->GetDestBlend();
-	RenderManager::Instance()->SetBlendMode(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
+	//RenderManager::Instance()->RemoveState(RenderState::STATE_CULL);
+	//eBlendMode src = RenderManager::Instance()->GetSrcBlend();
+	//eBlendMode dst = RenderManager::Instance()->GetDestBlend();
+	//RenderManager::Instance()->SetBlendMode(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
 
 	SharedFBO * fbo = manager->GetFBO();
-	RenderManager::Instance()->SetTexture(fbo->GetTexture());
+	RenderManager::Instance()->SetTextureState(fbo->GetTextureHandle());
 
 	RenderManager::Instance()->SetRenderData(renderData);
 
@@ -407,10 +408,10 @@ void ImposterNode::DrawImposter()
 	RenderManager::Instance()->DrawArrays(PRIMITIVETYPE_TRIANGLESTRIP, 0, 4);
 
 	//RenderManager::Instance()->AppendState(RenderStateBlock::STATE_DEPTH_WRITE);
-	RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
-	RenderManager::Instance()->SetBlendMode(src, dst);
+	//RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+	//RenderManager::Instance()->SetBlendMode(src, dst);
 
-	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, modelViewMatrix);
+	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, modelViewMatrix, matrixCache);
 }
 
 Entity* ImposterNode::Clone(Entity *dstNode /*= NULL*/)

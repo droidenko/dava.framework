@@ -38,6 +38,7 @@
 
 namespace DAVA
 {
+	REGISTER_CLASS(ActionComponent)
 
 	ActionComponent::ActionComponent() : started(false), allActionsActive(false)
 	{
@@ -301,9 +302,9 @@ namespace DAVA
 		return actionComponent;
 	}
 	
-	void ActionComponent::Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
+	void ActionComponent::Serialize(KeyedArchive *archive, SerializationContext *serializationContext)
 	{
-		Component::Serialize(archive, sceneFile);
+		Component::Serialize(archive, serializationContext);
 		
 		if(NULL != archive)
 		{
@@ -328,7 +329,7 @@ namespace DAVA
 		}
 	}
 	
-	void ActionComponent::Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile)
+	void ActionComponent::Deserialize(KeyedArchive *archive, SerializationContext *serializationContext)
 	{
 		actions.clear();
 		
@@ -352,7 +353,7 @@ namespace DAVA
 			}
 		}
 		
-		Component::Deserialize(archive, sceneFile);
+		Component::Deserialize(archive, serializationContext);
 	}
 		
 	void ActionComponent::EvaluateAction(const Action& action)

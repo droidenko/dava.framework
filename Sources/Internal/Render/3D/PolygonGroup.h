@@ -35,6 +35,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/RenderDataObject.h"
 #include "Scene3D/DataNode.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA
 {	
@@ -184,8 +185,8 @@ public:
     
     RenderDataObject * renderDataObject;
     
-    void Save(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile);
-    void Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile);
+    void Save(KeyedArchive * keyedArchive, SerializationContext * serializationContext);
+    void Load(KeyedArchive * keyedArchive, SerializationContext * serializationContext);
 
 private:	
     void    UpdateDataPointersAndStreams();

@@ -33,10 +33,9 @@
 
 #include <QTreeView>
 #include <QTimer>
+#include "QtPropertyModel.h"
+#include "QtPropertyData.h"
 
-class QtPropertyItem;
-class QtPropertyData;
-class QtPropertyModel;
 class QtPropertyItemDelegate;
 
 class QtPropertyEditor : public QTreeView
@@ -44,31 +43,50 @@ class QtPropertyEditor : public QTreeView
 	Q_OBJECT
 
 public:
+	enum Style
+	{
+		DEFAULT_STYLE = 0,
+		HEADER_STYLE,
+
+		USER_STYLE
+	};
+
 	QtPropertyEditor(QWidget *parent = 0);
 	~QtPropertyEditor();
 
-	QPair<QtPropertyItem*, QtPropertyItem*> AppendProperty(const QString &name, QtPropertyData* data, QtPropertyItem* parent = NULL);
-	QPair<QtPropertyItem*, QtPropertyItem*> GetProperty(const QString &name, QtPropertyItem* parent = NULL) const;
-	QtPropertyData * GetPropertyData(const QString &key, QtPropertyItem *parent = NULL) const;
+	QModelIndex AppendProperty(const QString &name, QtPropertyData* data, const QModelIndex &parent = QModelIndex());
+	QModelIndex InsertProperty(const QString &name, QtPropertyData* data, int row, const QModelIndex &parent = QModelIndex());
+	QModelIndex AppendHeader(const QString &text);
+	QModelIndex InsertHeader(const QString &text, int row);
 
-	bool GetEditTracking();
+	QtPropertyData * GetProperty(const QModelIndex &index) const;
+	QtPropertyData * GetRootProperty() const;
+	
+	bool GetEditTracking() const;
 	void SetEditTracking(bool enabled);
 
-	void RemoveProperty(QtPropertyItem* item);
+	void RemoveProperty(const QModelIndex &index);
+	void RemoveProperty(QtPropertyData* data);
 	void RemovePropertyAll();
-
-	void Expand(QtPropertyItem *);
-
-	void Update();
 
 	void SetUpdateTimeout(int ms);
 	int GetUpdateTimeout();
 
-	QtPropertyItem* AddHeader(const char *text);
+	virtual void ApplyStyle(QtPropertyData *data, int style);
+
+public slots:
+	void SetFilter(const QString &regex);
+	void Update();
+
+	void expand(const QModelIndex & index);
+	void expandAll();
+	void expandToDepth(int depth);
+	void collapse(const QModelIndex & index);
+	void collapseAll();
 
 signals:
-	void PropertyChanged(const QString &name, QtPropertyData *data);
-	void PropertyEdited(const QString &name, QtPropertyData *data);
+	// void PropertyChanged(const QModelIndex &index); // SZ: not implemented because is never used. will be implemented on request
+	void PropertyEdited(const QModelIndex &index);
 
 protected:
 	QtPropertyModel *curModel;
@@ -81,10 +99,25 @@ protected:
 	virtual void paintEvent(QPaintEvent * event);
 	virtual void drawRow(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
+	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void leaveEvent(QEvent * event);
+	
+	virtual QToolButton* GetButton(QMouseEvent * event);
+
 protected slots:
 	virtual void OnItemClicked(const QModelIndex &);
+	virtual void OnItemEdited(const QModelIndex &);
+	virtual void OnItemExpanded(const QModelIndex &, bool);
 	virtual void OnUpdateTimeout();
-	virtual void OnItemEdited(const QString &name, QtPropertyData *data);
+
+private:
+	QtPropertyData *lastHoverData;
+
+	void OnHover(const QModelIndex &index);
+	void UpdateExpandState(const QModelIndex &parent);
+
 };
 
 #endif // __QT_PROPERTY_VIEW_H__

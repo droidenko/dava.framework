@@ -1,0 +1,12 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        Layers: ["OpaqueRenderLayer"]
+
+        RenderPass:
+            Name: "Landscape.TileMask"
+            Shader: "~res:/Materials/Shaders/Landscape/tilemask"
+
+        RenderPass:
+            Name: "Landscape.FullTiled"
+            Shader: "~res:/Materials/Shaders/Landscape/fulltiled_texture"

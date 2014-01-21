@@ -35,11 +35,14 @@
 #include "Base/FastName.h"
 #include "Render/RenderBase.h"
 #include "Base/BaseMath.h"
-#include "Render/Material.h"
 
 #include "Render/3D/PolygonGroup.h"
 #include "Render/RenderDataObject.h"
 #include "Render/Highlevel/RenderObject.h"
+#include "Render/Material.h"
+#include "Render/Material/NMaterial.h"
+
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA
 {
@@ -61,6 +64,9 @@ class RenderLayer;
 class Camera;
 class RenderObject;
 class RenderBatch;
+class NMaterial;
+class NMaterialInstance;
+class OcclusionQuery;
 
     
 /*
@@ -81,38 +87,30 @@ protected:
 public:
     RenderBatch();
     
-    const FastName & GetOwnerLayerName();
-    void SetOwnerLayerName(const FastName & fastname);
-    
     void SetPolygonGroup(PolygonGroup * _polygonGroup);
     inline PolygonGroup * GetPolygonGroup();
     
     void SetRenderDataObject(RenderDataObject * _renderDataObject);
     inline RenderDataObject * GetRenderDataObject();
     
-    void SetMaterial(Material * _material);
-    
-    inline Material * GetMaterial();
-    inline InstanceMaterialState * GetMaterialInstance();
+    void SetMaterial(NMaterial * _material);
+    inline NMaterial * GetMaterial();
+    inline uint32 GetRenderLayerIDsBitmask() const { return renderLayerIDsBitmaskFromMaterial; };
     
 	void SetRenderObject(RenderObject * renderObject);
 	inline RenderObject * GetRenderObject();
     
     inline void SetStartIndex(uint32 _startIndex);
     inline void SetIndexCount(uint32 _indexCount);
-    
-    inline void SetRemoveIndex(RenderLayer * _ownerLayer, uint32 _removeIndex);
-    inline uint32 GetRemoveIndex();
-    inline RenderLayer * GetOwnerLayer();
 
-    virtual void Draw(Camera * camera);
+    virtual void Draw(const FastName & ownerRenderPass, Camera * camera);
     
     const AABBox3 & GetBoundingBox() const;
 
 	virtual void GetDataNodes(Set<DataNode*> & dataNodes);
 	virtual RenderBatch * Clone(RenderBatch * destination = 0);
-	virtual void Save(KeyedArchive *archive, SceneFileV2 *sceneFile);
-	virtual void Load(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	virtual void Save(KeyedArchive *archive, SerializationContext *serializationContext);
+	virtual void Load(KeyedArchive *archive, SerializationContext *serializationContext);
     
     /*
         \brief This is additional sorting key. It should be from 0 to 15.
@@ -124,14 +122,14 @@ public:
     bool GetVisible() const;
 
 	virtual void UpdateAABBoxFromSource();
-
+	
+    pointer_size layerSortingKey;
 protected:
+    uint32 renderLayerIDsBitmaskFromMaterial;
     PolygonGroup * dataSource;
     RenderDataObject * renderDataObject;   // Probably should be replaced to VBO / IBO, but not sure
-    Material * material;                    // Should be replaced to NMaterial
-    InstanceMaterialState * materialInstance; // Should be replaced by NMaterialInstance
+    NMaterial * material;                    // Should be replaced to NMaterial
 	RenderObject * renderObject;
-    FastName ownerLayerName;
     
     uint32 startIndex;
     uint32 indexCount;
@@ -140,13 +138,18 @@ protected:
     uint32 type;
     uint32 sortingKey;
     uint32 visiblityCriteria;
-    RenderLayer * ownerLayer;
-    uint32 removeIndex;
 
 	AABBox3 aabbox;
+#if defined(__DAVA_USE_OCCLUSION_QUERY__)
+    OcclusionQuery * occlusionQuery;
+    int32 queryRequested;
+    uint32 queryRequestFrame;
+    uint32 lastFraemDrawn;
+#endif
 
 	void InsertDataNode(DataNode *node, Set<DataNode*> & dataNodes);
     
+
 public:
     
     INTROSPECTION_EXTEND(RenderBatch, BaseObject,
@@ -161,10 +164,7 @@ public:
         MEMBER(aabbox, "AABBox",  I_SAVE | I_VIEW | I_EDIT )
         MEMBER(material, "Material", I_VIEW | I_EDIT)
                          
-        PROPERTY("ownerLayerName", "Owner Layer", GetOwnerLayerName, SetOwnerLayerName, I_SAVE | I_VIEW)
         PROPERTY("sortingKey", "Key for the sorting inside render layer", GetSortingKey, SetSortingKey, I_SAVE | I_VIEW | I_EDIT)
-
-        MEMBER(materialInstance, "Material Instance", I_VIEW | I_EDIT)
     );
 };
 
@@ -178,16 +178,11 @@ inline RenderDataObject * RenderBatch::GetRenderDataObject()
     return renderDataObject;
 }
 
-inline Material * RenderBatch::GetMaterial()
+inline NMaterial * RenderBatch::GetMaterial()
 {
     return material;
 }
     
-inline InstanceMaterialState * RenderBatch::GetMaterialInstance()
-{
-    return materialInstance;
-}
-
 inline RenderObject * RenderBatch::GetRenderObject()
 {
 	return renderObject;
@@ -201,24 +196,6 @@ inline void RenderBatch::SetStartIndex(uint32 _startIndex)
 inline void RenderBatch::SetIndexCount(uint32 _indexCount)
 {
     indexCount = _indexCount;
-}
-    
-    
-    
-inline uint32 RenderBatch::GetRemoveIndex()
-{
-    return removeIndex;
-}
-    
-inline RenderLayer * RenderBatch::GetOwnerLayer()
-{
-    return ownerLayer;
-}
-
-inline void RenderBatch::SetRemoveIndex(RenderLayer * _ownerLayer, uint32 _removeIndex)
-{
-    ownerLayer = _ownerLayer;
-    removeIndex = _removeIndex;
 }
     
 inline uint32 RenderBatch::GetSortingKey()

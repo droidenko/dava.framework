@@ -101,6 +101,8 @@ protected:
 	bool landIntersectCachedResult;
 
 	DAVA::Entity *curLandscapeEntity;
+	
+	DAVA::UniqueHandle renderState;
 
 	btDefaultCollisionConfiguration* objectsCollConf;
 	btCollisionDispatcher* objectsCollDisp;

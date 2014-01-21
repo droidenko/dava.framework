@@ -51,7 +51,7 @@ void ParticleEmitterObject::SetEmitter(ParticleEmitter * _emitter)
 	emitter = SafeRetain(_emitter);
 }
 	
-void ParticleEmitterObject::LoadFromYaml(const FilePath & pathName)
+void ParticleEmitterObject::LoadFromYaml(const FilePath & pathName, MaterialSystem* materialSystem)
 {
 	SafeRelease(emitter);
 	emitter = new ParticleEmitter();

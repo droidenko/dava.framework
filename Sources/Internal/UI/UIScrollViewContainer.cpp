@@ -136,6 +136,7 @@ bool UIScrollViewContainer::SystemInput(UIEvent *currentTouch)
 	if (currentTouch->GetInputHandledType() == UIEvent::INPUT_HANDLED_HARD)
 	{
 		// Can't scroll - some child control already processed this input.
+        mainTouch = -1;
 		return systemInput;
 	}
 
@@ -157,17 +158,22 @@ bool UIScrollViewContainer::SystemInput(UIEvent *currentTouch)
 		{
             UIScrollView *scrollView = DynamicTypeCheck<UIScrollView*>(this->GetParent());
             DVASSERT(scrollView);
-            if(abs(currentTouch->point.x - scrollStartInitialPosition.x) > touchTreshold
-                && (!currentScroll || currentScroll == scrollView->GetHorizontalScroll()))
+            if(enableHorizontalScroll
+               && abs(currentTouch->point.x - scrollStartInitialPosition.x) > touchTreshold
+               && (!currentScroll || currentScroll == scrollView->GetHorizontalScroll()))
             {
                 currentScroll = scrollView->GetHorizontalScroll();
             }
-            else if((abs(currentTouch->point.y - scrollStartInitialPosition.y) > touchTreshold)
-                && (!currentScroll || currentScroll == scrollView->GetVerticalScroll()))
+            else if(enableVerticalScroll
+                    && (abs(currentTouch->point.y - scrollStartInitialPosition.y) > touchTreshold)
+                    && (!currentScroll || currentScroll == scrollView->GetVerticalScroll()))
             {
                 currentScroll = scrollView->GetVerticalScroll();
             }
-			UIControlSystem::Instance()->SwitchInputToControl(mainTouch, this);
+            if (currentTouch->touchLocker != this && currentScroll)
+            {
+                UIControlSystem::Instance()->SwitchInputToControl(mainTouch, this);
+            }
 			Input(currentTouch);
 		}
 	}
@@ -243,12 +249,11 @@ YamlNode * UIScrollViewContainer::SaveToYamlNode(UIYamlLoader * loader)
 
 void UIScrollViewContainer::InputCancelled( UIEvent *currentInput )
 {
-    //TODO: FIX THIS FUCKING SHIT WITH INPUT CANCELS
-    //if (currentInput->tid == mainTouch)
-    //{
-    //    mainTouch = -1;
-    //    lockTouch = false;
-    //}
+    if (currentInput->tid == mainTouch)
+    {
+        mainTouch = -1;
+        lockTouch = false;
+    }
 }
 
 void UIScrollViewContainer::WillDisappear()

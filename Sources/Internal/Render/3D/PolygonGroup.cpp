@@ -420,9 +420,9 @@ void PolygonGroup::BuildBuffers()
 };
 
     
-void PolygonGroup::Save(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
+void PolygonGroup::Save(KeyedArchive * keyedArchive, SerializationContext * serializationContext)
 {
-    DataNode::Save(keyedArchive, sceneFile);
+    DataNode::Save(keyedArchive, serializationContext);
     
     keyedArchive->SetInt32("vertexFormat", vertexFormat);
     keyedArchive->SetInt32("vertexCount", vertexCount); 
@@ -446,9 +446,9 @@ void PolygonGroup::Save(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
 
 }
 
-void PolygonGroup::Load(KeyedArchive * keyedArchive, SceneFileV2 * sceneFile)
+void PolygonGroup::Load(KeyedArchive * keyedArchive, SerializationContext * serializationContext)
 {
-    DataNode::Load(keyedArchive, sceneFile);
+    DataNode::Load(keyedArchive, serializationContext);
     
     vertexFormat = keyedArchive->GetInt32("vertexFormat");
     vertexStride = GetVertexSize(vertexFormat);

@@ -46,7 +46,7 @@ namespace DAVA
 #define PARTICLE_EMITTER_DEFERRED_UPDATE_INTERVAL 0.1f // in seconds
 
 
-Map<String, ParticleEmitter::EmitterYamlCacheEntry> ParticleEmitter::emitterYamlCache;
+ParticleEmitter::YamlCacheMap ParticleEmitter::emitterYamlCache;
 
 ParticleEmitter::ParticleEmitter()
 {
@@ -160,30 +160,30 @@ RenderObject * ParticleEmitter::Clone(RenderObject *newObject)
 	return newObject;
 }
 
-void ParticleEmitter::Save(KeyedArchive *archive, SceneFileV2 *sceneFile)
+void ParticleEmitter::Save(KeyedArchive *archive, SerializationContext *serializationContext)
 {
-	RenderObject::Save(archive, sceneFile);
+	RenderObject::Save(archive, serializationContext);
 
 	if(NULL != archive)
 	{
-        String filename = configPath.GetRelativePathname(sceneFile->GetScenePath());
+        String filename = configPath.GetRelativePathname(serializationContext->GetScenePath());
 		archive->SetString("pe.configpath", filename);
 	}
 }
 
-void ParticleEmitter::Load(KeyedArchive *archive, SceneFileV2 *sceneFile)
+void ParticleEmitter::Load(KeyedArchive *archive, SerializationContext *serializationContext)
 {
-	RenderObject::Load(archive, sceneFile);
+	RenderObject::Load(archive, serializationContext);
 
 	if(NULL != archive)
 	{
 		String filename = archive->GetString("pe.configpath");
 		if(!filename.empty())
 		{
-			configPath = sceneFile->GetScenePath() + filename;
+			configPath = serializationContext->GetScenePath() + filename;
 			LoadFromYaml(configPath);
 		}
-	}
+	}	
 }
 
 void ParticleEmitter::AddLayer(ParticleLayer * layer)
@@ -474,8 +474,8 @@ void ParticleEmitter::PrepareRenderData(Camera * camera){
 
 void ParticleEmitter::RenderUpdate(Camera *camera, float32 timeElapsed)
 {
-	eBlendMode srcMode = RenderManager::Instance()->GetSrcBlend();
-	eBlendMode destMode = RenderManager::Instance()->GetDestBlend();
+	//eBlendMode srcMode = RenderManager::Instance()->GetSrcBlend();
+	//eBlendMode destMode = RenderManager::Instance()->GetDestBlend();
 
 	// Yuri Coder, 2013/01/30. ParticleEmitter class can be now only 2D.
 	if(particlesFollow)
@@ -496,7 +496,7 @@ void ParticleEmitter::RenderUpdate(Camera *camera, float32 timeElapsed)
 		RenderManager::Instance()->PopDrawMatrix();
 	}
 
-	RenderManager::Instance()->SetBlendMode(srcMode, destMode);
+	//RenderManager::Instance()->SetBlendMode(srcMode, destMode);
 }
 
 void ParticleEmitter::PrepareEmitterParameters(Particle * particle, float32 velocity, int32 emitIndex)
@@ -574,18 +574,18 @@ void ParticleEmitter::PrepareEmitterParameters(Particle * particle, float32 velo
     particle->angle = particleAngle;
 }
 
-void ParticleEmitter::RetainInCache(const String& name)
+void ParticleEmitter::RetainInCache(const FilePath& name)
 {
-	Map<String, EmitterYamlCacheEntry>::iterator it = emitterYamlCache.find(name);
+	YamlCacheMap::iterator it = emitterYamlCache.find(FILEPATH_MAP_KEY(name));
 	if (it!=emitterYamlCache.end())
 	{
 		(*it).second.refCount++;
 	}
 }
 
-void ParticleEmitter::ReleaseFromCache(const String& name)
+void ParticleEmitter::ReleaseFromCache(const FilePath& name)
 {
-	Map<String, EmitterYamlCacheEntry>::iterator it = emitterYamlCache.find(name);
+	YamlCacheMap::iterator it = emitterYamlCache.find(FILEPATH_MAP_KEY(name));
 	if (it!=emitterYamlCache.end())
 	{
 		(*it).second.refCount--;
@@ -600,8 +600,7 @@ void ParticleEmitter::ReleaseFromCache(const String& name)
 YamlParser* ParticleEmitter::GetParser(const FilePath &filename)
 {
 	YamlParser *res = NULL;
-	String name = filename.GetAbsolutePathname();
-	Map<String, EmitterYamlCacheEntry>::iterator it = emitterYamlCache.find(name);
+	YamlCacheMap::iterator it = emitterYamlCache.find(FILEPATH_MAP_KEY(filename));
 	if (it!=emitterYamlCache.end())
 	{
 		(*it).second.refCount++;
@@ -613,12 +612,13 @@ YamlParser* ParticleEmitter::GetParser(const FilePath &filename)
 		EmitterYamlCacheEntry entry;
 		entry.parser = res;
 		entry.refCount = 1;
-		emitterYamlCache[name] = entry;
+		emitterYamlCache[FILEPATH_MAP_KEY(filename)] = entry;
 	}
 	ReleaseFromCache(emitterFileName);
-	emitterFileName = name;
+	emitterFileName = filename;
 	return res;
 }
+
 
 void ParticleEmitter::LoadFromYaml(const FilePath & filename)
 {
@@ -1071,5 +1071,4 @@ void ParticleEmitter::HandleRemoveFromSystem()
 		(*it)->HandleRemoveFromSystem();
 	}
 }
-
 }; 

@@ -433,9 +433,9 @@ Entity* LodNode::Clone(Entity *dstNode)
     /**
      \brief virtual function to save node to KeyedArchive
      */
-void LodNode::Save(KeyedArchive * archive, SceneFileV2 * sceneFile)
+void LodNode::Save(KeyedArchive * archive, SerializationContext * serializationContext)
 {
-    Entity::Save(archive, sceneFile);
+    Entity::Save(archive, serializationContext);
     archive->SetInt32("lodCount", (int32)lodLayers.size());
     
     int32 lodIdx = 0;
@@ -466,9 +466,9 @@ void LodNode::Save(KeyedArchive * archive, SceneFileV2 * sceneFile)
     /**
      \brief virtual function to load node to KeyedArchive
      */
-void LodNode::Load(KeyedArchive * archive, SceneFileV2 * sceneFile)
+void LodNode::Load(KeyedArchive * archive, SerializationContext * serializationContext)
 {
-    Entity::Load(archive, sceneFile);
+    Entity::Load(archive, serializationContext);
 
     int32 lodCount = archive->GetInt32("lodCount", 0);
     

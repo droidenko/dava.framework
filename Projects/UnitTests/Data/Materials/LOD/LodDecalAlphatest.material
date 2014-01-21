@@ -1,0 +1,13 @@
+Material:
+    MaterialState:
+        Name: "Low"
+        Parent: "Global.Textured.Decal.Alphatest"
+        MaterialDefines: ["LOD_LOW"]
+    MaterialState:
+        Name: "Normal"
+        Parent: "Global.Textured.Decal.Alphatest"
+        MaterialDefines: ["LOD_NORMAL"]
+    MaterialState:
+        Name: "High"
+        Parent: "Global.Textured.Decal.Alphatest"
+        MaterialDefines: ["LOD_HIGH"]

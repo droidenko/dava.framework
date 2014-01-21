@@ -4,12 +4,12 @@
 #include "../../Tools/TileTexturePreviewWidget/TileTexturePreviewWidget.h"
 #include "../../Tools/SliderWidget/SliderWidget.h"
 #include "Constants.h"
-#include "TextureBrowser/TextureConvertor.h"
 #include "../LandscapeEditorShortcutManager.h"
 
 #include <QLayout>
 #include <QComboBox>
 #include <QRadioButton>
+#include <QLabel>
 
 TilemaskEditorPanel::TilemaskEditorPanel(QWidget* parent)
 :	LandscapeEditorBasePanel(parent)
@@ -21,12 +21,22 @@ TilemaskEditorPanel::TilemaskEditorPanel(QWidget* parent)
 ,	frameStrength(NULL)
 ,	frameTileTexturesPreview(NULL)
 {
+	const DAVA::RenderStateData* default3dState = DAVA::RenderManager::Instance()->GetRenderStateData(DAVA::RenderManager::Instance()->GetDefault3DStateHandle());
+	DAVA::RenderStateData noBlendStateData;
+	memcpy(&noBlendStateData, default3dState, sizeof(noBlendStateData));
+	
+	noBlendStateData.sourceFactor = DAVA::BLEND_ONE;
+	noBlendStateData.destFactor = DAVA::BLEND_ZERO;
+	
+	noBlendDrawState = DAVA::RenderManager::Instance()->AddRenderStateData(&noBlendStateData);
+
 	InitUI();
 	ConnectToSignals();
 }
 
 TilemaskEditorPanel::~TilemaskEditorPanel()
 {
+	RenderManager::Instance()->ReleaseRenderStateData(noBlendDrawState);
 }
 
 bool TilemaskEditorPanel::GetEditorEnabled()
@@ -319,13 +329,15 @@ void TilemaskEditorPanel::UpdateTileTextures()
 	int32 count = (int32)sceneEditor->tilemaskEditorSystem->GetTileTextureCount();
 	Image** images = new Image*[count];
 
-	eBlendMode srcBlend = RenderManager::Instance()->GetSrcBlend();
-	eBlendMode dstBlend = RenderManager::Instance()->GetDestBlend();
-	RenderManager::Instance()->SetBlendMode(BLEND_ONE, BLEND_ZERO);
+	//eBlendMode srcBlend = RenderManager::Instance()->GetSrcBlend();
+	//eBlendMode dstBlend = RenderManager::Instance()->GetDestBlend();
+	//RenderManager::Instance()->SetBlendMode(BLEND_ONE, BLEND_ZERO);
 
+	RenderManager::Instance()->SetRenderState(noBlendDrawState);
+	RenderManager::Instance()->FlushState();
+	
 	if (sceneEditor->landscapeEditorDrawSystem->GetLandscapeTiledShaderMode() == Landscape::TILED_MODE_TILE_DETAIL_MASK)
 	{
-		RenderManager::Instance()->SetBlendMode(BLEND_ONE, BLEND_ZERO);
 		Image* image = sceneEditor->tilemaskEditorSystem->GetTileTexture(0)->CreateImageFromMemory();
 
 		image->ResizeCanvas(iconSize.width(), iconSize.height());
@@ -346,7 +358,7 @@ void TilemaskEditorPanel::UpdateTileTextures()
 		tileTexturePreviewWidget->SetMode(TileTexturePreviewWidget::MODE_WITHOUT_COLORS);
 	}
 
-	RenderManager::Instance()->SetBlendMode(srcBlend, dstBlend);
+	//RenderManager::Instance()->SetBlendMode(srcBlend, dstBlend);
 
 	for (int32 i = 0; i < count; ++i)
 	{
@@ -598,7 +610,7 @@ void TilemaskEditorPanel::OnTileColorChanged(int32 tileNumber, Color color)
 
 void TilemaskEditorPanel::OnCommandExecuted(SceneEditor2* scene, const Command2* command, bool redo)
 {
-	if (scene != GetActiveScene() || !GetEditorEnabled() || command->GetId() != CMDID_META_OBJ_MODIFY)
+	if (scene != GetActiveScene() || !GetEditorEnabled() || command->GetId() != CMDID_SET_TILE_COLOR)
 	{
 		return;
 	}

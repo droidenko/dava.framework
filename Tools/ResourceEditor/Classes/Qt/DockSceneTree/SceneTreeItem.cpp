@@ -37,7 +37,9 @@
 
 SceneTreeItem::SceneTreeItem(eItemType _type)
 	: type(_type)
-{ }
+{ 
+	SetAcceptedByFilter(false);
+}
 
 SceneTreeItem::~SceneTreeItem()
 { }
@@ -60,7 +62,7 @@ QVariant SceneTreeItem::data(int role) const
 	case EIDR_Data:
 		v = ItemData();
 		break;
-    case Qt::BackgroundColorRole:
+	case Qt::BackgroundColorRole:
         v = ItemBackgroundColor();
         break;
 	default:
@@ -87,10 +89,30 @@ QIcon SceneTreeItem::ItemIcon() const
 	return icon;
 }
 
-
 QVariant SceneTreeItem::ItemBackgroundColor() const
 {
-	return QStandardItem::data(Qt::BackgroundColorRole);
+	QVariant ret;
+
+	if(IsAcceptedByFilter())
+	{
+		ret.setValue(QColor(0, 255, 0, 20));
+	}
+	else
+	{
+		ret = QStandardItem::data(Qt::BackgroundColorRole);
+	}
+
+	return ret;
+}
+
+bool SceneTreeItem::IsAcceptedByFilter() const
+{
+	return data(EIDR_AcceptedByFilter).toBool();
+}
+
+void SceneTreeItem::SetAcceptedByFilter(bool accepted)
+{
+	setData(accepted, EIDR_AcceptedByFilter);
 }
 
 // =========================================================================================

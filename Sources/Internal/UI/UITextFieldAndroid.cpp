@@ -431,6 +431,14 @@ void UITextFieldAndroid::HideField()
 	jniTextField.HideField();
 }
 
+void UITextFieldAndroid::SetVisible(bool isVisible)
+{
+	if (isVisible)
+		ShowField();
+	else
+		HideField();
+}
+
 void UITextFieldAndroid::SetIsPassword(bool isPassword)
 {
 	JniTextField jniTextField(id);

@@ -245,7 +245,7 @@ bool SceneFile::ReadTexture()
     sceneFP->Read(&hasOpacity, sizeof(hasOpacity));
 	
 	DAVA::Texture * texture = DAVA::Texture::CreateFromFile(tname);//textureDef.name);//0;
-	if (debugLogEnabled)Logger::FrameworkDebug("- Texture: %s hasOpacity: %s %s\n", textureDef.name, (hasOpacity) ? ("yes") : ("no"), Texture::GetPixelFormatString(texture->format));
+	if (debugLogEnabled)Logger::FrameworkDebug("- Texture: %s hasOpacity: %s %s\n", textureDef.name, (hasOpacity) ? ("yes") : ("no"), Texture::GetPixelFormatString(texture->texDescriptor->format));
     
     SafeRelease(texture);
 	return true;
@@ -329,7 +329,7 @@ bool SceneFile::ReadMaterial()
 	mat->reflectivity = materialDef.reflectivity;
 	mat->transparency = materialDef.transparency;
 	mat->transparent = materialDef.transparent;
-    mat->SetOpaque(materialDef.hasOpacity != 0);
+    mat->SetAlphatest(materialDef.hasOpacity != 0);
 	
     // retain object when we put it to array
     materials.push_back(SafeRetain(mat));
@@ -607,7 +607,7 @@ bool SceneFile::ReadSceneNode(Entity * parentNode, int level)
             
             DVASSERT(materialIndex < (int)materials.size());
 
-			if (debugLogEnabled)Logger::FrameworkDebug("%s polygon group: meshIndex:%d polyGroupIndex:%d materialIndex:%d\n", GetIndentString('-', level + 1), meshIndex, polyGroupIndex, materialIndex); 
+			if (debugLogEnabled)Logger::FrameworkDebug("%s polygon group: meshIndex:%d polyGroupIndex:%d materialIndex:%d\n", GetIndentString('-', level + 1).c_str(), meshIndex, polyGroupIndex, materialIndex);
 		
 			if (def.nodeType == SceneNodeDef::SCENE_NODE_MESH)
 			{
@@ -625,7 +625,7 @@ bool SceneFile::ReadSceneNode(Entity * parentNode, int level)
             parentNode->AddNode(node);
         }
 	}
-	if (debugLogEnabled)Logger::FrameworkDebug("%s node: %s typeId: %d childCount: %d type: %s\n", GetIndentString('-', level), name, def.nodeType, def.childCount, nodeType); 
+	if (debugLogEnabled)Logger::FrameworkDebug("%s node: %s typeId: %d childCount: %d type: %s\n", GetIndentString('-', level).c_str(), name, def.nodeType, def.childCount, nodeType);
 	
     if (parentNode == scene) 
     {

@@ -34,6 +34,7 @@
 #include "Render/Highlevel/RenderObject.h"
 #include "Render/Highlevel/RenderBatch.h"
 #include "FileSystem/FilePath.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA 
 {
@@ -125,12 +126,12 @@ public:
     /**
         \brief virtual function to save node to KeyedArchive
      */
-    virtual void Save(KeyedArchive * archive, SceneFileV2 * sceneFile);
+    virtual void Save(KeyedArchive * archive, SerializationContext * serializationContext);
     
     /**
         \brief virtual function to load node to KeyedArchive
      */
-	virtual void Load(KeyedArchive * archive, SceneFileV2 * sceneFile);
+	virtual void Load(KeyedArchive * archive, SerializationContext * serializationContext);
 
 	/**
         \brief Add lightmap texture.

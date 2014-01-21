@@ -1,0 +1,10 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        MaterialDefines: ["MATERIAL_LIGHTMAP"]
+        Uniforms:
+            lightmap: 1
+
+        RenderPass:
+            Name: "ForwardPass"
+            Shader: "~res:/Materials/Shaders/Old/materials"

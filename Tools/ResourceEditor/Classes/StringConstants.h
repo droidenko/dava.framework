@@ -79,32 +79,35 @@ namespace ResourceEditor
     static const String TAG = "tag";
 	
 	//settings properties names
-	static const String SETTINGS_3D_DATA_SOURCEPATH	=	"3dDataSourcePath";
-	static const String SETTINGS_PROJECT_PATH =			"ProjectPath";
-	static const String SETTINGS_CAMERA_SPEED_INDEX =	"CameraSpeedIndex";
-	static const String SETTINGS_CAMERA_SPEED_VALUE =	"CameraSpeedValue";
-	static const String SETTINGS_SCREEN_WIDTH =			"ScreenWidth";
-	static const String SETTINGS_SCREEN_HEIGHT =		"ScreenHeight";
-	static const String SETTINGS_LANGUAGE =				"Language";
-	static const String SETTINGS_SHOW_OUTPUT =			"ShowOutput";
-	static const String SETTINGS_LEFT_PANEL_WIDTH =		"LeftPanelWidth";
-	static const String SETTINGS_RIGHT_PANEL_WIDTH =	"RightPanelWidth";
-	static const String SETTINGS_LOD_LAYER =			"LODLayer";
-	static const String SETTINGS_LAST_OPENED_FILE =		"LastOpenedFile";
-	static const String SETTINGS_LAST_OPENED_FILES_COUNT = "LastOpenedFilesCount";
-	static const String SETTINGS_DRAW_GRID =			"DrawGrid";
-	static const String SETTINGS_ENABLE_IMPOSTERS =		"enableImposters";
-	static const String SETTINGS_TEXTURE_VIEW_GPU =		"TextureViewGPU";
-	static const String SETTINGS_MATERIALS_AMBIENT =	"materials.ambient";
-	static const String SETTINGS_MATERIALS_DIFFUSE =	"materials.diffuse";
-	static const String SETTINGS_MATERIALS_SPECULAR	=	"materials.specular";
-	static const String SETTINGS_DESIGNER_NAME =		"DesignerName";
-	static const String SETTINGS_PREVIEW_DIALOG_ENABLED = "PreviewDialogEnabled";
-
+	static const char* SETTINGS_3D_DATA_SOURCEPATH	=	"3dDataSourcePath";
+	static const char* SETTINGS_PROJECT_PATH =			"ProjectPath";
+	static const char* SETTINGS_CAMERA_SPEED_INDEX =	"CameraSpeedIndex";
+	static const char* SETTINGS_CAMERA_SPEED_VALUE =	"CameraSpeedValue";
+	static const char* SETTINGS_SCREEN_WIDTH =			"ScreenWidth";
+	static const char* SETTINGS_SCREEN_HEIGHT =			"ScreenHeight";
+	static const char* SETTINGS_LANGUAGE =				"Language";
+	static const char* SETTINGS_SHOW_OUTPUT =			"ShowOutput";
+	static const char* SETTINGS_LEFT_PANEL_WIDTH =		"LeftPanelWidth";
+	static const char* SETTINGS_RIGHT_PANEL_WIDTH =		"RightPanelWidth";
+	static const char* SETTINGS_LOD_LAYER =				"LODLayer";
+	static const char* SETTINGS_LAST_OPENED_FILE =		"LastOpenedFile";
+	//static const char* SETTINGS_LAST_OPENED_FILES_COUNT = "LastOpenedFilesCount";
+	static const char* SETTINGS_DRAW_GRID =				"DrawGrid";
+	static const char* SETTINGS_GRID_STEP =				"GridStep";
+	static const char* SETTINGS_ENABLE_IMPOSTERS =		"enableImposters";
+	static const char* SETTINGS_TEXTURE_VIEW_GPU =		"TextureViewGPU";
+	static const char* SETTINGS_MATERIALS_AMBIENT =		"materials.ambient";
+	static const char* SETTINGS_MATERIALS_DIFFUSE =		"materials.diffuse";
+	static const char* SETTINGS_MATERIALS_SPECULAR	=	"materials.specular";
+	static const char* SETTINGS_DESIGNER_NAME =			"DesignerName";
+	static const char* SETTINGS_PREVIEW_DIALOG_ENABLED = "PreviewDialogEnabled";
+	static const char* SETTINGS_DEFAULT_FOV =			"DefaultCameraFOV";
+	static const char* SETTINGS_EDITOR_VERSION =		"editor.version";
+	static const char* SETTINGS_CUBEMAP_LAST_FACE_DIR =	"cubemap_last_face_dir";
+	static const char* SETTINGS_CUBEMAP_LAST_PROJECT_DIR = "cubemap_last_proj_dir";
+	
 	static const String CUSTOM_COLOR_TEXTURE_PROP = "customColorTexture";
 	
-	static const String CUBEMAP_LAST_PROJECT_DIR_KEY = "cubemap_last_proj_dir";
-
 	static const String TILEMASK_EDITOR_BRUSH_SIZE_CAPTION	= "Brush\nsize:";
 	static const String TILEMASK_EDITOR_BRUSH_IMAGE_CAPTION	= "Brush\nimage:";
 	static const String TILEMASK_EDITOR_DRAW_CAPTION		= "Normal draw";

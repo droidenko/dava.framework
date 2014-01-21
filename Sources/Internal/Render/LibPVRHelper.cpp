@@ -2472,7 +2472,11 @@ PVRHeaderV3 LibPVRHelper::GetHeader(const uint8* pvrData, const int32 pvrDataSiz
         //Check if it's an old header format
         if((*(uint32*)pvrData)!=PVRTEX3_IDENT)
         {
-            ConvertOldTextureHeaderToV3((PVRHeaderV2 *)pvrData, header);
+            PVRHeaderV2 *pvrV2Header = (PVRHeaderV2 *)pvrData;
+            if(pvrV2Header->dwPVR == PVRTEX2_IDENT)
+            {
+                ConvertOldTextureHeaderToV3((PVRHeaderV2 *)pvrData, header);
+            }
         }
         else
         {

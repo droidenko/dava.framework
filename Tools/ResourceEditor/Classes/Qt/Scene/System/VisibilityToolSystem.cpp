@@ -32,13 +32,13 @@
 #include "CollisionSystem.h"
 #include "SelectionSystem.h"
 #include "ModifSystem.h"
-#include "../SceneEditor2.h"
+#include "Scene/SceneEditor2.h"
 #include "LandscapeEditorDrawSystem/LandscapeProxy.h"
 #include "LandscapeEditorDrawSystem/HeightmapProxy.h"
 #include "LandscapeEditorDrawSystem/VisibilityToolProxy.h"
-#include "../SceneEditor/EditorConfig.h"
-#include "../SceneSignals.h"
-#include "../../../Commands2/VisibilityToolActions.h"
+#include "Deprecated/EditorConfig.h"
+#include "Scene/SceneSignals.h"
+#include "Commands2/VisibilityToolActions.h"
 
 VisibilityToolSystem::VisibilityToolSystem(Scene* scene)
 :	SceneSystem(scene)
@@ -303,6 +303,7 @@ void VisibilityToolSystem::PrepareConfig()
 		{
 			std::sscanf(heights[0].c_str(), "%f", &visibilityPointHeight);
 
+            areaPointHeights.reserve(heights.size() - 1);
 			for(uint32 i = 1; i < heights.size(); ++i)
 			{
 				float32 val;
@@ -441,14 +442,18 @@ void VisibilityToolSystem::PerformHeightTest(Vector3 spectatorCoords,
 	uint32	sideLength = (circleRadius * 2) / density;
 
 	Vector< Vector< Vector< Vector3 > > > points;
+    points.reserve(hight);
 
 	for(uint32 layerIndex = 0; layerIndex < hight; ++layerIndex)
 	{
 		Vector<Vector<Vector3> > xLine;
+        xLine.reserve(sideLength);
 		for(uint32 x = 0; x < sideLength; ++x)
 		{
 			float xOfPoint = startOfCounting.x + density * x;
 			Vector<Vector3> yLine;
+            yLine.reserve(sideLength);
+            
 			for(uint32 y = 0; y < sideLength; ++y)
 			{
 				float yOfPoint = startOfCounting.y + density * y;
@@ -549,6 +554,8 @@ void VisibilityToolSystem::DrawVisibilityAreaPoints(const Vector<DAVA::Vector3> 
 		uint32 colorIndex = (uint32)points[i].z;
 		Vector2 pos(points[i].x, points[i].y);
 
+		UniqueHandle renderState = manager->GetDefault2DNoTextureStateHandle();
+		manager->SetRenderState(renderState);
 		manager->SetColor(areaPointColors[colorIndex]);
 		helper->DrawPoint(pos, 5.f);
 	}

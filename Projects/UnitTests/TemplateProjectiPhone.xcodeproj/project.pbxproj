@@ -30,12 +30,14 @@
 		74338640179D18CF0014FBD3 /* UIListTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7433863C179D18CE0014FBD3 /* UIListTest.cpp */; };
 		74338641179D18CF0014FBD3 /* UIScrollViewTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7433863E179D18CE0014FBD3 /* UIScrollViewTest.cpp */; };
 		7497447517B3D61800282DAA /* AlignTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7497447317B3D61800282DAA /* AlignTest.cpp */; };
+		74AF633D18852FE100070C35 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74AF633C18852FE100070C35 /* Security.framework */; };
 		74BF981A1876B3A8001D4CFE /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74BF98191876B3A7001D4CFE /* GameController.framework */; };
 		84C8F71516D3D16000FAC7DF /* DPITest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C8F71316D3D16000FAC7DF /* DPITest.cpp */; };
 		C19E4FAA16C5488C00D0AC28 /* DLCSystemTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C19E4FA816C5488C00D0AC28 /* DLCSystemTests.cpp */; };
 		CC24802616DF6CE000183D40 /* InputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC24802416DF6CE000183D40 /* InputTest.cpp */; };
 		CE1AA0781625B8D40005BE5E /* KeyedArchiveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE1AA0771625B8D40005BE5E /* KeyedArchiveTest.cpp */; };
 		CEC6DA17162D95A6009E5F1D /* KeyedArchiveYamlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC6DA16162D95A6009E5F1D /* KeyedArchiveYamlTest.cpp */; };
+		E801A588183FAB8E00D5B770 /* ComponentsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E801A586183FAB8E00D5B770 /* ComponentsTest.cpp */; };
 		E80842BA1639147A002A6A77 /* TextureUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E80842B81639147A002A6A77 /* TextureUtils.cpp */; };
 		E81B47DA16F896070025AF23 /* FilePathTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E81B47D816F896070025AF23 /* FilePathTest.cpp */; };
 		E81F2AF516BFA4E600C4545E /* MaterialCompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E81F2AF316BFA4E600C4545E /* MaterialCompilerTest.cpp */; };
@@ -119,6 +121,7 @@
 		7433863F179D18CF0014FBD3 /* UIScrollViewTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScrollViewTest.h; sourceTree = "<group>"; };
 		7497447317B3D61800282DAA /* AlignTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignTest.cpp; sourceTree = "<group>"; };
 		7497447417B3D61800282DAA /* AlignTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignTest.h; sourceTree = "<group>"; };
+		74AF633C18852FE100070C35 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		74BF98191876B3A7001D4CFE /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		84C8F71316D3D16000FAC7DF /* DPITest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DPITest.cpp; sourceTree = "<group>"; };
 		84C8F71416D3D16000FAC7DF /* DPITest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DPITest.h; sourceTree = "<group>"; };
@@ -131,6 +134,8 @@
 		CE1AA0771625B8D40005BE5E /* KeyedArchiveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedArchiveTest.cpp; sourceTree = "<group>"; };
 		CEC6DA15162D959B009E5F1D /* KeyedArchiveYamlTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyedArchiveYamlTest.h; sourceTree = "<group>"; };
 		CEC6DA16162D95A6009E5F1D /* KeyedArchiveYamlTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedArchiveYamlTest.cpp; sourceTree = "<group>"; };
+		E801A586183FAB8E00D5B770 /* ComponentsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentsTest.cpp; sourceTree = "<group>"; };
+		E801A587183FAB8E00D5B770 /* ComponentsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentsTest.h; sourceTree = "<group>"; };
 		E80842B81639147A002A6A77 /* TextureUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureUtils.cpp; sourceTree = "<group>"; };
 		E80842B91639147A002A6A77 /* TextureUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureUtils.h; sourceTree = "<group>"; };
 		E80D2FB0164D518100C13D70 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
@@ -180,6 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74AF633D18852FE100070C35 /* Security.framework in Frameworks */,
 				74BF981A1876B3A8001D4CFE /* GameController.framework in Frameworks */,
 				1770DF4717DF497600000391 /* MediaPlayer.framework in Frameworks */,
 				496ABE8D179E6FEB00BCA6E9 /* AdSupport.framework in Frameworks */,
@@ -266,6 +272,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				74AF633C18852FE100070C35 /* Security.framework */,
 				74BF98191876B3A7001D4CFE /* GameController.framework */,
 				496ABE8C179E6FEB00BCA6E9 /* AdSupport.framework */,
 				49A0DB281796F8050000970C /* MessageUI.framework */,
@@ -286,6 +293,8 @@
 		5C7BE30F156E0EF400F9F538 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				E801A586183FAB8E00D5B770 /* ComponentsTest.cpp */,
+				E801A587183FAB8E00D5B770 /* ComponentsTest.h */,
 				7497447317B3D61800282DAA /* AlignTest.cpp */,
 				7497447417B3D61800282DAA /* AlignTest.h */,
 				7433863C179D18CE0014FBD3 /* UIListTest.cpp */,
@@ -484,6 +493,7 @@
 				FEC95C7115B409E500588BBF /* MemoryAllocatorsTest.cpp in Sources */,
 				02BC3C0715E6399C0047F67F /* SplitTest.cpp in Sources */,
 				E8F98C48161AE9B900B50BDA /* PVRTest.cpp in Sources */,
+				E801A588183FAB8E00D5B770 /* ComponentsTest.cpp in Sources */,
 				E80842BA1639147A002A6A77 /* TextureUtils.cpp in Sources */,
 				CE1AA0781625B8D40005BE5E /* KeyedArchiveTest.cpp in Sources */,
 				CEC6DA17162D95A6009E5F1D /* KeyedArchiveYamlTest.cpp in Sources */,

@@ -267,6 +267,7 @@ void EditorLODData::GetDataFromSelection()
 DAVA::uint32 EditorLODData::GetTrianglesForLodLayer(DAVA::LodComponent::LodData *lodData, bool checkVisibility)
 {
     Vector<Entity *> meshes;
+    meshes.reserve(lodData->nodes.size());
     
     for(int32 n = 0; n < (int32)lodData->nodes.size(); ++n)
     {

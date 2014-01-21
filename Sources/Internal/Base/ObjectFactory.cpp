@@ -60,17 +60,6 @@ void ObjectFactory::RegisterObjectCreator(const String & name, CreateObjectFunc 
     nameMap[info.name()] = alias;
     sizeMap[name] = size;
 }
-	
-BaseObject * ObjectFactory::New(const String & name)
-{
-	Map<String, CreateObjectFunc>::iterator it = creatorMap.find(name);
-	if (it != creatorMap.end())
-	{
-		CreateObjectFunc newFunc = it->second;
-		return (newFunc)();
-	}
-	return 0;
-}
     
 void ObjectFactory::Dump()
 {

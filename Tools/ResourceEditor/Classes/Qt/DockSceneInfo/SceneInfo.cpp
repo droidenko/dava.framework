@@ -30,28 +30,29 @@
 
 #include "DAVAEngine.h"
 #include "DockSceneInfo/SceneInfo.h"
-#include "../../SceneEditor/EditorSettings.h"
-#include "../../EditorScene.h"
-
-#include "../../CommandLine/CommandLineManager.h"
+#include "../Qt/Settings/SettingsManager.h"
+#include "CommandLine/CommandLineManager.h"
 
 
 #include "Main/QtUtils.h"
 
 #include "Render/TextureDescriptor.h"
 
-#include "../../ImageTools/ImageTools.h"
+#include "ImageTools/ImageTools.h"
 
-#include "../Qt/CubemapEditor/MaterialHelper.h"
+#include "CubemapEditor/MaterialHelper.h"
 
-#include "Classes/Qt/Scene/SceneSignals.h"
-#include "Classes/Qt/Scene/SceneEditor2.h"
-#include "Classes/Qt/DockLODEditor/EditorLODData.h"
-#include "Classes/Qt/Main/mainwindow.h"
+#include "Scene/SceneSignals.h"
+#include "Scene/SceneEditor2.h"
+#include "Scene/SceneHelper.h"
+#include "DockLODEditor/EditorLODData.h"
+#include "Main/mainwindow.h"
 
 #include <QHeaderView>
 #include <QTimer>
 #include <QPalette>
+
+#include "Render/Material/NMaterialNames.h"
 
 using namespace DAVA;
 
@@ -59,14 +60,15 @@ SceneInfo::SceneInfo(QWidget *parent /* = 0 */)
 	: QtPropertyEditor(parent)
     , activeScene(NULL)
 	, landscape(NULL)
-    , treeStateHelper(this, this->curModel)
+    , treeStateHelper(this, curModel)
+	, isUpToDate(false)
 {
 	// global scene manager signals
     connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditor2 *)), SLOT(SceneActivated(SceneEditor2 *)));
     connect(SceneSignals::Instance(), SIGNAL(Deactivated(SceneEditor2 *)), SLOT(SceneDeactivated(SceneEditor2 *)));
     connect(SceneSignals::Instance(), SIGNAL(StructureChanged(SceneEditor2 *, DAVA::Entity *)), SLOT(SceneStructureChanged(SceneEditor2 *, DAVA::Entity *)));
     connect(SceneSignals::Instance(), SIGNAL(SelectionChanged(SceneEditor2 *, const EntityGroup *, const EntityGroup *)), SLOT(SceneSelectionChanged(SceneEditor2 *, const EntityGroup *, const EntityGroup *)));
-    
+
 	// MainWindow actions
 	posSaver.Attach(this, "DockSceneInfo");
 	
@@ -92,10 +94,8 @@ void SceneInfo::InitializeInfo()
     
     InitializeGeneralSection();
     Initialize3DDrawSection();
-    InitializeMaterialsSection();
     InitializeLODSectionInFrame();
     InitializeLODSectionForSelection();
-    InitializeParticlesSection();
     InitializeSpeedTreeInfoSelection();
 }
 
@@ -104,8 +104,14 @@ void SceneInfo::InitializeGeneralSection()
     QtPropertyData* header = CreateInfoHeader("General Scene Info");
   
     AddChild("Entities Count", header);
-    AddChild("DataNodes Count", header);
+    AddChild("Emitters Count", header);
+
     AddChild("All Textures Size", header);
+	AddChild("Material Textures Size", header);
+    AddChild("Particles Textures Size", header);
+    
+    AddChild("Sprites Count", header);
+    AddChild("Particle Textures Count", header);
 }
 
 void SceneInfo::RefreshSceneGeneralInfo()
@@ -113,8 +119,14 @@ void SceneInfo::RefreshSceneGeneralInfo()
     QtPropertyData* header = GetInfoHeader("General Scene Info");
 
     SetChild("Entities Count", (uint32)nodesAtScene.size(), header);
-    SetChild("DataNodes Count", (uint32)dataNodesAtScene.size(), header);
+    SetChild("Emitters Count", emittersCount, header);
+
     SetChild("All Textures Size", QString::fromStdString(SizeInBytesToString((float32)(sceneTexturesSize + particleTexturesSize))), header);
+	SetChild("Material Textures Size", QString::fromStdString(SizeInBytesToString((float32)sceneTexturesSize)), header);
+    SetChild("Particles Textures Size", QString::fromStdString(SizeInBytesToString((float32)particleTexturesSize)), header);
+    
+    SetChild("Sprites Count", spritesCount, header);
+    SetChild("Particle Textures Count", (uint32)particleTextures.size(), header);
 }
 
 void SceneInfo::Initialize3DDrawSection()
@@ -149,14 +161,6 @@ void SceneInfo::Refresh3DDrawInfo()
     SetChild("TriangleFan", renderStats.primitiveCount[PRIMITIVETYPE_TRIANGLEFAN], header);
 }
 
-void SceneInfo::InitializeMaterialsSection()
-{
-    QtPropertyData* header = CreateInfoHeader("Materials");
-    
-    AddChild("Materials Count", header);
-    AddChild("Textures Count", header);
-    AddChild("Textures Size", header);
-}
 
 void SceneInfo::InitializeSpeedTreeInfoSelection()
 {
@@ -186,21 +190,13 @@ void SceneInfo::RefreshSpeedTreeInfoSelection()
     SetChild("SpeedTree Leafs Square Div Y", speedTreeLeafSquareDivY, header);
 }
 
-void SceneInfo::RefreshMaterialsInfo()
-{
-    QtPropertyData* header = GetInfoHeader("Materials");
-    SetChild("Materials Count", (uint32)materialsAtScene.size(), header);
-    SetChild("Textures Count", (uint32)sceneTextures.size(), header);
-    SetChild("Textures Size", QString::fromStdString(SizeInBytesToString((float32)sceneTexturesSize)), header);
-}
-
 void SceneInfo::InitializeLODSectionInFrame()
 {
     QtPropertyData* header = CreateInfoHeader("LOD in Frame");
     
     for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS; ++i)
     {
-        AddChild(Format("Objects LOD%d Triangles", i), header);
+        AddChild(Format("Objects LOD%d Triangles", i).c_str(), header);
     }
     
     AddChild("All LOD Triangles", header);
@@ -215,7 +211,7 @@ void SceneInfo::InitializeLODSectionForSelection()
     
     for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS; ++i)
     {
-        AddChild(Format("Objects LOD%d Triangles", i), header);
+        AddChild(Format("Objects LOD%d Triangles", i).c_str(), header);
     }
     
     AddChild("All LOD Triangles", header);
@@ -231,7 +227,7 @@ void SceneInfo::RefreshLODInfoInFrame()
     uint32 lodTriangles = 0;
     for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS; ++i)
     {
-        SetChild(Format("Objects LOD%d Triangles", i), lodInfoInFrame.trianglesOnLod[i], header);
+        SetChild(Format("Objects LOD%d Triangles", i).c_str(), lodInfoInFrame.trianglesOnLod[i], header);
         
         lodTriangles += lodInfoInFrame.trianglesOnLod[i];
     }
@@ -251,7 +247,7 @@ void SceneInfo::RefreshLODInfoForSelection()
     uint32 lodTriangles = 0;
     for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS; ++i)
     {
-        SetChild(Format("Objects LOD%d Triangles", i), lodInfoSelection.trianglesOnLod[i], header);
+        SetChild(Format("Objects LOD%d Triangles", i).c_str(), lodInfoSelection.trianglesOnLod[i], header);
         
         lodTriangles += lodInfoSelection.trianglesOnLod[i];
     }
@@ -263,35 +259,13 @@ void SceneInfo::RefreshLODInfoForSelection()
 }
 
 
-void SceneInfo::InitializeParticlesSection()
+uint32 SceneInfo::CalculateTextureSize(const TexturesMap &textures)
 {
-    QtPropertyData* header = CreateInfoHeader("Particles");
-
-    AddChild("Emitters Count", header);
-    AddChild("Sprites Count", header);
-    AddChild("Textures Count", header);
-    AddChild("Textures Size", header);
-}
-
-void SceneInfo::RefreshParticlesInfo()
-{
-    QtPropertyData* header = GetInfoHeader("Particles");
-
-    SetChild("Emitters Count", emittersCount, header);
-    SetChild("Sprites Count", spritesCount, header);
-    SetChild("Textures Count", (uint32)particleTextures.size(), header);
-    SetChild("Textures Size", QString::fromStdString(SizeInBytesToString((float32)particleTexturesSize)), header);
-}
-
-uint32 SceneInfo::CalculateTextureSize(const Map<String, Texture *> &textures)
-{
-    KeyedArchive *settings = EditorSettings::Instance()->GetSettings();
-    String projectPath = settings->GetString("ProjectPath");
-
+	String projectPath = SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString();
     uint32 textureSize = 0;
     
-    Map<String, Texture *>::const_iterator endIt = textures.end();
-    for(Map<String, Texture *>::const_iterator it = textures.begin(); it != endIt; ++it)
+    TexturesMap::const_iterator endIt = textures.end();
+    for(TexturesMap::const_iterator it = textures.begin(); it != endIt; ++it)
     {
         FilePath pathname = it->first;
         Texture *tex = it->second;
@@ -303,16 +277,7 @@ uint32 SceneInfo::CalculateTextureSize(const Map<String, Texture *> &textures)
             continue;
         }
         
-        TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(pathname);
-        if(!descriptor)
-        {
-            Logger::Error("[SceneInfo::CalculateTextureSize] Can't create descriptor for texture %s", pathname.GetAbsolutePathname().c_str());
-            continue;
-        }
-        
-        textureSize += ImageTools::GetTexturePhysicalSize(descriptor, EditorSettings::Instance()->GetTextureViewGPU());
-        
-        SafeRelease(descriptor);
+        textureSize += ImageTools::GetTexturePhysicalSize(tex->GetDescriptor(), (eGPUFamily)SettingsManager::Instance()->GetValue("TextureViewGPU", SettingsManager::INTERNAL).AsInt32());
     }
 
     return textureSize;
@@ -327,28 +292,24 @@ void SceneInfo::CollectSceneData(SceneEditor2 *scene)
     if(scene)
     {
         scene->GetChildNodes(nodesAtScene);
-        scene->GetDataNodes(materialsAtScene);
 		//VI: remove skybox materials so they not to appear in the lists
-		MaterialHelper::FilterMaterialsByType(materialsAtScene, DAVA::Material::MATERIAL_SKYBOX);
+		//MaterialHelper::FilterMaterialsByType(materialsAtScene, DAVA::Material::MATERIAL_SKYBOX);
 
-        scene->GetDataNodes(dataNodesAtScene);
-        
-        CollectSceneTextures();
+        SceneHelper::EnumerateSceneTextures(activeScene, sceneTextures);
+        sceneTexturesSize = CalculateTextureSize(sceneTextures);
+
         CollectParticlesData();
+        particleTexturesSize = CalculateTextureSize(particleTextures);
         
         CollectLODDataInFrame();
         CollectLODDataForSelection();
         
-        sceneTexturesSize = CalculateTextureSize(sceneTextures);
-        particleTexturesSize = CalculateTextureSize(particleTextures);
     }
 }
 
 void SceneInfo::ClearData()
 {
     nodesAtScene.clear();
-    materialsAtScene.clear();
-    dataNodesAtScene.clear();
     sceneTextures.clear();
     particleTextures.clear();
     
@@ -367,45 +328,6 @@ void SceneInfo::ClearData()
 void SceneInfo::ClearSelectionData()
 {
     lodInfoSelection.Clear();
-}
-
-void SceneInfo::CollectSceneTextures()
-{
-    for(int32 n = 0; n < (int32)nodesAtScene.size(); ++n)
-    {
-        RenderObject *ro = GetRenderObject(nodesAtScene[n]);
-        if(!ro) continue;
-        
-        uint32 count = ro->GetRenderBatchCount();
-        for(uint32 b = 0; b < count; ++b)
-        {
-            RenderBatch *renderBatch = ro->GetRenderBatch(b);
-            
-            Material *material = renderBatch->GetMaterial();
-            if(material)
-            {
-                for(int32 t = 0; t < Material::TEXTURE_COUNT; ++t)
-                {
-                    CollectTexture(sceneTextures, material->GetTextureName((Material::eTextureLevel)t), material->GetTexture((Material::eTextureLevel)t));
-                }
-            }
-            
-            InstanceMaterialState *instanceMaterial = renderBatch->GetMaterialInstance();
-            if(instanceMaterial)
-            {
-                CollectTexture(sceneTextures, instanceMaterial->GetLightmapName(), instanceMaterial->GetLightmap());
-            }
-        }
-        
-        if(ro->GetType() == RenderObject::TYPE_LANDSCAPE)
-        {
-            Landscape *land = static_cast<Landscape *>(ro);
-            for(int32 t = 0; t < Landscape::TEXTURE_COUNT; ++t)
-            {
-                CollectTexture(sceneTextures, land->GetTextureName((Landscape::eTextureLevel)t), land->GetTexture((Landscape::eTextureLevel)t));
-            }
-        }
-    }
 }
 
 void SceneInfo::CollectParticlesData()
@@ -523,11 +445,11 @@ DAVA::uint32 SceneInfo::GetTrianglesForNotLODEntityRecursive(DAVA::Entity *entit
     return triangles;
 }
 
-void SceneInfo::CollectTexture(Map<String, Texture *> &textures, const FilePath &name, Texture *tex)
+void SceneInfo::CollectTexture(TexturesMap &textures, const FilePath &name, Texture *tex)
 {
     if(!name.IsEmpty() && tex)
 	{
-		textures[name.GetAbsolutePathname()] = tex;
+		textures[FILEPATH_MAP_KEY(name)] = tex;
 	}
 }
 
@@ -535,41 +457,40 @@ void SceneInfo::CollectTexture(Map<String, Texture *> &textures, const FilePath 
 QtPropertyData * SceneInfo::CreateInfoHeader(const QString &key)
 {
     QtPropertyData* headerData = new QtPropertyData("");
-    headerData->SetFlags(QtPropertyData::FLAG_IS_NOT_EDITABLE);
-
-    QPair<QtPropertyItem*, QtPropertyItem*> prop = AppendProperty(key, headerData);
-    prop.first->setBackground(QBrush(QColor(Qt::lightGray)));
-    prop.second->setBackground(QBrush(QColor(Qt::lightGray)));
-    
-    return headerData;
+    headerData->SetEditable(false);
+	headerData->SetBackground(QBrush(QColor(Qt::lightGray)));
+    AppendProperty(key, headerData);
+	return headerData;
 }
 
 QtPropertyData * SceneInfo::GetInfoHeader(const QString &key)
 {
-    QtPropertyData * header = GetPropertyData(key);
-    DVASSERT(header);
-    
-    return header;
+	QtPropertyData *header = NULL;
+    QtPropertyData *root = GetRootProperty();
+	if(NULL != root)
+	{
+		header = root->ChildGet(key);
+	}
+	return header;
 }
 
 void SceneInfo::AddChild(const QString & key, QtPropertyData *parent)
 {
     QtPropertyData *propData = new QtPropertyData(0);
-    propData->SetFlags(QtPropertyData::FLAG_IS_NOT_EDITABLE);
+	propData->SetEditable(false);
     parent->ChildAdd(key, propData);
 }
 
 void SceneInfo::SetChild(const QString & key, const QVariant &value, QtPropertyData *parent)
 {
-    for (int32 c = 0; c < parent->ChildCount(); ++c)
-    {
-        QPair<QString, QtPropertyData*> pair = parent->ChildGet(c);
-        if(pair.first == key)
-        {
-            pair.second->SetValue(value);
-            return;
-        }
-    }
+	if(NULL != parent)
+	{
+		QtPropertyData *propData = parent->ChildGet(key);
+		if(NULL != propData)
+		{
+			propData->SetValue(value);
+		}
+	}
 }
 
 void SceneInfo::SaveTreeState()
@@ -596,6 +517,12 @@ void SceneInfo::RestoreTreeState()
 
 void SceneInfo::showEvent ( QShowEvent * event )
 {
+	if(!isUpToDate)
+	{
+		isUpToDate = true;
+		RefreshAllData(activeScene);
+	}
+
     QtPropertyEditor::showEvent(event);
 }
 
@@ -617,10 +544,8 @@ void SceneInfo::RefreshAllData(SceneEditor2 *scene)
 
 	RefreshSceneGeneralInfo();
 	Refresh3DDrawInfo();
-	RefreshMaterialsInfo();
 	RefreshLODInfoInFrame();
     RefreshLODInfoForSelection();
-	RefreshParticlesInfo();
     RefreshSpeedTreeInfoSelection();
 
 	RestoreTreeState();
@@ -630,7 +555,12 @@ void SceneInfo::SceneActivated(SceneEditor2 *scene)
 {
     activeScene = scene;
     landscape = FindLandscape(activeScene);
-    RefreshAllData(scene);
+	
+	isUpToDate = isVisible();
+	if(isUpToDate)
+	{
+		RefreshAllData(scene);
+	}
 }
 
 void SceneInfo::SceneDeactivated(SceneEditor2 *scene)
@@ -648,7 +578,12 @@ void SceneInfo::SceneStructureChanged(SceneEditor2 *scene, DAVA::Entity *parent)
     if(activeScene == scene)
     {
         landscape = FindLandscape(activeScene);
-        RefreshAllData(scene);
+
+		isUpToDate = isVisible();
+		if(isUpToDate)
+		{
+			RefreshAllData(scene);
+		}
     }
 }
 
@@ -686,7 +621,7 @@ SceneInfo::SpeedTreeInfo SceneInfo::GetSpeedTreeLeafsSquare(DAVA::RenderObject *
         for(int32 i = 0; i < rbCount; ++i)
         {
             RenderBatch * rb = renderObject->GetRenderBatch(i);
-            if(rb->GetMaterial() && rb->GetMaterial()->type == Material::MATERIAL_SPEED_TREE_LEAF)
+            if(rb->GetMaterial() && rb->GetMaterial()->GetMaterialTemplate()->name == NMaterialName::SPEEDTREE_LEAF)
             {
                 PolygonGroup * pg = rb->GetPolygonGroup();
                 int32 triangleCount = pg->GetIndexCount() / 3;
@@ -719,4 +654,23 @@ SceneInfo::SpeedTreeInfo SceneInfo::GetSpeedTreeLeafsSquare(DAVA::RenderObject *
     }
     
     return info;
+}
+
+void SceneInfo::TexturesReloaded()
+{
+    sceneTextures.clear();
+    SceneHelper::EnumerateSceneTextures(activeScene, sceneTextures);
+    sceneTexturesSize = CalculateTextureSize(sceneTextures);
+    
+    RefreshSceneGeneralInfo();
+}
+
+void SceneInfo::SpritesReloaded()
+{
+    particleTextures.clear();
+
+    CollectParticlesData();
+    particleTexturesSize = CalculateTextureSize(particleTextures);
+    
+    RefreshSceneGeneralInfo();
 }

@@ -36,6 +36,8 @@
 
 #include "FileSystem/FilePath.h"
 
+#include "Render/RenderBase.h"
+
 
 #if defined (__DAVAENGINE_IPHONE__) || defined (__DAVAENGINE_ANDROID__)
     #include "PVRDefines.h"
@@ -79,6 +81,10 @@ struct PVRHeaderV3{
 #pragma pack(pop)
 #define PVRTEX3_HEADERSIZE 52
     
+    
+// V2 Header Identifiers.
+const uint32 PVRTEX2_IDENT			= 0x21525650;	// 'P''V''R'!
+const uint32 PVRTEX2_IDENT_REV		= 0x50565221;
     
 /*!***************************************************************************
  Describes the Version 2 header of a PVR texture header.

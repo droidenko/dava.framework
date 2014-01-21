@@ -104,6 +104,9 @@ public:
 	bool IsControlSelected(HierarchyTreeControlNode* control) const;
 	void ResetSelectedControl();
 	
+    // Synchronize the selection - select the nodes from the list, unselect the remainigns.
+    void SynchronizeSelection(const QList<HierarchyTreeControlNode*>& selectedNodes);
+
 	HierarchyTreePlatformNode* GetActivePlatform() const;
     HierarchyTreeScreenNode* GetActiveScreen() const;
 	
@@ -126,10 +129,10 @@ public:
 	void AdjustSelectedControlsSize();
 
     // Repack and reload sprites.
-    void RepackAndReloadSprites(bool needRepack, bool pixelized);
+    void RepackAndReloadSprites();
 
-    // Apply the pixelization.
-    void ApplyPixelizationForAllSprites();
+    // Set the pixelization value.
+    void SetPixelization(bool value);
 
 private:
 	void DeleteNodesInternal(const HierarchyTreeNode::HIERARCHYTREENODESLIST& nodes);

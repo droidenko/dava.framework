@@ -1,0 +1,10 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        MaterialDefines: ["PIXEL_LIT", "DIFFUSE"]
+        Uniforms:
+            normalmap: 1
+
+        RenderPass:
+            Name: "ForwardPass"
+            Shader: "~res:/Materials/Shaders/Old/materials"

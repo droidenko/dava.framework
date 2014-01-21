@@ -68,6 +68,11 @@
 #include "Scene3D/Systems/SoundUpdateSystem.h"
 #include "Scene3D/Systems/ActionUpdateSystem.h"
 #include "Scene3D/Systems/SkyboxSystem.h"
+#include "Scene3D/Systems/StaticOcclusionSystem.h"
+
+#include "Scene3D/Systems/MaterialSystem.h"
+
+#include "Scene3D/Components/ComponentHelpers.h"
 
 //#include "Entity/Entity.h"
 //#include "Entity/EntityManager.h"
@@ -137,6 +142,12 @@ void Scene::CreateSystems()
 	
 	skyboxSystem = new SkyboxSystem(this);
 	AddSystem(skyboxSystem, (1 << Component::RENDER_COMPONENT));
+    
+    staticOcclusionSystem = new StaticOcclusionSystem(this);
+	AddSystem(staticOcclusionSystem, (1 << Component::STATIC_OCCLUSION_DATA_COMPONENT));
+    
+    materialSystem = new MaterialSystem(this);
+    AddSystem(materialSystem, (1 << Component::RENDER_COMPONENT));
 }
 
 Scene::~Scene()
@@ -158,7 +169,7 @@ Scene::~Scene()
     SafeRelease(currentCamera);
     SafeRelease(clipCamera);
     
-    for (Map<String, ProxyNode*>::iterator it = rootNodes.begin(); it != rootNodes.end(); ++it)
+    for (ProxyNodeMap::iterator it = rootNodes.begin(); it != rootNodes.end(); ++it)
     {
         SafeRelease(it->second);
     }
@@ -171,7 +182,19 @@ Scene::~Scene()
 
     transformSystem = 0;
     renderUpdateSystem = 0;
+    lodSystem = 0;
+    debugRenderSystem = 0;
+    particleEffectSystem = 0;
+    updatableSystem = 0;
 	lodSystem = 0;
+    lightUpdateSystem = 0;
+    switchSystem = 0;
+    soundSystem = 0;
+    actionSystem = 0;
+    skyboxSystem = 0;
+    staticOcclusionSystem = 0;
+    materialSystem = 0;
+    
     uint32 size = (uint32)systems.size();
     for (uint32 k = 0; k < size; ++k)
         SafeDelete(systems[k]);
@@ -183,18 +206,6 @@ Scene::~Scene()
 
 void Scene::RegisterNode(Entity * node)
 {
-    Light * light = dynamic_cast<Light*>(node);
-    if (light)
-    {
-        lights.insert(light);
-    }
-
-	ImposterNode * imposter = dynamic_cast<ImposterNode*>(node);
-	if(imposter)
-	{
-		RegisterImposter(imposter);
-	}
-    
     uint32 systemsCount = systems.size();
     for (uint32 k = 0; k < systemsCount; ++k)
     {
@@ -217,70 +228,99 @@ void Scene::UnregisterNode(Entity * node)
         if (needRemove)
             systems[k]->RemoveEntity(node);
     }
-
-    Light * light = dynamic_cast<Light*>(node);
-    if (light)
-        lights.erase(light);
-
-	ImposterNode * imposter = dynamic_cast<ImposterNode*>(node);
-	if(imposter)
-	{
-		UnregisterImposter(imposter);
-	}
 }
     
 void Scene::AddComponent(Entity * entity, Component * component)
 {
-    uint32 oldComponentFlags = entity->componentFlags;
-    entity->componentFlags |= (1 << component->GetType());
-    uint32 systemsCount = systems.size();
+	DVASSERT(entity && component);
+
+    uint32 componentFlags = entity->componentFlags;
+	uint32 componentType = 1 << component->GetType();
+
+	uint32 systemsCount = systems.size();
     for (uint32 k = 0; k < systemsCount; ++k)
     {
         uint32 requiredComponents = systems[k]->GetRequiredComponents();
-        bool wasBefore = ((requiredComponents & oldComponentFlags) == requiredComponents);
-        bool needAdd = ((requiredComponents & entity->componentFlags) == requiredComponents);
-        
-        if ((!wasBefore) && (needAdd))
-            systems[k]->AddEntity(entity);
+		bool entityForSystem = ((componentFlags & requiredComponents) == requiredComponents);
+		bool componentForSystem = ((requiredComponents & componentType) == componentType);
+		if(entityForSystem && componentForSystem) 
+		{
+			if (entity->GetComponentCount(component->GetType()) == 1)
+			{
+				systems[k]->AddEntity(entity);
+			}
+			else
+			{
+				systems[k]->AddComponent(entity, component);
+			}
+		}
     }
 }
     
 void Scene::RemoveComponent(Entity * entity, Component * component)
 {
-    uint32 oldComponentFlags = entity->componentFlags;
-    entity->componentFlags &= ~(1 << component->GetType());
-    
+	DVASSERT(entity && component);
+
+	uint32 componentFlags = entity->componentFlags;
+	uint32 componentType = 1 << component->GetType();
+
     uint32 systemsCount = systems.size();
     for (uint32 k = 0; k < systemsCount; ++k)
     {
-        uint32 requiredComponents = systems[k]->GetRequiredComponents();
-        bool wasBefore = ((requiredComponents & oldComponentFlags) == requiredComponents);
-        bool shouldBeNow = ((requiredComponents & entity->componentFlags) == requiredComponents);
-        
-        if ((wasBefore) && (!shouldBeNow))
-            systems[k]->RemoveEntity(entity);
+		uint32 requiredComponents = systems[k]->GetRequiredComponents();
+		bool entityForSystem = ((componentFlags & requiredComponents) == requiredComponents);
+		bool componentForSystem = ((requiredComponents & componentType) == componentType);
+		if(entityForSystem && componentForSystem) 
+		{
+			if (entity->GetComponentCount(component->GetType()) == 1) 
+			{
+				systems[k]->RemoveEntity(entity);
+			}
+			else
+			{
+				systems[k]->RemoveComponent(entity, component);
+			}
+		}
     }
 }
     
+#if 0 // Removed temporarly if everything will work with events can be removed fully.
 void Scene::ImmediateEvent(Entity * entity, uint32 componentType, uint32 event)
 {
+#if 1
     uint32 systemsCount = systems.size();
     uint32 updatedComponentFlag = 1 << componentType;
+    uint32 componentsInEntity = entity->GetAvailableComponentFlags();
+
     for (uint32 k = 0; k < systemsCount; ++k)
     {
         uint32 requiredComponentFlags = systems[k]->GetRequiredComponents();
-        uint32 componentsInEntity = entity->GetAvailableComponentFlags();
         
         if (((requiredComponentFlags & updatedComponentFlag) != 0) && ((requiredComponentFlags & componentsInEntity) == requiredComponentFlags))
         {
 			eventSystem->NotifySystem(systems[k], entity, event);
         }
     }
+#else
+    uint32 componentsInEntity = entity->GetAvailableComponentFlags();
+    Set<SceneSystem*> & systemSetForType = componentTypeMapping.GetValue(componentsInEntity);
+    
+    for (Set<SceneSystem*>::iterator it = systemSetForType.begin(); it != systemSetForType.end(); ++it)
+    {
+        SceneSystem * system = *it;
+        uint32 requiredComponentFlags = system->GetRequiredComponents();
+        if ((requiredComponentFlags & componentsInEntity) == requiredComponentFlags)
+            eventSystem->NotifySystem(system, entity, event);
+    }
+#endif
 }
+#endif
     
 void Scene::AddSystem(SceneSystem * sceneSystem, uint32 componentFlags)
 {
     sceneSystem->SetRequiredComponents(componentFlags);
+    //Set<SceneSystem*> & systemSetForType = componentTypeMapping.GetValue(componentFlags);
+    //systemSetForType.insert(sceneSystem);
     systems.push_back(sceneSystem);
 }
     
@@ -374,14 +414,14 @@ void Scene::AddRootNode(Entity *node, const FilePath &rootNodePath)
     ProxyNode * proxyNode = new ProxyNode();
     proxyNode->SetNode(node);
     
-    rootNodes[rootNodePath.GetAbsolutePathname()] = proxyNode;
-    proxyNode->SetName(rootNodePath.GetAbsolutePathname());
+	rootNodes[FILEPATH_MAP_KEY(rootNodePath)] = proxyNode;
+
+	proxyNode->SetName(rootNodePath.GetAbsolutePathname());
 }
 
 Entity *Scene::GetRootNode(const FilePath &rootNodePath)
 {
-	Map<String, ProxyNode*>::const_iterator it;
-	it = rootNodes.find(rootNodePath.GetAbsolutePathname());
+	ProxyNodeMap::const_iterator it = rootNodes.find(FILEPATH_MAP_KEY(rootNodePath));
 	if (it != rootNodes.end())
 	{
         ProxyNode * node = it->second;
@@ -407,7 +447,7 @@ Entity *Scene::GetRootNode(const FilePath &rootNodePath)
         Logger::FrameworkDebug("[GETROOTNODE TIME] %dms (%ld)", deltaTime, deltaTime);
     }
     
-	it = rootNodes.find(rootNodePath.GetAbsolutePathname());
+	it = rootNodes.find(FILEPATH_MAP_KEY(rootNodePath));
 	if (it != rootNodes.end())
 	{
         ProxyNode * node = it->second;
@@ -419,8 +459,7 @@ Entity *Scene::GetRootNode(const FilePath &rootNodePath)
 
 void Scene::ReleaseRootNode(const FilePath &rootNodePath)
 {
-	Map<String, ProxyNode*>::iterator it;
-	it = rootNodes.find(rootNodePath.GetAbsolutePathname());
+	ProxyNodeMap::iterator it = rootNodes.find(FILEPATH_MAP_KEY(rootNodePath));
 	if (it != rootNodes.end())
 	{
         it->second->Release();
@@ -496,6 +535,13 @@ void Scene::SetupTestLighting()
 void Scene::Update(float timeElapsed)
 {
     TIME_PROFILE("Scene::Update");
+    
+    uint64 time = SystemTimer::Instance()->AbsoluteMS();
+    
+    staticOcclusionSystem->SetCamera(clipCamera);
+    staticOcclusionSystem->Process(timeElapsed);
+    
+	updatableSystem->UpdatePreTransform(timeElapsed);
 
 	updatableSystem->UpdatePreTransform(timeElapsed);
     transformSystem->Process(timeElapsed);
@@ -532,6 +578,8 @@ void Scene::Update(float timeElapsed)
 	//{
 	//	imposterManager->Update(timeElapsed);
 	//}
+
+    updateTime = SystemTimer::Instance()->AbsoluteMS() - time;
 }
 
 void Scene::Draw()
@@ -542,13 +590,21 @@ void Scene::Draw()
 
 	shadowVolumes.clear();
     
-//     if(imposterManager)
-// 	{
-// 		imposterManager->ProcessQueue();
-// 	}
+    uint64 time = SystemTimer::Instance()->AbsoluteMS();
+
+    //const GLenum discards[]  = {GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0};
+    //RENDER_VERIFY(glDiscardFramebufferEXT(GL_FRAMEBUFFER,2,discards));
+    //glDepthMask(GL_TRUE);
+    //RENDER_VERIFY(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
     
-    RenderManager::Instance()->SetCullMode(FACE_BACK);
-    RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+    if(imposterManager)
+	{
+		//imposterManager->ProcessQueue();
+	}
+ 
+	RenderManager::Instance()->SetDefault3DState();
+    //RenderManager::Instance()->SetCullMode(FACE_BACK);
+    //RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
     RenderManager::Instance()->FlushState();
 	RenderManager::Instance()->ClearDepthBuffer();
     
@@ -560,11 +616,13 @@ void Scene::Draw()
     
     Matrix4 prevMatrix = RenderManager::Instance()->GetMatrix(RenderManager::MATRIX_MODELVIEW);
     renderSystem->SetCamera(currentCamera);
+    renderSystem->SetClipCamera(clipCamera);
     renderUpdateSystem->Process(timeElapsed);
 	actionSystem->Process(timeElapsed); //update action system before particles and render
 	particleEffectSystem->Process(timeElapsed);
 	skyboxSystem->Process(timeElapsed);
     renderSystem->Render();
+	//renderSystem->DebugDrawHierarchy(currentCamera->GetMatrix());
     debugRenderSystem->SetCamera(currentCamera);
     debugRenderSystem->Process(timeElapsed);
 	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, currentCamera->GetMatrix());
@@ -576,7 +634,13 @@ void Scene::Draw()
 // 		imposterManager->Draw();
 // 	}
 
-	RenderManager::Instance()->SetState(RenderState::DEFAULT_2D_STATE_BLEND);
+	//RenderManager::Instance()->SetState(RenderState::DEFAULT_2D_STATE_BLEND);
+	drawTime = SystemTimer::Instance()->AbsoluteMS() - time;
+
+	//Image * image = Image::Create(512, 512, FORMAT_RGBA8888);
+	//RENDER_VERIFY(glReadPixels(0, 0, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)image->data));
+	//image->Save("img.png");
+	//RenderManager::Instance()->RestoreRenderTarget();
 }
 
 	
@@ -756,7 +820,7 @@ void Scene::UnregisterImposter(ImposterNode * imposter)
 	}
 }
 
-EventSystem * Scene::GetEventSystem()
+EventSystem * Scene::GetEventSystem() const
 {
 	return eventSystem;
 }
@@ -765,6 +829,12 @@ RenderSystem * Scene::GetRenderSystem() const
 {
 	return renderSystem;
 }
+
+MaterialSystem * Scene::GetMaterialSystem() const
+{
+    return materialSystem;
+}
+
 
 /*void Scene::Save(KeyedArchive * archive)
 {
@@ -782,20 +852,30 @@ void Scene::Load(KeyedArchive * archive)
     Entity::Load(archive);
 }*/
     
-    
-    
+
 SceneFileV2::eError Scene::Save(const DAVA::FilePath & pathname, bool saveForGame /*= false*/)
 {
-    ScopedPtr<SceneFileV2> file( new SceneFileV2() );
+    ScopedPtr<SceneFileV2> file(new SceneFileV2());
 	file->EnableDebugLog(false);
 	file->EnableSaveForGame(saveForGame);
 	return file->SaveScene(pathname, this);
 }
+    
+void Scene::OptimizeBeforeExport()
+{
+    Set<NMaterial*> materials;
+    materialSystem->BuildMaterialList(this, materials);
 
+    Set<NMaterial *>::const_iterator endIt = materials.end();
+    for(Set<NMaterial *>::const_iterator it = materials.begin(); it != endIt; ++it)
+        (*it)->ReleaseIlluminationParams();
 
-
-
+    Entity::OptimizeBeforeExport();
+}
+    
 };
+
+
 
 
 

@@ -34,7 +34,7 @@
 
 namespace DAVA
 {
-
+	/*
 	static Vector3 DodecVertexes[20] = {
 		Vector3( 0.607f,  0.000f,  0.795f),
 		Vector3( 0.188f,  0.577f,  0.795f),
@@ -72,6 +72,50 @@ namespace DAVA
 		19, 15, 10, 5, 14,
 		15, 16, 17, 18, 19
 	};
+	*/
+
+	#define isoX 0.525731f 
+	#define isoZ 0.850650f
+
+	static Vector3 gDodecVertexes[12] = {
+		Vector3(-isoX, 0.0, isoZ),
+		Vector3(isoX, 0.0, isoZ),
+		Vector3(-isoX, 0.0, -isoZ),
+		Vector3(isoX, 0.0, -isoZ),
+		Vector3(0.0, isoZ, isoX),
+		Vector3(0.0, isoZ, -isoX),
+		Vector3(0.0, -isoZ, isoX),
+		Vector3(0.0, -isoZ, -isoX),
+		Vector3(isoZ, isoX, 0.0),
+		Vector3(-isoZ, isoX, 0.0),
+		Vector3(isoZ, -isoX, 0.0),
+		Vector3(-isoZ, -isoX, 0.0)
+	};
+
+	static DAVA::uint16 gDodecIndexes[60] = {
+		0, 4, 1,
+		0, 9, 4,
+		9, 5, 4,
+		4, 5, 8,
+		4, 8, 1,
+		8, 10, 1,
+		8, 3, 10,
+		5, 3, 8,
+		5, 2, 3,
+		2, 7, 3,
+		7, 10, 3,
+		7, 6, 10,
+		7, 11, 6,
+		11, 0, 6,
+		0, 1, 6,
+		6, 1, 10,
+		9, 0, 11,
+		9, 11, 2,
+		9, 2, 5,
+		7, 2, 11
+	};
+
+	static RenderDataObject *gDodecObject;
 	
 	const float32 SEGMENT_LENGTH = 15.0f;
 	
@@ -79,10 +123,15 @@ RenderHelper::RenderHelper()
 {
     renderDataObject = new RenderDataObject();
     vertexStream = renderDataObject->SetStream(EVF_VERTEX, TYPE_FLOAT, 2, 0, 0);
+
+	gDodecObject = new RenderDataObject();
+	gDodecObject->SetStream(EVF_VERTEX, TYPE_FLOAT, 3, 0, gDodecVertexes);
+	gDodecObject->SetIndices(EIF_16, (DAVA::uint8 *) gDodecIndexes, sizeof(gDodecIndexes) / sizeof(gDodecIndexes[0]));
 }
 RenderHelper::~RenderHelper()
 {
     SafeRelease(renderDataObject);
+	SafeRelease(gDodecObject);
 }
     
 void RenderHelper::FillRect(const Rect & rect)
@@ -266,6 +315,7 @@ void RenderHelper::DrawCircle(const Vector2 & center, float32 radius)
     float32 angle = SEGMENT_LENGTH / radius;
 	int ptsCount = (int)(2 * PI / angle) + 1;
 	
+    pts.points.reserve(ptsCount);
 	for (int k = 0; k < ptsCount; ++k)
 	{
 		float32 angle = ((float)k / (ptsCount - 1)) * 2 * PI;
@@ -285,7 +335,7 @@ void RenderHelper::DrawCircle(const Vector3 & center, float32 radius)
     float32 angle = SEGMENT_LENGTH / radius;
 	int ptsCount = (int)(2 * PI / (DegToRad(angle))) + 1;
 
-
+    pts.points.reserve(ptsCount);
 	for (int k = 0; k < ptsCount; ++k)
 	{
 		float32 angle = ((float)k / (ptsCount - 1)) * 2 * PI;
@@ -304,6 +354,7 @@ void RenderHelper::DrawCircle3D(const Vector3 & center, const Vector3 &emissionV
     float32 angle = SEGMENT_LENGTH / radius;
 	int ptsCount = (int)(PI_2 / (DegToRad(angle))) + 1;
 
+    pts.points.reserve(ptsCount);
 	for (int k = 0; k < ptsCount; ++k)
 	{
 		float32 angleA = ((float)k / (ptsCount - 1)) * PI_2;
@@ -357,6 +408,7 @@ void RenderHelper::DrawCylinder(const Vector3 & center, float32 radius, bool use
 	int32 ptsCount = (int32)(PI_2 / (DegToRad(angle))) + 1;
 
 	Vector<Vector2> vertexes;
+    vertexes.reserve(ptsCount + 1);
 	for(int32 i = 0; i <= ptsCount; i++)
  	{
 		float32 seta = i * 360.0f / (float32)ptsCount;
@@ -366,6 +418,7 @@ void RenderHelper::DrawCylinder(const Vector3 & center, float32 radius, bool use
 		vertexes.push_back(Vector2(x, y));
 	}
 	
+    pts.points.reserve(ptsCount * 6);
 	for(int32 i = 0; i < ptsCount; ++i)
 	{
 		pts.AddPoint((Vector3(vertexes[i].x,  vertexes[i].y,  1) * radius) + center);
@@ -600,6 +653,7 @@ void RenderHelper::DrawStrippedLine(Polygon2 & polygon, float lineLen, float spa
 void RenderHelper::DrawBSpline(BezierSpline3 * bSpline, int segments, float ts, float te)
 {
 	Polygon3 pts;
+    pts.points.reserve(segments);
 	for (int k = 0; k < segments; ++k)
 	{
 		pts.AddPoint(bSpline->Evaluate(0, ts + (te - ts) * ((float)k / (float)(segments - 1))));
@@ -611,6 +665,7 @@ void RenderHelper::DrawInterpolationFunc(Interpolation::Func func, const Rect & 
 {
 	Polygon3 pts;
 	int segmentsCount = 20;
+    pts.points.reserve(segmentsCount);
 	for (int k = 0; k < segmentsCount; ++k)
 	{
 		Vector3 v;
@@ -934,6 +989,8 @@ void RenderHelper::DrawCornerBox(const AABBox3 & bbox, float32 lineWidth)
 		Vector3 p4 = c - nd;
 
 		Polygon3 poly;
+        poly.points.reserve(3);
+        
 		poly.AddPoint(p1);
 		poly.AddPoint(p3);
 		poly.AddPoint(p2);
@@ -981,6 +1038,8 @@ void RenderHelper::DrawCornerBox(const AABBox3 & bbox, float32 lineWidth)
 		DAVA::Vector3 max = box.max;
 
 		DAVA::Polygon3 poly;
+        poly.points.reserve(4);
+        
 		poly.AddPoint(min);
 		poly.AddPoint(DAVA::Vector3(min.x, min.y, max.z));
 		poly.AddPoint(DAVA::Vector3(min.x, max.y, max.z));
@@ -1025,34 +1084,54 @@ void RenderHelper::DrawCornerBox(const AABBox3 & bbox, float32 lineWidth)
 
 	void RenderHelper::DrawDodecahedron(const Vector3 &center, float32 radius, float32 lineWidth /* = 1.f */)
 	{
-		for(int i = 0; i < 12; ++i)
+		Matrix4 prevMatrix = RenderManager::Instance()->GetMatrix(RenderManager::MATRIX_MODELVIEW);
+		Matrix4 drawMatrix;
+
+		drawMatrix.CreateScale(DAVA::Vector3(radius, radius, radius));
+		drawMatrix.SetTranslationVector(center);
+
+		RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, drawMatrix * prevMatrix);
+		RenderManager::Instance()->SetShader(0);
+		RenderManager::Instance()->SetRenderData(gDodecObject);
+		RenderManager::Instance()->AttachRenderData();
+		RenderManager::Instance()->FlushState();
+
+		if(gDodecObject->GetIndexBufferID() != 0)
 		{
-			Polygon3 poly;
-
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][0]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][1]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][2]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][3]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][4]] * radius) + center);
-
-			DrawPolygon(poly, true);
+			RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_LINELIST, sizeof(gDodecIndexes) / sizeof(gDodecIndexes[0]), EIF_16, 0);
 		}
+		else
+		{
+			RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_LINELIST, sizeof(gDodecIndexes) / sizeof(gDodecIndexes[0]), EIF_16, gDodecIndexes);
+		}
+
+		RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, prevMatrix);
 	}
 
 	void RenderHelper::FillDodecahedron(const Vector3 &center, float32 radius)
 	{
-		for(int i = 0; i < 12; ++i)
+		Matrix4 prevMatrix = RenderManager::Instance()->GetMatrix(RenderManager::MATRIX_MODELVIEW);
+		Matrix4 drawMatrix;
+
+		drawMatrix.CreateScale(DAVA::Vector3(radius, radius, radius));
+		drawMatrix.SetTranslationVector(center);
+
+		RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, drawMatrix * prevMatrix);
+		RenderManager::Instance()->SetShader(0);
+		RenderManager::Instance()->SetRenderData(gDodecObject);
+		RenderManager::Instance()->AttachRenderData();
+		RenderManager::Instance()->FlushState();
+
+		if(gDodecObject->GetIndexBufferID() != 0)
 		{
-			Polygon3 poly;
-
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][0]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][1]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][2]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][3]] * radius) + center);
-			poly.AddPoint((DodecVertexes[DodecIndexes[i][4]] * radius) + center);
-
-			FillPolygon(poly);
+			RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_TRIANGLELIST, sizeof(gDodecIndexes) / sizeof(gDodecIndexes[0]), EIF_16, 0);
 		}
+		else
+		{
+			RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_TRIANGLELIST, sizeof(gDodecIndexes) / sizeof(gDodecIndexes[0]), EIF_16, gDodecIndexes);
+		}
+
+		RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, prevMatrix);
 	}
 
 #if defined(__DAVAENGINE_MACOS__) || defined(__DAVAENGINE_WIN32__)

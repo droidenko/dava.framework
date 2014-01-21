@@ -39,8 +39,8 @@
 #include <QDropEvent>
 #include <QMenu>
 
-#include "SceneEditor/EditorSettings.h"
-#include "SceneEditor/SceneValidator.h"
+#include "Qt/Settings/SettingsManager.h"
+#include "Deprecated/SceneValidator.h"
 #include "Main/QTUtils.h"
 #include "Project/ProjectManager.h"
 #include "Scene/SceneEditor2.h"
@@ -106,9 +106,39 @@ SceneTree::~SceneTree()
 
 void SceneTree::SetFilter(const QString &filter)
 {
+// 	if(!filter.isEmpty())
+// 	{
+// 		treeModel->ResetFilterAcceptFlag();
+// 	}
+
 	filteringProxyModel->setFilterRegExp(QRegExp(filter, Qt::CaseInsensitive, QRegExp::FixedString));
-    
     SyncSelectionToTree();
+
+	if(!filter.isEmpty())
+	{
+		for(int i = 0; i < filteringProxyModel->rowCount(); ++i)
+		{
+			ExpandUntilFilterAccepted(filteringProxyModel->index(i, 0));
+		}
+	}
+// 	else
+// 	{
+// 		treeModel->ResetFilterAcceptFlag();
+// 	}
+}
+
+void SceneTree::ExpandUntilFilterAccepted(const QModelIndex &index)
+{
+	SceneTreeItem *item = treeModel->GetItem(filteringProxyModel->mapToSource(index));
+	if(NULL != item && !item->IsAcceptedByFilter())
+	{
+		expand(index);
+
+		for(int i = 0; i < filteringProxyModel->rowCount(index); ++i)
+		{
+			ExpandUntilFilterAccepted(filteringProxyModel->index(i, 0, index));
+		}
+	}
 }
 
 void SceneTree::GetDropParams(const QPoint &pos, QModelIndex &index, int &row, int &col)
@@ -149,7 +179,7 @@ void SceneTree::dropEvent(QDropEvent * event)
 	}
 
 	// after processing don't allow this event to go higher
-	// so no body will decide to remove/insert grag&dropped items into treeview
+	// so no body will decide to remove/insert drag&dropped items into treeview
 	// except our model. Model will do this when scene entity remove/move signals catched
 	event->setDropAction(Qt::IgnoreAction);
 	event->accept();
@@ -352,6 +382,11 @@ void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, int entityCustomFlag
 		{
 			// disabled entities can only be removed
 			contextMenu.addAction(QIcon(":/QtIcons/remove.png"), "Remove entity", this, SLOT(RemoveSelection()));
+            
+            if(selectionSize == 1 && GetCamera(entity))
+            {
+                AddCameraActions(contextMenu);
+            }
 		}
 		else
 		{
@@ -361,7 +396,7 @@ void SceneTree::ShowContextMenuEntity(DAVA::Entity *entity, int entityCustomFlag
 			// look from
 			if(NULL != GetCamera(entity))
 			{
-				contextMenu.addAction(QIcon(":/QtIcons/eye.png"), "Look from", this, SLOT(SetCurrentCamera()));
+                AddCameraActions(contextMenu);
 			}
 
 			// add/remove
@@ -557,18 +592,6 @@ void SceneTree::UnlockEntities()
 	}
 }
 
-void SceneTree::SetCurrentCamera()
-{
-	SceneEditor2 *sceneEditor = treeModel->GetScene();
-	if(NULL != sceneEditor)
-	{
-		DAVA::Camera *camera = GetCamera(sceneEditor->selectionSystem->GetSelectionEntity(0));
-		if(NULL != camera)
-		{
-			sceneEditor->SetCurrentCamera(camera);
-		}
-	}
-}
 
 void SceneTree::CollapseSwitch()
 {
@@ -642,7 +665,7 @@ void SceneTree::ReloadModel()
 		{
 			EntityGroup selection = sceneEditor->selectionSystem->GetSelection();
 			String wrongPathes;
-			for(int i = 0; i < selection.Size(); ++i)
+			for(size_t i = 0; i < selection.Size(); ++i)
 			{
 				DAVA::Entity *entity = selection.GetEntity(i);
 				DAVA::FilePath pathToReload(entity->GetCustomProperties()->GetString(ResourceEditor::EDITOR_REFERENCE_TO_OWNER));
@@ -681,7 +704,7 @@ void SceneTree::ReloadModelAs()
 				}
 				else
 				{
-					ownerPath = EditorSettings::Instance()->GetDataSourcePath().GetAbsolutePathname();
+					ownerPath = FilePath(SettingsManager::Instance()->GetValue("3dDataSourcePath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname();
 				}
 			}
 
@@ -1136,7 +1159,7 @@ void SceneTree::PerformSaveInnerEmitter(bool forceAskFileName)
 	FilePath yamlPath;
 	if (forceAskFileName)
 	{
-		QString projectPath = QString(EditorSettings::Instance()->GetParticlesConfigsPath().GetAbsolutePathname().c_str());
+		QString projectPath = QString(FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString()+"Data/Configs/Particles/").GetAbsolutePathname().c_str());
 		QString filePath = QtFileDialog::getSaveFileName(NULL, QString("Save Particle Emitter YAML file"),
 			projectPath, QString("YAML File (*.yaml)"));
 
@@ -1271,7 +1294,7 @@ void SceneTree::PerformSaveEmitter(bool forceAskFileName)
 	FilePath yamlPath;
     if (forceAskFileName)
     {
-        QString projectPath = QString(EditorSettings::Instance()->GetParticlesConfigsPath().GetAbsolutePathname().c_str());
+        QString projectPath = QString(FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString()+"Data/Configs/Particles/").GetAbsolutePathname().c_str());
         QString filePath = QtFileDialog::getSaveFileName(NULL, QString("Save Particle Emitter YAML file"),
                                                         projectPath, QString("YAML File (*.yaml)"));
 		
@@ -1310,7 +1333,7 @@ void SceneTree::PerformSaveEmitter(bool forceAskFileName)
 
 QString SceneTree::GetParticlesConfigPath()
 {
-	return QString(EditorSettings::Instance()->GetParticlesConfigsPath().GetAbsolutePathname().c_str());
+	return QString(FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString()+"Data/Configs/Particles/").GetAbsolutePathname().c_str());
 }
 
 void SceneTree::CleanupParticleEditorSelectedItems()
@@ -1336,4 +1359,57 @@ void SceneTree::SetEntityNameAsFilter()
 
 	Entity *entity = selection.GetEntity(0);
 	QtMainWindow::Instance()->GetUI()->sceneTreeFilterEdit->setText(entity->GetName().c_str());
+}
+
+void SceneTree::AddCameraActions(QMenu &menu)
+{
+    menu.addAction(QIcon(":/QtIcons/eye.png"), "Look from", this, SLOT(SetCurrentCamera()));
+    menu.addAction(QIcon(":/QtIcons/camera.png"), "Set view camera", this, SLOT(SetViewCamera()));
+    menu.addAction(QIcon(":/QtIcons/camera.png"), "Set clip camera", this, SLOT(SetClipCamera()));
+}
+
+
+void SceneTree::SetCurrentCamera()
+{
+	SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		DAVA::Camera *camera = GetCamera(sceneEditor->selectionSystem->GetSelectionEntity(0));
+		if(NULL != camera)
+		{
+			sceneEditor->SetCurrentCamera(camera);
+		}
+	}
+}
+
+void SceneTree::SetViewCamera()
+{
+	SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		DAVA::Camera *camera = GetCamera(sceneEditor->selectionSystem->GetSelectionEntity(0));
+		if(NULL != camera)
+		{
+            DAVA::Camera *clipCamera = SafeRetain(sceneEditor->GetClipCamera());
+
+			sceneEditor->SetCurrentCamera(camera);
+            sceneEditor->SetClipCamera(clipCamera);
+            
+            SafeRelease(clipCamera);
+		}
+	}
+}
+
+void SceneTree::SetClipCamera()
+{
+    SceneEditor2 *sceneEditor = treeModel->GetScene();
+	if(NULL != sceneEditor)
+	{
+		DAVA::Camera *camera = GetCamera(sceneEditor->selectionSystem->GetSelectionEntity(0));
+		if(NULL != camera)
+		{
+			sceneEditor->SetClipCamera(camera);
+		}
+	}
+
 }

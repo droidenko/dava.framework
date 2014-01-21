@@ -37,7 +37,6 @@
 #include "DAVAConfig.h"
 #include "Base/RefPtr.h"
 #include "Base/ScopedPtr.h"
-#include "Render/RenderBase.h"
 #include <typeinfo>
 
 namespace DAVA
@@ -227,7 +226,8 @@ C * SafeRetain(C * c)
     
     
     
-typedef BaseObject* (*CreateObjectFunc)();
+//typedef BaseObject* (*CreateObjectFunc)();
+typedef void* (*CreateObjectFunc)();
 
 class ObjectRegistrator
 {
@@ -237,14 +237,14 @@ public:
 };
 	
 #define REGISTER_CLASS(class_name) \
-static BaseObject * Create##class_name()\
+static void * Create##class_name()\
 {\
 return new class_name();\
 };\
 static ObjectRegistrator registrator##class_name(#class_name, &Create##class_name, typeid(class_name), sizeof(class_name));
 
 #define REGISTER_CLASS_WITH_ALIAS(class_name, alias) \
-static BaseObject * Create##class_name()\
+static void * Create##class_name()\
 {\
 return new class_name();\
 };\

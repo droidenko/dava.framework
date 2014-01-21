@@ -39,7 +39,7 @@
 #include <QFileDialog>
 #include <QScrollBar>
 
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include <qdir>
 
 const int FACE_IMAGE_SIZE = 64;
@@ -57,9 +57,9 @@ CubeMapTextureBrowser::CubeMapTextureBrowser(SceneEditor2* currentScene, QWidget
 	
 	ConnectSignals();
 	
-	FilePath projectPath = CubemapUtils::GetDialogSavedPath(ResourceEditor::CUBEMAP_LAST_PROJECT_DIR_KEY,
-															EditorSettings::Instance()->GetDataSourcePath().GetAbsolutePathname(),
-															EditorSettings::Instance()->GetDataSourcePath().GetAbsolutePathname());
+	FilePath projectPath = CubemapUtils::GetDialogSavedPath(ResourceEditor::SETTINGS_CUBEMAP_LAST_PROJECT_DIR,
+															FilePath(SettingsManager::Instance()->GetValue("3dDataSourcePath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname(),
+															FilePath(SettingsManager::Instance()->GetValue("3dDataSourcePath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname());
 		
 	ui->textRootPath->setText(projectPath.GetAbsolutePathname().c_str());
 	ReloadTextures(projectPath.GetAbsolutePathname());
@@ -127,6 +127,8 @@ void CubeMapTextureBrowser::ReloadTextures(const DAVA::String& rootPath)
 					cubemapList.insert(cubemapList.begin(), itemInfo);
 				}
 			}
+
+			SafeDelete(texDesc);
 		}
 		
 		cubeListItemDelegate.UpdateCache(cubemapList);
@@ -165,9 +167,7 @@ void CubeMapTextureBrowser::ReloadTexturesFromUI(QString& path)
 	ui->textRootPath->setText(path);
 	
 	FilePath projectPath = path.toStdString();
-	EditorSettings::Instance()->GetSettings()->SetString(ResourceEditor::CUBEMAP_LAST_PROJECT_DIR_KEY,
-														 projectPath.GetAbsolutePathname());
-	EditorSettings::Instance()->Save();
+	SettingsManager::Instance()->SetValue(ResourceEditor::SETTINGS_CUBEMAP_LAST_PROJECT_DIR, VariantType(projectPath.GetAbsolutePathname()), SettingsManager::INTERNAL);
 	
 	ReloadTextures(path.toStdString());
 }

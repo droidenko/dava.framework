@@ -123,6 +123,9 @@ ActionSetVisibilityPoint::~ActionSetVisibilityPoint()
 
 void ActionSetVisibilityPoint::Redo()
 {
+	RenderManager::Instance()->SetDefault2DState();
+	RenderManager::Instance()->FlushState();
+
 	Sprite* visibilityToolSprite = visibilityToolProxy->GetSprite();
 	RenderManager::Instance()->SetRenderTarget(visibilityToolSprite);
 	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 0.f);
@@ -211,6 +214,10 @@ void ActionSetVisibilityArea::ApplyImage(DAVA::Image *image)
 	Sprite* sprite = Sprite::CreateFromTexture(texture, 0, 0, (float32)image->GetWidth(), (float32)image->GetHeight());
 
 	RenderManager::Instance()->SetRenderTarget(visibilityToolSprite);
+
+	RenderManager::Instance()->SetDefault2DState();
+	RenderManager::Instance()->FlushState();
+
 	RenderManager::Instance()->ClipPush();
 	RenderManager::Instance()->SetClip(updatedRect);
 

@@ -35,11 +35,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include "Commands2/ParticleEditorCommands.h"
-#include "Commands/CommandsManager.h"
-#include "Commands/CommandSignals.h"
-#include "../Scene/SceneDataManager.h"
-#include "Qt/Scene/SceneSignals.h"
-#include "ParticlesEditorController.h"
+#include "Scene/SceneSignals.h"
 
 ParticleTimeLineWidget::ParticleTimeLineWidget(QWidget *parent/* = 0*/) :
 	ScrollZoomWidget(parent),

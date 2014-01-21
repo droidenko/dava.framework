@@ -558,10 +558,11 @@ bool PngImage::CreateFromFBOSprite(Sprite * fboSprite)
 	width = fboSprite->GetTexture()->GetWidth();
 	height = fboSprite->GetTexture()->GetHeight();
 	data = new uint8[width * 4 * height];
-    format = fboSprite->GetTexture()->format;    
-    
+
 	Texture * texture = fboSprite->GetTexture();
-	if (texture->format == FORMAT_RGBA8888)
+
+	format = texture->GetFormat();    
+	if (format == FORMAT_RGBA8888)
 	{
 		RenderManager::Instance()->SetRenderTarget(fboSprite);
 		glReadPixels(0, 0, texture->width, texture->height, GL_RGBA, GL_UNSIGNED_BYTE, data);

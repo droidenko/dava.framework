@@ -39,13 +39,17 @@ namespace DAVA
 {
 
 class RenderDataObject;
-class Material;
+class NMaterial;
 class Camera;
+class MaterialSystem;
 class ParticleLayer3D : public ParticleLayer
 {
 public:
 	ParticleLayer3D(ParticleEmitter* parent);
 	virtual ~ParticleLayer3D();
+
+	static const FastName PARTICLE_MATERIAL_NAME;
+	static const FastName PARTICLE_FRAMEBLEND_MATERIAL_NAME;
 	
 	virtual ParticleLayer * Clone(ParticleLayer * dstLayer = 0);
 
@@ -53,12 +57,8 @@ public:
 
 	// Draw method for generic and long emitters. former DrawLayer
 	virtual void PrepareRenderData(Camera * camera);
-
-	Material * GetMaterial();
 	
 	virtual void SetBlendMode(eBlendMode sFactor, eBlendMode dFactor);
-
-	virtual void SetFog(bool enable);
 
 	virtual void SetFrameBlend(bool enable);
 
@@ -72,13 +72,16 @@ public:
 	
 	// Create the inner emitter where needed.
 	virtual void CreateInnerEmitter();
-
+	
 protected:
+		
 	void CalcNonLong(Particle* current,
 							Vector3& topLeft,
 							Vector3& topRight,
 							Vector3& botLeft,
-							Vector3& botRight);
+							Vector3& botRight,
+					 Vector3& dx,
+					 Vector3& dy);
 
 	void CalcLong(Particle* current,
 						 Vector3& topLeft,
@@ -89,9 +92,13 @@ protected:
 
 	// Update the current particle position according to the current emitter type.
 	void UpdateCurrentParticlePosition(Particle* particle);
+	
+	void UpdateBlendState();
+
+	virtual void DeleteAllParticles();
 
 	bool isLong;
-
+	
 	RenderDataObject * renderData;
 	Vector<float32> verts;
 	Vector<float32> textures;
@@ -106,6 +113,12 @@ protected:
 
 	// Current position of the particle - cached for speedup.
 	Vector3 currentParticlePosition;
+	
+	NMaterial* material;
+	Texture* currentTexture;
+	
+	static NMaterial* regularMaterial;
+	static NMaterial* frameBlendMaterial;
 
 public:
     //INTROSPECTION_EXTEND(ParticleLayer3D, ParticleLayer,

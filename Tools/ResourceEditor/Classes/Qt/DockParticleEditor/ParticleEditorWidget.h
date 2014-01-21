@@ -36,7 +36,6 @@
 #include <DAVAEngine.h>
 #include "ParticleEffectPropertiesWidget.h"
 #include "ParticleEmitterPropertiesWidget.h"
-#include "ParticlesEditorQT/Nodes/LayerParticleEditorNode.h"
 
 #include "Scene/SceneEditor2.h"
 
@@ -63,7 +62,6 @@ protected slots:
 
 	void OnUpdate();
 	void OnValueChanged();
-	void OnNodeDeselected(BaseParticleEditorNode* particleEditorNode);
 
 	// Notifications about changes in the Particles items.
 	void OnParticleLayerValueChanged(SceneEditor2* scene, DAVA::ParticleLayer* layer);

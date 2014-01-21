@@ -31,8 +31,7 @@
 #include "EmitterLayerWidget.h"
 #include "Commands2/ParticleEditorCommands.h"
 #include "TextureBrowser/TextureConvertor.h"
-#include "SceneEditor/EditorSettings.h"
-#include "../Scene/SceneDataManager.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Tools/QtFileDialog/QtFileDialog.h"
 
 #include <QHBoxLayout>
@@ -57,9 +56,9 @@ const EmitterLayerWidget::BlendPreset EmitterLayerWidget::blendPresetsMap[]=
 	{BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA, "Alpha blend"},
 	{BLEND_ONE, BLEND_ONE, "Additive"},
 	{BLEND_SRC_ALPHA, BLEND_ONE, "Alpha additive"},
-	{BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, "Soft additive"},
-	{BLEND_DST_COLOR, BLEND_ZERO, "Multiplicative"},
-	{BLEND_DST_COLOR, BLEND_SRC_COLOR, "2x Multiplicative"}
+	{BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, "Soft additive"}
+	/*{BLEND_DST_COLOR, BLEND_ZERO, "Multiplicative"},
+	{BLEND_DST_COLOR, BLEND_SRC_COLOR, "2x Multiplicative"}*/
 };
 
 
@@ -247,7 +246,9 @@ EmitterLayerWidget::EmitterLayerWidget(QWidget *parent) :
 	dstFactorLabel = new QLabel("DST Factor");	
 	presetComboBox = new QComboBox();
 	srcFactorComboBox = new QComboBox();
-	dstFactorComboBox = new QComboBox();	
+	dstFactorComboBox = new QComboBox();
+	srcFactorComboBox->setEnabled(false);
+	dstFactorComboBox->setEnabled(false);
 	FillBlendCombos();
 	
 	QHBoxLayout *blendLayout = new QHBoxLayout();
@@ -860,7 +861,7 @@ void EmitterLayerWidget::StoreVisualState(KeyedArchive* visualStateProps)
 
 void EmitterLayerWidget::OnSpriteBtn()
 {
-	FilePath projectPath = EditorSettings::Instance()->GetProjectPath();
+	FilePath projectPath = FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString());
 	projectPath += "Data/Gfx/Particles/";
     
 	QString filePath = QtFileDialog::getOpenFileName(NULL, QString("Open particle sprite"), QString::fromStdString(projectPath.GetAbsolutePathname()), QString("Effect File (*.txt)"));

@@ -72,9 +72,10 @@ void ActionEnableCustomColors::Redo()
 	SceneSignals::Instance()->EmitCustomColorsToggled(sceneEditor);
 }
 
-ActionDisableCustomColors::ActionDisableCustomColors(SceneEditor2* forSceneEditor)
+ActionDisableCustomColors::ActionDisableCustomColors(SceneEditor2* forSceneEditor, bool textureSavingNeeded)
 :	CommandAction(CMDID_CUSTOM_COLORS_DISABLE)
 ,	sceneEditor(forSceneEditor)
+,	textureSavingNeeded(textureSavingNeeded)
 {
 }
 
@@ -91,15 +92,13 @@ void ActionDisableCustomColors::Redo()
 		return;
 	}
 	
-	disabled = sceneEditor->customColorsSystem->DisableLandscapeEdititing();
-	if (!disabled)
+	bool success = sceneEditor->customColorsSystem->DisableLandscapeEdititing(textureSavingNeeded);
+	if (!success)
 	{
 		ShowErrorDialog(ResourceEditor::CUSTOM_COLORS_DISABLE_ERROR);
 	}
-
 	SceneSignals::Instance()->EmitCustomColorsToggled(sceneEditor);
 }
-
 
 ModifyCustomColorsCommand::ModifyCustomColorsCommand(Image* originalImage,
 													 CustomColorsProxy* customColorsProxy,
@@ -145,6 +144,10 @@ void ModifyCustomColorsCommand::ApplyImage(DAVA::Image *image)
 	Sprite* sprite = Sprite::CreateFromTexture(texture, 0, 0, (float32)texture->GetWidth(), (float32)texture->GetHeight());
 	
 	RenderManager::Instance()->SetRenderTarget(customColorsSprite);
+
+	RenderManager::Instance()->SetDefault2DState();
+	RenderManager::Instance()->FlushState();
+	
 	RenderManager::Instance()->ClipPush();
 	RenderManager::Instance()->SetClip(updatedRect);
 

@@ -28,8 +28,10 @@
 
 #include "CreatePlaneLODCommand.h"
 #include "Qt/Scene/SceneHelper.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Classes/CommandLine/TextureDescriptor/TextureDescriptorUtils.h"
+
+#include "Render/Material/NMaterialNames.h"
 
 using namespace DAVA;
 
@@ -150,7 +152,7 @@ DAVA::Entity * CreatePlaneLODCommand::CreatePlaneEntity(DAVA::Entity * fromEntit
     planeEntity->SetName(lodComponent->GetEntity()->GetName() + Format("_lod%d", lodComponent->GetLodLayersCount()));
 
     RenderObject * planeRO = new Mesh();
-    planeEntity->AddComponent(ScopedPtr<RenderComponent> (new RenderComponent(planeRO)));
+    planeEntity->AddComponent(new RenderComponent(planeRO));
 
     RenderBatch * rb = new RenderBatch();
 
@@ -218,14 +220,22 @@ DAVA::Entity * CreatePlaneLODCommand::CreatePlaneEntity(DAVA::Entity * fromEntit
     rb->SetPolygonGroup(planePG);
     planeRO->AddRenderBatch(rb);
 
-    Material * material = new Material();
+    /*Material * material = new Material();
     material->SetType(Material::MATERIAL_UNLIT_TEXTURE);
     material->SetFog(true);
     material->SetOpaque(true);
     material->SetTwoSided(true);
     material->SetName(Format("%s_planes", fromEntity->GetName().c_str()));
     
-    material->SetTexture(Material::TEXTURE_DIFFUSE, textureSavePath);
+    material->SetTexture(Material::TEXTURE_DIFFUSE, textureSavePath);*/
+	
+	NMaterial* material = NMaterial::CreateMaterialInstance(FastName(Format("%s_planes", fromEntity->GetName().c_str())),
+															NMaterialName::TEXTURED_ALPHATEST,
+															NMaterial::DEFAULT_QUALITY_NAME);
+	material->SetFlag(NMaterial::FLAG_VERTEXFOG, NMaterial::FlagOn);
+	NMaterialHelper::DisableStateFlags(PASS_FORWARD, material, RenderStateData::STATE_CULL);
+	material->SetTexture(NMaterial::TEXTURE_ALBEDO, textureSavePath);
+	
     rb->SetMaterial(material);
 
     SafeRelease(rb);
@@ -237,12 +247,12 @@ DAVA::Entity * CreatePlaneLODCommand::CreatePlaneEntity(DAVA::Entity * fromEntit
 
 void CreatePlaneLODCommand::DrawToTexture(DAVA::Entity * fromEntity, DAVA::Camera * camera, DAVA::Texture * toTexture, const DAVA::Rect & viewport /* = DAVA::Rect(0, 0, -1, -1) */, bool clearTarget /* = true */)
 {
-    Map<String, Texture*> textures;
-    SceneHelper::EnumerateTextures(fromEntity, textures);
-    eGPUFamily currentGPU = EditorSettings::Instance()->GetTextureViewGPU();
+    DAVA::TexturesMap textures;
+    SceneHelper::EnumerateEntityTextures(fromEntity->GetScene(), fromEntity, textures);
+    DAVA::eGPUFamily currentGPU = (DAVA::eGPUFamily)SettingsManager::Instance()->GetValue("TextureViewGPU", SettingsManager::INTERNAL).AsInt32();
 
-    DAVA::Map<DAVA::String, DAVA::Texture *>::const_iterator it = textures.begin();
-    DAVA::Map<DAVA::String, DAVA::Texture *>::const_iterator end = textures.end();
+    DAVA::TexturesMap::const_iterator it = textures.begin();
+    DAVA::TexturesMap::const_iterator end = textures.end();
     for(; it != end; ++it)
         it->second->ReloadAs(GPU_UNKNOWN);
 

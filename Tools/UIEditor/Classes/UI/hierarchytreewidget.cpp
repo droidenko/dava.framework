@@ -356,6 +356,11 @@ void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
     HierarchyTreeControlNode* firstNode = NULL;
     bool needReselectScreen = false;
     QList<HierarchyTreeControlNode*> nodesToBeSelected;
+    QList<QTreeWidgetItem*> itemsToBeSelected;
+    
+    // Selection is changed programmatically in this method, so block the signals to avoid
+    // recursive calls.
+    WidgetSignalsBlocker blocker(ui->treeWidget);
     
     // There can be situation where first and last items selected belong to the different screens.
     // So have to implement two-pass approach here - firstly determine the nodes to be selected,
@@ -366,6 +371,8 @@ void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
         HierarchyTreeControlNode* multiSelectControlNode = dynamic_cast<HierarchyTreeControlNode* >(HierarchyTreeController::Instance()->GetTree().GetNode(data.toInt()));
         if (!multiSelectControlNode)
         {
+            // For sure don't allow to multiselect anything but controls
+            multiSelectItem->setSelected(false);
             continue;
         }
         
@@ -373,6 +380,7 @@ void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
         {
             firstNode = multiSelectControlNode;
             nodesToBeSelected.append(multiSelectControlNode);
+            itemsToBeSelected.append(multiSelectItem);
             continue;
         }
         
@@ -380,6 +388,7 @@ void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
         if (multiSelectControlNode->GetScreenNode() == firstNode->GetScreenNode())
         {
             nodesToBeSelected.append(multiSelectControlNode);
+            itemsToBeSelected.append(multiSelectItem);
         }
         else
         {
@@ -398,13 +407,19 @@ void HierarchyTreeWidget::Select(const QList<QTreeWidgetItem*>& selectedItems)
     if (needReselectScreen)
     {
         HierarchyTreeController::Instance()->UpdateSelection(firstNode->GetScreenNode()->GetPlatform(), firstNode->GetScreenNode());
+
+        // Screen selection changed the tree selected item, so reselect all the tree items to be selected.
+        foreach(QTreeWidgetItem* reselectedItem, itemsToBeSelected)
+        {
+            reselectedItem->setSelected(true);
+        }
     }
     
-    // Second pass - select the controls remembered before.
-    foreach(HierarchyTreeControlNode* nodeToBeSelected, nodesToBeSelected)
-    {
-        HierarchyTreeController::Instance()->SelectControl(nodeToBeSelected);
-    }
+    // Second pass - select the controls remembered before. Note - selected controls
+    // are already handled by the tree, so block OnSelectedControlNodesChanged.
+    internalSelectionChanged = true;
+    HierarchyTreeController::Instance()->SynchronizeSelection(nodesToBeSelected);
+    internalSelectionChanged = false;
 }
 
 void HierarchyTreeWidget::ResetSelection()

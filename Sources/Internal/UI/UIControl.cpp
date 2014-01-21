@@ -111,10 +111,7 @@ namespace DAVA
 	
 	UIControl::~UIControl()
 	{
-		if(totalTouches > 0)
-		{
-			UIControlSystem::Instance()->CancelInputs(this);
-		}
+        UIControlSystem::Instance()->CancelInputs(this);
 		SafeRelease(background);
 		SafeRelease(eventDispatcher);
 		RemoveAllControls();
@@ -122,12 +119,9 @@ namespace DAVA
 	
 	void UIControl::SetParent(UIControl *newParent)
 	{
-		if (!newParent) 
+		if (!newParent && parent)
 		{
-			if(totalTouches > 0)
-			{
-				UIControlSystem::Instance()->CancelInputs(this);
-			}
+            UIControlSystem::Instance()->CancelInputs(this);
 		}
 		parent = newParent;
 		if(parent && needToRecalcFromAbsoluteCoordinates)
@@ -934,14 +928,11 @@ namespace DAVA
 	
 	void UIControl::SetVisible(bool isVisible, bool hierarchic/* = true*/)
 	{
-		visible = isVisible;
-		if (!visible) 
+		if (!isVisible && visible)
 		{
-			if(totalTouches > 0)
-			{
-				UIControlSystem::Instance()->CancelInputs(this);
-			}
+            UIControlSystem::Instance()->CancelInputs(this);
 		}
+		visible = isVisible;
 		
 		if(hierarchic)
 		{	
@@ -1618,6 +1609,7 @@ namespace DAVA
 	
 	void UIControl::DrawDebugRect(const UIGeometricData &gd, bool useAlpha)
 	{
+        RenderManager::Instance()->SetDefault2DNoTextureState();
 		Color oldColor = RenderManager::Instance()->GetColor();
 		RenderManager::Instance()->ClipPush();
 
@@ -1646,6 +1638,7 @@ namespace DAVA
 
 		RenderManager::Instance()->ClipPop();
 		RenderManager::Instance()->SetColor(oldColor);
+        RenderManager::Instance()->SetDefault2DState();
 	}
 
 	void UIControl::DrawPivotPoint(const Rect &drawRect)
@@ -1663,6 +1656,7 @@ namespace DAVA
 		static const float32 PIVOT_POINT_MARK_RADIUS = 10.0f;
 		static const float32 PIVOT_POINT_MARK_HALF_LINE_LENGTH = 13.0f;
 
+        RenderManager::Instance()->SetDefault2DNoTextureState();
 		Color oldColor = RenderManager::Instance()->GetColor();
 		RenderManager::Instance()->ClipPush();
 		RenderManager::Instance()->SetColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
@@ -1685,6 +1679,7 @@ namespace DAVA
 
 		RenderManager::Instance()->ClipPop();
 		RenderManager::Instance()->SetColor(oldColor);
+        RenderManager::Instance()->SetDefault2DState();
 	}
 	
 	bool UIControl::IsPointInside(const Vector2 &_point, bool expandWithFocus/* = false*/)
@@ -1776,7 +1771,7 @@ namespace DAVA
 						currentInput->touchLocker = this;
 						if(exclusiveInput)
 						{
-							UIControlSystem::Instance()->SetExclusiveInputLocker(this);
+							UIControlSystem::Instance()->SetExclusiveInputLocker(this, currentInput->tid);
 						}
 
    						PerformEventWithData(EVENT_TOUCH_DOWN, currentInput);
@@ -1897,7 +1892,7 @@ namespace DAVA
 								controlState |= STATE_NORMAL;
 								if(UIControlSystem::Instance()->GetExclusiveInputLocker() == this)
 								{
-									UIControlSystem::Instance()->SetExclusiveInputLocker(NULL);
+									UIControlSystem::Instance()->SetExclusiveInputLocker(NULL, -1);
 								}
 							}
 							else if(touchesInside <= 0)
@@ -1994,7 +1989,7 @@ namespace DAVA
 			controlState |= STATE_NORMAL;
 			if(UIControlSystem::Instance()->GetExclusiveInputLocker() == this)
 			{
-				UIControlSystem::Instance()->SetExclusiveInputLocker(NULL);
+				UIControlSystem::Instance()->SetExclusiveInputLocker(NULL, -1);
 			}
 		}
 		

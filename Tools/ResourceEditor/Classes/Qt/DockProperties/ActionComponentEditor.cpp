@@ -259,6 +259,8 @@ QWidget* ActionItemEditDelegate::createEditor(QWidget *parent, const QStyleOptio
 			parentEntity->GetChildNodes(allChildren);
 
 			DAVA::Vector<DAVA::String> childrenNames;
+            childrenNames.reserve(allChildren.size() + 1);
+            
 			childrenNames.push_back(parentEntity->GetName());
 			for(int i = 0; i < (int)allChildren.size(); ++i)
 			{

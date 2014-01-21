@@ -1567,7 +1567,7 @@ VariantType VariantType::FromType(int type)
 		v.SetColor(Color());
 		break;
 	case TYPE_FASTNAME:
-		v.SetFastName("");
+		v.SetFastName(FastName(""));
 		break;
 	case TYPE_AABBOX3:
 		v.SetAABBox3(AABBox3());

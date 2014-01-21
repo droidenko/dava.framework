@@ -49,26 +49,21 @@ void SpritesHelper::BuildSpritesListRecursive(const HierarchyTreeControlNode* co
         return;
     }
     
-    // Specific check for UIButton - it has more than one sprite to reload.
     UIButton* buttonControl = dynamic_cast<UIButton*>(controlNode->GetUIObject());
+    UIStaticText* staticTextControl = dynamic_cast<UIStaticText*>(controlNode->GetUIObject());
     if (buttonControl)
     {
-        //States cycle for values
-        int32 statesCount = UIControlStateHelper::GetUIControlStatesCount();
-		for (int32 i = 0; i < statesCount; ++i)
-		{
-            Sprite* buttonSprite = buttonControl->GetStateSprite(UIControlStateHelper::GetUIControlState(i));
-            if (buttonSprite)
-            {
-                sprites.insert(buttonSprite);
-            }
-        }
+        BuildSpritesList(sprites, buttonControl);
+    }
+    else if (staticTextControl)
+    {
+        BuildSpritesList(sprites, staticTextControl);
     }
     else if (controlNode->GetUIObject() && controlNode->GetUIObject()->GetSprite())
     {
         sprites.insert(controlNode->GetUIObject()->GetSprite());
     }
-    
+
     // Repeat for all children.
     const HierarchyTreeNode::HIERARCHYTREENODESLIST& childNodes = controlNode->GetChildNodes();
     for (HierarchyTreeNode::HIERARCHYTREENODESLIST::const_iterator iter = childNodes.begin(); iter != childNodes.end(); iter ++)
@@ -78,7 +73,21 @@ void SpritesHelper::BuildSpritesListRecursive(const HierarchyTreeControlNode* co
     }
 }
 
-void SpritesHelper::ApplyPixelization(Sprite* sprite)
+void SpritesHelper::SetPixelization(const HierarchyTreeNode* rootNode, bool value)
+{
+    Set<Sprite*> sprites = EnumerateSprites(rootNode);
+    SetPixelization(sprites, value);
+}
+
+void SpritesHelper::SetPixelization(Set<Sprite*>& spritesList, bool value)
+{
+    for (Set<Sprite*>::iterator iter = spritesList.begin(); iter != spritesList.end(); iter ++)
+    {
+        SetPixelization(*iter, value);
+    }
+}
+
+void SpritesHelper::SetPixelization(Sprite* sprite, bool value)
 {
     if (!sprite)
     {
@@ -94,15 +103,47 @@ void SpritesHelper::ApplyPixelization(Sprite* sprite)
             continue;
         }
 
-        texture->GeneratePixelesation();
+        Texture::TextureFilter minFilter = value ? Texture::FILTER_NEAREST : (Texture::TextureFilter)texture->GetDescriptor()->settings.minFilter;
+        Texture::TextureFilter magFilter = value ? Texture::FILTER_NEAREST : (Texture::TextureFilter)texture->GetDescriptor()->settings.magFilter;
+        texture->SetMinMagFilter(minFilter, magFilter);
     }
 }
 
-void SpritesHelper::ApplyPixelizationForAllSprites(const HierarchyTreeNode* rootNode)
+void SpritesHelper::SetPixelization(UIButton* button, bool value)
 {
-    Set<Sprite*> sprites = EnumerateSprites(rootNode);
-    for (Set<Sprite*>::iterator iter = sprites.begin(); iter != sprites.end(); iter ++)
+    Set<Sprite*> spritesList;
+    BuildSpritesList(spritesList, button);
+    SetPixelization(spritesList, value);
+}
+
+void SpritesHelper::SetPixelization(UIStaticText* staticText, bool value)
+{
+    Set<Sprite*> spritesList;
+    BuildSpritesList(spritesList, staticText);
+    SetPixelization(spritesList, value);
+}
+
+void SpritesHelper::BuildSpritesList(Set<Sprite*>& spritesList, UIButton* button)
+{
+    // Button might contain backgrounds and/or texts, check both.
+    int32 statesCount = UIControlStateHelper::GetUIControlStatesCount();
+    for (int32 i = 0; i < statesCount; ++i)
     {
-        ApplyPixelization(*iter);
+        Sprite* buttonSprite = button->GetStateSprite(UIControlStateHelper::GetUIControlState(i));
+        if (buttonSprite)
+        {
+            spritesList.insert(buttonSprite);
+        }
+
+        UIStaticText* textControl = button->GetStateTextControl(i);
+        BuildSpritesList(spritesList, textControl);
+    }
+}
+
+void SpritesHelper::BuildSpritesList(Set<Sprite*>& spritesList, UIStaticText* staticText)
+{
+    if (staticText && staticText->GetTextBlock() && staticText->GetTextBlock()->IsSpriteReady())
+    {
+        spritesList.insert(staticText->GetTextBlock()->GetSprite());
     }
 }

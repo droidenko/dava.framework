@@ -31,69 +31,93 @@
 #include <QMouseEvent>
 #include <QHeaderView>
 #include <QPainter>
-#include <QWindowsStyle>
+#include <QCoreApplication>
 
 #include "QtPropertyEditor.h"
-#include "QtPropertyModel.h"
 #include "QtPropertyItemDelegate.h"
 
 QtPropertyEditor::QtPropertyEditor(QWidget *parent /* = 0 */)
-	: QTreeView(parent)
-	, updateTimeout(0)
-	, doUpdateOnPaintEvent(false)
+: QTreeView(parent)
+, updateTimeout(0)
+, doUpdateOnPaintEvent(false)
+, lastHoverData(NULL)
 {
-	curModel = new QtPropertyModel();
+	curModel = new QtPropertyModel(viewport());
 	setModel(curModel);
 
-	curItemDelegate = new QtPropertyItemDelegate();
+	curItemDelegate = new QtPropertyItemDelegate(curModel);
 	setItemDelegate(curItemDelegate);
 
 	QObject::connect(this, SIGNAL(clicked(const QModelIndex &)), this, SLOT(OnItemClicked(const QModelIndex &)));
-	QObject::connect(this, SIGNAL(expanded(const QModelIndex &)), curItemDelegate, SLOT(expand(const QModelIndex &)));
-	QObject::connect(this, SIGNAL(collapsed(const QModelIndex &)), curItemDelegate, SLOT(collapse(const QModelIndex &)));
-	QObject::connect(curModel, SIGNAL(ItemEdited(const QString &, QtPropertyData *)), this, SLOT(OnItemEdited(const QString &, QtPropertyData *)));
+	QObject::connect(curModel, SIGNAL(PropertyEdited(const QModelIndex &)), this, SLOT(OnItemEdited(const QModelIndex &)));
+	QObject::connect(curModel, SIGNAL(PropertyExpanded(const QModelIndex &, bool)), this, SLOT(OnItemExpanded(const QModelIndex &, bool)));
 	QObject::connect(&updateTimer, SIGNAL(timeout()), this, SLOT(OnUpdateTimeout()));
+
+	setMouseTracking(true);
 }
 
 QtPropertyEditor::~QtPropertyEditor()
 { }
 
-QPair<QtPropertyItem*, QtPropertyItem*> QtPropertyEditor::AppendProperty(const QString &name, QtPropertyData* data, QtPropertyItem* parent /*= NULL*/)
+QModelIndex QtPropertyEditor::AppendProperty(const QString &name, QtPropertyData* data, const QModelIndex &parent)
 {
-	if(NULL != data)
-	{
-		data->SetOWViewport(viewport());
-	}
-
+	lastHoverData = NULL;
 	return curModel->AppendProperty(name, data, parent);
 }
 
-QPair<QtPropertyItem*, QtPropertyItem*> QtPropertyEditor::GetProperty(const QString &name, QtPropertyItem* parent) const
+QModelIndex QtPropertyEditor::InsertProperty(const QString &name, QtPropertyData* data, int row, const QModelIndex &parent)
 {
-	return curModel->GetProperty(name, parent);
+	lastHoverData = NULL;
+	return curModel->InsertProperty(name, data, row, parent);
 }
 
-void QtPropertyEditor::RemoveProperty(QtPropertyItem* item)
+QModelIndex QtPropertyEditor::AppendHeader(const QString &text)
 {
-	curModel->RemoveProperty(item);
+	QModelIndex propHeader = AppendProperty(text, new QtPropertyData(""));
+
+	ApplyStyle(GetProperty(propHeader), HEADER_STYLE);
+	return propHeader;
+}
+
+QModelIndex QtPropertyEditor::InsertHeader(const QString &text, int row)
+{
+	QModelIndex propHeader = InsertProperty(text, new QtPropertyData(""), row);
+
+	ApplyStyle(GetProperty(propHeader), HEADER_STYLE);
+	return propHeader;
+}
+
+QtPropertyData* QtPropertyEditor::GetProperty(const QModelIndex &index) const
+{
+	return curModel->itemFromIndex(index);
+}
+
+QtPropertyData * QtPropertyEditor::GetRootProperty() const
+{
+	return curModel->rootItem();
+}
+
+void QtPropertyEditor::RemoveProperty(const QModelIndex &index)
+{
+	lastHoverData = NULL;
+	curModel->RemoveProperty(index);
+}
+
+void QtPropertyEditor::RemoveProperty(QtPropertyData *data)
+{
+	lastHoverData = NULL;
+	curModel->RemoveProperty(curModel->indexFromItem(data));
 }
 
 void QtPropertyEditor::RemovePropertyAll()
 {
+	lastHoverData = NULL;
 	curModel->RemovePropertyAll();
 }
 
-QtPropertyData *QtPropertyEditor::GetPropertyData(const QString &key, QtPropertyItem *parent) const
+void QtPropertyEditor::SetFilter(const QString &regex)
 {
-	QtPropertyData *ret = NULL;
-
-	QPair<QtPropertyItem*, QtPropertyItem*> pair = GetProperty(key, parent);
-	if(NULL != pair.second)
-	{
-		ret = pair.second->GetPropertyData();
-	}
-
-	return ret;
+	//curFilteringModel->setFilterRegExp(regex);
 }
 
 void QtPropertyEditor::SetEditTracking(bool enabled)
@@ -101,14 +125,9 @@ void QtPropertyEditor::SetEditTracking(bool enabled)
 	curModel->SetEditTracking(enabled);
 }
 
-bool QtPropertyEditor::GetEditTracking()
+bool QtPropertyEditor::GetEditTracking() const
 {
 	return curModel->GetEditTracking();
-}
-
-void QtPropertyEditor::Expand(QtPropertyItem *item)
-{
-	expand(curModel->indexFromItem(item));
 }
 
 void QtPropertyEditor::SetUpdateTimeout(int ms)
@@ -146,20 +165,44 @@ void QtPropertyEditor::OnUpdateTimeout()
 	SetUpdateTimeout(updateTimeout);
 }
 
-QtPropertyItem* QtPropertyEditor::AddHeader(const char *text)
+void QtPropertyEditor::expand(const QModelIndex & index)
 {
-	QPair<QtPropertyItem*, QtPropertyItem*> propHeader;
-	
-	propHeader = AppendProperty(text, NULL);
-	
-	QFont boldFont = propHeader.first->font();
-	boldFont.setBold(true);
-	
-	propHeader.first->setFont(boldFont);
-	propHeader.first->setBackground(QBrush(QColor(Qt::lightGray)));
-	propHeader.second->setBackground(QBrush(QColor(Qt::lightGray)));
-	
-	return propHeader.first;
+	QTreeView::expand(index);
+
+	QtPropertyData *data = GetProperty(index);
+	if(NULL != data)
+	{
+		data->SetExpanded(true);
+	}
+}
+
+void QtPropertyEditor::expandAll()
+{
+	QTreeView::expandAll();
+	UpdateExpandState(rootIndex());
+}
+
+void QtPropertyEditor::expandToDepth(int depth)
+{
+	QTreeView::expandToDepth(depth);
+	UpdateExpandState(rootIndex());
+}
+
+void QtPropertyEditor::collapse(const QModelIndex & index)
+{
+	QTreeView::expand(index);
+
+	QtPropertyData *data = GetProperty(index);
+	if(NULL != data)
+	{
+		data->SetExpanded(true);
+	}
+}
+
+void QtPropertyEditor::collapseAll()
+{
+	QTreeView::collapseAll();
+	UpdateExpandState(rootIndex());
 }
 
 void QtPropertyEditor::drawRow(QPainter * painter, const QStyleOptionViewItem &option, const QModelIndex & index) const
@@ -197,6 +240,141 @@ void QtPropertyEditor::drawRow(QPainter * painter, const QStyleOptionViewItem &o
 	}
 }
 
+void QtPropertyEditor::mouseMoveEvent(QMouseEvent * event)
+{
+	OnHover(indexAt(event->pos()));
+	QTreeView::mouseMoveEvent(event);
+}
+
+void QtPropertyEditor::mousePressEvent(QMouseEvent * event)
+{
+	bool isExpandCase = false;
+	bool allowExpand = false;
+
+	QModelIndex index = indexAt(event->pos());
+	QtPropertyData *data = GetProperty(index);
+
+	OnHover(index);
+
+	if(style()->styleHint(QStyle::SH_Q3ListViewExpand_SelectMouseType, 0, this) == QEvent::MouseButtonPress)
+	{
+		isExpandCase = true;
+
+		if(NULL != data)
+		{
+			allowExpand = data->IsExpandable();
+		}
+	}
+
+	if(!isExpandCase || (isExpandCase && allowExpand))
+	{
+		QTreeView::mousePressEvent(event);
+	}
+	
+	if(isExpandCase && allowExpand)
+	{
+		// is this case expand/collapse user action was handled by tree view
+		// we should update expanded state to item
+		data->SetExpanded(isExpanded(index));
+	}
+}
+
+void QtPropertyEditor::mouseReleaseEvent(QMouseEvent * event)
+{
+	OnHover(indexAt(event->pos()));
+	QTreeView::mouseReleaseEvent(event);
+}
+
+void QtPropertyEditor::leaveEvent(QEvent * event)
+{
+	OnHover(QModelIndex());
+	QTreeView::leaveEvent(event);
+}
+
+void QtPropertyEditor::OnHover(const QModelIndex &index)
+{
+	QtPropertyData *data = GetProperty(index);
+
+	if(data != lastHoverData)
+	{
+		QtPropertyData *prevData = lastHoverData;
+		lastHoverData = data;
+
+		QModelIndex dataIndex = index.sibling(index.row(), 1);
+
+		if(NULL != prevData)
+		{
+			for(int i = 0; i < prevData->GetButtonsCount(); ++i)
+			{
+				QtPropertyToolButton *btn = prevData->GetButton(i);
+				btn->activeIndex = QModelIndex();
+				btn->hide();
+			}
+		}
+
+		if(NULL != data)
+		{
+			for(int i = 0; i < data->GetButtonsCount(); ++i)
+			{
+				QtPropertyToolButton *btn = data->GetButton(i);
+				btn->activeIndex = dataIndex;
+				btn->show();
+			}
+
+			update(dataIndex);
+		}
+	}
+}
+
+void QtPropertyEditor::ApplyStyle(QtPropertyData *data, int style)
+{
+	if(NULL != data)
+	{
+		switch(style)
+		{
+		case DEFAULT_STYLE:
+			data->ResetStyle();
+			break;
+
+		case HEADER_STYLE:
+			{
+				QFont boldFont = data->GetFont();
+				boldFont.setBold(true);
+				data->SetFont(boldFont);
+
+				data->SetBackground(QBrush(QColor(Qt::lightGray)));
+				data->SetBackground(QBrush(QColor(Qt::lightGray)));
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+QToolButton* QtPropertyEditor::GetButton(QMouseEvent * event)
+{
+	QToolButton *ret = NULL;
+	QtPropertyData *data = GetProperty(indexAt(event->pos()));
+
+	if(NULL != data)
+	{
+		for(int i = 0; i < data->GetButtonsCount(); ++i)
+		{
+			QToolButton *btn = data->GetButton(i);
+			QPoint p = event->pos() - btn->pos();
+
+			if(p.x() >= 0 && p.y() >= 0 && p.x() < btn->width() && p.y() < btn->height())
+			{
+				ret = btn;
+			}
+		}
+	}
+
+	return ret;
+}
+
 void QtPropertyEditor::paintEvent(QPaintEvent * event)
 {
 	QTreeView::paintEvent(event);
@@ -204,14 +382,35 @@ void QtPropertyEditor::paintEvent(QPaintEvent * event)
 
 void QtPropertyEditor::OnItemClicked(const QModelIndex &index)
 {
-	QStandardItem *item = curModel->itemFromIndex(index);
-	if(NULL != item && item->isEditable() && item->isEnabled())
+	edit(index, QAbstractItemView::DoubleClicked, NULL);
+}
+
+void QtPropertyEditor::OnItemEdited(const QModelIndex &index)
+{
+	lastHoverData = NULL;
+	emit PropertyEdited(index);
+}
+
+void QtPropertyEditor::OnItemExpanded(const QModelIndex &index, bool state)
+{
+	if(isExpanded(index) != state)
 	{
-		edit(index, QAbstractItemView::DoubleClicked, NULL);
+		setExpanded(index, state);
 	}
 }
 
-void QtPropertyEditor::OnItemEdited(const QString &name, QtPropertyData *data)
+void QtPropertyEditor::UpdateExpandState(const QModelIndex &parent)
 {
-	emit PropertyEdited(name, data);
+	int rowCount = model()->rowCount(parent);
+	for(int i = 0; i < rowCount; ++i)
+	{
+		QModelIndex child = model()->index(i, 0, parent);
+		QtPropertyData *data = GetProperty(child);
+		if(NULL != data)
+		{
+			data->SetExpanded(isExpanded(child));
+		}
+
+		UpdateExpandState(child);
+	}
 }

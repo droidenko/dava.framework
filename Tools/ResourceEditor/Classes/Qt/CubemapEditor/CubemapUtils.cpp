@@ -29,7 +29,7 @@
 
 #include "CUbemapEditor/CubemapUtils.h"
 #include "Render/Texture.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Qt/Main/QtUtils.h"
 
 #define CUBEMAPEDITOR_MAXFACES 6
@@ -112,14 +112,12 @@ const DAVA::String& CubemapUtils::GetDefaultFaceExtension()
 
 DAVA::FilePath CubemapUtils::GetDialogSavedPath(const DAVA::String& key, const DAVA::String& initialValue, const DAVA::String& defaultValue)
 {
-	DAVA::KeyedArchive* settings = EditorSettings::Instance()->GetSettings();
-	DAVA::FilePath projectPath = settings->GetString(key, initialValue);
+	DAVA::FilePath projectPath(SettingsManager::Instance()->GetValue(key, SettingsManager::INTERNAL).AsString());
 	
 	if(!projectPath.Exists())
 	{
 		projectPath = defaultValue;
-		settings->SetString(key, defaultValue);
-		EditorSettings::Instance()->Save();
+		SettingsManager::Instance()->SetValue(key, VariantType(defaultValue), SettingsManager::INTERNAL);
 	}
 
 	return projectPath;

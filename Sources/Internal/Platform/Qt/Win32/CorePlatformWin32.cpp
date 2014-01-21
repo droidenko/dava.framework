@@ -116,11 +116,6 @@ bool CoreWin32Platform::SetupWindow(HINSTANCE hInstance, HWND hWindow)
 			fileName[i] = ' ';
 		}
 	}
-	hMutex = CreateMutex(NULL, FALSE, fileName);
-	if(ERROR_ALREADY_EXISTS == GetLastError())
-	{
-		return false;
-	}
 
 	return true;
 }

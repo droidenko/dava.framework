@@ -41,6 +41,7 @@
 #include "Render/Highlevel/IRenderUpdatable.h"
 #include "Particles/ParticleLayer.h"
 #include "FileSystem/FilePath.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA 
 {
@@ -82,6 +83,9 @@ class Particle;
 	emitAtPoints - this number means that particles will be generated evenly on circle. If it's not defined particles will be generated randomly.
 	life - emitter life in seconds. When accumulated time in ParticleEmitter::Update exceeds this value, emitter restarts and delete all previous particles. 
  */
+
+
+class MaterialSystem;
 class ParticleEmitter : public RenderObject, public IRenderUpdatable
 {
 public:
@@ -242,8 +246,8 @@ public:
 	//ParticleEmitter * Clone();
 
 	virtual RenderObject * Clone(RenderObject *newObject);
-	virtual void Save(KeyedArchive *archive, SceneFileV2 *sceneFile);
-	virtual void Load(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	virtual void Save(KeyedArchive *archive, SerializationContext *serializationContext);
+	virtual void Load(KeyedArchive *archive, SerializationContext *serializationContext);
 	virtual void RecalcBoundingBox();
 
 	/*from RenderObject*/
@@ -401,8 +405,8 @@ public:
 	void SetShortEffect(bool isShort);
 
 	void GetModifableLines(List<ModifiablePropertyLineBase *> &modifiables);
-
 	Matrix3 GetRotationMatrix();	
+
 
 protected:
 	// Virtual methods which are different for 2D and 3D emitters.
@@ -490,14 +494,23 @@ private:
 		YamlParser *parser;
 		int refCount;
 	};
-	static Map<String, EmitterYamlCacheEntry> emitterYamlCache;
+
+
+#if defined (USE_FILEPATH_IN_MAP)
+	typedef Map<FilePath, EmitterYamlCacheEntry> YamlCacheMap;
+#else //#if defined (USE_FILEPATH_IN_MAP)
+	typedef Map<String, EmitterYamlCacheEntry> YamlCacheMap;
+#endif //#if defined (USE_FILEPATH_IN_MAP)
+	static YamlCacheMap emitterYamlCache;
 	
 protected:
+
 	friend class ParticleEmitter3D;
 	YamlParser* GetParser(const FilePath &filename);
-	void RetainInCache(const String& name);
-	void ReleaseFromCache(const String& name);	
-	String emitterFileName;
+
+	void RetainInCache(const FilePath & name);
+	void ReleaseFromCache(const FilePath & name);	
+	FilePath emitterFileName;
 
 public:
     

@@ -31,8 +31,11 @@
 
 #include "UIStaticTextMetadata.h"
 #include "EditorFontManager.h"
+#include "EditorSettings.h"
 
 #include "StringUtils.h"
+#include "ColorHelper.h"
+#include "SpritesHelper.h"
 
 using namespace DAVA;
 
@@ -65,6 +68,7 @@ void UIStaticTextMetadata::SetFont(Font * font)
     {
         font->SetSize(GetFontSize());
         GetActiveStaticText()->SetFont(font);
+        UpdatePixelization();
     }
 }
 
@@ -75,6 +79,7 @@ void UIStaticTextMetadata::SetLocalizedTextKey(const QString& value)
     // Update the control with the value.
     WideString localizationValue = LocalizationSystem::Instance()->GetLocalizedString(QStrint2WideString(value));
     GetActiveStaticText()->SetText(localizationValue);
+    UpdatePixelization();
 }
 
 float UIStaticTextMetadata::GetFontSize() const
@@ -104,6 +109,8 @@ void UIStaticTextMetadata::SetFontSize(float fontSize)
         newFont->SetSize(fontSize);
         GetActiveStaticText()->SetFont(newFont);
         newFont->Release();
+
+        UpdatePixelization();
     }
 }
 
@@ -129,6 +136,8 @@ void UIStaticTextMetadata::InitializeControl(const String& controlName, const Ve
         // Static text is not state-aware.
         activeNode->GetExtraData().SetLocalizationKey(controlText, this->GetReferenceState());
     }
+
+    UpdatePixelization();
 }
 
 void UIStaticTextMetadata::UpdateExtraData(HierarchyTreeNodeExtraData& extraData, eExtraDataUpdateStyle updateStyle)
@@ -150,7 +159,7 @@ QColor UIStaticTextMetadata::GetFontColor() const
         return QColor();
     }
 
-	return DAVAColorToQTColor(GetActiveStaticText()->GetTextColor());
+	return ColorHelper::DAVAColorToQTColor(GetActiveStaticText()->GetTextColor());
 }
 
 void UIStaticTextMetadata::SetFontColor(const QColor& value)
@@ -160,7 +169,7 @@ void UIStaticTextMetadata::SetFontColor(const QColor& value)
         return;
     }
 
-	GetActiveStaticText()->SetTextColor(QTColorToDAVAColor(value));
+	GetActiveStaticText()->SetTextColor(ColorHelper::QTColorToDAVAColor(value));
 }
 
 float UIStaticTextMetadata::GetShadowOffsetX() const
@@ -210,7 +219,7 @@ QColor UIStaticTextMetadata::GetShadowColor() const
     	return QColor();
     }
 	
-	return DAVAColorToQTColor(GetActiveStaticText()->GetShadowColor());
+	return ColorHelper::DAVAColorToQTColor(GetActiveStaticText()->GetShadowColor());
 }
 
 void UIStaticTextMetadata::SetShadowColor(const QColor& value)
@@ -220,7 +229,7 @@ void UIStaticTextMetadata::SetShadowColor(const QColor& value)
         return;
     }
 	
-	GetActiveStaticText()->SetShadowColor(QTColorToDAVAColor(value));
+	GetActiveStaticText()->SetShadowColor(ColorHelper::QTColorToDAVAColor(value));
 }
 
 int UIStaticTextMetadata::GetAlign()
@@ -283,6 +292,7 @@ void UIStaticTextMetadata::SetMultiline(const bool value)
     // Have to keep current MultilineBySymbol value.
     bool curMultilineBySymbolValue = GetActiveStaticText()->GetMultilineBySymbol();
     GetActiveStaticText()->SetMultiline(value, curMultilineBySymbolValue);
+    UpdatePixelization();
 }
 
 bool UIStaticTextMetadata::GetMultilineBySymbol() const
@@ -305,4 +315,20 @@ void UIStaticTextMetadata::SetMultilineBySymbol(const bool value)
     // Have to keep current Multiline value.
     bool curMultilineValue = GetActiveStaticText()->GetMultiline();
     GetActiveStaticText()->SetMultiline(curMultilineValue, value);
+    UpdatePixelization();
+}
+
+void UIStaticTextMetadata::UpdatePixelization()
+{
+    UIStaticText* activeText = GetActiveStaticText();
+    if (!activeText && treeNodeParams.size() > 0)
+    {
+        // We are during initialization, so active index is not set yet. Take the first one.
+        activeText = dynamic_cast<UIStaticText*>(treeNodeParams[0].GetUIControl());
+    }
+
+    if (activeText)
+    {
+        SpritesHelper::SetPixelization(activeText, EditorSettings::Instance()->IsPixelized());
+    }
 }

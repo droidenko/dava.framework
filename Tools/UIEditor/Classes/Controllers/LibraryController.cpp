@@ -119,7 +119,7 @@ HierarchyTreeControlNode* LibraryController::CreateNewControl(HierarchyTreeNode*
 		dynamic_cast<HierarchyTreeControlNode*>(iter->first))
 	{
 		//create standart control
-		BaseObject* object = ObjectFactory::Instance()->New(type);
+		BaseObject* object = ObjectFactory::Instance()->New<BaseObject>(type);
 		control = dynamic_cast<UIControl*>(object);
 		if (!control)
 		{

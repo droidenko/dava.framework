@@ -35,6 +35,7 @@
 #include "Base/BaseMath.h"
 #include <stack>
 #include "FileSystem/File.h"
+#include "Base/FastName.h"
 
 namespace DAVA 
 {
@@ -95,6 +96,7 @@ public:
 	const WideString & AsWString() const;
 	const Vector<YamlNode*> & AsVector() const;
     const MultiMap<String, YamlNode*> & AsMap() const;
+    FastName AsFastName() const;
 	
 	/*
 		These functions work only if type of node is array

@@ -80,7 +80,7 @@ void CopyLastLODToLod0Command::Redo()
 
     lodComponent->lodLayers.insert(lodComponent->lodLayers.begin(), newLayerData);
 
-    for(int32 i = 0; i < lodComponent->lodLayers.size(); i++)
+    for(int32 i = 0; i < (int32)lodComponent->lodLayers.size(); i++)
         lodComponent->lodLayers[i].layer = i;
 
     for(int32 i = LodComponent::MAX_LOD_LAYERS - 1; i > 0; i--)
@@ -99,7 +99,7 @@ void CopyLastLODToLod0Command::Undo()
 
     lodComponent->lodLayers.erase(lodComponent->lodLayers.begin());
     
-    for(int32 i = 0; i < lodComponent->lodLayers.size(); i++)
+    for(int32 i = 0; i < (int32)lodComponent->lodLayers.size(); i++)
         lodComponent->lodLayers[i].layer = i;
 
     for(int32 i = 0; i < LodComponent::MAX_LOD_LAYERS - 1; i++)

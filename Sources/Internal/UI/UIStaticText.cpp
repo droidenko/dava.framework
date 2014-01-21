@@ -43,7 +43,6 @@ namespace DAVA
 UIStaticText::UIStaticText(const Rect &rect, bool rectInAbsoluteCoordinates/* = FALSE*/) 
 :	UIControl(rect, rectInAbsoluteCoordinates)
 	, textColor(1.0f, 1.0f, 1.0f, 1.0f)
-	, tempSize(0, 0)
 	, shadowOffset(0, 0)
 	, shadowColor(0, 0, 0, 1)
 {
@@ -170,18 +169,9 @@ int32 UIStaticText::GetTextAlign() const
 	return textBg->GetAlign();
 }
 
-const Vector2 &UIStaticText::GetTextSize()
+const Vector2 & UIStaticText::GetTextSize()
 {
-	if (textBlock->IsSpriteReady())
-	{
-		return tempSize = textBlock->GetSprite()->GetSize();
-	}
-	else 
-	{
-		tempSize = Vector2(0,0);
-	}
-
-	return tempSize;
+    return textBlock->GetTextSize();
 }
 
 const Color &UIStaticText::GetTextColor() const

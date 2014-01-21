@@ -32,6 +32,11 @@
 
 #include "Render/RenderBase.h"
 #include "Core/Core.h"
+#include "Render/Texture.h"
+#include "Base/Serializable.h"
+
+#include "Render/UniqueStateSet.h"
+#include "Render/RenderStateData.h"
 
 namespace DAVA
 {
@@ -165,10 +170,10 @@ inline uint32 RenderStateBlock::GetStateValue(uint32 state)
 class Texture;
 class Shader;
 
-class RenderState
+class RenderState : public Serializable
 {
 public:  
-    enum 
+    /*enum
     {
         // bit flags
         STATE_BLEND = 1 << 0,            // 
@@ -200,17 +205,37 @@ public:
         // 
         // 32 bits * 4 for textures
         // 32 bits * 4 for color ??? can be switched to 4ub.
-    };
+    };*/
 
 	static const uint32 STATE_COUNT = 19;
 
-	static const uint32 IGNORE_SAVE_LOAD_RENDER_STATES = (STATE_TEXTURE0 | STATE_TEXTURE1 | STATE_TEXTURE2 | STATE_TEXTURE3 | STATE_TEXTURE4 | STATE_TEXTURE5 | STATE_TEXTURE6 | STATE_TEXTURE7);
+	static const uint32 IGNORE_SAVE_LOAD_RENDER_STATES = (RenderStateData::STATE_TEXTURE0 |
+														  RenderStateData::STATE_TEXTURE1 |
+														  RenderStateData::STATE_TEXTURE2 |
+														  RenderStateData::STATE_TEXTURE3 |
+														  RenderStateData::STATE_TEXTURE4 |
+														  RenderStateData::STATE_TEXTURE5 |
+														  RenderStateData::STATE_TEXTURE6 |
+														  RenderStateData::STATE_TEXTURE7);
 
-    static const uint32 DEFAULT_2D_STATE = (STATE_TEXTURE0 | STATE_COLORMASK_ALL);
-    static const uint32 DEFAULT_2D_STATE_BLEND = (STATE_BLEND | STATE_TEXTURE0 | STATE_COLORMASK_ALL);
+    static const uint32 DEFAULT_2D_STATE = (RenderStateData::STATE_TEXTURE0 |
+											RenderStateData::STATE_COLORMASK_ALL);
+    static const uint32 DEFAULT_2D_STATE_BLEND = (RenderStateData::STATE_BLEND |
+												  RenderStateData::STATE_TEXTURE0 |
+												  RenderStateData::STATE_COLORMASK_ALL);
     
-    static const uint32 DEFAULT_3D_STATE = (STATE_DEPTH_WRITE | STATE_DEPTH_TEST | STATE_CULL | STATE_TEXTURE0 | STATE_COLORMASK_ALL);
-    static const uint32 DEFAULT_3D_STATE_BLEND = (STATE_BLEND | STATE_DEPTH_WRITE | STATE_DEPTH_TEST | STATE_CULL | STATE_TEXTURE0 | STATE_COLORMASK_ALL);
+    static const uint32 DEFAULT_3D_STATE = (RenderStateData::STATE_DEPTH_WRITE |
+											RenderStateData::STATE_DEPTH_TEST |
+											RenderStateData::STATE_CULL |
+											RenderStateData::STATE_TEXTURE0 |
+											RenderStateData::STATE_COLORMASK_ALL);
+	
+    static const uint32 DEFAULT_3D_STATE_BLEND = (RenderStateData::STATE_BLEND |
+												  RenderStateData::STATE_DEPTH_WRITE |
+												  RenderStateData::STATE_DEPTH_TEST |
+												  RenderStateData::STATE_CULL |
+												  RenderStateData::STATE_TEXTURE0 |
+												  RenderStateData::STATE_COLORMASK_ALL);
 
     enum
     {
@@ -281,19 +306,22 @@ public:
     ~RenderState();
         
     Core::eRenderer renderer;
-    uint32 state;
-    //mutable uint32 changeSet;
+    //uint32 state;
+    ////mutable uint32 changeSet;
     
     Color		color;
-    eBlendMode	sourceFactor, destFactor;
-    eFace		cullMode;
-    eCmpFunc	alphaFunc;
-    uint8		alphaFuncCmpValue;
-	eCmpFunc	depthFunc;
 	Rect		scissorRect;
-	eFillMode	fillMode;
 
-	struct StencilState
+	UniqueHandle stateHandle;
+	UniqueHandle textureState;
+    //eBlendMode	sourceFactor, destFactor;
+    //eFace		cullMode;
+    //eCmpFunc	alphaFunc;
+    //uint8		alphaFuncCmpValue;
+	//eCmpFunc	depthFunc;
+		//eFillMode	fillMode;
+
+	/*struct StencilState
 	{
 		StencilState();
 		int32 ref;
@@ -340,11 +368,16 @@ public:
 			PROPERTY("IZFailBack", "iZFailBack", GetZFailBack, SetZFailBack, I_VIEW | I_EDIT)
 			)
 	};
-	StencilState stencilState;
+	StencilState stencilState;*/
     
     static const uint32 MAX_TEXTURE_LEVELS = 8;
-    Texture * currentTexture[MAX_TEXTURE_LEVELS];
+    //Texture * currentTexture[MAX_TEXTURE_LEVELS];
     Shader * shader;
+    
+    //void AppendState(uint32 state);
+    //void RemoveState(uint32 state);
+    //void SetState(uint32 state);
+    //uint32 GetState();
     
     // STATE_COLOR
     inline void SetColor(float32 _r, float32 _g, float32 _b, float32 _a);
@@ -353,34 +386,34 @@ public:
     inline const Color & GetColor() const;
     
     // STATE_BLEND_FUNC
-    inline void SetBlendMode(eBlendMode _sourceFactor, eBlendMode _destFactor);
-	inline eBlendMode GetSrcBlend();
-	inline eBlendMode GetDestBlend();
+    //inline void SetBlendMode(eBlendMode _sourceFactor, eBlendMode _destFactor);
+	//inline eBlendMode GetSrcBlend();
+	//inline eBlendMode GetDestBlend();
     
     // STATE_TEXTURE
-    inline void SetTexture(Texture *texture, uint32 textureLevel = 0);
-	inline Texture * GetTexture(uint32 textureLevel = 0);
+    //inline void SetTexture(Texture *texture, uint32 textureLevel = 0);
+	//inline Texture * GetTexture(uint32 textureLevel = 0);
     
     // SHADER
     inline void SetShader(Shader * shader);
     
     // CULL MODE
-	inline int32 GetCullMode();
-    inline void SetCullMode(int32 mode);
+	//inline int32 GetCullMode();
+    //inline void SetCullMode(int32 mode);
     
     // ALPHA
-    inline void SetAlphaFunc(eCmpFunc func, float32 cmpValue);
+    //inline void SetAlphaFunc(eCmpFunc func, float32 cmpValue);
 
 	// DEPTH
-	inline void SetDepthFunc(eCmpFunc func);
+	//inline void SetDepthFunc(eCmpFunc func);
 
 	// STENCIL
-	inline void SetStencilRef(int32 ref);
-	inline void SetStencilMask(uint32 mask);
-	inline void SetStencilFunc(eFace face, eCmpFunc func);
-	inline void SetStencilPass(eFace face, eStencilOp operation);
-	inline void SetStencilFail(eFace face, eStencilOp operation);
-	inline void SetStencilZFail(eFace face, eStencilOp operation);
+	//inline void SetStencilRef(int32 ref);
+	//inline void SetStencilMask(uint32 mask);
+	//inline void SetStencilFunc(eFace face, eCmpFunc func);
+	//inline void SetStencilPass(eFace face, eStencilOp operation);
+	//inline void SetStencilFail(eFace face, eStencilOp operation);
+	//inline void SetStencilZFail(eFace face, eStencilOp operation);
 
 	//SCISSOR
 	inline void SetScissorRect(const Rect & rect);
@@ -388,33 +421,42 @@ public:
 	//FILL
 	inline void SetFillMode(eFillMode fillMode);
 
-	inline void SetEnableBlendingInHW() const;
-	inline void SetTextureLevelInHW(uint32 textureLevel) const;
-	inline void SetBlendModeInHW() const;
-	inline void SetDepthTestInHW() const;
-	inline void SetDepthWriteInHW() const;
-	inline void SetDepthFuncInHW() const;
-	inline void SetCullInHW() const;
-	inline void SetCullModeInHW() const;
+	inline void SetEnableBlendingInHW(uint32 state) const;
+	inline void SetTextureLevelInHW(uint32 textureLevel, Texture* texture) const;
+	inline void SetBlendModeInHW(eBlendMode	sourceFactor,
+								 eBlendMode  destFactor) const;
+	inline void SetDepthTestInHW(uint32 state) const;
+	inline void SetDepthWriteInHW(uint32 state) const;
+	inline void SetDepthFuncInHW(eCmpFunc depthFunc) const;
+	inline void SetCullInHW(uint32 state) const;
+	inline void SetCullModeInHW(eFace cullMode) const;
 	inline void SetColorInHW() const;
-	inline void SetColorMaskInHW() const;
-	inline void SetStensilTestInHW() const;
+	inline void SetColorMaskInHW(uint32 state) const;
+	inline void SetStensilTestInHW(uint32 state) const;
 
-	inline void SetAlphaTestInHW() const;
-	inline void SetAlphaTestFuncInHW() const;
+	inline void SetAlphaTestInHW(uint32 state) const;
+	inline void SetAlphaTestFuncInHW(eCmpFunc alphaFunc, uint8 alphaFuncCmpValue) const;
 
 	inline void SetStencilRefInHW() const;
 	inline void SetStencilMaskInHW() const;
-	inline void SetStencilFuncInHW() const;
+	inline void SetStencilFuncInHW(eCmpFunc stencilFunc0,
+								   eCmpFunc stencilFunc1,
+								   int32 stencilRef,
+								   uint32 stencilMask) const;
 	inline void SetStencilPassInHW() const;
 	inline void SetStencilFailInHW() const;
 	inline void SetStencilZFailInHW() const;
-	inline void SetStencilOpInHW() const;
+	inline void SetStencilOpInHW(eStencilOp stencilFail0,
+								 eStencilOp stencilZFail0,
+								 eStencilOp stencilPass0,
+								 eStencilOp stencilFail1,
+								 eStencilOp stencilZFail1,
+								 eStencilOp stencilPass1) const;
 
-	inline void SetScissorTestInHW() const;
+	inline void SetScissorTestInHW(uint32 state) const;
 	inline void SetScissorRectInHW() const;
 
-	inline void SetFillModeInHW() const;
+	inline void SetFillModeInHW(eFillMode fillMode) const;
     
     /**
      \brief Function to load render state from yaml file.
@@ -459,20 +501,52 @@ public:
 
 	//introspection related
 
-	void GetCurrentStateStrings(Vector<String> & statesStrs);
+	void GetCurrentStateStrings(uint32 state, Vector<String> & statesStrs);
 
 	static uint32 GetRenderStateByName(const String & str);
+	
+	void CopyTo(RenderState* target) const;
+	
+	virtual void Serialize(KeyedArchive *archive, SerializationContext *serializationContext);
+	virtual void Deserialize(KeyedArchive *archive, SerializationContext *serializationContext);
+
+private:
+	RenderState(const RenderState & renderState);
+	RenderState * operator=(const RenderState & renderState);
+
+public:
 
 #if defined(__DAVAENGINE_DIRECTX9__)
 	static IDirect3DDevice9 * direct3DDevice; 
 #endif
-	INTROSPECTION(RenderState, 
-		MEMBER(state, "state", I_VIEW | I_EDIT)
-		PROPERTY("CullMode", "Cull Mode", GetCullMode, SetCullMode, I_VIEW | I_EDIT)
-		MEMBER(stencilState, "Stencil state", I_VIEW | I_EDIT)
-		)
+//	INTROSPECTION(RenderState,
+//		MEMBER(state, "state", I_VIEW | I_EDIT)
+//		PROPERTY("CullMode", "Cull Mode", GetCullMode, SetCullMode, I_VIEW | I_EDIT)
+//		MEMBER(stencilState, "Stencil state", I_VIEW | I_EDIT)
+//		)
 };
 
+    
+//inline void RenderState::AppendState(uint32 _state)
+//{
+//   state |= _state;
+//}
+
+//inline void RenderState::RemoveState(uint32 _state)
+//{
+//    state &= ~_state;
+//}
+
+//inline void RenderState::SetState(uint32 _state)
+//{
+//    state = _state;
+//}
+
+//inline uint32 RenderState::GetState()
+//{
+//    return state;
+//}
+    
 // Implementation of inline functions
 inline void RenderState::SetColor(float32 _r, float32 _g, float32 _b, float32 _a)
 {
@@ -510,15 +584,15 @@ inline const Color & RenderState::GetColor() const
     return color;
 }
 
-inline void RenderState::SetBlendMode(eBlendMode _sourceFactor, eBlendMode _destFactor)
-{
-    //if ((sourceFactor != _sourceFactor) || (destFactor != _destFactor))
-    {       
-        sourceFactor = _sourceFactor;
-        destFactor = _destFactor;
-        //changeSet |= STATE_CHANGED_SRC_BLEND | STATE_CHANGED_DEST_BLEND;
-    }
-}
+//inline void RenderState::SetBlendMode(eBlendMode _sourceFactor, eBlendMode _destFactor)
+//{
+    ////if ((sourceFactor != _sourceFactor) || (destFactor != _destFactor))
+//    {
+//        sourceFactor = _sourceFactor;
+//        destFactor = _destFactor;
+        ////changeSet |= STATE_CHANGED_SRC_BLEND | STATE_CHANGED_DEST_BLEND;
+//    }
+//}
     
 // SHADER
 inline void RenderState::SetShader(Shader * _shader)
@@ -533,136 +607,137 @@ inline void RenderState::SetShader(Shader * _shader)
 }
 
 // CULL MODE
-inline int32 RenderState::GetCullMode()
-{
-	return cullMode;
-}
+//inline int32 RenderState::GetCullMode()
+//{
+//	return cullMode;
+//}
 
 
-inline void RenderState::SetCullMode(int32 _cullMode)
-{
-    //if (cullMode != _cullMode)
-    {   
-        cullMode = (eFace)_cullMode;
-        //changeSet |= STATE_CHANGED_CULLMODE;
-    }
-}
+//inline void RenderState::SetCullMode(int32 _cullMode)
+//{
+    ////if (cullMode != _cullMode)
+//    {
+//        cullMode = (eFace)_cullMode;
+        ////changeSet |= STATE_CHANGED_CULLMODE;
+//    }
+//}
 
-inline void RenderState::SetAlphaFunc(eCmpFunc func, float32 cmpValue)
-{
-    uint8 newCmpValue = (uint8)(cmpValue * 255.0f);
-    //if ((alphaFunc != func) || (alphaFuncCmpValue != newCmpValue))
-    {
-        alphaFunc = func;
-        alphaFuncCmpValue = newCmpValue;
-        //changeSet |= STATE_CHANGED_ALPHA_FUNC;
-    }
-}
+//inline void RenderState::SetAlphaFunc(eCmpFunc func, float32 cmpValue)
+//{
+//    uint8 newCmpValue = (uint8)(cmpValue * 255.0f);
+//    //if ((alphaFunc != func) || (alphaFuncCmpValue != newCmpValue))
+//    {
+//        alphaFunc = func;
+//        alphaFuncCmpValue = newCmpValue;
+//        //changeSet |= STATE_CHANGED_ALPHA_FUNC;
+//    }
+//}
 
-inline void RenderState::SetDepthFunc(eCmpFunc func)
-{
-	//if(depthFunc != func)
-	{
-		depthFunc = func;
-		//changeSet |= STATE_CHANGED_DEPTH_FUNC;
-	}
-}
+//inline void RenderState::SetDepthFunc(eCmpFunc func)
+//{
+//	//if(depthFunc != func)
+//	{
+//		depthFunc = func;
+//		//changeSet |= STATE_CHANGED_DEPTH_FUNC;
+//	}
+//}
 
-inline void RenderState::SetScissorRect(const Rect & rect)
-{
-	//if(scissorRect != rect)
-	{
-		scissorRect = rect;
-		//changeSet |= STATE_CHANGED_SCISSOR_RECT;
-	}
-}
+//inline void RenderState::SetScissorRect(const Rect & rect)
+//{
+//	//if(scissorRect != rect)
+//	{
+//		scissorRect = rect;
+//		//changeSet |= STATE_CHANGED_SCISSOR_RECT;
+//	}
+//}
 
-inline void RenderState::SetFillMode(eFillMode _fillMode)
-{
-	fillMode = _fillMode;
-}
+//inline void RenderState::SetFillMode(eFillMode _fillMode)
+//{
+//	fillMode = _fillMode;
+//}
     
-inline eBlendMode RenderState::GetSrcBlend()
-{
-    return sourceFactor;
-}
+//inline eBlendMode RenderState::GetSrcBlend()
+//{
+//    return sourceFactor;
+//}
 
-inline eBlendMode RenderState::GetDestBlend()
-{
-    return destFactor;
-}
+//inline eBlendMode RenderState::GetDestBlend()
+//{
+//    return destFactor;
+//}
 
 // STATE_TEXTURE
-inline void RenderState::SetTexture(Texture *texture, uint32 textureLevel)
+/*inline void RenderState::SetTexture(Texture *texture, uint32 textureLevel)
 {
-    currentTexture[textureLevel] = texture;
-    //changeSet |= (STATE_CHANGED_TEXTURE0 << textureLevel);
+	if(texture != currentTexture[textureLevel])
+	{
+		SafeRelease(currentTexture[textureLevel]);
+		currentTexture[textureLevel] = SafeRetain(texture);
+	}
 }
 
 inline Texture * RenderState::GetTexture(uint32 textureLevel)
 {
     return currentTexture[textureLevel];
-}
+}*/
 
-inline void RenderState::SetStencilRef(int32 ref)
-{
-	stencilState.ref = ref;
-	//changeSet |= STATE_CHANGED_STENCIL_REF;
-}
+//inline void RenderState::SetStencilRef(int32 ref)
+//{
+//	stencilState.ref = ref;
+//}
 
-inline void RenderState::SetStencilMask(uint32 mask)
-{
-	stencilState.mask = mask;
-	//changeSet |= STATE_CHANGED_STENCIL_MASK;
-}
+//inline void RenderState::SetStencilMask(uint32 mask)
+//{
+//	stencilState.mask = mask;
+//}
 
-inline void RenderState::SetStencilFunc(eFace face, eCmpFunc func)
-{
-	if(face == FACE_FRONT_AND_BACK)
-	{
-		stencilState.func[0] = stencilState.func[1] = func;
-	}
-	else
-	{
-		stencilState.func[face] = func;
-	}
-}
+//inline void RenderState::SetStencilFunc(eFace face, eCmpFunc func)
+//{
+//	if(face == FACE_FRONT_AND_BACK)
+//	{
+//		stencilState.func[0] = stencilState.func[1] = func;
+//	}
+//	else
+//	{
+//		stencilState.func[face] = func;
+//	}
+//}
 
-inline void RenderState::SetStencilPass(eFace face, eStencilOp operation)
-{
-	if(face == FACE_FRONT_AND_BACK)
-	{
-		stencilState.pass[0] = stencilState.pass[1] = operation;
-	}
-	else
-	{
-		stencilState.pass[face] = operation;
-	}
-}
+//inline void RenderState::SetStencilPass(eFace face, eStencilOp operation)
+//{
+//	if(face == FACE_FRONT_AND_BACK)
+//	{
+//		stencilState.pass[0] = stencilState.pass[1] = operation;
+//	}
+//	else
+//	{
+//		stencilState.pass[face] = operation;
+//	}
+//}
 
-inline void RenderState::SetStencilFail(eFace face, eStencilOp operation)
-{
-	if(face == FACE_FRONT_AND_BACK)
-	{
-		stencilState.fail[0] = stencilState.fail[1] = operation;
-	}
-	else
-	{
-		stencilState.fail[face] = operation;
-	}
-}
+//inline void RenderState::SetStencilFail(eFace face, eStencilOp operation)
+//{
+//	if(face == FACE_FRONT_AND_BACK)
+//	{
+//		stencilState.fail[0] = stencilState.fail[1] = operation;
+//	}
+//	else
+//	{
+//		stencilState.fail[face] = operation;
+//	}
+//}
 
-inline void RenderState::SetStencilZFail(eFace face, eStencilOp operation)
-{
-	if(face == FACE_FRONT_AND_BACK)
-	{
-		stencilState.zFail[0] = stencilState.zFail[1] = operation;
-	}
-	else
-	{
-		stencilState.zFail[face] = operation;
-	}
-}
+//inline void RenderState::SetStencilZFail(eFace face, eStencilOp operation)
+//{
+//	if(face == FACE_FRONT_AND_BACK)
+//	{
+//		stencilState.zFail[0] = stencilState.zFail[1] = operation;
+//	}
+//	else
+//	{
+//		stencilState.zFail[face] = operation;
+//	}
+//}
     
 };
 

@@ -44,13 +44,15 @@ public:
 	ParticleEffectSystem(Scene * scene);
 	virtual void Process(float32 timeElapsed);
 
-	virtual void AddEntity(Entity * entity);
-	virtual void RemoveEntity(Entity * entity);
+	virtual void AddComponent(Entity * entity, Component * component);
+	virtual void RemoveComponent(Entity * entity, Component * component);
+	
 
 	void SetGlobalExtertnalValue(const String& name, float32 value);
 	float32 GetGlobalExternalValue(const String& name);
 	Map<String, float32> GetGlobalExternals();
 
+protected:
 	uint32 index;
 	uint32 size;
 

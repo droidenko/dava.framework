@@ -1,0 +1,13 @@
+Material:
+    MaterialState:
+        Name: "Low"
+        Parent: "Global.ShadowRectAlpha"
+        MaterialDefines: ["LOD_LOW"]
+    MaterialState:
+        Name: "Normal"
+        Parent: "Global.ShadowRectAlpha"
+        MaterialDefines: ["LOD_NORMAL"]
+    MaterialState:
+        Name: "High"
+        Parent: "Global.ShadowRectAlpha"
+        MaterialDefines: ["LOD_HIGH"]

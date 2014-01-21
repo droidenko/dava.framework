@@ -174,6 +174,7 @@ ParticleLayer * ParticleLayer::Clone(ParticleLayer * dstLayer)
 
 	// Copy the forces.
 	dstLayer->CleanupForces();
+    dstLayer->forces.reserve(forces.size());
 	for (int32 f = 0; f < (int32)forces.size(); ++ f)
 	{
 		ParticleForce* clonedForce = new ParticleForce(this->forces[f]);
@@ -212,7 +213,7 @@ ParticleLayer * ParticleLayer::Clone(ParticleLayer * dstLayer)
 	SafeRelease(dstLayer->innerEmitter);
 	if (innerEmitter)
 		dstLayer->innerEmitter = static_cast<ParticleEmitter*>(innerEmitter->Clone(NULL));
-
+	
 	dstLayer->layerName = layerName;
 	dstLayer->alignToMotion = alignToMotion;
 	dstLayer->SetBlendMode(srcBlendFactor, dstBlendFactor);
@@ -240,7 +241,6 @@ ParticleLayer * ParticleLayer::Clone(ParticleLayer * dstLayer)
 	dstLayer->loopSpriteAnimation = loopSpriteAnimation;
 	dstLayer->particleOrientation = particleOrientation;
 
-	dstLayer->scaleVelocityBase = scaleVelocityBase;
 	dstLayer->scaleVelocityFactor = scaleVelocityFactor;
 
     dstLayer->isDisabled = isDisabled;
@@ -252,7 +252,7 @@ ParticleLayer * ParticleLayer::Clone(ParticleLayer * dstLayer)
 
 bool ParticleLayer::IsLodActive(int32 lod)
 {
-	if ((lod>=0)&&(lod<activeLODS.size()))
+	if ((lod>=0)&&(lod<(int32)activeLODS.size()))
 		return activeLODS[lod];
 	
 	return false;
@@ -260,7 +260,7 @@ bool ParticleLayer::IsLodActive(int32 lod)
 
 void ParticleLayer::SetLodActive(int32 lod, bool active)
 {
-	if ((lod>=0)&&(lod<activeLODS.size()))
+	if ((lod>=0)&&(lod<(int32)activeLODS.size()))
 		activeLODS[lod] = active;
 }
 
@@ -691,15 +691,7 @@ void ParticleLayer::GenerateNewParticle(int32 emitIndex)
 	if (type == TYPE_SUPEREMITTER_PARTICLES)
 	{
 		//as fog kostyl is not applied to parent emitter
-		//add another fog kostyl here		
-		Vector<ParticleLayer *>& innerLayers = innerEmitter->GetLayers();
-		Color fogColor = renderBatch->GetMaterial()->GetFogColor();
-		float32 fogDensity = renderBatch->GetMaterial()->GetFogDensity();
-		for (int32 i = 0, sz = innerLayers.size(); i<sz; ++i)
-		{
-			innerLayers[i]->renderBatch->GetMaterial()->SetFogColor(fogColor);
-			innerLayers[i]->renderBatch->GetMaterial()->SetFogDensity(fogDensity);
-		}
+		//add another fog kostyl here
 
 		innerEmitter->SetLongToAllLayers(IsLong());		
 		particle->InitializeInnerEmitter(this->emitter, innerEmitter);				
@@ -924,7 +916,7 @@ void ParticleLayer::PrepareRenderData(Camera * camera)
 void ParticleLayer::Draw(Camera * camera)
 {	
 
-	RenderManager::Instance()->SetBlendMode(srcBlendFactor, dstBlendFactor);
+	//RenderManager::Instance()->SetBlendMode(srcBlendFactor, dstBlendFactor);
 
 	const Vector2& drawPivotPoint = GetDrawPivotPoint();
 	switch(type)
@@ -1717,5 +1709,5 @@ void ParticleLayer::HandleRemoveFromSystem()
 {
 	DeleteAllParticles();
 }
-	
+		
 };

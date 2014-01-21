@@ -31,54 +31,93 @@
 #include "Particles/ParticleLayer3D.h"
 #include "Render/RenderDataObject.h"
 #include "Render/RenderManager.h"
-#include "Render/Material.h"
+#include "Render/Material/NMaterial.h"
+#include "Scene3D/Systems/MaterialSystem.h"
+
 #include "Math/MathHelpers.h"
 #include "Render/Highlevel/Camera.h"
 #include "ParticleEmitter3D.h"
+#include "Render/Highlevel/RenderFastNames.h"
+
+#include "Render/Material/NMaterialNames.h"
+
+#define MAKE_BLEND_KEY(SRC, DST) (SRC | DST << 16)
 
 namespace DAVA
 {
 
+NMaterial* ParticleLayer3D::regularMaterial = NULL;
+NMaterial* ParticleLayer3D::frameBlendMaterial = NULL;
+	
 Vector<uint16> ParticleLayer3D::indices;
+
+const FastName ParticleLayer3D::PARTICLE_MATERIAL_NAME = FastName("Particle_Material");
+const FastName ParticleLayer3D::PARTICLE_FRAMEBLEND_MATERIAL_NAME = FastName("Particle_Frameblend_Material");
 
 ParticleLayer3D::ParticleLayer3D(ParticleEmitter* parent)
 {
+	if(NULL == ParticleLayer3D::regularMaterial)
+	{
+		//VI: do not call release on this material. It should be alive even with no children
+		ParticleLayer3D::regularMaterial = NMaterial::CreateMaterial(PARTICLE_MATERIAL_NAME,
+														             NMaterialName::PARTICLES,
+                                                                     NMaterial::DEFAULT_QUALITY_NAME);
+		ParticleLayer3D::regularMaterial->AddNodeFlags(DataNode::NodeRuntimeFlag);
+	}
+	
+	if(NULL == ParticleLayer3D::frameBlendMaterial)
+	{
+		//VI: do not call release on this material. It should be alive even with no children
+		ParticleLayer3D::frameBlendMaterial = NMaterial::CreateMaterial(PARTICLE_FRAMEBLEND_MATERIAL_NAME,
+                                                                        NMaterialName::PARTICLES_FRAMEBLEND,
+														                NMaterial::DEFAULT_QUALITY_NAME);
+		ParticleLayer3D::frameBlendMaterial->AddNodeFlags(DataNode::NodeRuntimeFlag);
+	}
+	
 	isLong = false;
 	renderData = new RenderDataObject();
 	this->emitter = parent;
-
-	//TODO: set material from outside
 	
-	
-	Material *material = new Material();
-	material->SetType(Material::MATERIAL_VERTEX_COLOR_ALPHABLENDED);	
-	material->SetAlphablend(true);
-	material->SetBlendSrc(BLEND_SRC_ALPHA);
-	material->SetBlendDest(BLEND_ONE);
-	material->SetName("ParticleLayer3D_material");
-	material->SetFog(true);
-	material->SetTwoSided(true); //as particles can now be not camera facing
-	
-	
-
-	renderBatch->SetMaterial(material);
+	material = NMaterial::CreateMaterialInstance();
+	material->AddNodeFlags(DataNode::NodeRuntimeFlag);
+	material->SetParent(ParticleLayer3D::regularMaterial);
 	
 	renderBatch->SetIndices(&indices);
-	
 	renderBatch->SetRenderDataObject(renderData);
-
-	SafeRelease(material);
+	renderBatch->SetMaterial(material);
+	currentTexture = NULL;
 }
 
 ParticleLayer3D::~ParticleLayer3D()
 {
 	SafeRelease(renderData);
+	
+	SafeRelease(material);
 }
 
 void ParticleLayer3D::Draw(Camera * camera)
 {
 	//render data are now prepared explicitly
 	//DrawLayer(camera);	
+}
+
+void ParticleLayer3D::DeleteAllParticles()
+{
+	ParticleLayer::DeleteAllParticles();
+	verts.clear();
+	textures.clear();
+	colors.clear();
+
+	if (enableFrameBlend)
+	{
+		textures2.clear();
+		times.clear();
+	}		
+	Vector3 emmiterPos;
+	if (emitter->GetWorldTransformPtr())	
+		emmiterPos = emitter->GetWorldTransformPtr()->GetTranslationVector();			
+	renderBatch->SetTotalCount(0);	
+	renderBatch->SetLayerBoundingBox(AABBox3(emmiterPos, emmiterPos));
 }
 
 void ParticleLayer3D::PrepareRenderData(Camera* camera)
@@ -194,20 +233,121 @@ void ParticleLayer3D::PrepareRenderData(Camera* camera)
 	}
 
 	Particle * current = head;
+	/*if(current &&
+	   NULL == currentTexture)
+	{
+		Texture* tex = sprite->GetTexture(current->frame);
+		
+		if(tex != currentTexture)
+		{
+			currentTexture = tex;
+			renderBatch->GetMaterial()->SetTexture(NMaterial::TEXTURE_ALBEDO, currentTexture);
+		}
+	}*/
+	
 	if(current)
 	{
-		renderBatch->GetMaterial()->GetRenderState()->SetTexture(sprite->GetTexture(current->frame));
+		renderBatch->GetMaterial()->SetTexture(NMaterial::TEXTURE_ALBEDO, sprite->GetTexture(current->frame));
 	}
 
 	int32 verticesCount = 0;
 	int32 texturesCount = 0;
 	int32 texturesCount2 = 0;
 	int32 timesCount = 0;
-	int32 colorsCount = 0;	
+	int32 colorsCount = 0;
+	
+	Vector3 particlePos[4];
+	
 	while(current != 0)
-	{		
+	{
 		for (int32 i=0; i<planesCount; ++i)
-		{		
+		{
+			//_up = basises[i].first;
+			//_left = basises[i].second;
+			//Vector3 topRight;
+			//Vector3 topLeft;
+			//Vector3 botRight;
+			//Vector3 botLeft;
+			
+			if (IsLong())
+			{
+				CalcLong(current,
+						 particlePos[0],
+						 particlePos[1],
+						 particlePos[2],
+						 particlePos[3]);
+			}
+			else
+			{
+				CalcNonLong(current,
+							particlePos[0],
+							particlePos[1],
+							particlePos[2],
+							particlePos[3],
+							basises[i].second,
+							basises[i].first);
+			}
+			
+			memcpy(&verts[verticesCount], &particlePos[0], sizeof(Vector3) * 4);
+			verticesCount += 12; //4 * 3
+			
+			bbox.AddPoint(particlePos[0]);
+			bbox.AddPoint(particlePos[1]);
+			bbox.AddPoint(particlePos[2]);
+			bbox.AddPoint(particlePos[3]);
+			
+			float32 *pT = sprite->GetTextureVerts(current->frame);
+			
+			memcpy(&textures[texturesCount], pT, sizeof(float32) * 8);
+			texturesCount += 8;
+			
+			//frame blending
+			if (enableFrameBlend)
+			{
+				int32 nextFrame = current->frame+1;
+				if (nextFrame >= sprite->GetFrameCount())
+				{
+					if (loopSpriteAnimation)
+						nextFrame = 0;
+					else
+						nextFrame = sprite->GetFrameCount()-1;
+					
+				}
+				pT = sprite->GetTextureVerts(nextFrame);
+				
+				memcpy(&textures2[texturesCount2], pT, sizeof(float32) * 8);
+				texturesCount2 += 8;
+				
+				times[timesCount] = current->animTime;
+				timesCount++;
+				times[timesCount] = current->animTime;
+				timesCount++;
+				times[timesCount] = current->animTime;
+				timesCount++;
+				times[timesCount] = current->animTime;
+				timesCount++;
+			}
+			
+			
+			// Yuri Coder, 2013/04/03. Need to use drawColor here instead of just colot
+			// to take colorOverlife property into account.
+			uint32 color = (((uint32)(current->drawColor.a*255.f))<<24) |  (((uint32)(current->drawColor.b*255.f))<<16) |
+			(((uint32)(current->drawColor.g*255.f))<<8) | ((uint32)(current->drawColor.r*255.f));
+			for(int32 i = 0; i < POINTS_PER_PARTICLE; ++i)
+			{
+				colors[i + colorsCount] = color;
+			}
+			colorsCount += POINTS_PER_PARTICLE;
+			
+			totalCount++;
+		}
+		current = TYPE_PARTICLES == type ? current->next : 0;
+	}
+
+	/*while(current != 0)
+	{
+		for (int32 i=0; i<planesCount; ++i)
+		{
 			_up = basises[i].first;
 			_left = basises[i].second;
 			Vector3 topRight;
@@ -337,7 +477,7 @@ void ParticleLayer3D::PrepareRenderData(Camera* camera)
 			totalCount++;
 		}
 		current = TYPE_PARTICLES == type ? current->next : 0;
-	}	
+	}	*/
 	int indexCount = indices.size()/INDICES_PER_PARTICLE;
 	if (totalCount>indexCount)
 	{
@@ -373,10 +513,12 @@ void ParticleLayer3D::CalcNonLong(Particle* current,
 								  Vector3& topLeft,
 								  Vector3& topRight,
 								  Vector3& botLeft,
-								  Vector3& botRight)
+								  Vector3& botRight,
+								  Vector3& dx,
+								  Vector3& dy)
 {
-	Vector3 dx(_left);
-	Vector3 dy(_up);
+	//Vector3 dx(_left);
+	//Vector3 dy(_up);
 
 	float32 sine;
 	float32 cosine;
@@ -454,49 +596,68 @@ ParticleLayer * ParticleLayer3D::Clone(ParticleLayer * dstLayer /*= 0*/)
 		}
 
 		ParticleLayer3D *dst = new ParticleLayer3D(parentFor3DLayer);		
-		GetMaterial()->Clone(dst->GetMaterial());
+		
+		SafeRelease(dst->material);
+		dst->material = material->Clone();
+		dst->renderBatch->SetMaterial(dst->material);
+
 		dstLayer = dst; 
 		dstLayer->SetLong(this->isLong);
 	}
-
+		
 	ParticleLayer::Clone(dstLayer);
 
 	return dstLayer;
 }
 
-Material * ParticleLayer3D::GetMaterial()
-{
-	return renderBatch->GetMaterial();
-}
-
 void ParticleLayer3D::SetBlendMode(eBlendMode sFactor, eBlendMode dFactor)
 {
+	//Logger::FrameworkDebug("[ParticleLayer3D::SetBlendMode] (%x) sFactor = %s, dFactor = %s",
+	//					   (size_t)this,
+	//					   BLEND_MODE_NAMES[sFactor].c_str(),
+	//					   BLEND_MODE_NAMES[dFactor].c_str());
 	ParticleLayer::SetBlendMode(sFactor, dFactor);
-	renderBatch->GetMaterial()->SetBlendSrc(srcBlendFactor);
-	renderBatch->GetMaterial()->SetBlendDest(dstBlendFactor);
+	UpdateBlendState();
 }
 
-void ParticleLayer3D::SetFog(bool enable)
-{
-	ParticleLayer::SetFog(enable);
-	renderBatch->GetMaterial()->SetFog(enableFog);
-}
 
 void ParticleLayer3D::SetFrameBlend(bool enable)
 {
 	if (enableFrameBlend==enable) return; 
 	ParticleLayer::SetFrameBlend(enable);
-	if (enableFrameBlend)
+	
+	
+	if(enableFrameBlend)
 	{
-		renderBatch->GetMaterial()->SetType(Material::MATERIAL_VERTEX_COLOR_ALPHABLENDED_FRAME_BLEND);			
+		material->SetParent(ParticleLayer3D::frameBlendMaterial);
 	}
 	else
 	{
-		renderBatch->GetMaterial()->SetType(Material::MATERIAL_VERTEX_COLOR_ALPHABLENDED);	
+		material->SetParent(ParticleLayer3D::regularMaterial);
+	}
+	
+	UpdateBlendState();
+	
+	if (!enableFrameBlend)
+	{
 		renderData->RemoveStream(EVF_TEXCOORD1);
 		renderData->RemoveStream(EVF_TIME);
 		textures2.resize(0);
-		times.resize(0);		
+		times.resize(0);
+	}
+}
+
+void ParticleLayer3D::UpdateBlendState()
+{
+	if(material)
+	{
+	//	Logger::FrameworkDebug("[ParticleLayer3D::UpdateBlendState] (%x) sFactor = %s, dFactor = %s",
+	//						   (size_t)this,
+	//						   BLEND_MODE_NAMES[srcBlendFactor].c_str(),
+	//						   BLEND_MODE_NAMES[dstBlendFactor].c_str());
+
+
+		NMaterialHelper::SetBlendMode(PASS_FORWARD, material, srcBlendFactor, dstBlendFactor);
 	}
 }
 
@@ -539,5 +700,5 @@ void ParticleLayer3D::CreateInnerEmitter()
 	SafeRelease(this->innerEmitter);
 	this->innerEmitter = new ParticleEmitter3D();
 }
-
+		
 };

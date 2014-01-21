@@ -301,7 +301,7 @@ protected:
 
 	void RestartLayerIfNeed();
 
-	void DeleteAllParticles();
+	virtual void DeleteAllParticles();
 	
 	void AddToList(Particle * particle);
 	void RemoveFromList(Particle * particle);

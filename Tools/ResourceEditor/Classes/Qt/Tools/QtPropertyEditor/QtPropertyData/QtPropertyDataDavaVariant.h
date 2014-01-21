@@ -36,8 +36,7 @@
 
 #include "../QtPropertyData.h"
 
-class QToolButton;
-
+class QtComboFake;
 class QtPropertyDataDavaVariant : public QtPropertyData
 {
 	Q_OBJECT
@@ -54,19 +53,16 @@ public:
 	void AddAllowedValue(const DAVA::VariantType& realValue, const QVariant& visibleValue = QVariant());
 	void ClearAllowedValues();
 
-	virtual void SetIcon(const QIcon &icon);
-	virtual QIcon GetIcon();
-
-	QVariant FromDavaVariant(const DAVA::VariantType &variant);
+	QVariant FromDavaVariant(const DAVA::VariantType &variant) const;
 
 protected:
 	DAVA::VariantType curVariantValue;
 
-	virtual QVariant GetValueInternal();
-	virtual QVariant GetValueAlias();
+	virtual QVariant GetValueInternal() const;
+	virtual QVariant GetValueAlias() const;
 	virtual void SetValueInternal(const QVariant &value);
 
-	virtual QWidget* CreateEditorInternal(QWidget *parent, const QStyleOptionViewItem& option);
+	virtual QWidget* CreateEditorInternal(QWidget *parent, const QStyleOptionViewItem& option) const;
 	virtual bool SetEditorDataInternal(QWidget *editor);
 	virtual bool EditorDoneInternal(QWidget *editor);
 
@@ -76,7 +72,7 @@ protected slots:
 	void AllowedOWPressed();
 	void AllowedSelected(int index);
 
-private:
+protected:
 	struct AllowedValue
 	{
 		DAVA::VariantType realValue;
@@ -84,26 +80,25 @@ private:
 	};
 
 	QVector<AllowedValue> allowedValues;
-	bool allowedValuesLocked;
-	QToolButton *allowedButton;
-
-	bool iconCacheIsValid;
-	QIcon iconCache;
+	mutable bool allowedValuesLocked;
+	QtPropertyToolButton *allowedButton;
 
 	void InitFlags();
 	void ChildsCreate();
 	void ChildsSetFromMe();
 	void MeSetFromChilds();
 
-	QVariant FromKeyedArchive(DAVA::KeyedArchive *archive);
-	QVariant FromVector4(const DAVA::Vector4 &vector);
-	QVariant FromVector3(const DAVA::Vector3 &vector);
-	QVariant FromVector2(const DAVA::Vector2 &vector);
-	QVariant FromMatrix4(const DAVA::Matrix4 &matrix);
-	QVariant FromMatrix3(const DAVA::Matrix3 &matrix);
-	QVariant FromMatrix2(const DAVA::Matrix2 &matrix);
-	QVariant FromColor(const DAVA::Color &color);
-	QVariant FromAABBox3(const DAVA::AABBox3 &aabbox);
+	void SetColorIcon();
+
+	QVariant FromKeyedArchive(DAVA::KeyedArchive *archive) const;
+	QVariant FromVector4(const DAVA::Vector4 &vector) const;
+	QVariant FromVector3(const DAVA::Vector3 &vector) const;
+	QVariant FromVector2(const DAVA::Vector2 &vector) const;
+	QVariant FromMatrix4(const DAVA::Matrix4 &matrix) const;
+	QVariant FromMatrix3(const DAVA::Matrix3 &matrix) const;
+	QVariant FromMatrix2(const DAVA::Matrix2 &matrix) const;
+	QVariant FromColor(const DAVA::Color &color) const;
+	QVariant FromAABBox3(const DAVA::AABBox3 &aabbox) const;
 
 	void ToKeyedArchive(const QVariant &value);
 	void ToVector4(const QVariant &value);
@@ -114,12 +109,13 @@ private:
 	void ToMatrix2(const QVariant &value);
 	void ToColor(const QVariant &value);
 	void ToAABBox3(const QVariant &value);
+	int ParseFloatList(const QString &str, int maxCount, DAVA::float32 *dest);
 
 	void SubValueAdd(const QString &key, const QVariant &value);
 	void SubValueSet(const QString &key, const QVariant &value);
 	QVariant SubValueGet(const QString &key);
 
-	QWidget* CreateAllowedValuesEditor(QWidget *parent);
+	QWidget* CreateAllowedValuesEditor(QWidget *parent) const;
 	void SetAllowedValueEditorData(QWidget *editorWidget);
 	void ApplyAllowedValueFromEditor(QWidget *editorWidget);
 };

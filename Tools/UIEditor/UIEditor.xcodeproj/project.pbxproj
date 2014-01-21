@@ -85,7 +85,6 @@
 		02D69CE816F08CEE00F3803F /* sliderpropertygridwidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 02D69C8216F08CED00F3803F /* sliderpropertygridwidget_moc.cpp */; };
 		02D69CE916F08CEE00F3803F /* statepropertygridwidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 02D69C8316F08CED00F3803F /* statepropertygridwidget_moc.cpp */; };
 		02D69CEB16F08CEE00F3803F /* uitextfieldpropertygridwidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 02D69C8516F08CED00F3803F /* uitextfieldpropertygridwidget_moc.cpp */; };
-		02D69CEC16F08CEE00F3803F /* QColorButton_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 02D69C8616F08CED00F3803F /* QColorButton_moc.cpp */; };
 		02D69CED16F08CEE00F3803F /* StateComboBoxItemDelegate_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 02D69C8716F08CED00F3803F /* StateComboBoxItemDelegate_moc.cpp */; };
 		02E9E449173A3AED00C501BC /* libfmodevent.dylib in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 02E9E447173A3AED00C501BC /* libfmodevent.dylib */; };
 		02E9E44A173A3AED00C501BC /* libfmodex.dylib in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 02E9E448173A3AED00C501BC /* libfmodex.dylib */; };
@@ -137,7 +136,11 @@
 		176D395E162C3DF90099AACF /* UIButtonMetadata.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176D395C162C3DF90099AACF /* UIButtonMetadata.cpp */; };
 		176D3961162C3E890099AACF /* UIControlMetadata.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 176D395F162C3E890099AACF /* UIControlMetadata.cpp */; };
 		1775862D1834E02200908EE9 /* CenterPivotPointCommand.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 1775862B1834E02200908EE9 /* CenterPivotPointCommand.cpp */; };
+		178D10EB1883FED600529DA8 /* QColorWidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178D10EA1883FED600529DA8 /* QColorWidget_moc.cpp */; };
+		178D10EE188405F800529DA8 /* QtColorLineEdit.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178D10EC188405F800529DA8 /* QtColorLineEdit.cpp */; };
+		178D10F0188406A100529DA8 /* QtColorLineEdit_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178D10EF188406A100529DA8 /* QtColorLineEdit_moc.cpp */; };
 		178F303E165677BF008678AD /* StringUtils.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 178F303C165677BF008678AD /* StringUtils.cpp */; };
+		17B0617518892C1500FD8007 /* WebKit.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 17B0617418892C1500FD8007 /* WebKit.framework */; };
 		17C5CCD516F31E5300FB90B4 /* spinnerpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 17C5CCD416F31E5300FB90B4 /* spinnerpropertygridwidget.ui */; };
 		17C5CCD916F323B700FB90B4 /* spinnerpropertygridwidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17C5CCD816F323B700FB90B4 /* spinnerpropertygridwidget_moc.cpp */; };
 		17C5CCDC16F323E900FB90B4 /* spinnerpropertygridwidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 17C5CCDA16F323E900FB90B4 /* spinnerpropertygridwidget.cpp */; };
@@ -176,7 +179,7 @@
 		7482C8CC1688AAA800435155 /* sliderpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 7482C8CB1688AAA800435155 /* sliderpropertygridwidget.ui */; };
 		7484342B1648024700920BBD /* StateComboBoxItemDelegate.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748434291648024700920BBD /* StateComboBoxItemDelegate.cpp */; };
 		74893AD4165A8E90006B2762 /* ResourcesManageHelper.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 74893AD2165A8E8F006B2762 /* ResourcesManageHelper.cpp */; };
-		748955FD1641620200070AE1 /* QColorButton.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748955FB1641620200070AE1 /* QColorButton.cpp */; };
+		748955FD1641620200070AE1 /* QColorWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748955FB1641620200070AE1 /* QColorWidget.cpp */; };
 		748A9423170C599C0087E18A /* listpropertygridwidget.ui in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 748A9422170C599C0087E18A /* listpropertygridwidget.ui */; };
 		748A9427170C59DF0087E18A /* listpropertygridwidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748A9425170C59DE0087E18A /* listpropertygridwidget.cpp */; };
 		748A942A170C5C650087E18A /* listpropertygridwidget_moc.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 748A9429170C5C650087E18A /* listpropertygridwidget_moc.cpp */; };
@@ -398,7 +401,6 @@
 		02D69C8216F08CED00F3803F /* sliderpropertygridwidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sliderpropertygridwidget_moc.cpp; sourceTree = "<group>"; };
 		02D69C8316F08CED00F3803F /* statepropertygridwidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = statepropertygridwidget_moc.cpp; sourceTree = "<group>"; };
 		02D69C8516F08CED00F3803F /* uitextfieldpropertygridwidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uitextfieldpropertygridwidget_moc.cpp; sourceTree = "<group>"; };
-		02D69C8616F08CED00F3803F /* QColorButton_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QColorButton_moc.cpp; sourceTree = "<group>"; };
 		02D69C8716F08CED00F3803F /* StateComboBoxItemDelegate_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateComboBoxItemDelegate_moc.cpp; sourceTree = "<group>"; };
 		02D69C8816F08CED00F3803F /* ui_alignspropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui_alignspropertygridwidget.h; sourceTree = "<group>"; };
 		02D69C8916F08CED00F3803F /* ui_backgroundpropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui_backgroundpropertygridwidget.h; sourceTree = "<group>"; };
@@ -512,15 +514,21 @@
 		176D3960162C3E890099AACF /* UIControlMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIControlMetadata.h; path = Metadata/UIControlMetadata.h; sourceTree = "<group>"; };
 		1775862B1834E02200908EE9 /* CenterPivotPointCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CenterPivotPointCommand.cpp; path = Commands/CenterPivotPointCommand.cpp; sourceTree = "<group>"; };
 		1775862C1834E02200908EE9 /* CenterPivotPointCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CenterPivotPointCommand.h; path = Commands/CenterPivotPointCommand.h; sourceTree = "<group>"; };
+		178D10EA1883FED600529DA8 /* QColorWidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QColorWidget_moc.cpp; sourceTree = "<group>"; };
+		178D10EC188405F800529DA8 /* QtColorLineEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtColorLineEdit.cpp; sourceTree = "<group>"; };
+		178D10ED188405F800529DA8 /* QtColorLineEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QtColorLineEdit.h; sourceTree = "<group>"; };
+		178D10EF188406A100529DA8 /* QtColorLineEdit_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtColorLineEdit_moc.cpp; sourceTree = "<group>"; };
 		178F303C165677BF008678AD /* StringUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringUtils.cpp; sourceTree = "<group>"; };
 		178F303D165677BF008678AD /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		179D0ECB17C5F65B006F59CA /* AlignDistributeEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AlignDistributeEnums.h; path = AlignDistribute/AlignDistributeEnums.h; sourceTree = "<group>"; };
 		17AB665116EDF86B00634657 /* UIListMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIListMetadata.cpp; path = Metadata/UIListMetadata.cpp; sourceTree = "<group>"; };
 		17AB665216EDF86B00634657 /* UIListMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIListMetadata.h; path = Metadata/UIListMetadata.h; sourceTree = "<group>"; };
+		17B0617418892C1500FD8007 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		17C5CCD416F31E5300FB90B4 /* spinnerpropertygridwidget.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = spinnerpropertygridwidget.ui; sourceTree = "<group>"; };
 		17C5CCD816F323B700FB90B4 /* spinnerpropertygridwidget_moc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spinnerpropertygridwidget_moc.cpp; sourceTree = "<group>"; };
 		17C5CCDA16F323E900FB90B4 /* spinnerpropertygridwidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinnerpropertygridwidget.cpp; path = PropertyGridWidgets/spinnerpropertygridwidget.cpp; sourceTree = "<group>"; };
 		17C5CCDB16F323E900FB90B4 /* spinnerpropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spinnerpropertygridwidget.h; path = PropertyGridWidgets/spinnerpropertygridwidget.h; sourceTree = "<group>"; };
+		17CAF56718869CE0006DE56D /* ColorHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorHelper.h; path = Helpers/ColorHelper.h; sourceTree = "<group>"; };
 		17CED76B163ABD3B00F9B02D /* propertygridcontainerwidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = propertygridcontainerwidget.cpp; path = PropertyGridWidgets/propertygridcontainerwidget.cpp; sourceTree = "<group>"; };
 		17CED79A163E829600F9B02D /* statepropertygridwidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = statepropertygridwidget.cpp; path = PropertyGridWidgets/statepropertygridwidget.cpp; sourceTree = "<group>"; };
 		17CED79B163E829600F9B02D /* statepropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statepropertygridwidget.h; path = PropertyGridWidgets/statepropertygridwidget.h; sourceTree = "<group>"; };
@@ -593,8 +601,8 @@
 		7487A43D170ADBED005EA703 /* StringConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringConstants.h; path = Helpers/StringConstants.h; sourceTree = "<group>"; };
 		74893AD2165A8E8F006B2762 /* ResourcesManageHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourcesManageHelper.cpp; path = Helpers/ResourcesManageHelper.cpp; sourceTree = "<group>"; };
 		74893AD3165A8E8F006B2762 /* ResourcesManageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourcesManageHelper.h; path = Helpers/ResourcesManageHelper.h; sourceTree = "<group>"; };
-		748955FB1641620200070AE1 /* QColorButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QColorButton.cpp; sourceTree = "<group>"; };
-		748955FC1641620200070AE1 /* QColorButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QColorButton.h; sourceTree = "<group>"; };
+		748955FB1641620200070AE1 /* QColorWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QColorWidget.cpp; sourceTree = "<group>"; };
+		748955FC1641620200070AE1 /* QColorWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QColorWidget.h; sourceTree = "<group>"; };
 		748A9422170C599C0087E18A /* listpropertygridwidget.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = listpropertygridwidget.ui; sourceTree = "<group>"; };
 		748A9425170C59DE0087E18A /* listpropertygridwidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = listpropertygridwidget.cpp; path = PropertyGridWidgets/listpropertygridwidget.cpp; sourceTree = "<group>"; };
 		748A9426170C59DE0087E18A /* listpropertygridwidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listpropertygridwidget.h; path = PropertyGridWidgets/listpropertygridwidget.h; sourceTree = "<group>"; };
@@ -741,6 +749,7 @@
 				77BDEC8E56A833D3814BC614 /* QtNetwork.framework in Frameworks & Libraries */,
 				BCEF71E1EDFB18DA77DC750B /* OpenGL.framework in Frameworks & Libraries */,
 				0C6D4628EE0B0D1479A20551 /* AGL.framework in Frameworks & Libraries */,
+				17B0617518892C1500FD8007 /* WebKit.framework in Frameworks & Libraries */,
 			);
 			name = "Frameworks & Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -828,6 +837,8 @@
 		02D69C6A16F08CED00F3803F /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				178D10EF188406A100529DA8 /* QtColorLineEdit_moc.cpp */,
+				178D10EA1883FED600529DA8 /* QColorWidget_moc.cpp */,
 				497774BF170DB808004CE2FB /* importdialogfilewidget_moc.cpp */,
 				02D69C6B16F08CED00F3803F /* controllist_moc.cpp */,
 				02D69C6C16F08CED00F3803F /* createplatformdlg_moc.cpp */,
@@ -840,7 +851,6 @@
 				02D69C7416F08CED00F3803F /* librarywidget_moc.cpp */,
 				02D69C7516F08CED00F3803F /* mainwindow_moc.cpp */,
 				02D69C7616F08CED00F3803F /* PropertyGridWidgets */,
-				02D69C8616F08CED00F3803F /* QColorButton_moc.cpp */,
 				02D69C8716F08CED00F3803F /* StateComboBoxItemDelegate_moc.cpp */,
 			);
 			path = UI;
@@ -887,6 +897,7 @@
 		05596AB53D8D521C69802C27 /* TemplateProjectQt */ = {
 			isa = PBXGroup;
 			children = (
+				17B0617418892C1500FD8007 /* WebKit.framework */,
 				A641262317D0C97B004D3C5E /* FrameworkTools.xcodeproj */,
 				02E9E447173A3AED00C501BC /* libfmodevent.dylib */,
 				02E9E448173A3AED00C501BC /* libfmodex.dylib */,
@@ -979,6 +990,7 @@
 				174D916D184E15EC00A30453 /* UIControlResizeHelper.h */,
 				176B4EFD186845A70020798C /* SpritesHelper.cpp */,
 				176B4EFE186845A70020798C /* SpritesHelper.h */,
+				17CAF56718869CE0006DE56D /* ColorHelper.h */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1204,8 +1216,10 @@
 			children = (
 				748434291648024700920BBD /* StateComboBoxItemDelegate.cpp */,
 				7484342A1648024700920BBD /* StateComboBoxItemDelegate.h */,
-				748955FC1641620200070AE1 /* QColorButton.h */,
-				748955FB1641620200070AE1 /* QColorButton.cpp */,
+				748955FC1641620200070AE1 /* QColorWidget.h */,
+				748955FB1641620200070AE1 /* QColorWidget.cpp */,
+				178D10EC188405F800529DA8 /* QtColorLineEdit.cpp */,
+				178D10ED188405F800529DA8 /* QtColorLineEdit.h */,
 			);
 			name = CustomContols;
 			sourceTree = "<group>";
@@ -1344,8 +1358,6 @@
 		C15C2FE8162AD6E400818631 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				C161DCE916400E9F00068417 /* hierarchytreecontrol.cpp */,
-				C161DCEA16400E9F00068417 /* hierarchytreecontrol.h */,
 				17FF160616401361001B130F /* CustomContols */,
 				17FF15FD16400A41001B130F /* Dialogs */,
 				1700E40B162EAD760069650D /* PropertyGridWidgets */,
@@ -1367,6 +1379,8 @@
 				498B61FC16F76E2C009D4417 /* IconHelper.h */,
 				49B0264A1709DA7D001E28CC /* importdialogfilewidget.cpp */,
 				49B0264B1709DA7D001E28CC /* importdialogfilewidget.h */,
+				C161DCEA16400E9F00068417 /* hierarchytreecontrol.h */,
+				C161DCE916400E9F00068417 /* hierarchytreecontrol.cpp */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1671,7 +1685,7 @@
 				17FF160016400A75001B130F /* localizationeditordialog.cpp in Build Sources */,
 				17607FC2164121FB004E36DE /* LocalizationSystemHelper.cpp in Build Sources */,
 				C15D3E5116415A3600161684 /* ControlCommands.cpp in Build Sources */,
-				748955FD1641620200070AE1 /* QColorButton.cpp in Build Sources */,
+				748955FD1641620200070AE1 /* QColorWidget.cpp in Build Sources */,
 				17660BBC186B1DD700CF7A14 /* RulerWidget.cpp in Build Sources */,
 				17607FEF16415B7C004E36DE /* BackgroundGridWidgetHelper.cpp in Build Sources */,
 				7484342B1648024700920BBD /* StateComboBoxItemDelegate.cpp in Build Sources */,
@@ -1765,12 +1779,12 @@
 				02D69CE816F08CEE00F3803F /* sliderpropertygridwidget_moc.cpp in Build Sources */,
 				02D69CE916F08CEE00F3803F /* statepropertygridwidget_moc.cpp in Build Sources */,
 				02D69CEB16F08CEE00F3803F /* uitextfieldpropertygridwidget_moc.cpp in Build Sources */,
-				02D69CEC16F08CEE00F3803F /* QColorButton_moc.cpp in Build Sources */,
 				176B4EDC18682B1F0020798C /* GridController.cpp in Build Sources */,
 				02D69CED16F08CEE00F3803F /* StateComboBoxItemDelegate_moc.cpp in Build Sources */,
 				C18593D616F30B56005D30E2 /* LibraryController.cpp in Build Sources */,
 				C18593E216F30C06005D30E2 /* HierarchyTreeAggregatorControlNode.cpp in Build Sources */,
 				C18593E316F30C06005D30E2 /* HierarchyTreeAggregatorNode.cpp in Build Sources */,
+				178D10EE188405F800529DA8 /* QtColorLineEdit.cpp in Build Sources */,
 				C18593E616F30C10005D30E2 /* UIAggregatorMetadata.cpp in Build Sources */,
 				1775862D1834E02200908EE9 /* CenterPivotPointCommand.cpp in Build Sources */,
 				C18593F516F30D74005D30E2 /* createaggregatordlg.cpp in Build Sources */,
@@ -1782,7 +1796,9 @@
 				498B61FD16F76E2C009D4417 /* IconHelper.cpp in Build Sources */,
 				17C5CCD916F323B700FB90B4 /* spinnerpropertygridwidget_moc.cpp in Build Sources */,
 				17C5CCDC16F323E900FB90B4 /* spinnerpropertygridwidget.cpp in Build Sources */,
+				178D10F0188406A100529DA8 /* QtColorLineEdit_moc.cpp in Build Sources */,
 				7497D74D1705AD5500E1DE60 /* UISwitchMetadata.cpp in Build Sources */,
+				178D10EB1883FED600529DA8 /* QColorWidget_moc.cpp in Build Sources */,
 				7497D74F1705AD7200E1DE60 /* UISwitchMetadata_moc.cpp in Build Sources */,
 				1707BA111709C90D00D69DC0 /* SubcontrolsHelper.cpp in Build Sources */,
 				748A9427170C59DF0087E18A /* listpropertygridwidget.cpp in Build Sources */,

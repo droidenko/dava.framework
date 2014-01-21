@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceEditorQtVS2010", "ResourceEditorQtVS2010.vcxproj", "{39D57C77-6E88-35CC-A5C4-41750E5A8CE4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8785B31F-E437-4FF7-B66E-5975F59E18D4} = {8785B31F-E437-4FF7-B66E-5975F59E18D4}

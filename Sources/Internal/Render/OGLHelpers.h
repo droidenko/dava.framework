@@ -57,7 +57,6 @@
 #if defined(__DAVAENGINE_OPENGL__)
 namespace DAVA
 {
-
 #if defined(__DAVAENGINE_WIN32__) || defined(__DAVAENGINE_MACOS__) || (defined(__DAVAENGINE_IPHONE__) && defined (__DAVAENGINE_DEBUG__))
 #define RENDER_VERIFY(command) \
 { \
@@ -89,9 +88,19 @@ namespace DAVA
 		OGLDebugBreak(); \
     }\
 }
+#else // RELEASE VERSION
+/* 
+    If you want to have ability to disable all rendering functions in release build you should uncomment the line below.
+ */
+ //#define CAN_DISABLE_ALL_RENDERING_IN_BUILD
+    
+#if defined(CAN_DISABLE_ALL_RENDERING_IN_BUILD)
+    #define RENDER_VERIFY(command) if (RenderManager::Instance()->GetOptions()->IsOptionEnabled(RenderOptions::ALL_RENDER_FUNCTIONS_ENABLED)) command;
 #else
-#define RENDER_VERIFY(command) command;  
-#endif //#if defined(__DAVAENGINE_WIN32__)
+    #define RENDER_VERIFY(command) command;
+#endif 
+    
+#endif
     
 
     
@@ -120,6 +129,7 @@ namespace DAVA
 	#define glBindFramebuffer glBindFramebufferOES
     #define DAVA_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT16_OES
 	#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+
     
 #elif defined(__DAVAENGINE_ANDROID__)
     

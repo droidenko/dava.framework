@@ -89,6 +89,8 @@ private slots:
 	void FileMenuTriggered(QAction *resentScene);
 	void MenuFileWillShow();
 
+    void SetBackgroundColorMenuTriggered(QAction* action);
+
 	void OnUndoRequested();
 	void OnRedoRequested();
 	
@@ -136,8 +138,10 @@ private:
 	void UpdateScreenPosition();
 	
 	void InitMenu();
+    void SetupViewMenu();
 	void UpdateMenu();
 	void UpdateProjectSettings(const QString& filename);
+
 	// Save/restore positions of DockWidgets and main window geometry
 	void SaveMainWindowState();
 	void RestoreMainWindowState();
@@ -162,12 +166,18 @@ private:
     // Notify external systems that the scale is updated.
     void NotifyScaleUpdated(float32 newScale);
 
-    // Repack (if needed) and reload sprites.
-    void RepackAndReloadSprites(bool needRepack);
+    // Repack and reload sprites.
+    void RepackAndReloadSprites();
+
 private:
     Ui::MainWindow *ui;
 	QAction *recentPojectActions[EditorSettings::RECENT_FILES_COUNT];
-	
+
+    // Background Frame Color menu actions.
+    QList<QAction*> backgroundFramePredefinedColorActions;
+    QAction* backgroundFrameUseCustomColorAction;
+    QAction* backgroundFrameSelectCustomColorAction;
+
 	bool screenChangeUpdate;
 };
 

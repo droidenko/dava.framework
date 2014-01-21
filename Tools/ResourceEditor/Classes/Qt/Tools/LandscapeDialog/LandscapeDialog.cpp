@@ -30,15 +30,16 @@
 #include <QLabel>
 #include <QMessageBox>
 #include "ui_BaseAddEntityDialog.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Main/mainwindow.h"
-#include "Classes/Commands2/EntityAddCommand.h"
-#include "Classes/Commands2/EntityRemoveCommand.h"
-#include "Classes/Commands2/LandscapeSetTexturesCommands.h"
+#include "Commands2/EntityAddCommand.h"
+#include "Commands2/EntityRemoveCommand.h"
+#include "Commands2/LandscapeSetTexturesCommands.h"
 #include "Tools/QtPropertyEditor/QtPropertyData/QtPropertyDataDavaVariant.h"
 #include "Tools/SelectPathWidget/SelectPathWidgetBase.h"
-#include "../Qt/Main/QtUtils.h"
-#include "Classes/CommandLine/TextureDescriptor/TextureDescriptorUtils.h"
+#include "Main/QtUtils.h"
+#include "CommandLine/TextureDescriptor/TextureDescriptorUtils.h"
+#include "MaterialEditor/MaterialEditor.h"
 
 #define TEXTURE_TITLE "Open texture"
 #define HEIGHTMAP_TITLE "Open height map"
@@ -51,7 +52,7 @@
 
 #define CREATE_TITLE "Create"
 #define DELETE_TITLE "Delete"
-
+#define OPEN_MAT_EDITOR_TITLE "Edit material"
 
 #define DEFAULT_LANDSCAPE_SIDE_LENGTH	600.0f
 #define DEFAULT_LANDSCAPE_HEIGHT		50.0f
@@ -98,7 +99,8 @@ LandscapeDialog::LandscapeDialog(Entity* _landscapeEntity,  QWidget* parent)
 	AddControlToUserContainer(tileMaskWidget, "Tile mask:");
 	
 	QString btnTitle = CREATE_TITLE;
-	if(innerLandscape != NULL)
+	bool isLandscapePresent = innerLandscape != NULL;
+	if(isLandscapePresent)
 	{
 		TileModeChanged((int)innerLandscape->GetTiledShaderMode());
 		btnTitle = DELETE_TITLE;
@@ -106,7 +108,12 @@ LandscapeDialog::LandscapeDialog(Entity* _landscapeEntity,  QWidget* parent)
 	actionButton = new QPushButton(btnTitle, this);
 	connect(actionButton, SIGNAL(clicked()), this, SLOT(ActionButtonClicked()));
 	AddButton(actionButton);
-	
+
+	openMaterEditorBtn = new QPushButton(OPEN_MAT_EDITOR_TITLE, this);
+	connect(openMaterEditorBtn, SIGNAL(clicked()), this, SLOT(MaterialEditorButtonClicked()));
+	AddButton(openMaterEditorBtn, 1);
+	openMaterEditorBtn->setVisible(isLandscapePresent);
+
 	landscapeSize = Vector3(DEFAULT_LANDSCAPE_SIDE_LENGTH, DEFAULT_LANDSCAPE_SIDE_LENGTH, DEFAULT_LANDSCAPE_HEIGHT);
 }
 
@@ -118,7 +125,7 @@ LandscapeDialog::~LandscapeDialog()
 	{
 		delete it->first;
 	}
-
+	delete openMaterEditorBtn;
 	delete actionButton;
 }
 
@@ -133,7 +140,7 @@ SelectPathWidgetBase* LandscapeDialog::InitPathWidget(QWidget* parent, int32 wid
 		fileFilter = HEIGHTMAP_FILTER;
 	}
 
-	DAVA::String resFolder = EditorSettings::Instance()->GetDataSourcePath().GetAbsolutePathname();
+	DAVA::String resFolder = FilePath(SettingsManager::Instance()->GetValue("3dDataSourcePath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname();
 	SelectPathWidgetBase* widget = new SelectPathWidgetBase(parent,resFolder,"", widgetTitle, fileFilter);
 
 	if(innerLandscape)
@@ -161,28 +168,28 @@ void LandscapeDialog::FillPropertyEditorWithContent()
 	AddMetaObject(&landscapeSize.x, DAVA::MetaInfo::Instance<float>(), "Size");
 	AddMetaObject(&landscapeSize.z, DAVA::MetaInfo::Instance<float>(), "Height");
 
-	DAVA::KeyedArchive* propertyList = entity->GetCustomProperties();
-	if(!propertyList->IsKeyExists("lightmap.size"))
-	{
-		propertyList->SetInt32("lightmap.size", 1024);
-	}
-	if(!propertyList->IsKeyExists("editor.staticlight.enable"))
-	{
-		propertyList->SetBool("editor.staticlight.enable", false);
-	}
-	if(!propertyList->IsKeyExists("editor.staticlight.castshadows"))
-	{
-		propertyList->SetBool("editor.staticlight.castshadows", false);
-	}
-	if(!propertyList->IsKeyExists("editor.staticlight.receiveshadows"))
-	{
-		propertyList->SetBool("editor.staticlight.receiveshadows", false);
-	}
+	//DAVA::KeyedArchive* propertyList = entity->GetCustomProperties();
+	//if(!propertyList->IsKeyExists("lightmap.size"))
+	//{
+	//	propertyList->SetInt32("lightmap.size", 1024);
+	//}
+	//if(!propertyList->IsKeyExists("editor.staticlight.enable"))
+	//{
+	//	propertyList->SetBool("editor.staticlight.enable", false);
+	//}
+	//if(!propertyList->IsKeyExists("editor.staticlight.castshadows"))
+	//{
+	//	propertyList->SetBool("editor.staticlight.castshadows", false);
+	//}
+	//if(!propertyList->IsKeyExists("editor.staticlight.receiveshadows"))
+	//{
+	//	propertyList->SetBool("editor.staticlight.receiveshadows", false);
+	//}
 
-	AddKeyedArchiveMember(propertyList, "lightmap.size", "Lightmap size");
-	AddKeyedArchiveMember(propertyList, "editor.staticlight.enable", "Staticlight enable");
-	AddKeyedArchiveMember(propertyList, "editor.staticlight.castshadows", "Cast shadows"); 
-	AddKeyedArchiveMember(propertyList, "editor.staticlight.receiveshadows", "Receive shadows");
+	//AddKeyedArchiveMember(propertyList, "lightmap.size", "Lightmap size");
+	//AddKeyedArchiveMember(propertyList, "editor.staticlight.enable", "Staticlight enable");
+	//AddKeyedArchiveMember(propertyList, "editor.staticlight.castshadows", "Cast shadows"); 
+	//AddKeyedArchiveMember(propertyList, "editor.staticlight.receiveshadows", "Receive shadows");
 
 	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("isFogEnabled"));
 	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("fogDensity"));
@@ -203,8 +210,8 @@ void LandscapeDialog::FillPropertyEditorWithContent()
 		tileModeVariant->AddAllowedValue(DAVA::VariantType((uint32)Landscape::TILED_MODE_TILE_DETAIL_MASK), "Detail mask mode");
 	}
 
-	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("tileColor"));
-	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("textureTiling"));
+//	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("tileColor"));
+//	AddInspMemberToEditor( innerLandscape, innerLandscape->GetTypeInfo()->Member("textureTiling"));
 }
 
 void LandscapeDialog::FillWidgetsWithContent()
@@ -241,6 +248,8 @@ void LandscapeDialog::FillWidgetsWithContent()
 	{
 		actionButton->setText(CREATE_TITLE);
 	}
+	
+	openMaterEditorBtn->setVisible( innerLandscape != NULL);
 }
 
 void LandscapeDialog::showEvent ( QShowEvent * event )
@@ -309,6 +318,7 @@ void LandscapeDialog::ActionButtonClicked()
 		
 		Entity* entityToProcess = new Entity();
 		entityToProcess->SetName(ResourceEditor::LANDSCAPE_NODE_NAME);
+        entityToProcess->SetLocked(true);
 		Landscape* newLandscape = new Landscape();
 		
 		for(uint32 i = Landscape::TEXTURE_COLOR; i < Landscape::TEXTURE_COUNT; ++i)
@@ -320,7 +330,6 @@ void LandscapeDialog::ActionButtonClicked()
 		newLandscape->SetTiledShaderMode(Landscape::TILED_MODE_TILE_DETAIL_MASK);
 		RenderComponent* component = new RenderComponent(ScopedPtr<Landscape>(newLandscape));
 		entityToProcess->AddComponent(component);
-		SafeRelease(component);
 
 		AABBox3 bboxForLandscape;
 		bboxForLandscape.AddPoint(Vector3(-landscapeSize.x/2.f, -landscapeSize.y/2.f, 0.f));
@@ -348,8 +357,16 @@ void LandscapeDialog::ActionButtonClicked()
 	}
 }
 
-void LandscapeDialog::OnItemEdited(const QString &name, QtPropertyData *data)
+void LandscapeDialog::MaterialEditorButtonClicked()
 {
+	MaterialEditor::Instance()->show();
+}
+
+void LandscapeDialog::OnItemEdited(const QModelIndex &index)
+{
+	QtPropertyData *data = propEditor->GetProperty(index);
+	QString name = data->GetName();
+
 	SceneEditor2 *curScene = QtMainWindow::Instance()->GetCurrentScene();
 	if(NULL == curScene)
 	{
@@ -493,7 +510,7 @@ void LandscapeDialog::PathWidgetValueChanged(String fileName)
 		{
 			if(filePath.IsEqualToExtension(".png"))
 			{
-				Vector<Image *> imageVector = ImageLoader::CreateFromFile(filePath);
+				Vector<Image *> imageVector = ImageLoader::CreateFromFileByExtension(filePath);
 				DVASSERT(imageVector.size());
 			
 				PixelFormat format = imageVector[0]->GetPixelFormat();

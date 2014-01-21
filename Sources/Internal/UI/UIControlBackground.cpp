@@ -316,6 +316,7 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 			
 			lastDrawPos = drawState.position;
 
+			RenderManager::Instance()->SetDefault2DState();
 			spr->Draw(&drawState);
 		}
 		break;
@@ -355,6 +356,7 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 //			spr->SetPivotPoint(geometricData.pivotPoint.x / (geometricData.size.x / spr->GetSize().dx), geometricData.pivotPoint.y / (geometricData.size.y / spr->GetSize().dy));
 //			spr->SetAngle(geometricData.angle);
 			
+			RenderManager::Instance()->SetDefault2DState();
 			spr->Draw(&drawState);
 		}
 		break;
@@ -454,12 +456,15 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 
 			lastDrawPos = drawState.position;
 			
+			RenderManager::Instance()->SetDefault2DState();
 			spr->Draw(&drawState);
 		}
 		break;
 		
 		case DRAW_FILL:
 		{
+		    RenderManager::Instance()->SetDefault2DNoTextureState();
+			RenderManager::Instance()->SetDefaultTextureState();
 			DrawFilled( geometricData );
 		}	
 		break;
@@ -467,11 +472,13 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 		case DRAW_STRETCH_BOTH:
 		case DRAW_STRETCH_HORIZONTAL:
 		case DRAW_STRETCH_VERTICAL:
+			RenderManager::Instance()->SetDefault2DState();
 			DrawStretched(drawRect);
 		break;
 		
-		case DRAW_TILED:
-			DrawTiled( geometricData );
+        case DRAW_TILED:
+            RenderManager::Instance()->SetDefault2DState();
+			DrawTiled(geometricData);
 		break;
 	}
 	
@@ -482,7 +489,8 @@ void UIControlBackground::Draw(const UIGeometricData &geometricData)
 void UIControlBackground::DrawStretched(const Rect &drawRect)
 {
 	if (!spr)return;
-	Texture *texture = spr->GetTexture(frame);
+	UniqueHandle textureHandle = spr->GetTextureHandle(frame);
+	Texture* texture = spr->GetTexture(frame);
 	
 	float32 texX = spr->GetRectOffsetValueForFrame(frame, Sprite::X_POSITION_IN_TEXTURE);
 	float32 texY = spr->GetRectOffsetValueForFrame(frame, Sprite::Y_POSITION_IN_TEXTURE);
@@ -644,7 +652,7 @@ void UIControlBackground::DrawStretched(const Rect &drawRect)
 	vertexStream->Set(TYPE_FLOAT, 2, 0, vertices);
 	texCoordStream->Set(TYPE_FLOAT, 2, 0, texCoords);
 
-	RenderManager::Instance()->SetTexture(texture);
+	RenderManager::Instance()->SetTextureState(textureHandle);
 	RenderManager::Instance()->SetRenderEffect(RenderManager::TEXTURE_MUL_FLAT_COLOR);
     RenderManager::Instance()->SetRenderData(rdoObject);
 	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, vertInTriCount, EIF_16, indeces);
@@ -673,6 +681,9 @@ void UIControlBackground::DrawTiled(const UIGeometricData &gd)
 
 	Vector2 stretchCap( Min( size.x, spr->GetRectOffsetValueForFrame(frame, Sprite::ACTIVE_WIDTH) ),
 						Min( size.y, spr->GetRectOffsetValueForFrame(frame, Sprite::ACTIVE_HEIGHT) ) );
+
+	Texture *texture = spr->GetTexture(frame);
+	UniqueHandle textureHandle = spr->GetTextureHandle(frame);
 
 	stretchCap.x = Min( stretchCap.x * 0.5f, leftStretchCap );
 	stretchCap.y = Min( stretchCap.y * 0.5f, topStretchCap );
@@ -714,7 +725,7 @@ void UIControlBackground::DrawTiled(const UIGeometricData &gd)
 	vertexStream->Set(TYPE_FLOAT, 2, 0, &td.transformedVertices[0]);
 	texCoordStream->Set(TYPE_FLOAT, 2, 0, &td.texCoords[0]);
 
-	RenderManager::Instance()->SetTexture( spr->GetTexture(frame) );
+	RenderManager::Instance()->SetTextureState(textureHandle);
 	RenderManager::Instance()->SetRenderEffect(RenderManager::TEXTURE_MUL_FLAT_COLOR);
 	RenderManager::Instance()->SetRenderData(rdoObject);
 	RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, td.indeces.size(), EIF_32, &td.indeces[0]);

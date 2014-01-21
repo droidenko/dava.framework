@@ -120,9 +120,9 @@ public:
 
 	void EmitCommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo) { emit CommandExecuted(scene, command, redo); };
 	void EmitStructureChanged(SceneEditor2 *scene, DAVA::Entity *parent) { emit StructureChanged(scene, parent); }
-	void EmitModifyStatusChanged(SceneEditor2 *scene, bool modified) { emit ModifyStatusChanged(scene, modified); }
 
 	void EmitSelectionChanged(SceneEditor2 *scene, const EntityGroup *selected, const EntityGroup *deselected) { emit SelectionChanged(scene, selected, deselected); }
+	void EmitModifyStatusChanged(SceneEditor2 *scene, bool modified) { emit ModifyStatusChanged(scene, modified); }
 
 	void EmitVisibilityToolToggled(SceneEditor2* scene) { emit VisibilityToolToggled(scene); }
 	void EmitCustomColorsToggled(SceneEditor2* scene) { emit CustomColorsToggled(scene); }

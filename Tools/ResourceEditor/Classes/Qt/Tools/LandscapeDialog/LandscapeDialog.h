@@ -64,7 +64,9 @@ protected slots:
 	
 	void ActionButtonClicked();
 
-	virtual void OnItemEdited(const QString &name, QtPropertyData *data);
+	void MaterialEditorButtonClicked();
+
+	virtual void OnItemEdited(const QModelIndex &index);
 	
 	virtual void CommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo);
 	
@@ -94,6 +96,7 @@ protected:
 	
 	Landscape*				innerLandscape;
 	QPushButton*			actionButton;
+	QPushButton*			openMaterEditorBtn;
 
 	DAVA::Map<SelectPathWidgetBase*, int32>  widgetMap;
 	Vector3	landscapeSize;

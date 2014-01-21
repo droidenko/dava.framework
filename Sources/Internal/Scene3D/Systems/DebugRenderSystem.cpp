@@ -40,6 +40,7 @@
 
 #include "Render/Highlevel/Camera.h"
 #include "Render/RenderHelper.h"
+#include "Debug/Stats.h"
 
 namespace DAVA
 {
@@ -48,6 +49,12 @@ DebugRenderSystem::DebugRenderSystem(Scene * scene)
 :	SceneSystem(scene),
 	camera(0)
 {
+	depthTestState = RenderManager::Instance()->Derive3DRenderState(RenderStateData::STATE_COLORMASK_ALL |
+																	RenderStateData::STATE_DEPTH_WRITE |
+																	RenderStateData::STATE_DEPTH_TEST);
+	
+	depthWriteState = RenderManager::Instance()->Derive3DRenderState(RenderStateData::STATE_COLORMASK_ALL |
+																	RenderStateData::STATE_DEPTH_WRITE);
 }
     
 DebugRenderSystem::~DebugRenderSystem()
@@ -57,6 +64,7 @@ DebugRenderSystem::~DebugRenderSystem()
 
 void DebugRenderSystem::Process(float32 timeElapsed)
 {
+    TIME_PROFILE("DebugRenderSystem::Process");
     uint32 size = entities.size();
 	for(uint32 i = 0; i < size; ++i)
 	{
@@ -90,13 +98,15 @@ void DebugRenderSystem::Process(float32 timeElapsed)
 					// If this is clip camera - show it as red camera
 					if (entityCamera == entity->GetScene()->GetClipCamera()) camColor = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
+					//RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
+					RenderManager::Instance()->SetRenderState(depthWriteState);
+
 					RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
-					RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
 					RenderManager::Instance()->SetColor(camColor);
 
 					RenderHelper::Instance()->DrawBox(camBox, 2.5f);
 
-					RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+					//RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
 					RenderManager::Instance()->ResetColor();
 
 					debugBoundigBox = camBox;
@@ -116,9 +126,11 @@ void DebugRenderSystem::Process(float32 timeElapsed)
 				Matrix4 finalMatrix = transformComponent->GetWorldTransform() * prevMatrix;
 				RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix);
 
+				
 				RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
-				RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE | RenderState::STATE_DEPTH_TEST);
-
+				//RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE | RenderState::STATE_DEPTH_TEST);
+				RenderManager::Instance()->SetRenderState(depthTestState);
+				
 				RenderManager::Instance()->SetColor(1.f, 1.f, 0, 1.0f);
 				RenderHelper::Instance()->DrawLine(Vector3(0, 0, 0), Vector3(1.f, 0, 0));
 				RenderManager::Instance()->SetColor(1.f, 0, 1.f, 1.0f);
@@ -129,7 +141,7 @@ void DebugRenderSystem::Process(float32 timeElapsed)
 				RenderManager::Instance()->SetColor(dcColor);
 				RenderHelper::Instance()->DrawBox(dcBox);
 
-				RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+				//RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
 				RenderManager::Instance()->ResetColor();
 				RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, prevMatrix);
 
@@ -151,7 +163,8 @@ void DebugRenderSystem::Process(float32 timeElapsed)
 					Vector3 lPosition = light->GetPosition();
 
 					RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
-					RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
+					//RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
+					RenderManager::Instance()->SetRenderState(depthWriteState);
 					RenderManager::Instance()->SetColor(1.0f, 1.0f, 0.0f, 1.0f);
 
 					switch (light->GetType())
@@ -177,30 +190,34 @@ void DebugRenderSystem::Process(float32 timeElapsed)
 						break;
 					}
 
-					RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+					//RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
 					RenderManager::Instance()->ResetColor();
 				}
 			}
 		}
         
         if ((debugFlags & DebugRenderComponent::DEBUG_DRAW_AABOX_CORNERS))
-        {            
+        {
             RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
-            RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE | RenderState::STATE_DEPTH_TEST);
+            //RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE | RenderState::STATE_DEPTH_TEST);
+			RenderManager::Instance()->SetRenderState(depthTestState);
             RenderManager::Instance()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderHelper::Instance()->DrawCornerBox(debugBoundigBox);
-            RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
-            RenderManager::Instance()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+            //RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+            //RenderManager::Instance()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
             //		RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, prevMatrix);
         }
         
         if (debugFlags & DebugRenderComponent::DEBUG_DRAW_RED_AABBOX)
         {
+			RenderManager::Instance()->SetRenderState(depthWriteState);
+
             RenderManager::Instance()->SetRenderEffect(RenderManager::FLAT_COLOR);
-            RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
+            //RenderManager::Instance()->SetState(RenderState::STATE_COLORMASK_ALL | RenderState::STATE_DEPTH_WRITE);
+			RenderManager::Instance()->SetRenderState(depthWriteState);
             RenderManager::Instance()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
             RenderHelper::Instance()->DrawBox(debugBoundigBox);
-            RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+            //RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
             RenderManager::Instance()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
         

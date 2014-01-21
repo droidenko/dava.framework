@@ -36,6 +36,7 @@
 #include "Scene3D/Components/LodComponent.h"
 #include "Scene3D/Components/RenderComponent.h"
 #include "Scene3D/Components/ParticleEffectComponent.h"
+#include "Scene3D/Components/QualitySettingsComponent.h"
 #include "Render/Highlevel/Camera.h"
 #include "Render/Highlevel/Landscape.h"
 #include "Render/Highlevel/RenderObject.h"
@@ -237,4 +238,14 @@ Landscape * FindLandscape(Entity * rootEntity)
 	return GetLandscape(entity);
 }
 
+QualitySettingsComponent * GetQualitySettingsComponent(const Entity * fromEntity)
+{
+    if(fromEntity)
+    {
+		return (static_cast<QualitySettingsComponent *>(fromEntity->GetComponent(Component::QUALITY_SETTINGS_COMPONENT)));
+    }
+    
+    return NULL;
+}
+    
 }

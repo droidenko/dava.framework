@@ -30,7 +30,7 @@
 #include "CubemapEditor/CubemapEditorDialog.h"
 #include "CubemapEditor/ClickableQLabel.h"
 #include "CubemapEditor/CubemapUtils.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Qt/Main/QtUtils.h"
 #include "Tools/QtFileDialog/QtFileDialog.h"
 #include "ui_cubemapeditordialog.h"
@@ -91,10 +91,9 @@ void CubemapEditorDialog::ConnectSignals()
 
 void CubemapEditorDialog::LoadImageFromUserFile(float rotation, int face)
 {
-	KeyedArchive* settings = EditorSettings::Instance()->GetSettings();
-	FilePath projectPath = CubemapUtils::GetDialogSavedPath(CUBEMAP_LAST_FACE_DIR_KEY,
+	FilePath projectPath = CubemapUtils::GetDialogSavedPath(ResourceEditor::SETTINGS_CUBEMAP_LAST_FACE_DIR,
 															rootPath.toStdString(),
-															EditorSettings::Instance()->GetDataSourcePath().GetAbsolutePathname());
+															FilePath(SettingsManager::Instance()->GetValue("3dDataSourcePath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname());
 		
 	QString fileName = QtFileDialog::getOpenFileName(this,
 													tr("Open Cubemap Face Image"),
@@ -107,7 +106,8 @@ void CubemapEditorDialog::LoadImageFromUserFile(float rotation, int face)
 		LoadImageTo(stdFilePath, face, false);
 		
 		projectPath = stdFilePath;
-		settings->SetString(CUBEMAP_LAST_FACE_DIR_KEY, projectPath.GetDirectory().GetAbsolutePathname());
+		SettingsManager::Instance()->SetValue("cubemap_last_face_dir", 
+			VariantType(projectPath.GetDirectory().GetAbsolutePathname()), SettingsManager::INTERNAL);
 		
 		if(AllFacesLoaded())
 		{
@@ -303,6 +303,8 @@ void CubemapEditorDialog::LoadCubemap(const QString& path)
 			ShowErrorDialog("Failed to load cubemap texture " + path.toStdString() + ". Seems this is not a cubemap texture.");
 		}
 	}
+
+	SafeDelete(texDescriptor);
 }
 
 void CubemapEditorDialog::SaveCubemap(const QString& path)
@@ -380,7 +382,7 @@ void CubemapEditorDialog::SaveCubemap(const QString& path)
 	descriptor->faceDescription = faceMask;
 	    
     descriptor->Save(filePath);
-	SafeRelease(descriptor);
+	delete descriptor;
 	
 	QMessageBox::information(this, "Cubemap texture save result", "Cubemap texture was saved successfully!");
 }
@@ -505,8 +507,6 @@ void CubemapEditorDialog::OnSave()
 	
 	this->setUpdatesEnabled(true);
 	ui->lblSaving->setVisible(false);
-	
-	EditorSettings::Instance()->Save();
 	close();
 }
 
@@ -523,7 +523,6 @@ void CubemapEditorDialog::OnClose()
 
 	if(MB_FLAG_YES == answer)
 	{
-		EditorSettings::Instance()->Save();
 		close();
 	}
 }

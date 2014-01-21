@@ -32,7 +32,7 @@
 #include "Tools/MimeDataHelper/MimeDataHelper.h"
 #include "Tools/SelectPathWidget/SelectEntityPathWidget.h"
 #include "Main/mainwindow.h"
-#include "SceneEditor/EditorSettings.h"
+#include "Qt/Settings/SettingsManager.h"
 #include "Classes/Commands2/EntityAddCommand.h"
 #include "Qt/Main/QtUtils.h"
 #include "Commands2/EntityParentChangeCommand.h"
@@ -44,7 +44,7 @@ AddSwitchEntityDialog::AddSwitchEntityDialog( QWidget* parent)
 {
 	setAcceptDrops(true);
 	setAttribute( Qt::WA_DeleteOnClose, true );
-	FilePath defaultPath(EditorSettings::Instance()->GetProjectPath().GetAbsolutePathname() + "/DataSource/3d");
+	FilePath defaultPath(FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString()).GetAbsolutePathname() + "/DataSource/3d");
 	
 	SceneEditor2 *scene = QtMainWindow::Instance()->GetCurrentScene();
 	if(scene)
@@ -72,7 +72,13 @@ AddSwitchEntityDialog::AddSwitchEntityDialog( QWidget* parent)
 	propEditor->setMinimumHeight(0);
 	propEditor->setMaximumSize(propEditor->maximumWidth(), 0);
 
-	
+	Entity* entityToAdd = new Entity();
+	entityToAdd->SetName(ResourceEditor::SWITCH_NODE_NAME);
+	entityToAdd->AddComponent(new SwitchComponent());
+	KeyedArchive *customProperties = entityToAdd->GetCustomProperties();
+	customProperties->SetBool(Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME, false);
+	SetEntity(entityToAdd);
+	SafeRelease(entityToAdd);
 }
 
 AddSwitchEntityDialog::~AddSwitchEntityDialog()
@@ -132,7 +138,10 @@ void AddSwitchEntityDialog::accept()
 	
 	SwitchComponent* component = new SwitchComponent();
 	switchEntity->AddComponent(component);
-	SafeRelease(component);
+
+    //TODO AMakovii
+	//SafeRelease(component);
+
 	KeyedArchive *customProperties = switchEntity->GetCustomProperties();
 	customProperties->SetBool(Entity::SCENE_NODE_IS_SOLID_PROPERTY_NAME, false);
 	
@@ -143,8 +152,19 @@ void AddSwitchEntityDialog::accept()
 			scene->Exec(new EntityParentChangeCommand(item, switchEntity));
 		}
 	}
+
+	scene->Exec(new EntityAddCommand(switchEntity, scene));
+	scene->selectionSystem->SetSelection(switchEntity);
+
+	DAVA::SwitchComponent *swComponent = GetSwitchComponent(switchEntity);
+	if(NULL != swComponent)
+	{
+		// this will case switch component to send event about it state
+		swComponent->SetSwitchIndex(swComponent->GetSwitchIndex());
+	}
 		
-	scene->ImmediateEvent(switchEntity, Component::SWITCH_COMPONENT, EventSystem::SWITCH_CHANGED);
+    //TODO AMAkovii
+	//scene->ImmediateEvent(switchEntity, Component::SWITCH_COMPONENT, EventSystem::SWITCH_CHANGED);
 	scene->EndBatch();
 
 	scene->selectionSystem->SetSelection(switchEntity);

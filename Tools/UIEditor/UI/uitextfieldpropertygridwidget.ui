@@ -77,16 +77,28 @@
      <string>Font:</string>
     </property>
    </widget>
-   <widget class="QColorButton" name="textColorPushButton">
+   <widget class="QColorWidget" name="textColorWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>105</x>
       <y>100</y>
-      <width>200</width>
+      <width>184</width>
       <height>21</height>
      </rect>
     </property>
-    <property name="text">
+    <property name="minimumSize">
+     <size>
+      <width>184</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>184</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="text" stdset="0">
      <string/>
     </property>
    </widget>
@@ -120,16 +132,28 @@ QPushButton:pressed {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 
      <string>default font</string>
     </property>
    </widget>
-   <widget class="QColorButton" name="shadowColorButton">
+   <widget class="QColorWidget" name="shadowColorWidget" native="true">
     <property name="geometry">
      <rect>
       <x>105</x>
       <y>158</y>
-      <width>185</width>
-      <height>21</height>
+      <width>184</width>
+      <height>22</height>
      </rect>
     </property>
-    <property name="text">
+    <property name="minimumSize">
+     <size>
+      <width>184</width>
+      <height>22</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>184</width>
+      <height>22</height>
+     </size>
+    </property>
+    <property name="text" stdset="0">
      <string/>
     </property>
    </widget>
@@ -402,16 +426,15 @@ QPushButton:pressed {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QColorButton</class>
-   <extends>QPushButton</extends>
-   <header>qcolorbutton.h</header>
+   <class>QColorWidget</class>
+   <extends>QWidget</extends>
+   <header>qcolorwidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>textLineEdit</tabstop>
   <tabstop>fontSelectButton</tabstop>
   <tabstop>fontSizeSpinBox</tabstop>
-  <tabstop>textColorPushButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

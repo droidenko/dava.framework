@@ -7,7 +7,7 @@
 
 set -e
 
-export SDK=6.0
+export SDK=7.0
 
 checkExists() {
 
@@ -50,7 +50,7 @@ buildit() {
     fi
 
     export CC="/usr/bin/clang"
-    export CFLAGS="-arch ${target} -isysroot ${root}/SDKs/${platform}${SDK}.sdk"
+    export CFLAGS="-arch ${target} -isysroot ${root}/SDKs/${platform}${SDK}.sdk -miphoneos-version-min=6.0"
     export CXX="/usr/bin/clang"
     export AR="/usr/bin/ar"
     export RANLIB="/usr/bin/ranlib"

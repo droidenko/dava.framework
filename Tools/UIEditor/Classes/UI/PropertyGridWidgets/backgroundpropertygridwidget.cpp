@@ -91,7 +91,7 @@ void BackGroundPropertyGridWidget::Initialize(BaseMetadata* activeMetadata)
     RegisterComboBoxWidgetForProperty(propertiesMap, PropertyNames::COLOR_INHERIT_TYPE_PROPERTY_NAME, ui->colorInheritComboBox, false, true);
 	RegisterComboBoxWidgetForProperty(propertiesMap, PropertyNames::ALIGN_PROPERTY_NAME, ui->alignComboBox, false, true);
 	
-    RegisterColorButtonWidgetForProperty(propertiesMap, PropertyNames::BACKGROUND_COLOR_PROPERTY_NAME, ui->selectColorButton, false, true);
+    RegisterColorWidgetForProperty(propertiesMap, PropertyNames::BACKGROUND_COLOR_PROPERTY_NAME, ui->selectColorWidget, false, true);
 
 	ui->spriteLineEdit->setEnabled(true);
 	HandleDrawTypeComboBox();
@@ -106,7 +106,7 @@ void BackGroundPropertyGridWidget::Cleanup()
     UnregisterComboBoxWidget(ui->drawTypeComboBox);
     UnregisterComboBoxWidget(ui->colorInheritComboBox);
     UnregisterComboBoxWidget(ui->alignComboBox);
-    UnregisterColorButtonWidget(ui->selectColorButton);
+    UnregisterColorWidget(ui->selectColorWidget);
 
 	UnregisterComboBoxWidget(ui->modificationComboBox);
 	UnregisterSpinBoxWidget(ui->lrSpinBox);

@@ -36,6 +36,8 @@
 #include "Entity/SceneSystem.h"
 #include "UI/UIEvent.h"
 
+#include "Render/RenderManager.h"
+
 class EditorParticlesSystem : public DAVA::SceneSystem
 {
 	friend class SceneEditor2;
@@ -63,6 +65,8 @@ private:
 	void DrawSizeCircleShockWave(DAVA::ParticleEmitter *emitter,DAVA::Vector3 center);
 	void DrawSizeBox(DAVA::Entity *entity, DAVA::ParticleEmitter *emitter, DAVA::Vector3 center);
 	void DrawVectorArrow(DAVA::Entity *entity, DAVA::ParticleEmitter *emitter, DAVA::Vector3 center);
+	
+	DAVA::UniqueHandle renderState;
 	
 };
 

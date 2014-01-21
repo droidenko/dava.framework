@@ -54,7 +54,8 @@ public:
 
 		DropingEntity,
 		DropingLayer,
-		DropingForce
+		DropingForce,
+        DropingMaterial
 	};
 
 	enum CustomFlags
@@ -63,10 +64,6 @@ public:
 		CF_Disabled		= 0x0001,
 		CF_Invisible	= 0x0002,
 	};
-
-	static const char* mimeFormatEntity;
-	static const char* mimeFormatLayer;
-	static const char* mimeFormatForce;
 
 	SceneTreeModel(QObject* parent = 0);
 	~SceneTreeModel();
@@ -99,6 +96,7 @@ public:
 	int GetDropType(const QMimeData *data) const;
 
 	void ResyncStructure(QStandardItem *item, DAVA::Entity *entity);
+	void ResetFilterAcceptFlag();
 
 protected:
 	SceneEditor2 * curScene;
@@ -110,11 +108,11 @@ protected:
 
 	void RebuildIndexesCache();
 	void AddIndexesCache(SceneTreeItem *item);
+	void ResetFilterAcceptFlagInternal(SceneTreeItem *item);
 
 	bool AreSameType(const QModelIndexList & indexes) const;
-
-	QMimeData* EncodeMimeData(const QVector<void*> &data, const QString &format) const;
-	QVector<void*>* DecodeMimeData(const QMimeData* data, const QString &format) const;
+    
+    void DropMaterial(SceneTreeItem *parentItem, const QMimeData *mimeData) const;
 
 protected slots:
 	void ItemChanged(QStandardItem * item);

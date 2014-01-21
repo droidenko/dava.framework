@@ -36,9 +36,17 @@
 #include "Base/BaseMath.h"
 #include "Base/Data.h"
 #include "Base/FastName.h"
+#include "Base/FastNameMap.h"
 #include "FileSystem/FilePath.h"
 #include "Job/JobManager.h"
 #include "Job/JobWaiter.h"
+
+//#define USE_CRC_COMPARE
+
+#ifdef __DAVAENGINE_ARM_7__
+#define USE_NEON_MATRIX_COMPARE
+#include <arm_neon.h>
+#endif
 
 #ifdef __DAVAENGINE_ANDROID__
 #if !defined(GLchar)
@@ -46,9 +54,34 @@ typedef char             GLchar;
 #endif //not defined GLchar
 #endif //#ifdef __DAVAENGINE_ANDROID__
 
+#define GET_UNIFORM(__uniformIndex__) ((Uniform*)(uniformData + uniformOffsets[__uniformIndex__]))
 
 namespace DAVA
 {
+
+template<class AutobindType>
+class AutobindVariable
+{
+public:
+    inline void SetValue(uint32 _semantic, const AutobindType & _value){ if (semantic != _semantic)value = _value; }
+    inline void ClearSemantic() { semantic = 0; }
+    
+    uint32 semantic;
+    AutobindType value;
+};
+
+class AutobindManager
+{
+public:
+    template<class T>
+    AutobindVariable<T> * AllocateVariable(const FastName & name);
+    
+    template<class T>
+    AutobindVariable<T> * GetVariable(const FastName & name);
+    
+    HashMap<FastName, uint32> manager;
+    Vector<uint32> bytes;
+};
     
 class Data;
     
@@ -67,9 +100,17 @@ public:
         UNIFORM_NORMAL_MATRIX, 
         UNIFORM_COLOR,
         UNIFORM_GLOBAL_TIME,
+        UNIFORM_MODEL_VIEW_TRANSLATE,
+        UNIFORM_MODEL_SCALE,
         UNIFORM_COUNT,
     };
-    
+    enum eUpdateFreq
+    {
+        UPDATE_ALWAYS = 0,
+        UPDATE_ONCE = 1,
+        UPDATE_PER_FRAME = 2,
+    };
+
     enum eUniformType
     {
         UT_FLOAT = GL_FLOAT,
@@ -90,6 +131,44 @@ public:
         UT_SAMPLER_2D = GL_SAMPLER_2D,
         UT_SAMPLER_CUBE = GL_SAMPLER_CUBE,
     };
+    
+#ifdef USE_NEON_MATRIX_COMPARE
+#pragma pack(push)
+#pragma pack(4)
+#endif
+    struct Uniform
+    {
+        eUniform        id;
+        //eUpdateFreq     updateFreq;
+        FastName        name;
+        GLint           location;
+        GLint           size;
+        eUniformType    type;
+#ifdef USE_CRC_COMPARE
+        uint32          crc;
+#else
+        void*			cacheValue;
+		uint16			cacheValueSize;
+#endif
+        
+#ifdef USE_NEON_MATRIX_COMPARE
+        uint32x4_t      matrixCRC;
+#endif
+        
+		bool ValidateCache(int32 value);
+		bool ValidateCache(float32 value);
+		bool ValidateCache(const Vector2 & value);
+		bool ValidateCache(const Vector3 & value);
+		bool ValidateCacheColor3(const Color & value);
+		bool ValidateCacheColor4(const Color & value);
+		bool ValidateCache(const Vector4 & value);
+		bool ValidateCache(const Matrix4 & value);
+		bool ValidateCache(const Matrix3 & value);
+		bool ValidateCache(const void* value, uint16 valueSize);
+    };
+#ifdef USE_NEON_MATRIX_COMPARE
+#pragma pack(pop)
+#endif
 
 protected:
     virtual ~Shader();
@@ -109,23 +188,40 @@ public:
     bool LoadFromYaml(const FilePath & pathname);
     bool Load(const FilePath & vertexShaderPath, const FilePath & fragmentShaderPath);
     
-	void Recompile();
-	void RecompileAsync();
-	void RecompileInternal(BaseObject * caller, void * param, void *callerData);
-
+    // TODO: OLD FUNCTIONS: NEED TO REMOVE THEM 
     Shader * RecompileNewInstance(const String & combination);
     
+    static Shader * CompileShader(const FastName & assetName,
+                                  Data * vertexShaderData,
+                                  Data * fragmentShaderData,
+                                  uint8 * vertexShaderDataStart,
+                                  uint32 vertexShaderDataSize,
+                                  uint8 * fragmentShaderDataStart,
+                                  uint32 fragmentShaderDataSize,
+                                  const FastNameSet & definesSet);
+    
+    const FastName & GetAssetName() { return assetName; };
+    
+    bool Recompile(bool silentDelete = false);
+	bool IsReady();
+    
+    void ClearLastBindedCaches();
+
     void Bind();
     static void Unbind();
-    int32 GetAttributeIndex(eVertexFormat vertexFormat);
-    int32 GetAttributeCount();
+	static bool IsAutobindUniform(Shader::eUniform uniformId);
+
+    inline int32 GetAttributeIndex(eVertexFormat vertexFormat);
+    inline int32 GetAttributeCount();
     
-    int32 GetUniformCount();
-    eUniformType GetUniformType(int32 index);
+    inline int32 GetUniformCount();
+    inline Uniform * GetUniform(int32 index);
+    inline eUniformType GetUniformType(int32 index);
+    inline const char * GetUniformName(int32 index);
+    inline int32 GetUniformArraySize(int32 index);
+
     static int32 GetUniformTypeSize(eUniformType type);
     static const char * GetUniformTypeSLName(eUniformType type);
-    const char * GetUniformName(int32 index);
-    int32 GetUniformArraySize(int32 index);
 
     int32 GetUniformLocationByIndex(int32 index);
     //int32 FindUniformLocationByName(const FastName & name);
@@ -142,6 +238,7 @@ public:
     void SetUniformValue(int32 uniformLocation, const Vector4 & vector);
     void SetUniformValue(int32 uniformLocation, const Matrix4 & matrix);*/
 
+    void SetUniformValueByIndex(int32 uniformIndex, eUniformType uniformType, uint32 arraySize, void * data);
 	void SetUniformValueByIndex(int32 uniformIndex, int32 value);
     void SetUniformValueByIndex(int32 uniformIndex, float32 value);
     //void SetUniformValueByIndex(int32 uniformIndex, int32 count, int32 * value);
@@ -153,6 +250,17 @@ public:
     void SetUniformValueByIndex(int32 uniformIndex, const Vector4 & vector);
     void SetUniformValueByIndex(int32 uniformIndex, const Matrix4 & matrix);
 	void SetUniformValueByIndex(int32 uniformIndex, const Matrix3 & matrix);
+	
+    void SetUniformValueByUniform(Uniform* uniform, eUniformType uniformType, uint32 arraySize, void * data);
+	void SetUniformValueByUniform(Uniform* uniform, int32 value);
+    void SetUniformValueByUniform(Uniform* uniform, float32 value);
+    void SetUniformValueByUniform(Uniform* uniform, const Vector2 & vector);
+    void SetUniformValueByUniform(Uniform* uniform, const Vector3 & vector);
+    void SetUniformColor3ByUniform(Uniform* uniform, const Color & color);
+    void SetUniformColor4ByUniform(Uniform* uniform, const Color & color);
+    void SetUniformValueByUniform(Uniform* uniform, const Vector4 & vector);
+    void SetUniformValueByUniform(Uniform* uniform, const Matrix4 & matrix);
+	void SetUniformValueByUniform(Uniform* uniform, const Matrix3 & matrix);
     
     void Dump();
     
@@ -187,43 +295,24 @@ private:
     FastName *attributeNames;
     GLint activeAttributes;
     GLint activeUniforms;
-    
-    
+
 //    eUniform *uniformIDs;
 //    String * uniformNames;
 //    GLint * uniformLocations;
 //    GLint * uniformSizes;
 //    eUniformType * uniformTypes;
-    
-    
-    struct Uniform
-    {
-        eUniform        id;
-        FastName        name;
-        GLint           location;
-        GLint           size;
-        eUniformType    type;
-		void*			cacheValue;
-		uint16			cacheValueSize;
-		
-		bool ValidateCache(int32 value);
-		bool ValidateCache(float32 value);
-		bool ValidateCache(const Vector2 & value);
-		bool ValidateCache(const Vector3 & value);
-		bool ValidateCacheColor3(const Color & value);
-		bool ValidateCacheColor4(const Color & value);
-		bool ValidateCache(const Vector4 & value);
-		bool ValidateCache(const Matrix4 & value);
-		bool ValidateCache(const Matrix3 & value);
-	};
 	
 	uint16* uniformOffsets;
 	uint8* uniformData;
+	Uniform** autobindUniforms;
+	uint8 autobindUniformCount;
     
     int32 vertexFormatAttribIndeces[VERTEX_FORMAT_STREAM_MAX_COUNT];
     
     GLint CompileShader(GLuint *shader, GLenum type, GLint count, const GLchar * sources, const String & defines);
     GLint LinkProgram(GLuint prog);
+	
+	void RecompileInternal(BaseObject * caller, void * param, void *callerData);
     
 	void DeleteShaders();
 	struct DeleteShaderContainer
@@ -244,12 +333,64 @@ private:
     Data * vertexShaderData;
     Data * fragmentShaderData;
     FilePath vertexShaderPath, fragmentShaderPath;
-/*  uint8 * vertexShaderBytes;
-    uint32 vertexShaderSize;
-    uint8 * fragmentShaderBytes;
-    uint32 fragmentShaderSize;*/
+    FastName assetName;
 #endif
+        
+    uint8 * vertexShaderDataStart;
+    uint8 * fragmentShaderDataStart;
+    uint32 vertexShaderDataSize;
+    uint32 fragmentShaderDataSize;
+    
+    uint32 lastProjectionMatrixCache;
+    uint32 lastModelViewMatrixCache;
+    uint32 lastMVPMatrixModelViewCache;
+    uint32 lastMVPMatrixProjectionCache;
+    uint32 lastModelViewTranslateCache;
+    uint32 lastModelScaleCache;
 };
+
+//
+inline int32 Shader::GetAttributeCount()
+{
+    return activeAttributes;
+}
+
+inline int32 Shader::GetAttributeIndex(eVertexFormat vertexFormat)
+{
+    return vertexFormatAttribIndeces[FastLog2(vertexFormat)];
+}
+    
+inline int32 Shader::GetUniformCount()
+{
+    return activeUniforms;
+}
+
+inline Shader::eUniformType Shader::GetUniformType(int32 index)
+{
+    return GET_UNIFORM(index)->type;
+}
+
+inline Shader::Uniform * Shader::GetUniform(int32 index)
+{
+    return GET_UNIFORM(index);
+}
+
+inline const char * Shader::GetUniformName(int32 index)
+{
+    return GET_UNIFORM(index)->name.c_str();
+}
+
+inline int32 Shader::GetUniformLocationByIndex(int32 index)
+{
+    return GET_UNIFORM(index)->location;
+}
+
+inline int32 Shader::GetUniformArraySize(int32 index)
+{
+    return GET_UNIFORM(index)->size;
+}
+    
 };
+
 
 #endif // __DAVAENGINE_SHADER_H__

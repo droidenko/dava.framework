@@ -48,6 +48,7 @@ public:
 	QtPropertyDataDavaKeyedArcive(DAVA::KeyedArchive *archive);
 	virtual ~QtPropertyDataDavaKeyedArcive();
 
+	virtual const DAVA::MetaInfo * MetaInfo() const;
 	virtual void* CreateLastCommand() const;
 
 protected:
@@ -55,7 +56,7 @@ protected:
 	mutable Command2 *lastCommand;
 	int lastAddedType;
 
-	virtual QVariant GetValueInternal();
+	virtual QVariant GetValueInternal() const;
 	virtual bool UpdateValueInternal();
 
 private:

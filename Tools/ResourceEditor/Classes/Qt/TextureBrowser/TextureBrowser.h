@@ -37,6 +37,8 @@
 #include "Tools/QtPosSaver/QtPosSaver.h"
 #include "Scene/SceneSignals.h"
 
+#include "TextureInfo.h"
+
 class QModelIndex;
 class TextureListDelegate;
 class TextureListModel;
@@ -138,8 +140,8 @@ private slots:
 	void textureBorderPressed(bool checked);
 	void textureBgMaskPressed(bool checked);
 	void texturePropertyChanged(int type);
-	void textureReadyOriginal(const DAVA::TextureDescriptor *descriptor, DAVA::Vector<QImage>& images);
-	void textureReadyConverted(const DAVA::TextureDescriptor *descriptor, DAVA::eGPUFamily gpu,  DAVA::Vector<QImage>& images);
+	void textureReadyOriginal(const DAVA::TextureDescriptor *descriptor, const TextureInfo & images);
+	void textureReadyConverted(const DAVA::TextureDescriptor *descriptor, const DAVA::eGPUFamily gpu, const TextureInfo & images);
 	void texturePixelOver(const QPoint &pos);
 	void textureZoomSlide(int value);
 	void textureZoom100(bool checked);

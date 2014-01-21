@@ -31,10 +31,9 @@
 #include "Project/ProjectManager.h"
 #include "Main/QtUtils.h"
 #include "Tools/QtFileDialog/QtFileDialog.h"
-#include "Classes/SceneEditor/EditorSettings.h"
-#include "Classes/SceneEditor/SceneValidator.h"
-#include "Classes/SceneEditor/EditorConfig.h"
-#include "Classes/SceneEditor/SceneEditorScreenMain.h"
+#include "Qt/Settings/SettingsManager.h"
+#include "Deprecated/SceneValidator.h"
+#include "Deprecated/EditorConfig.h"
 
 #include "Classes/CommandLine/TextureDescriptor/TextureDescriptorUtils.h"
 #include "Classes/Qt/SpritesPacker/SpritePackerHelper.h"
@@ -87,14 +86,15 @@ void ProjectManager::ProjectOpen(const QString &path)
 			DAVA::FilePath dataSource3Dpathname = projectPath + "DataSource/3d/";
 			curProjectPathDataSource = dataSource3Dpathname.GetAbsolutePathname().c_str();
 
-			EditorSettings::Instance()->SetProjectPath(projectPath);
-			EditorSettings::Instance()->SetDataSourcePath(dataSource3Dpathname);
-			EditorSettings::Instance()->Save();
+			SettingsManager::Instance()->SetValue("ProjectPath", 
+				VariantType(projectPath.GetAbsolutePathname()), SettingsManager::INTERNAL);
+			SettingsManager::Instance()->SetValue("3dDataSourcePath", 
+				VariantType(dataSource3Dpathname.GetAbsolutePathname()), SettingsManager::INTERNAL);
 
 			EditorConfig::Instance()->ParseConfig(projectPath + "EditorConfig.yaml");
 
 			SceneValidator::Instance()->SetPathForChecking(projectPath);
-            SpritePackerHelper::Instance()->UpdateParticleSprites(EditorSettings::Instance()->GetTextureViewGPU());
+            SpritePackerHelper::Instance()->UpdateParticleSprites((eGPUFamily)SettingsManager::Instance()->GetValue("TextureViewGPU", SettingsManager::INTERNAL).AsInt32());
 
             LoadProjectSettings();
             
@@ -107,7 +107,7 @@ void ProjectManager::ProjectOpen(const QString &path)
 
 void ProjectManager::ProjectOpenLast()
 {
-	DAVA::FilePath projectPath = EditorSettings::Instance()->GetProjectPath();
+	DAVA::FilePath projectPath = FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString());
 
 	if(!projectPath.IsEmpty())
 	{

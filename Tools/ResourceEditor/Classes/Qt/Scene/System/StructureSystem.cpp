@@ -41,17 +41,12 @@
 #include "Commands2/ParticleForceMoveCommand.h"
 #include "Commands2/ParticleForceRemoveCommand.h"
 
-#include "Classes/SceneEditor/SceneValidator.h"
-
-#include "Scene3D/Components/ActionComponent.h"
-#include "Scene3D/Components/SwitchComponent.h"
+#include "Deprecated/SceneValidator.h"
 
 StructureSystem::StructureSystem(DAVA::Scene * scene)
 	: DAVA::SceneSystem(scene)
 	, structureChanged(false)
 {
-    new DAVA::SwitchComponent();
-    new DAVA::ActionComponent();
 }
 
 StructureSystem::~StructureSystem()
@@ -246,7 +241,7 @@ void StructureSystem::ReloadEntities(const EntityGroup& entityGroup, bool saveLi
 	{
 		DAVA::Set<DAVA::FilePath> refsToReload;
 
-		for(int i = 0; i < entityGroup.Size(); ++i)
+		for(int i = 0; i < (int)entityGroup.Size(); ++i)
 		{
 			DAVA::Entity *entity = entityGroup.GetEntity(i);
 			if(NULL != entity)
@@ -283,7 +278,7 @@ void StructureSystem::ReloadEntitiesAs(const EntityGroup& entityGroup, const DAV
 	{
 		DAVA::Set<DAVA::Entity *> entitiesToReload;
 
-		for (int i = 0; i < entityGroup.Size(); i++)
+		for (int i = 0; i < (int)entityGroup.Size(); i++)
 		{
 			entitiesToReload.insert(entityGroup.GetEntity(i));
 		}
@@ -387,7 +382,7 @@ void StructureSystem::Add(const DAVA::FilePath &newModelPath, const DAVA::Vector
 
 			// TODO: move this code to some another place (into command itself or into ProcessCommand function)
 			// 
-			// Ïåðåíåñòè â Load è çàâàëèäåéòèòü òîëüêî ïîäãðóæåííóþ Entity
+			// Å“Ã‚ï£¿Ã‚ÃŒÃ‚Ã’ÃšÃ‹ â€š Load Ã‹ Ãâ€¡â€šâ€¡ÃŽÃ‹â€°Ã‚ÃˆÃšÃ‹ÃšÂ¸ ÃšÃ“ÃŽÂ¸ÃÃ“ Ã”Ã“â€°â€žï£¿Ã›ÃŠÃ‚ÃŒÃŒÃ›Ë› Entity
 			// -->
 			sceneEditor->UpdateShadowColorFromLandscape();
             SceneValidator::Instance()->ValidateSceneAndShowErrors(sceneEditor, sceneEditor->GetScenePath());
@@ -401,7 +396,7 @@ void StructureSystem::Add(const DAVA::FilePath &newModelPath, const DAVA::Vector
 void StructureSystem::EmitChanged()
 {
 	// mark that structure was changed. real signal will be emited on next update() call
-	// this should done be to increase perfomance - on Change emit on multiple scene structure operations
+	// this should done be to increase performance - on Change emit on multiple scene structure operations
 	structureChanged = true;
 }
 
@@ -530,11 +525,14 @@ DAVA::Entity* StructureSystem::LoadInternal(const DAVA::FilePath& sc2path, bool 
         if(rootNode)
         {
             Entity *parentForOptimize = new Entity();
-			parentForOptimize->AddNode(rootNode->Clone());
+
+			Entity *nodeForOptimize = rootNode->Clone();
+			parentForOptimize->AddNode(nodeForOptimize);
+			nodeForOptimize->Release();
 
 			if(optimize)
 			{
-				ScopedPtr<SceneFileV2> sceneFile( new SceneFileV2() );
+				ScopedPtr<SceneFileV2> sceneFile(new SceneFileV2());
 				sceneFile->OptimizeScene(parentForOptimize);
 			}
 
@@ -555,7 +553,36 @@ DAVA::Entity* StructureSystem::LoadInternal(const DAVA::FilePath& sc2path, bool 
 		}
 	}
 
+	if(NULL != loadedEntity) printf("%d\n", loadedEntity->GetRetainCount());
 	return loadedEntity;
+}
+
+void StructureSystem::CopyLightmapSettings(DAVA::NMaterial *fromState, DAVA::NMaterial *toState) const
+{
+	Texture* lightmap = fromState->GetTexture(NMaterial::TEXTURE_LIGHTMAP);
+	if(!lightmap)
+	{
+		lightmap = Texture::CreatePink();
+	}
+	
+	toState->SetTexture(NMaterial::TEXTURE_LIGHTMAP, lightmap);
+	
+	if(lightmap->isPink)
+	{
+		SafeRelease(lightmap);
+	}
+	
+	NMaterialProperty* uvScale = fromState->GetMaterialProperty(NMaterial::PARAM_UV_SCALE);
+	if(uvScale)
+	{
+		toState->SetPropertyValue(NMaterial::PARAM_UV_SCALE, uvScale->type, uvScale->size, uvScale->data);
+	}
+	
+	NMaterialProperty* uvOffset = fromState->GetMaterialProperty(NMaterial::PARAM_UV_OFFSET);
+	if(uvScale)
+	{
+		toState->SetPropertyValue(NMaterial::PARAM_UV_OFFSET, uvOffset->type, uvOffset->size, uvOffset->data);
+	}
 }
 
 bool StructureSystem::CopyLightmapSettings(DAVA::Entity *fromEntity, DAVA::Entity *toEntity) const
@@ -581,14 +608,11 @@ bool StructureSystem::CopyLightmapSettings(DAVA::Entity *fromEntity, DAVA::Entit
             {
                 DAVA::RenderBatch *fromBatch = fromMeshes[m]->GetRenderBatch(rb);
                 DAVA::RenderBatch *toBatch = toMeshes[m]->GetRenderBatch(rb);
-                
-                DAVA::InstanceMaterialState *fromState = fromBatch->GetMaterialInstance();
-                DAVA::InstanceMaterialState *toState = toBatch->GetMaterialInstance();
-                
-                if(fromState && toState)
-                {
-                    toState->InitFromState(fromState);
-                }
+
+				NMaterial* fromMat = fromBatch->GetMaterial();
+				NMaterial* toMat = toBatch->GetMaterial();
+				
+				CopyLightmapSettings(fromMat, toMat);
             }
         }
         

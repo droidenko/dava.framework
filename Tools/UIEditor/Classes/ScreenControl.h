@@ -45,8 +45,18 @@ protected:
 public:
 	ScreenControl();
 	
-	virtual bool IsPointInside(const Vector2& point, bool expandWithFocus);
 	virtual void SystemDraw(const UIGeometricData &geometricData);
+	virtual bool IsPointInside(const Vector2& point, bool expandWithFocus);
+    
+    void SetScale(const Vector2& value);
+    void SetPos(const Vector2& value);
+
+private:
+    UIControl* background;
+    
+    // Scale and Position of the screen in UIEditor. Needed to recalculate opacity texture.
+    Vector2 scale;
+    Vector2 pos;
 };
 
 #endif /* defined(__UIEditor__ScreenControl__) */

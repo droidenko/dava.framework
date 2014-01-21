@@ -1,0 +1,8 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        MaterialDefines: ["GLOSS"]
+
+        RenderPass:
+            Name: "ForwardPass"
+            Shader: "~res:/Materials/Shaders/Old/materials"

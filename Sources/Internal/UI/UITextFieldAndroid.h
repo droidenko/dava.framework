@@ -100,6 +100,7 @@ public:
 
 	void ShowField();
 	void HideField();
+	void SetVisible(bool isVisible);
 
 	void SetIsPassword(bool isPassword);
 

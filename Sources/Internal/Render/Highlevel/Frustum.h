@@ -153,13 +153,8 @@ public:
 
 private:
 	int32					planeCount;
-	Vector<Plane>		planeArray;
-	struct PlaneAcces
-	{
-		uint8 minx,miny,minz,maxx,maxy,maxz;
-	};
-
-	Vector<PlaneAcces> planeAccesArray;
+	uint32 planeAccesBits;
+	Plane  planeArray[6];	
 
 };
 

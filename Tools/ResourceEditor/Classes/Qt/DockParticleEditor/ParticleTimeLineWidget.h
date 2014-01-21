@@ -39,9 +39,7 @@
 #include <DAVAEngine.h>
 #include "ScrollZoomWidget.h"
 #include "Tools/EventFilterDoubleSpinBox/EventFilterDoubleSpinBox.h"
-
 #include "Scene/SceneEditor2.h"
-#include "Commands/CommandList.h"
 
 using namespace DAVA;
 

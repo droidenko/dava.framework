@@ -29,11 +29,8 @@
 
 
 #include "SpritePackerHelper.h"
-#include "DockParticleEditor/ParticlesEditorController.h"
-
-#include "../SpritesPacker.h"
-#include "../SceneEditor/EditorSettings.h"
-#include "./Scene/SceneDataManager.h"
+#include "SpritesPacker.h"
+#include "Qt/Settings/SettingsManager.h"
 
 #include <QtConcurrentRun>
 
@@ -52,7 +49,7 @@ SpritePackerHelper::SpritePackerHelper()
 
 void SpritePackerHelper::UpdateParticleSprites(DAVA::eGPUFamily gpu)
 {
-	FilePath projectPath = EditorSettings::Instance()->GetProjectPath();
+	FilePath projectPath = FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString());
     if(projectPath.IsEmpty())
     {
         Logger::Warning("[ParticlesEditorSpritePackerHelper::UpdateParticleSprites] Project path not set.");
@@ -67,13 +64,14 @@ void SpritePackerHelper::UpdateParticleSprites(DAVA::eGPUFamily gpu)
 void SpritePackerHelper::Pack(DAVA::eGPUFamily gpu)
 {
 	void *pool = DAVA::QtLayer::Instance()->CreateAutoreleasePool();
-	FilePath projectPath = EditorSettings::Instance()->GetProjectPath();
+	FilePath projectPath = FilePath(SettingsManager::Instance()->GetValue("ProjectPath", SettingsManager::INTERNAL).AsString());
 	FilePath inputDir = projectPath + "DataSource/Gfx/Particles/";
 	FilePath outputDir = projectPath + "Data/Gfx/Particles/";
 
 	if(!FileSystem::Instance()->IsDirectory(inputDir))
 	{
 		Logger::Error("[SpritePackerHelper::Pack] inputDir is not directory (%s)", inputDir.GetAbsolutePathname().c_str());
+        DAVA::QtLayer::Instance()->ReleaseAutoreleasePool(pool);
 		return;
 	}
 
@@ -84,6 +82,7 @@ void SpritePackerHelper::Pack(DAVA::eGPUFamily gpu)
 	SafeDelete(resourcePacker);
 	if(!isChanged)
 	{
+        DAVA::QtLayer::Instance()->ReleaseAutoreleasePool(pool);
 		return;
 	}
 	
@@ -112,9 +111,6 @@ void SpritePackerHelper::Reload()
     {
         it->second->Reload();
     }
-    
-    if(ParticlesEditorController::Instance())
-        ParticlesEditorController::Instance()->RefreshSelectedNode();
 }
 
 void SpritePackerHelper::EnumerateSpritesForReloading(Scene * scene, Map<String, Sprite *> &sprites)

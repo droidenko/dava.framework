@@ -34,13 +34,15 @@
 #include <QStyledItemDelegate>
 
 class QtPropertyData;
+class QtPropertyModel;
+class QtPropertyFilteringModel;
 
 class QtPropertyItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    QtPropertyItemDelegate(QWidget *parent = 0);
+	QtPropertyItemDelegate(QtPropertyModel *model, QWidget *parent = 0);
 	virtual ~QtPropertyItemDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -51,16 +53,18 @@ public:
 	void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
 public slots:
-	void collapse(const QModelIndex & index);
-	void expand(const QModelIndex & index);
 	bool helpEvent(QHelpEvent * event, QAbstractItemView * view, const QStyleOptionViewItem & option, const QModelIndex & index);
-	bool editorEvent(QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index);
 
 protected:
-	QStyle *childWidgetsStyle;
+	QtPropertyModel *model;
 
-	void recalcOptionalWidgets(const QModelIndex &index, QStyleOptionViewItem *option) const;
-	void hideAllChildOptionalWidgets(QtPropertyData* data);
+	enum OptionalButtonsType
+	{
+		NORMAL,
+		OVERLAYED
+	};
+
+	void drawOptionalButtons(QPainter *painter, QStyleOptionViewItem &option, const QModelIndex &index, OptionalButtonsType type) const;
 };
 
 #endif // __QT_PROPERY_ITEM_DELEGATE_H__

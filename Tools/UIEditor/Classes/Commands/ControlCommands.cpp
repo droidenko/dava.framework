@@ -226,7 +226,7 @@ void ControlsAlignDistributeCommand::Execute()
 			
 		default:
 		{
-			DVASSERT_MSG(Format("Unknown Command Mode %i", this->commandMode), false);
+			DVASSERT_MSG(Format("Unknown Command Mode %i", this->commandMode).c_str(), false);
 			break;
 		}
 	}

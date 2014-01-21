@@ -29,7 +29,6 @@
 
 
 #include "Commands2/EntityAddCommand.h"
-#include "../Qt/Scene/SceneDataManager.h"
 #include "Scene3D/Entity.h"
 
 
@@ -60,7 +59,7 @@ void EntityAddCommand::Redo()
         parentToAdd->AddNode(entityToAdd);
 }
 
-Entity* EntityAddCommand::GetEntity() const
+DAVA::Entity* EntityAddCommand::GetEntity() const
 {
 	return entityToAdd;
 }

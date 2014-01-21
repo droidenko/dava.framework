@@ -40,14 +40,14 @@ namespace DAVA
 SpriteRenderBatch::SpriteRenderBatch()
 	: RenderBatch()
 {
-    SetOwnerLayerName(LAYER_TRANSLUCENT);
+    //SetOwnerLayerName(LAYER_TRANSLUCENT);
 }
 
 SpriteRenderBatch::~SpriteRenderBatch()
 {
 }
 
-void SpriteRenderBatch::Draw(Camera * camera)
+void SpriteRenderBatch::Draw(const FastName & ownerRenderPass, Camera * camera)
 {
 	if(!renderObject)return;
 	Matrix4 * worldTransformPtr = renderObject->GetWorldTransformPtr();
@@ -128,10 +128,12 @@ void SpriteRenderBatch::Draw(Camera * camera)
 		};   
 	}
 
-	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix);
+	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix, (pointer_size)worldTransformPtr);
 
+	
+	material->BindMaterialTechnique(ownerRenderPass, camera);
 	RenderManager::Instance()->SetRenderData(renderDataObject);
-	material->PrepareRenderState();
+	RenderManager::Instance()->AttachRenderData();
 
 	RenderManager::Instance()->HWDrawArrays(PRIMITIVETYPE_TRIANGLESTRIP, spriteObject->GetFrame() * 4, 4);
 }

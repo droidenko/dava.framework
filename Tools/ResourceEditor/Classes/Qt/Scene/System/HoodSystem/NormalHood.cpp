@@ -46,6 +46,17 @@ NormalHood::NormalHood() : HoodObject(2.0f)
 
 	axisZ = CreateLine(DAVA::Vector3(0, 0, 0), DAVA::Vector3(0, 0, baseSize));
 	axisZ->axis = ST_AXIS_Z;
+	
+	const DAVA::RenderStateData* default3dState = DAVA::RenderManager::Instance()->GetRenderStateData(DAVA::RenderManager::Instance()->GetDefault3DStateHandle());
+	DAVA::RenderStateData hoodStateData;
+	memcpy(&hoodStateData, default3dState, sizeof(hoodStateData));
+	
+	hoodStateData.state =	DAVA::RenderStateData::STATE_BLEND |
+							DAVA::RenderStateData::STATE_COLORMASK_ALL |
+							DAVA::RenderStateData::STATE_DEPTH_WRITE;
+	hoodStateData.sourceFactor = DAVA::BLEND_SRC_ALPHA;
+	hoodStateData.destFactor = DAVA::BLEND_ONE_MINUS_SRC_ALPHA;
+	hoodDrawState = DAVA::RenderManager::Instance()->AddRenderStateData(&hoodStateData);
 }
 
 NormalHood::~NormalHood()
@@ -55,12 +66,15 @@ NormalHood::~NormalHood()
 
 void NormalHood::Draw(ST_Axis selectedAxis, ST_Axis mouseOverAxis, TextDrawSystem *textDrawSystem)
 {
-	int oldState = DAVA::RenderManager::Instance()->GetState();
-	DAVA::eBlendMode oldBlendSrc = DAVA::RenderManager::Instance()->GetSrcBlend();
-	DAVA::eBlendMode oldBlendDst = DAVA::RenderManager::Instance()->GetDestBlend();
+	//int oldState = DAVA::RenderManager::Instance()->GetState();
+	//DAVA::eBlendMode oldBlendSrc = DAVA::RenderManager::Instance()->GetSrcBlend();
+	//DAVA::eBlendMode oldBlendDst = DAVA::RenderManager::Instance()->GetDestBlend();
 
-	DAVA::RenderManager::Instance()->SetState(DAVA::RenderState::STATE_BLEND | DAVA::RenderState::STATE_COLORMASK_ALL | DAVA::RenderState::STATE_DEPTH_WRITE);
-	DAVA::RenderManager::Instance()->SetBlendMode(DAVA::BLEND_SRC_ALPHA, DAVA::BLEND_ONE_MINUS_SRC_ALPHA);
+	//DAVA::RenderManager::Instance()->SetState(DAVA::RenderState::STATE_BLEND | DAVA::RenderState::STATE_COLORMASK_ALL | DAVA::RenderState::STATE_DEPTH_WRITE);
+	//DAVA::RenderManager::Instance()->SetBlendMode(DAVA::BLEND_SRC_ALPHA, DAVA::BLEND_ONE_MINUS_SRC_ALPHA);
+
+	DAVA::RenderManager::Instance()->SetRenderState(hoodDrawState);
+	DAVA::RenderManager::Instance()->FlushState();
 
 	// x
 	DAVA::RenderManager::Instance()->SetColor(colorX);
@@ -76,6 +90,6 @@ void NormalHood::Draw(ST_Axis selectedAxis, ST_Axis mouseOverAxis, TextDrawSyste
 
 	DrawAxisText(textDrawSystem, axisX, axisY, axisZ);
 
-	DAVA::RenderManager::Instance()->SetBlendMode(oldBlendSrc, oldBlendDst);
-	DAVA::RenderManager::Instance()->SetState(oldState);
+	//DAVA::RenderManager::Instance()->SetBlendMode(oldBlendSrc, oldBlendDst);
+	//DAVA::RenderManager::Instance()->SetState(oldState);
 }

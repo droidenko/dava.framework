@@ -543,6 +543,24 @@ void HierarchyTreeController::DeleteNodesInternal(const HierarchyTreeNode::HIERA
 	}
 }
 
+void HierarchyTreeController::SynchronizeSelection(const QList<HierarchyTreeControlNode*>& selectedNodes)
+{
+    SELECTEDCONTROLNODES nodesToDeselect = activeControlNodes;
+
+    foreach(HierarchyTreeControlNode* selectedNode, selectedNodes)
+    {
+        SelectControl(selectedNode);
+        nodesToDeselect.remove(selectedNode);
+    }
+
+    // In case some nodes remain in the deselected list - unselect them.
+    for (SELECTEDCONTROLNODES::iterator iter = nodesToDeselect.begin(); iter != nodesToDeselect.end();
+         iter ++)
+    {
+        UnselectControl(*iter, false);
+    }
+}
+
 void HierarchyTreeController::UpdateLocalization(bool takePathFromLocalizationSystem)
 {
     // Update the Active Platform.
@@ -691,14 +709,14 @@ bool HierarchyTreeController::CanPerformDistribute(eDistributeControlsType /*dis
 	return activeControlNodes.size() >= 3;
 }
 
-void HierarchyTreeController::RepackAndReloadSprites(bool needRepack, bool pixelized)
+void HierarchyTreeController::RepackAndReloadSprites()
 {
-    ReloadSpritesCommand* cmd = new ReloadSpritesCommand(hierarchyTree.GetRootNode(), needRepack, pixelized);
+    ReloadSpritesCommand* cmd = new ReloadSpritesCommand(hierarchyTree.GetRootNode());
     CommandsController::Instance()->ExecuteCommand(cmd);
     SafeRelease(cmd);
 }
 
-void HierarchyTreeController::ApplyPixelizationForAllSprites()
+void HierarchyTreeController::SetPixelization(bool value)
 {
-    SpritesHelper::ApplyPixelizationForAllSprites(hierarchyTree.GetRootNode());
+    SpritesHelper::SetPixelization(hierarchyTree.GetRootNode(), value);
 }

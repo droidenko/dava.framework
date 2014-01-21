@@ -36,6 +36,7 @@
 #include "Render/Highlevel/RenderSystem.h"
 #include "Render/Highlevel/RenderBatch.h"
 #include "Scene3D/Scene.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA
 {
@@ -61,6 +62,7 @@ public:
     - Mesh(Skinned)
  
  */
+const static uint16 INVALID_STATIC_OCCLUSION_INDEX = (uint16)(-1);
 
 class RenderBatch;
 class ShadowVolume;
@@ -86,12 +88,16 @@ public:
 		VISIBLE_LOD = 1 << 2,
 		VISIBLE_SWITCH = 1 << 3,
 		ALWAYS_CLIPPING_VISIBLE = 1 << 4,
-		TREE_NODE_NEED_UPDATE = 1 << 5,
+        VISIBLE_STATIC_OCCLUSION = 1 << 5,
+		TREE_NODE_NEED_UPDATE = 1 << 6,
+		NEED_UPDATE = 1 << 7,
+		MARKED_FOR_UPDATE = 1 << 8,
+
         TRANSFORM_UPDATED = 1 << 15,
 	};
 
-	static const uint32 VISIBILITY_CRITERIA = VISIBLE | VISIBLE_AFTER_CLIPPING_THIS_FRAME | VISIBLE_LOD | VISIBLE_SWITCH;
-	const static uint32 CLIPPING_VISIBILITY_CRITERIA = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH;
+	static const uint32 VISIBILITY_CRITERIA = VISIBLE | VISIBLE_AFTER_CLIPPING_THIS_FRAME | VISIBLE_LOD | VISIBLE_SWITCH | VISIBLE_STATIC_OCCLUSION;
+	const static uint32 CLIPPING_VISIBILITY_CRITERIA = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH | VISIBLE_STATIC_OCCLUSION;
 protected:
     virtual ~RenderObject();
 public:
@@ -102,14 +108,14 @@ public:
     inline uint32 GetRemoveIndex();
 
 	inline void SetTreeNodeIndex(uint16 index);
-	inline uint16 GetTreeNodeIndex();	
+	inline uint16 GetTreeNodeIndex();
     
     void AddRenderBatch(RenderBatch * batch);
     void RemoveRenderBatch(RenderBatch * batch);
     virtual void RecalcBoundingBox();
     
-	uint32 GetRenderBatchCount();
-    RenderBatch * GetRenderBatch(uint32 batchIndex);
+	inline uint32 GetRenderBatchCount();
+    inline RenderBatch * GetRenderBatch(uint32 batchIndex);
     
     inline void SetFlags(uint32 _flags) { flags = _flags; }
     inline uint32 GetFlags() { return flags; }
@@ -129,18 +135,21 @@ public:
     inline eType GetType() { return (eType)type; }
 
 	virtual RenderObject * Clone(RenderObject *newObject);
-	virtual void Save(KeyedArchive *archive, SceneFileV2 *sceneFile);
-	virtual void Load(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	virtual void Save(KeyedArchive *archive, SerializationContext *serializationContext);
+	virtual void Load(KeyedArchive *archive, SerializationContext *serializationContext);
 
     void SetOwnerDebugInfo(const String & str) { ownerDebugInfo = str; };
 
-	virtual void SetRenderSystem(RenderSystem * renderSystem);
+    virtual void SetRenderSystem(RenderSystem * renderSystem);
 	RenderSystem * GetRenderSystem();
 
 	virtual void BakeTransform(const Matrix4 & transform);
 	virtual ShadowVolume * CreateShadow() {return 0;}
 
 	virtual void RecalculateWorldBoundingBox();
+    
+    inline uint16 GetStaticOcclusionIndex() const;
+    inline void SetStaticOcclusionIndex(uint16 index);
 
 	uint8 startClippingPlane;
     
@@ -152,7 +161,8 @@ protected:
     uint32 flags;
     uint32 debugFlags;
     uint32 removeIndex;
-	uint16 treeNodeIndex;	
+	uint16 treeNodeIndex;
+    uint16 staticOcclusionIndex;    
     AABBox3 bbox;
     AABBox3 worldBBox;
     Matrix4 * worldTransform;                    // temporary - this should me moved directly to matrix uniforms
@@ -195,7 +205,6 @@ inline uint16 RenderObject::GetTreeNodeIndex()
 {
 	return treeNodeIndex;
 }
-
     
 inline void RenderObject::SetAABBox(const AABBox3 & _bbox)
 {
@@ -228,6 +237,26 @@ inline Matrix4 * RenderObject::GetWorldTransformPtr() const
     return worldTransform;
 }
 
+inline uint32 RenderObject::GetRenderBatchCount()
+{
+    return (uint32)renderBatchArray.size();
+}
+
+inline RenderBatch * RenderObject::GetRenderBatch(uint32 batchIndex)
+{
+    return renderBatchArray[batchIndex];
+}
+    
+inline uint16 RenderObject::GetStaticOcclusionIndex() const
+{
+    return staticOcclusionIndex;
+}
+inline void RenderObject::SetStaticOcclusionIndex(uint16 _index)
+{
+    staticOcclusionIndex = _index;
+}
+
+    
     
 } // ns
 

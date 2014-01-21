@@ -49,7 +49,11 @@
 EditorParticlesSystem::EditorParticlesSystem(DAVA::Scene * scene)
 	: DAVA::SceneSystem(scene)
 {
-
+	DAVA::RenderManager* rm = DAVA::RenderManager::Instance();
+	
+	renderState = rm->Derive3DRenderState(DAVA::RenderStateData::STATE_BLEND |
+										  DAVA::RenderStateData::STATE_COLORMASK_ALL |
+										  DAVA::RenderStateData::STATE_DEPTH_TEST);
 }
 
 EditorParticlesSystem::~EditorParticlesSystem()
@@ -93,12 +97,15 @@ void EditorParticlesSystem::DrawDebugInfoForEmitter(DAVA::Entity* parentEntity)
 
 void EditorParticlesSystem::Draw()
 {
-	int oldState = DAVA::RenderManager::Instance()->GetState();
-	DAVA::eBlendMode oldBlendSrc = DAVA::RenderManager::Instance()->GetSrcBlend();
-	DAVA::eBlendMode oldBlendDst = DAVA::RenderManager::Instance()->GetDestBlend();
+	//int oldState = DAVA::RenderManager::Instance()->GetState();
+	//DAVA::eBlendMode oldBlendSrc = DAVA::RenderManager::Instance()->GetSrcBlend();
+	//DAVA::eBlendMode oldBlendDst = DAVA::RenderManager::Instance()->GetDestBlend();
 
-	DAVA::RenderManager::Instance()->SetState(DAVA::RenderState::STATE_BLEND | DAVA::RenderState::STATE_COLORMASK_ALL | DAVA::RenderState::STATE_DEPTH_TEST);
-	DAVA::RenderManager::Instance()->SetBlendMode(DAVA::BLEND_SRC_ALPHA, DAVA::BLEND_ONE_MINUS_SRC_ALPHA);
+	//DAVA::RenderManager::Instance()->SetState(DAVA::RenderState::STATE_BLEND | DAVA::RenderState::STATE_COLORMASK_ALL | DAVA::RenderState::STATE_DEPTH_TEST);
+	//DAVA::RenderManager::Instance()->SetBlendMode(DAVA::BLEND_SRC_ALPHA, DAVA::BLEND_ONE_MINUS_SRC_ALPHA);
+	
+	DAVA::RenderManager::Instance()->SetRenderState(renderState);
+	DAVA::RenderManager::Instance()->FlushState();
 	
 	// Draw debug information for non-selected entities
 	for(size_t i = 0; i < entities.size(); ++i)
@@ -116,54 +123,49 @@ void EditorParticlesSystem::Draw()
 		{
 			DAVA::Entity *entity = selectionSystem->GetSelectionEntity(i);
 			
-			DAVA::RenderComponent *renderComponent = static_cast<DAVA::RenderComponent*>(entity->GetComponent(DAVA::Component::RENDER_COMPONENT));
-		
-			if (renderComponent)
-			{		
-				DAVA::ParticleEmitter *emitter = dynamic_cast<DAVA::ParticleEmitter*>(renderComponent->GetRenderObject());
-				// Draw additional effects according to emitter type
-				if (emitter)
+			DAVA::ParticleEmitter *emitter = GetEmitter(entity);
+			// Draw additional effects according to emitter type
+			if (emitter)
+			{
+				// Get center of entity object
+				DAVA::AABBox3 selectionBox = selectionSystem->GetSelectionAABox(i);
+				DAVA::Vector3 center = selectionBox.GetCenter();
+				// Always draw emission vector arrow for emitter
+				DrawVectorArrow(entity, emitter, center);
+
+				switch (emitter->emitterType)
 				{
-					// Get center of entity object
-					DAVA::AABBox3 selectionBox = selectionSystem->GetSelectionAABox(i);
-					DAVA::Vector3 center = selectionBox.GetCenter();
-					// Always draw emission vector arrow for emitter
-					DrawVectorArrow(entity, emitter, center);
-					
-					switch (emitter->emitterType)
+				case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_VOLUME:
+				case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_EDGES:
 					{
-						case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_VOLUME:
-						case DAVA::ParticleEmitter::EMITTER_ONCIRCLE_EDGES:
-						{
-							DrawSizeCircle(entity, emitter, center);
-						}
-						break;
-						case DAVA::ParticleEmitter::EMITTER_SHOCKWAVE:
-						{
-							DrawSizeCircleShockWave(emitter, center);
-						}
-						break;
-					
-						case DAVA::ParticleEmitter::EMITTER_RECT:
-						{
-							DrawSizeBox(entity, emitter, center);
-						}
-						break;
-					
-						case DAVA::ParticleEmitter::EMITTER_POINT:
-						{
-							DAVA::RenderHelper::Instance()->FillDodecahedron(center, 0.05f);
-						}
-						break;
+						DrawSizeCircle(entity, emitter, center);
 					}
+					break;
+				case DAVA::ParticleEmitter::EMITTER_SHOCKWAVE:
+					{
+						DrawSizeCircleShockWave(emitter, center);
+					}
+					break;
+
+				case DAVA::ParticleEmitter::EMITTER_RECT:
+					{
+						DrawSizeBox(entity, emitter, center);
+					}
+					break;
+
+				case DAVA::ParticleEmitter::EMITTER_POINT:
+					{
+						DAVA::RenderHelper::Instance()->FillDodecahedron(center, 0.05f);
+					}
+					break;
 				}
 			}
 		}
 		DAVA::RenderManager::Instance()->ResetColor();
 	}
 	
-	DAVA::RenderManager::Instance()->SetBlendMode(oldBlendSrc, oldBlendDst);
-	DAVA::RenderManager::Instance()->SetState(oldState);
+	//DAVA::RenderManager::Instance()->SetBlendMode(oldBlendSrc, oldBlendDst);
+	//DAVA::RenderManager::Instance()->SetState(oldState);
 }
 
 void EditorParticlesSystem::DrawSizeCircleShockWave(DAVA::ParticleEmitter *emitter, DAVA::Vector3 center)

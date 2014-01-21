@@ -41,6 +41,9 @@
 
 #include "FileSystem/FilePath.h"
 
+#include "Render/UniqueStateSet.h"
+#include "Platform/Mutex.h"
+
 namespace DAVA
 {
 
@@ -174,6 +177,8 @@ public:
 	Texture* GetTexture();
 	Texture* GetTexture(int32 frameNumber);
 
+	UniqueHandle GetTextureHandle(int32 frameNumber);
+
 	int32 GetFrameCount() const;
 
 	float32 GetWidth() const;
@@ -289,14 +294,19 @@ protected:
 	 \brief Removes all sprite data.
 	 */
 	void Clear();
+	
+    static Sprite* GetSpriteFromMap(const FilePath & pathname);
+    static FilePath GetScaledName(const FilePath & spriteName);
+    static File* LoadLocalizedFile(const FilePath & spritePathname, FilePath & texturePath);
+    
+    void ReloadExistingTextures();
+	
+	void RegisterTextureStates();
+	void UnregisterTextureStates();
 
-	static Sprite* GetSpriteFromMap(const FilePath & pathname);
-	static FilePath GetScaledName(const FilePath & spriteName);
-	static File* LoadLocalizedFile(const FilePath & spritePathname, FilePath & texturePath);
-
-	void ReloadExistingTextures();
 //private:
 
+    static Mutex spriteMapMutex;
 
 	enum eSpriteTransform
 	{
@@ -315,6 +325,8 @@ protected:
 	int32 *frameTextureIndex;
 	int32 textureCount;
 
+	Vector<UniqueHandle> textureHandles;
+	
 	float32 **frameVertices;
 	float32 **texCoords;
 

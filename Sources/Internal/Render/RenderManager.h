@@ -44,6 +44,12 @@
 #include "Render/RenderOptions.h"
 #include <stack>
 
+#include "Render/UniqueStateSet.h"
+#include "Render/RenderStateData.h"
+#include "Render/RenderStateDataUniqueHandler.h"
+#include "Render/TextureStateData.h"
+#include "Render/TextureStateDataUniqueHandler.h"
+
 namespace DAVA
 {
 
@@ -104,13 +110,21 @@ public:
         
         uint32 drawArraysCalls;
         uint32 drawElementsCalls;
+        uint32 shaderBindCount;
+        uint32 occludedRenderBatchCount;
         uint32 primitiveCount[PRIMITIVETYPE_COUNT];
+		
+		uint32 renderStateSwitches;
+		uint32 renderStateFullSwitches;
+		uint32 textureStateFullSwitches;
+		
+		uint32 attachRenderDataCount;
     };
     
     static void Create(Core::eRenderer renderer);
 
 	RenderManager(Core::eRenderer renderer);
-	virtual ~RenderManager();
+	~RenderManager();
     
     
     Core::eRenderer GetRenderer() { return renderer; };
@@ -165,7 +179,7 @@ public:
 	void DetectRenderingCapabilities();
 	const RenderManager::Caps & GetCaps();
     
-    const RenderManager::Stats & GetStats();
+    RenderManager::Stats & GetStats();
     void ClearStats();
     void EnableOutputDebugStatsEveryNFrame(int32 frameToShowDebugStats);
     void ProcessStats();
@@ -250,15 +264,6 @@ public:
 	void FlushState();
 
 	void FlushState(RenderState * stateBlock);
-
-	/** 
-	 \brief 
-	 \param[in] sfactor
-	 \param[in] dfactor
-	 */
-	void SetBlendMode(eBlendMode sfactor, eBlendMode dfactor);
-	eBlendMode GetSrcBlend();
-	eBlendMode GetDestBlend();
 	
 	/** 
 	 \brief 
@@ -277,8 +282,8 @@ public:
 	void ResetColor();
 
 	// 
-	void SetTexture(Texture *texture, uint32 textureLevel = 0);
-	Texture * GetTexture(uint32 textureLevel = 0);
+	//void SetTexture(Texture *texture, uint32 textureLevel = 0);
+	//Texture * GetTexture(uint32 textureLevel = 0);
     void SetShader(Shader * shader);
     Shader * GetShader();
     
@@ -302,22 +307,8 @@ public:
     */
     
     
-    void PushState(uint32 );
-    void AppendState(uint32 state);
-    void RemoveState(uint32 state);
-    void SetState(uint32 state);
-    uint32 GetState();
-    void PopState();
-
-	static RenderState * State();
-    
-    void SetAlphaFunc(eCmpFunc func, float32 cmpValue);
-    void SetCullMode(eFace cullFace);
-	void SetDepthFunc(eCmpFunc func);
-    
-    
     void SetRenderData(RenderDataObject * object);
-	virtual void AttachRenderData();
+	void AttachRenderData();
 	
 	/** 
 	 \brief 
@@ -341,55 +332,55 @@ public:
 	 \brief Sets the clip rect
 	 \param[in] rect
 	 */
-	virtual void SetClip(const Rect &rect);
+	void SetClip(const Rect &rect);
 
 	/** 
 	 \brief Sets the clip rect as an intersection of the current rect and rect sent to method
 	 \param[in] rect
 	 */
-	virtual void ClipRect(const Rect &rect);
+	void ClipRect(const Rect &rect);
 	
 	/** 
 	 \brief Sets clip yo the full screen
 	 */
-	virtual void RemoveClip();
+	void RemoveClip();
 
 	/** 
 	 \brief Store current clip
 	 */
-	virtual void ClipPush();
+	void ClipPush();
 
 	/** 
 	 \brief Restore current screen
 	 */
-	virtual void ClipPop();
+	void ClipPop();
     
-    virtual void Clear(const Color & color, float32 depth, int32 stencil);
+    void Clear(const Color & color, float32 depth, int32 stencil);
 	
 	/** 
         \brief Clear rendering surface with required color 
         \param[in] r,g,b,a Clear color components
 	 */
-	virtual void ClearWithColor(float32 r, float32 g, float32 b, float32 a);
+	void ClearWithColor(float32 r, float32 g, float32 b, float32 a);
     
     /** 
         \brief Clear attached depth buffer with requested depth
         \param[in] depth by default 1.0f, means clear the depth
      */
-    virtual void ClearDepthBuffer(float32 depth = 1.0f);
+    void ClearDepthBuffer(float32 depth = 1.0f);
 
 	/** 
         \brief Clear stencil buffer with requested value
         \param[in] stencil specifies the index used when the stencil buffer is cleared
      */
-	virtual void ClearStencilBuffer(int32 stencil = 0);
+	void ClearStencilBuffer(int32 stencil = 0);
 
 	/** 
 	 \brief Sets the sprite to use as a render target. Sprite should be created with CreateAsRenderTarget method.
 			Call RestoreRenderTarget when you finish drawing to your sprite 
 	 \param[in] renderTarget - Render target sprite. If NULL 0 render manager will draw to the screen.
 	 */
-	virtual void SetRenderTarget(Sprite *renderTarget);
+	void SetRenderTarget(Sprite *renderTarget);
 
 	/** 
 	 \brief Sets the texture to use as a render target. Texture should be created with CreateFBO method.
@@ -401,52 +392,52 @@ public:
 	/** 
         \brief Restores the previous render target
 	 */
-	virtual void RestoreRenderTarget();
+	void RestoreRenderTarget();
 
 	/** 
 	 \brief Checks is render target using for drawing now
 	 \param[out] true if render manager sets to a render targe. false if render manager draws to the screen now
 	 */
-	virtual bool IsRenderTarget();
+	bool IsRenderTarget();
 	
 	/** 
         \brief Sets the effect for the rendering. 
         \param[in] renderEffect - if 0, sets the effect to none
 	 */
-	virtual void SetRenderEffect(RenderEffect *renderEffect);
+	void SetRenderEffect(RenderEffect *renderEffect);
 
 	/** 
 	 \brief Sets the requested framerate. For iPhone can be set to 60, 30, 20, 15
 	 \param[in] newFps requested frames per second
 	 */
-	virtual void SetFPS(int32 newFps);
+	void SetFPS(int32 newFps);
 
 	/** 
 	 \brief Returns current requested framerate
 	 \returns frames per second
 	 */
-    virtual int32 GetFPS();
+    int32 GetFPS();
 
-	virtual void SetDebug(bool isDebugEnabled);
+	void SetDebug(bool isDebugEnabled);
 
 
 	/** 
 	 \brief 
 	 \param[in] offset
 	 */
-	virtual void SetDrawTranslate(const Vector2 &offset);
+	void SetDrawTranslate(const Vector2 &offset);
     
-	virtual void SetDrawTranslate(const Vector3 &offset);
+	void SetDrawTranslate(const Vector3 &offset);
 
 	/** 
 	 \brief 
 	 \param[in] offset
 	 */
-	virtual void SetDrawScale(const Vector2 &scale);
+	void SetDrawScale(const Vector2 &scale);
 
-	virtual void IdentityDrawMatrix();
-	virtual void IdentityMappingMatrix();
-	virtual void IdentityModelMatrix();
+	void IdentityDrawMatrix();
+	void IdentityMappingMatrix();
+	void IdentityModelMatrix();
 	
 	/*
 		TODO:	Hottych - напиши пожалуйста что делают эти функции детально, 
@@ -454,16 +445,16 @@ public:
 				Думаю что пока воспоминания свежи, напиши документацию по системе виртуальных преобразований
 				Можешь писать на русском - я переведу потом.
 	 */
-	virtual void SetPhysicalViewScale();
-	virtual void SetPhysicalViewOffset();
-	virtual void SetVirtualViewScale();
-	virtual void SetVirtualViewOffset();
+	void SetPhysicalViewScale();
+	void SetPhysicalViewOffset();
+	void SetVirtualViewScale();
+	void SetVirtualViewOffset();
 
-	virtual void PushDrawMatrix();
-    virtual void PopDrawMatrix();
+	void PushDrawMatrix();
+    void PopDrawMatrix();
 
-    virtual void PushMappingMatrix();
-	virtual void PopMappingMatrix();
+    void PushMappingMatrix();
+	void PopMappingMatrix();
     
     void SetRenderContextId(uint64 contextId);
 	uint64 GetRenderContextId();
@@ -486,11 +477,14 @@ public:
         UNIFORM_MATRIX_COUNT,
     };
     
-    virtual void SetMatrix(eMatrixType type, const Matrix4 & matrix);
-    virtual const Matrix4 & GetMatrix(eMatrixType type);
-    virtual const Matrix4 & GetUniformMatrix(eUniformMatrixType type);
-    virtual const Matrix3 & GetNormalMatrix();
-    virtual void  ClearUniformMatrices();
+    void SetMatrix(eMatrixType type, const Matrix4 & matrix);
+    void SetMatrix(eMatrixType type, const Matrix4 & matrix, uint32 cacheValue);
+    const Matrix4 & GetMatrix(eMatrixType type);
+    const Matrix4 & GetUniformMatrix(eUniformMatrixType type);
+    const Matrix3 & GetNormalMatrix();
+    void  ClearUniformMatrices();
+    uint32 GetProjectionMatrixCache() const {return projectionMatrixCache;};
+    uint32 GetModelViewMatrixCache() const {return modelViewMatrixCache;};
 
 
 	/**
@@ -498,7 +492,7 @@ public:
 		It acts differently in different operation systems but idea is common. 
 		When you call this function on next refresh cursor will be changed to the new one.
 	*/
-	virtual void SetCursor(Cursor * cursor);
+	void SetCursor(Cursor * cursor);
 
 	/**
 		\brief This function get hardware cursor that actively set
@@ -506,7 +500,7 @@ public:
 		we use default cursor that is provided by operational system. 
 		\returns pointer to custom cursor or null if there is no cursor set by default.
 	 */
-	virtual Cursor * GetCursor();
+	Cursor * GetCursor();
 
 	RenderOptions * GetOptions();
 
@@ -529,7 +523,131 @@ public:
 #endif //#if defined(__DAVAENGINE_OPENGL__)
     
     void RequestGLScreenShot(ScreenShotCallbackDelegate *screenShotCallback);
+	
+	inline void RetainRenderStateData(UniqueHandle handle)
+	{
+		uniqueRenderStates.RetainUnique(handle);
+	}
+	
+	inline UniqueHandle AddRenderStateData(const RenderStateData* data)
+	{
+		return uniqueRenderStates.MakeUnique(data);
+	}
 
+	inline const RenderStateData* GetRenderStateData(UniqueHandle handle)
+	{
+		return uniqueRenderStates.GetUnique(handle);
+	}
+	
+	inline void ReleaseRenderStateData(UniqueHandle handle)
+	{
+		uniqueRenderStates.ReleaseUnique(handle);
+	}
+	
+	inline UniqueHandle GetDefault2DStateHandle() const
+	{
+		return default2DRenderStateHandle;
+	}
+	
+	inline UniqueHandle GetDefault2DNoBlendStateHandle()
+	{
+		return default2DNoBlendRenderStateHandle;
+	}
+	
+	inline UniqueHandle GetDefault2DNoTextureStateHandle() const
+	{
+		return default2DNoTextureStateHandle;
+	}
+
+	inline UniqueHandle GetDefault3DStateHandle() const
+	{
+		return default3DRenderStateHandle;
+	}
+	
+	inline UniqueHandle GetDefaultHardwareStateHandle() const
+	{
+		return defaultHardwareState;
+	}
+	
+	inline UniqueHandle DeriveRenderState(UniqueHandle parentStateHandle, uint32 renderStateFlags)
+	{
+		const RenderStateData* parentState = RenderManager::Instance()->GetRenderStateData(parentStateHandle);
+		RenderStateData derivedState;
+		memcpy(&derivedState, parentState, sizeof(derivedState));
+		
+		derivedState.state = renderStateFlags;
+		return AddRenderStateData(&derivedState);
+	}
+	
+	inline UniqueHandle DeriveRenderState(UniqueHandle parentStateHandle,
+										  eBlendMode srcBlend,
+										  eBlendMode dstBlend)
+	{
+		const RenderStateData* parentState = RenderManager::Instance()->GetRenderStateData(parentStateHandle);
+		RenderStateData derivedState;
+		memcpy(&derivedState, parentState, sizeof(derivedState));
+		
+		derivedState.sourceFactor = srcBlend;
+		derivedState.destFactor = dstBlend;
+		return AddRenderStateData(&derivedState);
+	}
+
+	inline UniqueHandle Derive3DRenderState(eBlendMode srcBlend,
+										  eBlendMode dstBlend)
+	{
+		return DeriveRenderState(default3DRenderStateHandle, srcBlend, dstBlend);
+	}
+	
+	inline UniqueHandle Derive3DRenderState(uint32 renderStateFlags)
+	{
+		return DeriveRenderState(default3DRenderStateHandle, renderStateFlags);
+	}
+	
+	inline UniqueHandle Derive2DRenderState(uint32 renderStateFlags)
+	{
+		return DeriveRenderState(default2DRenderStateHandle, renderStateFlags);
+	}
+
+	void SetDefault2DState();
+	void SetDefault2DNoBlendState();
+	void SetDefault2DNoTextureState();
+	void SetDefault3DState();
+	
+	inline void SetRenderState(UniqueHandle requestedState)
+	{
+		currentState.stateHandle = requestedState;
+	}
+	
+	inline UniqueHandle AddTextureStateData(const TextureStateData* data)
+	{
+		return uniqueTextureStates.MakeUnique(data);
+	}
+	
+	inline const TextureStateData* GetTextureStateData(UniqueHandle handle)
+	{
+		return uniqueTextureStates.GetUnique(handle);
+	}
+	
+	inline void ReleaseTextureStateData(UniqueHandle handle)
+	{
+		//Logger::FrameworkDebug("[ReleaseTextureStateData] handle %d", handle);
+		uniqueTextureStates.ReleaseUnique(handle);
+	}
+
+	inline void SetTextureState(UniqueHandle requestedState)
+	{
+		currentState.textureState = requestedState;
+	}
+	
+	inline void SetDefaultTextureState()
+	{
+		SetTextureState(defaultTextureState);
+	}
+	
+	inline UniqueHandle GetDefaultTextureState()
+	{
+		return defaultTextureState;
+	}
 	
 protected:
     //
@@ -537,6 +655,8 @@ protected:
     // 
     
     Matrix4 matrices[MATRIX_COUNT];
+    uint32 projectionMatrixCache;
+    uint32 modelViewMatrixCache;
     int32   uniformMatrixFlags[UNIFORM_MATRIX_COUNT];
     Matrix4 uniformMatrices[UNIFORM_MATRIX_COUNT];
     Matrix3 uniformMatrixNormal;
@@ -603,6 +723,18 @@ protected:
 //	Texture *currentTexture[MAX_TEXTURE_LEVELS];                        // Texture that was set
 //  Shader * shader;
 	
+	UniqueStateSet<RenderStateData, RenderStateDataUniqueHandler> uniqueRenderStates;
+	UniqueHandle default2DRenderStateHandle;
+	UniqueHandle default2DNoBlendRenderStateHandle;
+	UniqueHandle default2DNoTextureStateHandle;
+	UniqueHandle default3DRenderStateHandle;
+	UniqueHandle defaultHardwareState;
+	
+	UniqueStateSet<TextureStateData, TextureStateDataUniqueHandler> uniqueTextureStates;
+	UniqueHandle defaultTextureState;
+	
+	void InitDefaultRenderStates();
+	void InitDefaultTextureStates();
     
     RenderState currentState;
     RenderState hardwareState;

@@ -324,14 +324,17 @@ Image* TileTexturePreviewWidget::MultiplyImageWithColor(DAVA::Image *image, cons
 	RenderManager::Instance()->ClearWithColor(0.f, 0.f, 0.f, 1.f);
 	RenderManager::Instance()->SetColor(color);
 
-	eBlendMode srcBlend = RenderManager::Instance()->GetSrcBlend();
-	eBlendMode dstBlend = RenderManager::Instance()->GetDestBlend();
-	RenderManager::Instance()->SetBlendMode(BLEND_SRC_ALPHA, BLEND_DST_COLOR);
+	//eBlendMode srcBlend = RenderManager::Instance()->GetSrcBlend();
+	//eBlendMode dstBlend = RenderManager::Instance()->GetDestBlend();
+	//RenderManager::Instance()->SetBlendMode(BLEND_SRC_ALPHA, BLEND_DST_COLOR);
 
+	RenderManager::Instance()->SetDefault3DState();
+	RenderManager::Instance()->FlushState();
+	
 	srcSprite->SetPosition(0.f, 0.f);
 	srcSprite->Draw();
 
-	RenderManager::Instance()->SetBlendMode(srcBlend, dstBlend);
+	//RenderManager::Instance()->SetBlendMode(srcBlend, dstBlend);
 
 	RenderManager::Instance()->ResetColor();
 	RenderManager::Instance()->RestoreRenderTarget();

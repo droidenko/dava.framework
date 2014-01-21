@@ -34,6 +34,7 @@
 #include "Base/BaseTypes.h"
 #include "Entity/Component.h"
 #include "Debug/DVAssert.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA
 {
@@ -96,8 +97,8 @@ protected:
 public:
 	LodComponent();
 	virtual Component * Clone(Entity * toEntity);
-	virtual void Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
-	virtual void Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
+	virtual void Serialize(KeyedArchive *archive, SerializationContext *serializationContext);
+	virtual void Deserialize(KeyedArchive *archive, SerializationContext *serializationContext);
 
 	static float32 GetDefaultDistance(int32 layer);
 	void SetCurrentLod(int32 newLod);

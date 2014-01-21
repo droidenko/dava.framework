@@ -54,27 +54,28 @@ void ParticleLayerBatch::SetLayerBoundingBox(const AABBox3 & bbox)
 {
 	aabbox = bbox;
 }
-void ParticleLayerBatch::Draw(Camera * camera)
+void ParticleLayerBatch::Draw(const FastName & ownerRenderPass, Camera * camera)
 {
 	if(!renderObject)return;
 	//Matrix4 * worldTransformPtr = renderObject->GetWorldTransformPtr();
 	//if (!worldTransformPtr)return;
 
-	uint32 flags = renderObject->GetFlags();
-	if (((flags & RenderObject::VISIBILITY_CRITERIA) != RenderObject::VISIBILITY_CRITERIA) || particleLayer->GetDisabled())
+	if (!GetVisible() || particleLayer->GetDisabled())
 		return;
 
 	Matrix4 worldMatrix = Matrix4::IDENTITY;
 	Matrix4 finalMatrix = worldMatrix * camera->GetMatrix();
-	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix);	
+	RenderManager::Instance()->SetMatrix(RenderManager::MATRIX_MODELVIEW, finalMatrix, (pointer_size)&worldMatrix);
 
     particleLayer->Draw(camera); //note - it is mostly deprecated and is here for compatibility with old not-3d particles
     
 	if(!totalCount)return;
 
+	material->BindMaterialTechnique(ownerRenderPass, camera);
+	
 	RenderManager::Instance()->SetRenderData(renderDataObject);
-	material->PrepareRenderState();
-
+	RenderManager::Instance()->AttachRenderData();
+	
 	//RenderManager::Instance()->HWDrawArrays(PRIMITIVETYPE_TRIANGLELIST, 0, 6*totalCount);
 	RenderManager::Instance()->HWDrawElements(PRIMITIVETYPE_TRIANGLELIST, 6*totalCount, EIF_16, &((*indices)[0]));
 }

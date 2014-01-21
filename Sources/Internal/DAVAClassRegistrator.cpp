@@ -66,6 +66,7 @@ REGISTER_CLASS(ShadowVolume);
 REGISTER_CLASS(SkyboxRenderObject);
 REGISTER_CLASS(InstanceMaterialState);
 REGISTER_CLASS(Material);
+REGISTER_CLASS(NMaterial);
 REGISTER_CLASS(ImposterNode);
 REGISTER_CLASS(BillboardNode);
 REGISTER_CLASS(BoneNode);
@@ -87,5 +88,6 @@ REGISTER_CLASS(UIList);
 REGISTER_CLASS(UIListCell);
 REGISTER_CLASS(UIScrollBar);
 REGISTER_CLASS(UIScrollView);
-
-
+REGISTER_CLASS(StaticOcclusionComponent);
+REGISTER_CLASS(StaticOcclusionDataComponent);
+REGISTER_CLASS(UIWebView);

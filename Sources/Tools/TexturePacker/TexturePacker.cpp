@@ -338,7 +338,8 @@ void TexturePacker::PackToMultipleTextures(const FilePath & excludeFolder, const
     Logger::FrameworkDebug("* Writing %d final textures", (int)packers.size());
 
 	Vector<PngImageExt*> finalImages;
-	
+	finalImages.reserve(packers.size());
+    
 	for (int imageIndex = 0; imageIndex < (int)packers.size(); ++imageIndex)
 	{
 		PngImageExt * image = new PngImageExt();
@@ -548,7 +549,7 @@ bool TexturePacker::WriteMultipleDefinition(const FilePath & /*excludeFolder*/, 
 
             if(!CheckFrameSize(Size2i(defFile->spriteWidth, defFile->spriteHeight), writeRect.GetSize()))
             {
-                Logger::Error("In sprite %s.psd frame %d has size bigger than sprite size!", defFile->filename.GetBasename().c_str(), frame);
+                Logger::Warning("In sprite %s.psd frame %d has size bigger than sprite size. Frame will be cropped.", defFile->filename.GetBasename().c_str(), frame);
             }
 		}else
 		{
@@ -593,7 +594,7 @@ void TexturePacker::ExportImage(PngImageExt *image, const FilePath &exportedPath
         FileSystem::Instance()->DeleteFile(exportedPathname);
     }
 
-    SafeRelease(descriptor);
+	delete descriptor;
 }
 
 
@@ -604,7 +605,7 @@ TextureDescriptor * TexturePacker::CreateDescriptor(eGPUFamily forGPU)
     descriptor->settings.wrapModeS = descriptor->settings.wrapModeT = GetDescriptorWrapMode();
     descriptor->settings.generateMipMaps = CommandLineParser::Instance()->IsFlagSet(String("--generateMipMaps"));
 	
-	TexturePacker::FilterItem ftItem = GetDescriptorFilter(descriptor->settings.generateMipMaps);
+	TexturePacker::FilterItem ftItem = GetDescriptorFilter(descriptor->settings.generateMipMaps == TextureDescriptor::OPTION_ENABLED);
 	descriptor->settings.minFilter = ftItem.minFilter;
 	descriptor->settings.magFilter = ftItem.magFilter;
 	

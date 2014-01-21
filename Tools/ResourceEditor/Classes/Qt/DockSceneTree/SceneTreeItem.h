@@ -59,12 +59,16 @@ public:
 	{
 		EIDR_Type = Qt::UserRole,
 		EIDR_Data,
+		EIDR_AcceptedByFilter
 	};
 
 	SceneTreeItem(eItemType type);
 	~SceneTreeItem();
 
 	QVariant data(int role) const;
+
+	bool IsAcceptedByFilter() const;
+	void SetAcceptedByFilter(bool accepted);
 
 	int ItemType() const;
 	virtual QIcon ItemIcon() const;

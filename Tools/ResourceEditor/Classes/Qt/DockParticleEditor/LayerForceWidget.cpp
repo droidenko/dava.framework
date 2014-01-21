@@ -31,7 +31,6 @@
 #include "LayerForceWidget.h"
 #include "TimeLineWidget.h"
 #include "Commands2/ParticleEditorCommands.h"
-#include "../Scene/SceneDataManager.h"
 
 #include <QVBoxLayout>
 #include <QScrollArea>

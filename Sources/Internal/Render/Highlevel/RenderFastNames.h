@@ -37,10 +37,24 @@
 namespace DAVA
 {
 
+typedef uint32 RenderLayerID;
+typedef uint32 RenderPassID;
+    
+
 // GLOBAL PASSES
 static const FastName PASS_FORWARD("ForwardPass");
 static const FastName PASS_SHADOW_VOLUME("ShadowVolumePass");
 static const FastName PASS_DEFERRED("DeferredPass");
+    
+enum eRenderPassID
+{
+    RENDER_PASS_FORWARD_ID = 0,
+    RENDER_PASS_SHADOW_VOLUME_ID = 1,
+    RENDER_PASS_SHADOW_MAP_ID = 2,
+    RENDER_PASS_DEFERRED = 3,
+    RENDER_PASS_ID_COUNT,
+};
+
 
 // GLOBAL LAYERS
 static const FastName LAYER_OPAQUE("OpaqueRenderLayer");
@@ -49,6 +63,25 @@ static const FastName LAYER_ALPHA_TEST_LAYER("AlphaTestLayer");
 static const FastName LAYER_TRANSLUCENT("TransclucentRenderLayer");
 static const FastName LAYER_AFTER_TRANSLUCENT("AfterTransclucentRenderLayer");
 static const FastName LAYER_SHADOW_VOLUME("ShadowVolumeRenderLayer");
+static const FastName LAYER_SHADOW_RECT("ShadowRectRenderLayer");
+    
+enum eRenderLayerID
+{
+    RENDER_LAYER_OPAQUE_ID = 0,
+    RENDER_LAYER_AFTER_OPAQUE_ID = 1,
+    RENDER_LAYER_ALPHA_TEST_LAYER_ID = 2,
+    RENDER_LAYER_TRANSLUCENT_ID = 3,
+    RENDER_LAYER_AFTER_TRANSLUCENT_ID = 4,
+    RENDER_LAYER_SHADOW_VOLUME_ID = 5,
+    RENDER_LAYER_ID_COUNT,
+};
+    
+#define RENDER_LAYER_ID_BITMASK_MIN_POS 16
+#define RENDER_LAYER_ID_BITMASK_MIN_MASK 0xF
+#define RENDER_LAYER_ID_BITMASK_MAX_POS 20
+#define RENDER_LAYER_ID_BITMASK_MAX_MASK 0xF
+    
+
     
 static const FastName INHERIT_FROM_MATERIAL("Inherit from material");
 static const FastName LAST_LAYER("Last layer");

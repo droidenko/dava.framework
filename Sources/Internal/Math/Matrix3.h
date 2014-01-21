@@ -55,7 +55,7 @@ struct Matrix3
 		};
 	};
 	
-	inline Matrix3() {};
+	inline Matrix3();
 
 	inline Matrix3(	float32 __00, float32 __01, float32 __02,
 					float32 __10, float32 __11, float32 __12,
@@ -113,6 +113,13 @@ inline float32 Matrix3::Det() const
 {
 	return _00 * _11 * _22 + _01 * _12 * _20 + _02 * _10 * _21 
 		- _02 * _11 * _20 - _01 * _10 * _22 - _00 * _12 * _21;
+}
+
+inline Matrix3::Matrix3()
+{
+	_00 = 1.0f; _01 = 0.0f; _02 = 0.0f;
+	_10 = 0.0f; _11 = 1.0f; _12 = 0.0f;
+	_20 = 0.0f; _21 = 0.0f; _22 = 1.0f;
 }
 
 inline void Matrix3::Identity()

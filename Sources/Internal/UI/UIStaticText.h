@@ -71,7 +71,7 @@ public:
 	virtual void SetTextAlign(int32 _align);
 	virtual int32 GetTextAlign() const;
 
-	const Vector2 &GetTextSize();
+	const Vector2 & GetTextSize();
 	
 	inline void PrepareSprite()
 	{
@@ -108,7 +108,6 @@ public:
 protected:
 	Color textColor;
 	TextBlock *textBlock;
-	Vector2 tempSize;
 	Vector2 shadowOffset;
 	Color shadowColor;
 	UIControlBackground *shadowBg;

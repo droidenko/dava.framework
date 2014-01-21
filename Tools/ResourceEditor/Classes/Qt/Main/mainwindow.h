@@ -41,10 +41,6 @@
 #include "Scene/SceneEditor2.h"
 #include "Tools/QtPosSaver/QtPosSaver.h"
 
-// TODO: remove old screen -->
-#include "Classes/SceneEditor/MaterialEditor.h"
-// <---
-
 class AddSwitchEntityDialog;
 class Request;
 class QtLabelWithActions;
@@ -55,7 +51,6 @@ class QtMainWindow : public QMainWindow, public DAVA::Singleton<QtMainWindow>
 	Q_OBJECT
 
 protected:
-    
     static const int GLOBAL_INVALIDATE_TIMER_DELTA = 1000;
 
 public:
@@ -85,6 +80,9 @@ public:
 
 signals:
     void GlobalInvalidateTimeout();
+
+    void TexturesReloaded();
+    void SpritesReloaded();
     
 // qt actions slots
 public slots:
@@ -135,14 +133,13 @@ public slots:
 	void OnUserNodeDialog();
 	void OnSwitchEntityDialog();
 	void OnParticleEffectDialog();
-	void OnUniteEntitiesWithLODs();
-	void OnAddEntityMenuAboutToShow();
 	void OnAddEntityFromSceneTree();
 
 	void OnSetSkyboxNode();
 	
-	void OnShowSettings();
+	void OnShowGeneralSettings();
 	void OnOpenHelp();
+	void OnShowCurrentSceneSettings();
 
 	void OnSetShadowColor();
 	void OnShadowBlendModeWillShow();
@@ -156,8 +153,9 @@ public slots:
     
 	void OnCloseTabRequest(int tabIndex, Request *closeRequest);
 
-	void OnBeast();
 	void OnBeastAndSave();
+    
+    void OnBuildStaticOcclusion();
 
 	void OnConvertToShadow();
 
@@ -176,7 +174,8 @@ public slots:
 	void OnNotPassableTerrain();
 	
 	void OnAddActionComponent();
-	void OnRemoveActionComponent();
+    void OnAddStaticOcclusionComponent();
+    void OnAddModelTypeComponent();
 
 	void OnObjectsTypeMenuWillShow();
 	void OnObjectsTypeChanged(QAction *action);
@@ -200,19 +199,18 @@ protected:
 	void InitRecent();
 	void AddRecent(const QString &path);
     
-    void CreateMaterialEditorIfNeed();
-    
     void StartGlobalInvalidateTimer();
 
 	void RunBeast();
-
 
 	bool IsAnySceneChanged();
 
 	void SetLandscapeSettingsEnabled(bool);
 
 	void DiableUIForFutureUsing();
-
+	
+	bool SelectCustomColorsTexturePath();
+	
 protected slots:
 	void ProjectOpened(const QString &path);
 	void ProjectClosed();
@@ -238,10 +236,6 @@ private:
 
 	QList<QAction *> recentScenes;
 	ModificationWidget *modificationWidget;
-
-	// TODO: remove this old screen -->
-	MaterialEditor *materialEditor;
-	// <--
 
 	QtLabelWithActions *objectTypesLabel;
     QComboBox *objectTypesWidget;

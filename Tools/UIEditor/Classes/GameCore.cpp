@@ -55,6 +55,10 @@ using namespace DAVA;
 
 GameCore::GameCore()
 {
+    // Editor Settings might be used by any singleton below during initialization, so
+    // initialize it before any other one.
+    new EditorSettings();
+    
 	new HierarchyTreeController();
     new PropertiesGridController();
     new CommandsController();
@@ -67,7 +71,6 @@ GameCore::GameCore()
     new MetadataFactory();
 	new EditorFontManager();
 	new ScreenManager();
-	new EditorSettings();
 	new LibraryController();
 
     new GridController();

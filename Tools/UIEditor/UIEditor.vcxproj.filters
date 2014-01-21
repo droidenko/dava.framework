@@ -246,9 +246,6 @@
     <ClCompile Include="Classes\UI\mainwindow.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\UI\QColorButton.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\UI\StateComboBoxItemDelegate.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
@@ -486,9 +483,6 @@
     <ClCompile Include="GeneratedFiles\UI\PropertyGridWidgets\uitextfieldpropertygridwidget_moc.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\UI\QColorButton_moc.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\UI\StateComboBoxItemDelegate_moc.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
@@ -684,6 +678,21 @@
     <ClCompile Include="GeneratedFiles\Grid\GridVisualizer_moc.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\UI\QColorWidget.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\UI\QtColorLineEdit.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\UI\QColorWidget_moc.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\UI\QtColorLineEdit_moc.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Helpers\ColorHelper.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\DefaultScreen.h">
@@ -790,9 +799,6 @@
     </ClInclude>
     <ClInclude Include="Classes\EditorFontManager.h">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\UI\QColorButton.h">
-      <Filter>Sources\UI</Filter>
     </ClInclude>
     <ClInclude Include="Classes\UI\StateComboBoxItemDelegate.h">
       <Filter>Sources\UI</Filter>
@@ -1093,6 +1099,15 @@
     </ClInclude>
     <ClInclude Include="Classes\Grid\GridVisualizer.h">
       <Filter>Sources\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\UI\QColorWidget.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\UI\QtColorLineEdit.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Helpers\ColorHelper.h">
+      <Filter>Sources\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

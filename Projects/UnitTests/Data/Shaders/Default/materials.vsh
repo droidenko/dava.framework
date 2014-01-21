@@ -7,6 +7,8 @@ precision highp float;
 #define mediump
 #endif
 
+//#define TEXTURE0_SHIFT_ENABLED
+
 // INPUT ATTRIBUTES
 attribute vec4 inPosition;
 
@@ -14,9 +16,13 @@ attribute vec4 inPosition;
 attribute vec3 inNormal;
 #endif 
 
+#if defined(MATERIAL_SKYBOX)
+attribute vec3 inTexCoord0;
+#else
 attribute vec2 inTexCoord0;
+#endif
 
-#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP)
+#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP) || defined(FRAME_BLEND)
 attribute vec2 inTexCoord1;
 #endif
 
@@ -31,6 +37,9 @@ attribute vec4 inColor;
 attribute vec3 inTangent;
 #endif
 
+#if defined(FRAME_BLEND)
+attribute float inTime;
+#endif
 
 // UNIFORMS
 uniform mat4 modelViewProjectionMatrix;
@@ -57,9 +66,13 @@ uniform mediump vec2 uvScale;
 
 
 // OUTPUT ATTRIBUTES
+#if defined(MATERIAL_SKYBOX)
+varying vec3 varTexCoord0;
+#else
 varying vec2 varTexCoord0;
+#endif
 
-#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP)
+#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP) || defined(FRAME_BLEND)
 varying vec2 varTexCoord1;
 #endif
 
@@ -88,9 +101,24 @@ varying lowp float varLightmapSize;
 varying lowp vec4 varVertexColor;
 #endif
 
+#if defined(FRAME_BLEND)
+varying lowp float varTime;
+#endif
+
+#if defined(TEXTURE0_SHIFT_ENABLED)
+uniform mediump vec2 texture0Shift;
+#endif 
+
+
 void main()
 {
+#if defined(MATERIAL_SKYBOX)
+	vec4 vecPos = (modelViewProjectionMatrix * inPosition);
+	gl_Position = vec4(vecPos.xy, vecPos.w - 0.0001, vecPos.w);
+#else
 	gl_Position = modelViewProjectionMatrix * inPosition;
+#endif
+
 #if defined(VERTEX_LIT)
     vec3 eyeCoordsPosition = vec3(modelViewMatrix * inPosition);
     vec3 normal = normalize(normalMatrix * inNormal); // normal in eye coordinates
@@ -181,16 +209,25 @@ void main()
 #endif
 
 	varTexCoord0 = inTexCoord0;
-#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP)
+	
+#if defined(TEXTURE0_SHIFT_ENABLED)
+	varTexCoord0 += texture0Shift;
+#endif
+		
+#if defined(MATERIAL_DECAL) || defined(MATERIAL_DETAIL) || defined(MATERIAL_LIGHTMAP) || defined(FRAME_BLEND)
 	
 	#if defined(SETUP_LIGHTMAP)
 		varLightmapSize = lightmapSize;
 		varTexCoord1 = inTexCoord1;
 	#elif defined(MATERIAL_LIGHTMAP)
 		varTexCoord1 = uvScale*inTexCoord1+uvOffset;
-	#else defined(MATERIAL_DECAL)
+    #else
 		varTexCoord1 = inTexCoord1;
 	#endif
+#endif
+
+#if defined(FRAME_BLEND)
+	varTime = inTime;
 #endif
 
 

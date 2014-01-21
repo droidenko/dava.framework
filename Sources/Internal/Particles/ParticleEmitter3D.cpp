@@ -61,12 +61,12 @@ void ParticleEmitter3D::InsertLayer(ParticleLayer * layer, ParticleLayer * befor
 
 void ParticleEmitter3D::RenderUpdate(Camera *camera, float32 timeElapsed)
 {
-	eBlendMode srcMode = RenderManager::Instance()->GetSrcBlend();
-	eBlendMode destMode = RenderManager::Instance()->GetDestBlend();
+//	eBlendMode srcMode = RenderManager::Instance()->GetSrcBlend();
+//	eBlendMode destMode = RenderManager::Instance()->GetDestBlend();
 
 	Draw(camera);
     
-	RenderManager::Instance()->SetBlendMode(srcMode, destMode);
+//	RenderManager::Instance()->SetBlendMode(srcMode, destMode);
 }
 
 void ParticleEmitter3D::Draw(Camera * camera)
@@ -394,6 +394,7 @@ RenderObject * ParticleEmitter3D::Clone(RenderObject *newObject)
 	clonedEmitter->SetShortEffect(shortEffect);
 	
 	// Now can add Layers. Need to update their parents.
+    clonedEmitter->layers.reserve(layers.size());
 	for (Vector<ParticleLayer*>::iterator iter = this->layers.begin(); iter != this->layers.end();
 		 iter ++)
 	{

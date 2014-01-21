@@ -414,24 +414,6 @@ void RenderManager::SetRenderOrientation(int32 orientation)
 
 }
 
-
-
-void RenderManager::SetBlendMode(eBlendMode sfactor, eBlendMode dfactor)
-{
-	currentState.SetBlendMode(sfactor, dfactor);
-}
-	
-eBlendMode RenderManager::GetSrcBlend()
-{
-	return currentState.sourceFactor;
-}
-
-eBlendMode RenderManager::GetDestBlend()
-{
-	return currentState.destFactor;
-}
-
-
 /*
  void RenderManager::EnableBlending(bool isEnabled)
 {
@@ -603,7 +585,7 @@ void RenderManager::HWDrawArrays(ePrimitiveType type, int32 first, int32 count)
 
 	if(debugEnabled)
 	{
-		Logger::FrameworkDebug("Draw arrays texture: id %d", currentState.currentTexture[0]->id);
+		Logger::FrameworkDebug("Draw arrays texture stated: id %d", currentState.textureState);
 	}
 
     RENDER_VERIFY(glDrawArrays(mode, first, count));
@@ -647,7 +629,7 @@ void RenderManager::HWDrawElements(ePrimitiveType type, int32 count, eIndexForma
 	
 	if(debugEnabled)
 	{
-		Logger::FrameworkDebug("Draw arrays texture: id %d", currentState.currentTexture[0]->id);
+		Logger::FrameworkDebug("Draw arrays texture state: id %d", currentState.textureState);
 	}
 #if defined(__DAVAENGINE_IPHONE__)
 #if not defined(GL_UNSIGNED_INT)
@@ -819,13 +801,32 @@ void RenderManager::SetHWRenderTargetTexture(Texture * renderTarget)
 	RemoveClip();
 }
 
-    
 void RenderManager::SetMatrix(eMatrixType type, const Matrix4 & matrix)
 {
+    SetMatrix(type, matrix, 0);
+}
+    
+void RenderManager::SetMatrix(eMatrixType type, const Matrix4 & matrix, uint32 cacheValue)
+{
     GLint matrixMode[2] = {GL_MODELVIEW, GL_PROJECTION};
-    matrices[type] = matrix;
-    uniformMatrixFlags[UNIFORM_MATRIX_MODELVIEWPROJECTION] = 0; // require update
-    uniformMatrixFlags[UNIFORM_MATRIX_NORMAL] = 0; // require update
+    if (type == MATRIX_PROJECTION)
+    {
+        matrices[type] = matrix;
+        uniformMatrixFlags[UNIFORM_MATRIX_MODELVIEWPROJECTION] = 0; // require update
+        uniformMatrixFlags[UNIFORM_MATRIX_NORMAL] = 0; // require update
+        projectionMatrixCache++;
+    }
+    else if (type == MATRIX_MODELVIEW)
+    {
+        if (cacheValue == 0 ||
+            modelViewMatrixCache != cacheValue)
+        {
+            matrices[type] = matrix;
+            uniformMatrixFlags[UNIFORM_MATRIX_MODELVIEWPROJECTION] = 0; // require update
+            uniformMatrixFlags[UNIFORM_MATRIX_NORMAL] = 0; // require update
+            modelViewMatrixCache = cacheValue;
+        }
+    }
     
     if (renderer != Core::RENDERER_OPENGL_ES_2_0)
     {
@@ -850,6 +851,8 @@ void RenderManager::AttachRenderData()
 
     const int DEBUG = 0;
 	Shader * shader = hardwareState.shader;
+	
+	GetStats().attachRenderDataCount++;
     
     if (!shader)
     {
@@ -1062,7 +1065,7 @@ void RenderManager::HWglBindTexture(int32 tId, uint32 textureType)
 {
     if(0 != tId)
     {
-        glBindTexture((Texture::TEXTURE_2D == textureType) ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP, tId);
+        RENDER_VERIFY(glBindTexture((Texture::TEXTURE_2D == textureType) ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP, tId));
         
         		//GLenum err = glGetError();
         		//if (err != GL_NO_ERROR)

@@ -81,12 +81,12 @@ void TextPropertyGridWidget::Initialize(BaseMetadata* activeMetadata)
     // All these properties are state-aware.
     RegisterSpinBoxWidgetForProperty(propertiesMap, PropertyNames::FONT_SIZE_PROPERTY_NAME, ui->fontSizeSpinBox, false, true);
     RegisterPushButtonWidgetForProperty(propertiesMap, PropertyNames::FONT_PROPERTY_NAME, ui->fontSelectButton, false, true);
-    RegisterColorButtonWidgetForProperty(propertiesMap, PropertyNames::FONT_COLOR_PROPERTY_NAME, ui->textColorPushButton, false, true);
+    RegisterColorWidgetForProperty(propertiesMap, PropertyNames::FONT_COLOR_PROPERTY_NAME, ui->textColorWidget, false, true);
 
     // Shadow properties are also state-aware
     RegisterSpinBoxWidgetForProperty(propertiesMap, PropertyNames::SHADOW_OFFSET_X, ui->shadowOffsetXSpinBox, false, true);
     RegisterSpinBoxWidgetForProperty(propertiesMap, PropertyNames::SHADOW_OFFSET_Y, ui->shadowOffsetYSpinBox, false, true);
-    RegisterColorButtonWidgetForProperty(propertiesMap, PropertyNames::SHADOW_COLOR, ui->shadowColorButton, false, true);
+    RegisterColorWidgetForProperty(propertiesMap, PropertyNames::SHADOW_COLOR, ui->shadowColorWidget, false, true);
     // Localized Text Key is handled through generic Property mechanism, but we need to update the
     // Localization Value widget each time Localization Key is changes.
     RegisterLineEditWidgetForProperty(propertiesMap, PropertyNames::LOCALIZED_TEXT_KEY_PROPERTY_NAME, localizationKeyNameLineEdit, false, true);
@@ -181,13 +181,13 @@ void TextPropertyGridWidget::InsertLocalizationFields()
 	ui->fontSizeSpinBox->setGeometry(QRect(234, 171, 57, 25));
 	ui->fontSelectButton->setGeometry(QRect(50, 166, 181, 38));
 	ui->fontColorLabel->setGeometry(QRect(10, 220, 71, 16));
-	ui->textColorPushButton->setGeometry(QRect(85, 218, 205, 21));
+	ui->textColorWidget->setGeometry(QRect(105, 218, 184, 21));
 	ui->shadowOffsetLabel->setGeometry(QRect(10, 252, 91, 16));
 	ui->offsetYLabel->setGeometry(QRect(210, 252, 36, 16));
 	ui->shadowColorLabel->setGeometry(QRect(10, 282, 91, 16));
 	ui->shadowOffsetXSpinBox->setGeometry(QRect(140, 248, 57, 25));
 	ui->shadowOffsetYSpinBox->setGeometry(QRect(230, 248, 57, 25));
-	ui->shadowColorButton->setGeometry(QRect(105, 280, 185, 21));
+	ui->shadowColorWidget->setGeometry(QRect(105, 280, 184, 21));
 	ui->offsetXLabel->setGeometry(QRect(120, 252, 16, 16));
 	ui->AlignLabel->setGeometry(QRect(10, 316, 62, 16));
 	ui->alignComboBox->setGeometry(QRect(80, 310, 209, 26));

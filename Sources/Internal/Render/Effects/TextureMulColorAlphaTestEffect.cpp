@@ -57,24 +57,21 @@ void TextureMulColorAlphaTestEffectGL::DrawArrays(ePrimitiveType mode, int32 fir
 {
 //    RenderManager::Instance()->EnableTexturing(true);
 //    RenderManager::Instance()->EnableAlphaTest(true);
-    RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE | RenderState::STATE_ALPHA_TEST);
-    RenderManager::Instance()->SetAlphaFunc(CMP_GREATER, 0.9f);
+	
     RenderManager::Instance()->SetShader(0);
     RenderManager::Instance()->FlushState();
 	RenderManager::Instance()->AttachRenderData();
     RenderManager::Instance()->HWDrawArrays(mode, first, count);
-    RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+    //RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
 }
 
 void TextureMulColorAlphaTestEffectGL::DrawElements(ePrimitiveType type, int32 count, eIndexFormat indexFormat, void * indices)
 {
-    RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE | RenderState::STATE_ALPHA_TEST);
-    RenderManager::Instance()->SetAlphaFunc(CMP_GREATER, 0.9f);
     RenderManager::Instance()->SetShader(0);
     RenderManager::Instance()->FlushState();
 	RenderManager::Instance()->AttachRenderData();
     RenderManager::Instance()->HWDrawElements(type, count, indexFormat, indices);
-    RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
+    //RenderManager::Instance()->SetState(RenderState::DEFAULT_3D_STATE);
 }
 
 TextureMulColorAlphaTestEffectGL20::TextureMulColorAlphaTestEffectGL20()

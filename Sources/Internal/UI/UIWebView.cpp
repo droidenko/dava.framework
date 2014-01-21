@@ -58,7 +58,8 @@ UIWebView::UIWebView(const Rect &rect, bool rectInAbsoluteCoordinates) :
 	webViewControl(new WebViewControl()),
 	UIControl(rect, rectInAbsoluteCoordinates)
 {
-	this->webViewControl->Initialize(rect);
+	Rect newRect = GetRect(true);
+	this->webViewControl->Initialize(newRect);
 }
 
 void UIWebView::SetDelegate(IUIWebViewDelegate* delegate)
@@ -76,7 +77,7 @@ void UIWebView::SetPosition(const Vector2 &position, bool positionInAbsoluteCoor
 	UIControl::SetPosition(position, positionInAbsoluteCoordinates);
 
 	// Update the inner control.
-	Rect newRect = GetRect();
+	Rect newRect = GetRect(true);
 	this->webViewControl->SetRect(newRect);
 }
 
@@ -85,7 +86,7 @@ void UIWebView::SetSize(const Vector2 &newSize)
 	UIControl::SetSize(newSize);
 
 	// Update the inner control.
-	Rect newRect = GetRect();
+	Rect newRect = GetRect(true);
 	this->webViewControl->SetRect(newRect);
 }
 

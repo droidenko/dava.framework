@@ -1,0 +1,8 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        MaterialDefines: ["VERTEX_LIT"]
+
+        RenderPass:
+            Name: "ForwardPass"
+            Shader: "~res:/Materials/Shaders/Old/materials"

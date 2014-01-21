@@ -39,7 +39,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QPushButton>
-#include "QColorButton.h"
+#include "QColorWidget.h"
 
 #include "HierarchyTreeNode.h"
 #include "BaseMetadata.h"
@@ -110,8 +110,8 @@ protected:
     void RegisterComboBoxWidgetForProperty(const PROPERTIESMAP& propertiesMap, const char* propertyName,
                                            QComboBox* comboBoxWidget,
                                            bool needUpdateTree = false, bool stateAware = false);
-    void RegisterColorButtonWidgetForProperty(const PROPERTIESMAP& propertiesMap, const char* propertyName,
-                                            QColorButton* colorButtonWidget,
+    void RegisterColorWidgetForProperty(const PROPERTIESMAP& propertiesMap, const char* propertyName,
+                                            QColorWidget* colorWidget,
                                             bool needUpdateTree = false, bool stateAware = false);
     void RegisterPushButtonWidgetForProperty(const PROPERTIESMAP& propertiesMap, const char* propertyName,
                                              QPushButton* pushButtonWidget,
@@ -123,7 +123,7 @@ protected:
 	void UnregisterDoubleSpinBoxWidget(QDoubleSpinBox* spinBoxWidget);
     void UnregisterCheckBoxWidget(QCheckBox* checkBoxWidget);
     void UnregisterComboBoxWidget(QComboBox* comboBoxWidget);
-    void UnregisterColorButtonWidget(QColorButton* colorButtonWidget);
+    void UnregisterColorWidget(QColorWidget* colorWidget);
     void UnregisterPushButtonWidget(QPushButton* pushButtonWidget);
 
     // Process the data attached to each property when it is changed.
@@ -136,7 +136,7 @@ protected:
     virtual void UpdateLineEditWidgetWithPropertyValue(QLineEdit* lineEditWidget, const QMetaProperty& curProperty);
     //void UpdateCheckBoxWidgetWithPropertyValue(QCheckBox* checkBoxWidget, const QMetaProperty& curProperty);
     virtual void UpdateSpinBoxWidgetWithPropertyValue(QSpinBox* spinBoxWidget, const QMetaProperty& curProperty);
-    virtual void UpdateColorButtonWidgetWithPropertyValue(QColorButton* colorButtonWidget, const QMetaProperty& curProperty);
+    virtual void UpdateColorWidgetWithPropertyValue(QColorWidget* colorWidget, const QMetaProperty& curProperty);
 
     // Override this method to get a notification about properties changed from external source.
     virtual void OnPropertiesChangedFromExternalSource() {};
@@ -222,10 +222,10 @@ protected slots:
     void OnLineEditEditingFinished();
     void OnCheckBoxStateChanged(int state);
     void OnComboBoxValueChanged(QString value);
-    
-    void OnColorButtonClicked();
+
+    void OnColorChanged(const QColor& color);
     void OnPushButtonClicked();
-    
+
     // These methods are called when property change is succeeded/failed.
     void OnChangePropertySucceeded(const QString& propertyName);
     void OnChangePropertyFailed(const QString& propertyName);

@@ -321,15 +321,10 @@ void EntityModificationSystem::BeginModification(const EntityGroup &entities)
 
 	if(entities.Size() > 0)
 	{
+        modifEntities.reserve(entities.Size());
 		for(size_t i = 0; i < entities.Size(); ++i)
 		{
 			DAVA::Entity *en = entities.GetEntity(i);
-
-			if(NULL == en)
-			{
-				en = entities.GetEntity(i);
-			}
-
 			if(NULL != en)
 			{
 				EntityToModify etm;
@@ -386,6 +381,8 @@ void EntityModificationSystem::BeginModification(const EntityGroup &entities)
 		case ST_AXIS_Z:
 			rotateAround = DAVA::Vector3(0, 0, 1);
 			break;
+                
+            default: break;
 		}
 
 		// 2d axis projection we are rotating around
@@ -746,6 +743,7 @@ void EntityModificationSystem::CloneBegin()
 {
 	if(modifEntities.size() > 0)
 	{
+        clonedEntities.reserve(modifEntities.size());
 		for(size_t i = 0; i < modifEntities.size(); ++i)
 		{
 			DAVA::Entity *origEntity = modifEntities[i].entity;

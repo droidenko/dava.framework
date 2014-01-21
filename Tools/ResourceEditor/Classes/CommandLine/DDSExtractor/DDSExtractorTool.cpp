@@ -135,7 +135,7 @@ void DDSExtractorTool::SaveImageAsPNG(const DAVA::FilePath& pathToDDS, DAVA::Ima
 	
 	DAVA::ImageLoader::Save(imageToSave, saveFilePath);
 	printf("\n");
-	printf(DAVA::Format("Converted: %s", saveFilePath.GetAbsolutePathname().c_str()));
+	printf(DAVA::Format("Converted: %s", saveFilePath.GetAbsolutePathname().c_str()).c_str());
 }
 
 void DDSExtractorTool::GetFilesFromFolderRecursively(const DAVA::FilePath& path, DAVA::List<DAVA::FilePath>& outputList)

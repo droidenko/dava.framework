@@ -33,29 +33,35 @@
 #include "Base/BaseTypes.h"
 #include "Base/FastName.h"
 #include "Render/Highlevel/RenderLayer.h"
+#include "Render/Highlevel/RenderFastNames.h"
 
 namespace DAVA
 {
-//class RenderLayer;
+class RenderPassBatchArray;
 class Camera;
+
 class RenderPass
 {
 public:
-    RenderPass(const FastName & name);
+    RenderPass(RenderSystem * renderSystem, const FastName & name, RenderPassID id);
     virtual ~RenderPass();
     
-    const FastName & GetName();
+    void InitDefaultLayers();
     
-    virtual void Draw(Camera * camera);
+    inline RenderPassID GetRenderPassID() const;
+    inline const FastName & GetName() const;
     
-protected:
-    Vector<RenderLayer*> renderLayers;
-    FastName name;
-
-private:
 	void AddRenderLayer(RenderLayer * layer, const FastName & afterLayer);
 	void RemoveRenderLayer(RenderLayer * layer);
-	
+
+    virtual void Draw(Camera * camera, RenderPassBatchArray * renderBatchArray);
+    
+protected:
+    // TODO: add StaticVector container
+    Vector<RenderLayer*> renderLayers;
+    RenderSystem * renderSystem;
+    FastName name;
+    RenderPassID id;
 
 public:
     
@@ -66,7 +72,18 @@ public:
 
 	friend class RenderSystem;
 };
+
+inline RenderPassID RenderPass::GetRenderPassID() const
+{
+    return id;
+}
+
+inline const FastName & RenderPass::GetName() const
+{
+    return name;
+}
     
+
 } // ns
 
 #endif	/* __DAVAENGINE_SCENE3D_RENDERLAYER_H__ */

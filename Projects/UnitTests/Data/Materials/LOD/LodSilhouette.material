@@ -1,0 +1,13 @@
+Material:
+    MaterialState:
+        Name: "Low"
+        Parent: "Global.FlatColor.Silhouette"
+        MaterialDefines: ["LOD_LOW"]
+    MaterialState:
+        Name: "Normal"
+        Parent: "Global.FlatColor.Silhouette"
+        MaterialDefines: ["LOD_NORMAL"]
+    MaterialState:
+        Name: "High"
+        Parent: "Global.FlatColor.Silhouette"
+        MaterialDefines: ["LOD_HIGH"]

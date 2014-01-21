@@ -34,7 +34,7 @@
 #include "Core/Core.h"
 #include "Render/Shader.h"
 #include "Render/RenderDataObject.h"
-
+#include "Render/ShaderCache.h"
 
 #include "Render/Effects/ColorOnlyEffect.h"
 #include "Render/Effects/TextureMulColorEffect.h"
@@ -57,6 +57,10 @@ RenderManager::RenderManager(Core::eRenderer _renderer)
     needGLScreenShot(false),
     screenShotCallback(NULL)
 {
+    // Create shader cache singleton
+    ShaderCache * cache = new ShaderCache();
+    cache = 0;
+    
 //	Logger::FrameworkDebug("[RenderManager] created");
 
     Texture::InitializePixelFormatDescriptors();
@@ -157,11 +161,19 @@ RenderManager::RenderManager(Core::eRenderer _renderer)
     TEXTURE_MUL_FLAT_COLOR_ALPHA_TEST = 0;
 	
 	renderContextId = 0;
+    
+    projectionMatrixCache = 0;
+    modelViewMatrixCache = 0;
+
+	InitDefaultRenderStates();
+	InitDefaultTextureStates();
 }
 	
 RenderManager::~RenderManager()
 {
-    SafeRelease(currentRenderData);
+    ShaderCache::Instance()->Release();
+    
+    currentRenderData = 0;
 	SafeRelease(currentRenderEffect);
     SafeRelease(FLAT_COLOR);
     SafeRelease(TEXTURE_MUL_FLAT_COLOR);
@@ -169,7 +181,72 @@ RenderManager::~RenderManager()
 	SafeRelease(cursor);
 	Logger::FrameworkDebug("[RenderManager] released");
 }
+	
+void RenderManager::InitDefaultRenderStates()
+{
+	//VI: do not set up stencil state for default states. It's disabled in them. 
+	
+	RenderStateData defaultStateData = {0};
+	
+	defaultStateData.state = RenderState::DEFAULT_2D_STATE_BLEND;
+	defaultStateData.cullMode = FACE_BACK;
+	defaultStateData.depthFunc = CMP_NEVER;
+	defaultStateData.sourceFactor = BLEND_SRC_ALPHA;
+	defaultStateData.destFactor = BLEND_ONE_MINUS_SRC_ALPHA;
+	defaultStateData.fillMode = FILLMODE_SOLID;
+	
+	default2DRenderStateHandle = AddRenderStateData(&defaultStateData);
+	
+	defaultStateData.state = RenderState::DEFAULT_2D_STATE;
+	defaultStateData.cullMode = FACE_BACK;
+	defaultStateData.depthFunc = CMP_NEVER;
+	defaultStateData.sourceFactor = BLEND_SRC_ALPHA;
+	defaultStateData.destFactor = BLEND_ONE_MINUS_SRC_ALPHA;
+	defaultStateData.fillMode = FILLMODE_SOLID;
+	
+	default2DNoBlendRenderStateHandle = AddRenderStateData(&defaultStateData);
+	
+	defaultStateData.state =	RenderStateData::STATE_BLEND |
+								RenderStateData::STATE_COLORMASK_ALL;
+	defaultStateData.cullMode = FACE_BACK;
+	defaultStateData.depthFunc = CMP_NEVER;
+	defaultStateData.sourceFactor = BLEND_SRC_ALPHA;
+	defaultStateData.destFactor = BLEND_ONE_MINUS_SRC_ALPHA;
+	defaultStateData.fillMode = FILLMODE_SOLID;
+	
+	default2DNoTextureStateHandle = AddRenderStateData(&defaultStateData);
 
+	defaultStateData.state = RenderState::DEFAULT_3D_STATE_BLEND;
+	defaultStateData.cullMode = FACE_BACK;
+	defaultStateData.depthFunc = CMP_LESS;
+	defaultStateData.sourceFactor = BLEND_SRC_ALPHA;
+	defaultStateData.destFactor = BLEND_ONE_MINUS_SRC_ALPHA;
+	defaultStateData.fillMode = FILLMODE_SOLID;
+
+	default3DRenderStateHandle = AddRenderStateData(&defaultStateData);
+	
+	defaultStateData.state = RenderStateData::STATE_COLORMASK_ALL;
+	defaultStateData.cullMode = FACE_COUNT;
+	defaultStateData.depthFunc = CMP_TEST_MODE_COUNT;
+	defaultStateData.sourceFactor = BLEND_MODE_COUNT;
+	defaultStateData.destFactor = BLEND_MODE_COUNT;
+	defaultStateData.fillMode = FILLMODE_COUNT;
+	defaultStateData.stencilRef = 0;
+	defaultStateData.stencilMask = 0;
+	defaultStateData.stencilFunc[0] = defaultStateData.stencilFunc[1] = CMP_TEST_MODE_COUNT;
+	defaultStateData.stencilPass[0] = defaultStateData.stencilPass[1] = STENCILOP_COUNT;
+	defaultStateData.stencilFail[0] = defaultStateData.stencilFail[1] = STENCILOP_COUNT;
+	defaultStateData.stencilZFail[0] = defaultStateData.stencilZFail[1] = STENCILOP_COUNT;
+	defaultHardwareState = AddRenderStateData(&defaultStateData);
+	hardwareState.stateHandle = defaultHardwareState;
+}
+	
+void RenderManager::InitDefaultTextureStates()
+{
+	TextureStateData textureData;
+	defaultTextureState = AddTextureStateData(&textureData);
+}
+	
 void RenderManager::SetDebug(bool isDebugEnabled)
 {
 	debugEnabled = isDebugEnabled;
@@ -328,56 +405,16 @@ void RenderManager::ResetColor()
 	currentState.ResetColor();
 }
 	
-	
-void RenderManager::SetTexture(Texture *texture, uint32 textureLevel)
+/*void RenderManager::SetTexture(Texture *texture, uint32 textureLevel)
 {	
     currentState.SetTexture(texture, textureLevel);
-	
-/*  DVASSERT(textureLevel < MAX_TEXTURE_LEVELS);
-	if(texture != currentTexture[textureLevel])
-	{
-		currentTexture[textureLevel] = texture;
-		if(currentTexture[textureLevel])
-		{
-			if(debugEnabled)
-			{
-				Logger::FrameworkDebug("Bind texture: id %d", texture->id);
-			}
-            
-#if defined(__DAVAENGINE_OPENGL__)
-            RENDER_VERIFY(glActiveTexture(GL_TEXTURE0 + textureLevel));
-            if (textureLevel != 0)
-            {
-                // todo: boroda: fix that for OpenGL ES because glDisable / glEnable is deprecated
-                // fix it pizdato
-                if (GetRenderer() != Core::RENDERER_OPENGL_ES_2_0)
-                    RENDER_VERIFY(glEnable(GL_TEXTURE_2D));
-            }
-            RENDER_VERIFY(glBindTexture(GL_TEXTURE_2D, texture->id));
-#elif defined(__DAVAENGINE_DIRECTX9__)
-			RENDER_VERIFY(GetD3DDevice()->SetTexture(textureLevel, texture->id));
-#endif
-		}else
-        {
-#if defined(__DAVAENGINE_OPENGL__)
-            RENDER_VERIFY(glActiveTexture(GL_TEXTURE0 + textureLevel));
-            if (textureLevel != 0)
-            {
-                // todo: boroda: fix that for OpenGL ES because glDisable / glEnable is deprecated
-                // fix it pizdato
-                if (GetRenderer() != Core::RENDERER_OPENGL_ES_2_0)
-                    RENDER_VERIFY(glDisable(GL_TEXTURE_2D));
-            }
-#endif
-        }
-	}*/
 }
 	
 Texture *RenderManager::GetTexture(uint32 textureLevel)
 {
     DVASSERT(textureLevel < RenderState::MAX_TEXTURE_LEVELS);
 	return currentState.currentTexture[textureLevel];	
-}
+}*/
     
 void RenderManager::SetShader(Shader * _shader)
 {
@@ -394,8 +431,7 @@ Shader * RenderManager::GetShader()
 
 void RenderManager::SetRenderData(RenderDataObject * object)
 {
-    SafeRelease(currentRenderData);
-    currentRenderData = SafeRetain(object);
+    currentRenderData = object;
 }
 		
 void RenderManager::SetClip(const Rect &rect)
@@ -583,7 +619,7 @@ void RenderManager::IdentityMappingMatrix()
 void RenderManager::IdentityModelMatrix()
 {
     mappingMatrixChanged = true;
-    RenderManager::Instance()->SetMatrix(MATRIX_MODELVIEW, Matrix4::IDENTITY);
+    RenderManager::Instance()->SetMatrix(MATRIX_MODELVIEW, Matrix4::IDENTITY, (pointer_size)&Matrix4::IDENTITY);
 	currentDrawOffset = Vector2(0, 0);
     currentDrawScale = Vector2(1, 1);
 }
@@ -672,7 +708,7 @@ const RenderManager::Caps & RenderManager::GetCaps()
 	return caps;
 }
     
-const RenderManager::Stats & RenderManager::GetStats()
+RenderManager::Stats & RenderManager::GetStats()
 {
     return stats;
 }
@@ -728,8 +764,16 @@ void RenderManager::ClearUniformMatrices()
     
 void RenderManager::Stats::Clear()
 {
+	//uint32 matrixMultiplicationCount = Matrix4::matrixMultiplicationCounter;
     drawArraysCalls = 0;
     drawElementsCalls = 0;
+    shaderBindCount = 0;
+    occludedRenderBatchCount = 0;
+	renderStateSwitches = 0;
+	renderStateFullSwitches = 0;
+	textureStateFullSwitches = 0;
+	attachRenderDataCount = 0;
+	//Matrix4::matrixMultiplicationCounter = 0;
     for (int32 k = 0; k < PRIMITIVETYPE_COUNT; ++k)
         primitiveCount[k] = 0;
 }
@@ -753,6 +797,26 @@ void RenderManager::ProcessStats()
     }
 }
     
+void RenderManager::SetDefault2DState()
+{
+	currentState.stateHandle = GetDefault2DStateHandle();
+}
+	
+void RenderManager::SetDefault2DNoBlendState()
+{
+	currentState.stateHandle = GetDefault2DNoBlendStateHandle();
+}
+	
+void RenderManager::SetDefault2DNoTextureState()
+{
+	currentState.stateHandle = GetDefault2DNoTextureStateHandle();
+}
+	
+void RenderManager::SetDefault3DState()
+{
+	currentState.stateHandle = GetDefault3DStateHandle();
+}
+
     /*void RenderManager::EnableAlphaTest(bool isEnabled)
 {
     alphaTestEnabled = isEnabled;
@@ -763,47 +827,7 @@ void RenderManager::EnableCulling(bool isEnabled)
 {
     cullingEnabled = isEnabled;
 }*/
-
-void RenderManager::AppendState(uint32 state)
-{
-    currentState.state |= state;
-}
     
-void RenderManager::RemoveState(uint32 state)
-{
-    currentState.state &= ~state;
-}
-
-void RenderManager::SetState(uint32 state)
-{
-    currentState.state = state;
-}
-    
-uint32 RenderManager::GetState()
-{
-    return currentState.state;
-}
-    
-    
-void RenderManager::SetCullMode(eFace _cullFace)
-{
-    currentState.SetCullMode(_cullFace);
-}
-    
-void RenderManager::SetAlphaFunc(eCmpFunc func, float32 cmpValue)
-{
-    currentState.SetAlphaFunc(func, cmpValue);
-}
-
-RenderState * RenderManager::State()
-{
-	return &RenderManager::Instance()->currentState;
-}
-
-void RenderManager::SetDepthFunc(eCmpFunc func)
-{
-	currentState.SetDepthFunc(func);
-}
 
 RenderOptions * RenderManager::GetOptions()
 {

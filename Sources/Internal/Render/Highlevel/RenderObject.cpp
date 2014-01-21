@@ -36,19 +36,19 @@ namespace DAVA
 {
 
 
-static const int32 DEFAULT_FLAGS = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH;
+static const int32 DEFAULT_FLAGS = RenderObject::VISIBLE | RenderObject::VISIBLE_LOD | RenderObject::VISIBLE_SWITCH | RenderObject::VISIBLE_STATIC_OCCLUSION;
 
 RenderObject::RenderObject()
     :   type(TYPE_RENDEROBJECT)
     ,   flags(DEFAULT_FLAGS)
     ,   removeIndex(-1)
 	,   treeNodeIndex(INVALID_TREE_NODE_INDEX)
+    ,   staticOcclusionIndex(INVALID_STATIC_OCCLUSION_INDEX)
 	,   startClippingPlane(0)
     ,   debugFlags(0)
     ,   worldTransform(0)
 	,	renderSystem(0)
 {
-    
 }
     
 RenderObject::~RenderObject()
@@ -56,7 +56,6 @@ RenderObject::~RenderObject()
 	uint32 size = renderBatchArray.size();
 	for(uint32 i = 0; i < size; ++i)
 	{
-		DVASSERT(renderBatchArray[i]->GetOwnerLayer() == 0);
 		renderBatchArray[i]->Release();
 	}
 }
@@ -66,11 +65,9 @@ void RenderObject::AddRenderBatch(RenderBatch * batch)
 	batch->Retain();
 	batch->SetRenderObject(this);
     renderBatchArray.push_back(batch);
-    if (removeIndex != -1)
-    {
-        DVASSERT(renderSystem);
-		renderSystem->AddRenderBatch(batch);
-    }
+    //batch->AttachToRenderSystem(renderSystem);
+    if (renderSystem)
+        renderSystem->RegisterBatch(batch);
     
     const AABBox3 & boundingBox = batch->GetBoundingBox();
 //    DVASSERT(boundingBox.min.x != AABBOX_INFINITY &&
@@ -82,11 +79,8 @@ void RenderObject::AddRenderBatch(RenderBatch * batch)
 
 void RenderObject::RemoveRenderBatch(RenderBatch * batch)
 {
-    if (removeIndex != -1)
-    {
-        DVASSERT(renderSystem);
-		renderSystem->RemoveRenderBatch(batch);
-    }
+    if (renderSystem)
+        renderSystem->UnregisterBatch(batch);
     
     batch->SetRenderObject(0);
 	batch->Release();
@@ -106,15 +100,6 @@ void RenderObject::RecalcBoundingBox()
     }
 }
     
-uint32 RenderObject::GetRenderBatchCount()
-{
-    return (uint32)renderBatchArray.size();
-}
-RenderBatch * RenderObject::GetRenderBatch(uint32 batchIndex)
-{
-    return renderBatchArray[batchIndex];
-}
-
 RenderObject * RenderObject::Clone(RenderObject *newObject)
 {
 	if(!newObject)
@@ -125,8 +110,9 @@ RenderObject * RenderObject::Clone(RenderObject *newObject)
 
 	newObject->type = type;
 	newObject->flags = flags;
-	newObject->RemoveFlag(RenderObject::TREE_NODE_NEED_UPDATE);
+	newObject->RemoveFlag(MARKED_FOR_UPDATE);
 	newObject->debugFlags = debugFlags;
+    newObject->staticOcclusionIndex = staticOcclusionIndex;
 	//ro->bbox = bbox;
 	//ro->worldBBox = worldBBox;
 
@@ -134,6 +120,7 @@ RenderObject * RenderObject::Clone(RenderObject *newObject)
 	DVASSERT(newObject->GetRenderBatchCount() == 0);
 
 	uint32 size = GetRenderBatchCount();
+    newObject->renderBatchArray.reserve(size);
 	for(uint32 i = 0; i < size; ++i)
 	{
         RenderBatch *batch = GetRenderBatch(i)->Clone();
@@ -145,16 +132,17 @@ RenderObject * RenderObject::Clone(RenderObject *newObject)
 	return newObject;
 }
 
-void RenderObject::Save(KeyedArchive * archive, SceneFileV2* sceneFile)
+void RenderObject::Save(KeyedArchive * archive, SerializationContext* serializationContext)
 {
 	AnimatedObject::Save(archive);
 
 	if(NULL != archive)
 	{
 		archive->SetUInt32("ro.type", type);
-		archive->SetUInt32("ro.flags", flags);
+		//archive->SetUInt32("ro.flags", flags);
 		archive->SetUInt32("ro.debugflags", debugFlags);
 		archive->SetUInt32("ro.batchCount", GetRenderBatchCount());
+        archive->SetUInt32("ro.sOclIndex", staticOcclusionIndex);
 
 		KeyedArchive *batchesArch = new KeyedArchive();
 		for(uint32 i = 0; i < GetRenderBatchCount(); ++i)
@@ -163,7 +151,7 @@ void RenderObject::Save(KeyedArchive * archive, SceneFileV2* sceneFile)
 			if(NULL != batch)
 			{
 				KeyedArchive *batchArch = new KeyedArchive();
-				batch->Save(batchArch, sceneFile);
+				batch->Save(batchArch, serializationContext);
 				if(batchArch->Count() > 0)
 				{
 					batchArch->SetString("rb.classname", batch->GetClassName());
@@ -178,31 +166,32 @@ void RenderObject::Save(KeyedArchive * archive, SceneFileV2* sceneFile)
 	}
 }
 
-void RenderObject::Load(KeyedArchive * archive, SceneFileV2 *sceneFile)
+void RenderObject::Load(KeyedArchive * archive, SerializationContext *serializationContext)
 {
 	if(NULL != archive)
 	{
 		type = archive->GetUInt32("ro.type", TYPE_RENDEROBJECT);
-		flags = archive->GetUInt32("ro.flags", DEFAULT_FLAGS);
 		debugFlags = archive->GetUInt32("ro.debugflags", 0);
+        staticOcclusionIndex = (uint16)archive->GetUInt32("ro.sOclIndex", INVALID_STATIC_OCCLUSION_INDEX);
 
 		uint32 roBatchCount = archive->GetUInt32("ro.batchCount");
         KeyedArchive *batchesArch = archive->GetArchive("ro.batches");
         for(uint32 i = 0; i < roBatchCount; ++i)
-        {
-            KeyedArchive *batchArch = batchesArch->GetArchive(KeyedArchive::GenKeyFromIndex(i));
-            if(NULL != batchArch)
-            {
-                RenderBatch *batch = (RenderBatch *) ObjectFactory::Instance()->New(batchArch->GetString("rb.classname"));
-                if(NULL != batch)
-                {
-                    batch->Load(batchArch, sceneFile);
-                    AddRenderBatch(batch);
-                    batch->Release();
-                }
-            }
-        }
-	}
+			{
+				KeyedArchive *batchArch = batchesArch->GetArchive(KeyedArchive::GenKeyFromIndex(i));
+				if(NULL != batchArch)
+				{
+					RenderBatch *batch = ObjectFactory::Instance()->New<RenderBatch>(batchArch->GetString("rb.classname"));
+					
+					if(NULL != batch)
+					{
+						batch->Load(batchArch, serializationContext);
+						AddRenderBatch(batch);
+						batch->Release();
+					}
+				}
+			}
+		}
 
 	AnimatedObject::Load(archive);
 }

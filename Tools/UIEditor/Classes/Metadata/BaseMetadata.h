@@ -120,15 +120,8 @@ public:
     bool IsActiveStateDirtyForProperty(const QString& propertyName);
     void SetActiveStateDirtyForProperty(const QString& propertyName, bool value);
     
-    // Helper for Colors.
-    Color QTColorToDAVAColor(const QColor& qtColor) const;
-    QColor DAVAColorToQTColor(const Color& davaColor) const;
-
     // Fill ExtraData from attached Control values. Specific for each classes.
     virtual void UpdateExtraData(HierarchyTreeNodeExtraData& /*extraData*/, eExtraDataUpdateStyle /*updateStyle*/) {};
-
-    // Set the "Pixelization Needed" flag.
-    void SetPixelizationNeeded(bool value);
 
 protected:
     // Default Flags.
@@ -168,9 +161,6 @@ protected:
 
     // UI Control State.
     Vector<UIControl::eControlState> uiControlStates;
-    
-    // Pixelization flag.
-    bool pixelizationNeeded;
 };
 
 }

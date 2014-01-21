@@ -31,7 +31,6 @@
 #include "ParticleEditorWidget.h"
 #include "EmitterLayerWidget.h"
 #include "LayerForceWidget.h"
-#include "ParticlesEditorController.h"
 #include "ui_mainwindow.h"
 #include <QScrollBar>
 
@@ -113,43 +112,6 @@ void ParticleEditorWidget::DeleteInnerWidgets()
 	SAFE_DELETE(emitterPropertiesWidget);
 	SAFE_DELETE(emitterLayerWidget);
 	SAFE_DELETE(layerForceWidget);
-}
-
-void ParticleEditorWidget::OnNodeDeselected(BaseParticleEditorNode* particleEditorNode)
-{
-	if (!particleEditorNode)
-	{
-		return;
-	}
-
-	KeyedArchive* stateProps = particleEditorNode->GetExtraData();
-	switch (widgetMode)
-	{
-		case MODE_EMITTER:
-		{
-			emitterLayerWidget->StoreVisualState(stateProps);
-			break;
-		}
-
-		case MODE_LAYER:
-		{
-			emitterLayerWidget->StoreVisualState(stateProps);
-			break;
-		}
-
-		case MODE_FORCE:
-		{
-			layerForceWidget->StoreVisualState(stateProps);
-			break;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	stateProps->SetInt32("EDITOR_SCROLL_VALUE", verticalScrollBar()->value());
 }
 
 void ParticleEditorWidget::OnUpdate()
@@ -252,12 +214,6 @@ void ParticleEditorWidget::UpdateWidgetsForLayer()
 
 void ParticleEditorWidget::OnEmitterSelectedFromSceneTree(SceneEditor2* scene, DAVA::Entity* emitterNode)
 {
-	if (!emitterNode)
-	{
-		// This means nothing Particle Emitter-related is selected.
-		OnNodeDeselected(NULL);
-	}
-	
 	// NULL is accepted here too.
 	ParticleEmitter* emitter = GetEmitter(emitterNode);
 	HandleEmitterSelected(scene, emitter, false);
@@ -265,11 +221,6 @@ void ParticleEditorWidget::OnEmitterSelectedFromSceneTree(SceneEditor2* scene, D
 
 void ParticleEditorWidget::OnInnerEmitterSelectedFromSceneTree(SceneEditor2* scene, DAVA::ParticleEmitter* emitter)
 {
-	if (!emitter)
-	{
-		// This means nothing Particle Emitter-related is selected.
-		OnNodeDeselected(NULL);
-	}	
 	HandleEmitterSelected(scene, emitter, false);
 }
 

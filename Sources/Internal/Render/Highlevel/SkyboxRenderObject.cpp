@@ -27,9 +27,12 @@
 =====================================================================================*/
 
 
-
+#include "Render/Material/NMaterial.h"
+#include "Scene3D/Systems/MaterialSystem.h"
 #include "Render/Highlevel/SkyboxRenderObject.h"
 #include <Render/TextureDescriptor.h>
+
+#include "Render/Material/NMaterialNames.h"
 
 namespace DAVA
 {
@@ -43,6 +46,9 @@ namespace DAVA
 	rotationZ(0.0f),
 	nonClippingDistance(0.0f)
 	{
+		bbox.AddPoint(Vector3(0, 0, 0));
+		bbox.AddPoint(Vector3(1, 1, 1));
+		
 		type = RenderObject::TYPE_SKYBOX;
 		AddFlag(RenderObject::ALWAYS_CLIPPING_VISIBLE);
 	}
@@ -53,18 +59,14 @@ namespace DAVA
 		
 	void SkyboxRenderObject::SetRenderSystem(RenderSystem * renderSystem)
 	{
-		bool adding = (GetRenderSystem() == NULL && renderSystem != NULL);
-		bool removing = (GetRenderSystem() != NULL && renderSystem == NULL);
-		bool switching = (GetRenderSystem() != NULL && renderSystem != NULL);
-		
-		if(removing || switching)
+		if(GetRenderSystem())
 		{
 			GetRenderSystem()->UnregisterFromUpdate(this);
 		}
 		
 		RenderObject::SetRenderSystem(renderSystem);
 		
-		if(adding || switching)
+		if(GetRenderSystem())
 		{
 			GetRenderSystem()->RegisterForUpdate(this);
 		}
@@ -84,23 +86,20 @@ namespace DAVA
 		if(renderBatchArray.size() == 0)
 		{
 			RenderDataObject* renderDataObj = new RenderDataObject();
-			
-			Material* skyboxMaterial = new Material();
-			skyboxMaterial->SetType(Material::MATERIAL_SKYBOX);
-			skyboxMaterial->SetAlphablend(false);
-			skyboxMaterial->SetName("SkyBox_material");
-			skyboxMaterial->GetRenderState()->SetDepthFunc(CMP_LEQUAL);
-			skyboxMaterial->GetRenderState()->state |= RenderState::STATE_DEPTH_TEST;
-			skyboxMaterial->GetRenderState()->state &= ~RenderState::STATE_DEPTH_WRITE;
+							
+			NMaterial* skyboxMaterial = NMaterial::CreateMaterialInstance(FastName("Skybox_material"),
+																		  NMaterialName::SKYBOX,
+																		  NMaterial::DEFAULT_QUALITY_NAME);
 			
 			RenderBatch* skyboxRenderBatch = new RenderBatch();
 			skyboxRenderBatch->SetRenderDataObject(renderDataObj);
 			skyboxRenderBatch->SetMaterial(skyboxMaterial);
-			SafeRelease(renderDataObj);
-			SafeRelease(skyboxMaterial);
 			
 			RenderObject::AddRenderBatch(skyboxRenderBatch);
-			SafeRelease(skyboxRenderBatch);			
+			
+			SafeRelease(renderDataObj);
+			SafeRelease(skyboxMaterial);
+			SafeRelease(skyboxRenderBatch);
 		}
 	}
 	
@@ -187,27 +186,15 @@ namespace DAVA
 	{
 		if(renderBatchArray.size() > 0)
 		{
-			Material* skyboxMaterial = renderBatchArray[0]->GetMaterial();
+			NMaterial* skyboxMaterial = renderBatchArray[0]->GetMaterial();
 			
 			//since the renderBatchArray is entirely controlled by SkyboxRenderObject
 			//we can safely assume that objects in render batch array are properly initialized
 			//and have material in place (no need to check for NULL)
 			
-            DAVA::Texture* tx = NULL;
-            TextureDescriptor *descriptor = TextureDescriptor::CreateFromFile(texturePath);
-            if(descriptor && descriptor->IsCubeMap())
-            {
-                tx = DAVA::Texture::CreateFromFile(texturePath, Texture::TEXTURE_CUBE);
-            }
-            else
-            {
-				tx = Texture::CreatePink(Texture::TEXTURE_CUBE);
-            }
-            
-            skyboxMaterial->SetTexture(Material::TEXTURE_DIFFUSE, tx);
-
-            SafeRelease(descriptor);
-            tx->Release();
+            DAVA::Texture* tx = DAVA::Texture::CreateFromFile(texturePath, Texture::TEXTURE_CUBE);
+			skyboxMaterial->SetTexture(NMaterial::TEXTURE_CUBEMAP, tx);
+			SafeRelease(tx);
 		}
 	}
 	
@@ -239,7 +226,7 @@ namespace DAVA
 		
 		skyboxRenderObject->type = type;
 		skyboxRenderObject->flags = flags;
-		skyboxRenderObject->RemoveFlag(RenderObject::TREE_NODE_NEED_UPDATE);
+		skyboxRenderObject->RemoveFlag(RenderObject::MARKED_FOR_UPDATE);
 		skyboxRenderObject->debugFlags = debugFlags;
 		skyboxRenderObject->ownerDebugInfo = ownerDebugInfo;
 		
@@ -250,6 +237,7 @@ namespace DAVA
 		skyboxRenderObject->nonClippingDistance = nonClippingDistance;
 		
 		uint32 size = GetRenderBatchCount();
+        skyboxRenderObject->renderBatchArray.reserve(size);
 		for(uint32 i = 0; i < size; ++i)
 		{
 			RenderBatch *batch = GetRenderBatch(i)->Clone();
@@ -263,26 +251,26 @@ namespace DAVA
 		return newObject;
 	}
 	
-	void SkyboxRenderObject::Save(KeyedArchive *archive, SceneFileV2 *sceneFile)
+	void SkyboxRenderObject::Save(KeyedArchive *archive, SerializationContext *serializationContext)
 	{
-		RenderObject::Save(archive, sceneFile);
+		RenderObject::Save(archive, serializationContext);
 		
 		if(archive != NULL)
 		{
-			archive->SetString("skbxro.texture", texturePath.GetRelativePathname(sceneFile->GetScenePath()));
+			archive->SetString("skbxro.texture", texturePath.GetRelativePathname(serializationContext->GetScenePath()));
 			archive->SetFloat("skbxro.verticalOffset", offsetZ);
 			archive->SetFloat("skbxro.rotation", rotationZ);
 			archive->SetFloat("skbxro.noclipdist", nonClippingDistance);
 		}
 	}
 	
-	void SkyboxRenderObject::Load(KeyedArchive *archive, SceneFileV2 *sceneFile)
+	void SkyboxRenderObject::Load(KeyedArchive *archive, SerializationContext *serializationContext)
 	{
-		RenderObject::Load(archive, sceneFile);
+		RenderObject::Load(archive, serializationContext);
 		
 		if(archive != NULL)
 		{
-			texturePath = sceneFile->GetScenePath() + archive->GetString("skbxro.texture");
+			texturePath = serializationContext->GetScenePath() + archive->GetString("skbxro.texture");
 			offsetZ = archive->GetFloat("skbxro.verticalOffset");
 			rotationZ = archive->GetFloat("skbxro.rotation");
 			nonClippingDistance = archive->GetFloat("skbxro.noclipdist");

@@ -32,6 +32,7 @@
 #define __DAVAENGINE_ACTION_COMPONENT_H__
 
 #include "Entity/Component.h"
+#include "Scene3D/SceneFile/SerializationContext.h"
 
 namespace DAVA
 {
@@ -111,8 +112,8 @@ namespace DAVA
 		void Update(float32 timeElapsed);
 		
 		virtual Component * Clone(Entity * toEntity);
-		virtual void Serialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
-		virtual void Deserialize(KeyedArchive *archive, SceneFileV2 *sceneFile);
+		virtual void Serialize(KeyedArchive *archive, SerializationContext *serializationContext);
+		virtual void Deserialize(KeyedArchive *archive, SerializationContext *serializationContext);
 		
 		static ActionComponent::Action MakeAction(ActionComponent::Action::eType type, String targetName, float32 delay);
 		static ActionComponent::Action MakeAction(ActionComponent::Action::eType type, String targetName, float32 delay, int32 switchIndex);

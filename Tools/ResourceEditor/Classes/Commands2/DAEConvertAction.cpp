@@ -31,11 +31,11 @@
 #include "DAEConvertAction.h"
 #include "Collada/ColladaConvert.h"
 
-#include "Classes/SceneEditor/SceneValidator.h"
-#include "Classes/Qt/DockLODEditor/EditorLODData.h"
+#include "Deprecated/SceneValidator.h"
+#include "DockLODEditor/EditorLODData.h"
 
-#include "Classes/Qt/Scene/SceneHelper.h"
-#include "Classes/Commands2/ConvertToShadowCommand.h"
+#include "Scene/SceneHelper.h"
+#include "Commands2/ConvertToShadowCommand.h"
 
 using namespace DAVA;
 
@@ -48,7 +48,7 @@ void DAEConvertAction::Redo()
 {
 	if(daePath.Exists() && daePath.IsEqualToExtension(".dae"))
 	{
-		eColladaErrorCodes code = ConvertDaeToSce(daePath.GetAbsolutePathname());
+		eColladaErrorCodes code = ConvertDaeToSce(daePath);
 		if(code == COLLADA_OK)
 		{
             ConvertFromSceToSc2();

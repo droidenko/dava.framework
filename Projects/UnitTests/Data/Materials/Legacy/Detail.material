@@ -1,0 +1,10 @@
+Material:
+    MaterialState:
+        Name: "Default"
+        MaterialDefines: ["MATERIAL_DETAIL"]
+        Uniforms:
+            detail: 1
+
+        RenderPass:
+            Name: "ForwardPass"
+            Shader: "~res:/Materials/Shaders/Old/materials"

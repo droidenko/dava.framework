@@ -32,20 +32,75 @@
 #include <QString>
 #include "HierarchyTreeNode.h"
 
+#include "Render/RenderHelper.h"
+#include "Render/RenderManager.h"
 #include "Grid/GridVisualizer.h"
+
+#include "DefaultScreen.h"
 
 ScreenControl::ScreenControl()
 {
-	UIControlBackground* bkg = new UIControlBackground();
-	bkg->SetColor(Color(0.2f, 0.2f, 0.2f, 1.0f));
-	bkg->SetDrawType(UIControlBackground::DRAW_FILL);
-	SetBackground(bkg);
-    SafeRelease(bkg);
+    background = new UIControl();
+    Sprite* backgroundSprite = Sprite::Create("~res:/Gfx/chequered");
+    
+    UIControlBackground* bkgControl = background->GetBackground();
+    bkgControl->SetSprite(backgroundSprite, 0);
+    bkgControl->SetDrawType(UIControlBackground::DRAW_TILED);
+
+    SafeRelease(backgroundSprite);
 }
 
 ScreenControl::~ScreenControl()
 {
-	
+	SafeRelease(background);
+}
+
+void ScreenControl::SystemDraw(const UIGeometricData &geometricData)
+{
+	Rect rect = this->GetRect();
+    
+    // Draw "transparent" (cheqered) backgound under the control.
+    RenderManager::Instance()->PushDrawMatrix();
+    RenderManager::Instance()->IdentityDrawMatrix();
+  	RenderManager::Instance()->SetDrawScale(Vector2(1.0f, 1.0f));
+   
+    Vector2 backgroundPos = Vector2(0.0f, 0.0f);
+    Vector2 backgroundSize = rect.GetSize();
+    
+    if (pos.x > 0)
+    {
+        // The size of the background is less than the size of the screen.
+        backgroundPos.x = pos.x * scale.x;
+        backgroundSize.x *= scale.x;
+    }
+    else
+    {
+        // The size of background is the same as the size of screen.
+        backgroundSize.x = DAVA::Core::Instance()->GetVirtualScreenWidth();
+    }
+
+    // The same logic for Y coord.
+    if (pos.y > 0)
+    {
+        backgroundPos.y = pos.y * scale.y;
+        backgroundSize.y *= scale.y;
+    }
+    else
+    {
+        backgroundSize.y = DAVA::Core::Instance()->GetVirtualScreenHeight();
+    }
+
+    background->SetPosition(backgroundPos);
+    background->SetSize(backgroundSize);
+    background->SystemDraw(geometricData);
+
+   	RenderManager::Instance()->PopDrawMatrix();
+    
+    // Draw the control itself.
+	UIControl::SystemDraw(geometricData);
+    
+    // Draw the grid over the control.
+	GridVisualizer::Instance()->DrawGridIfNeeded(rect);
 }
 
 bool ScreenControl::IsPointInside(const Vector2& /*point*/, bool/* expandWithFocus*/)
@@ -55,8 +110,13 @@ bool ScreenControl::IsPointInside(const Vector2& /*point*/, bool/* expandWithFoc
 	return false;
 }
 
-void ScreenControl::SystemDraw(const UIGeometricData &geometricData)
+void ScreenControl::SetScale(const Vector2& value)
 {
-    UIControl::SystemDraw(geometricData);
-    GridVisualizer::Instance()->DrawGridIfNeeded(GetRect());
+    this->scale = value;
 }
+
+void ScreenControl::SetPos(const Vector2& value)
+{
+    this->pos = value;
+}
+

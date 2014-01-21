@@ -206,7 +206,7 @@ void CommandLineManager::PrintResults()
         int32 index = 0;
         for (auto it = errors.begin(); it != endIt; ++it)
         {
-            Logger::Error(Format("[%d] %s\n", index, (*it).c_str()));
+            Logger::Error(Format("[%d] %s\n", index, (*it).c_str()).c_str());
             
             ++index;
         }

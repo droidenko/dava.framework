@@ -33,6 +33,9 @@
 
 #include "Base/BaseTypes.h"
 #include "Entity/SceneSystem.h"
+#include "Scene3D/Components/ComponentHelpers.h"
+#include "Scene3D/Components/LodComponent.h"
+
 
 namespace DAVA
 {
@@ -50,10 +53,15 @@ public:
 	virtual void RemoveEntity(Entity * entity);
 
 	virtual void SetCamera(Camera * camera);
+	inline Camera* GetCamera() const;
+	
+	inline void SetForceUpdateAll();
 
 	static void UpdateEntityAfterLoad(Entity * entity);
 
 	static void MergeChildLods(Entity * toEntity);
+	
+	static void ForceUpdate(Entity* entity, Camera* camera, float32 timeElapsed);
 
 	class LodMerger
 	{
@@ -70,23 +78,49 @@ public:
 
 private:
 	//partial update per frame
-	static const int32 UPDATE_PART_PER_FRAME = 1;
+	static const int32 UPDATE_PART_PER_FRAME = 10;
 	Vector<int32> partialUpdateIndices;
 	int32 currentPartialUpdateIndex;
 	void UpdatePartialUpdateIndices();
-
+	bool forceUpdateAll;
+	
 	
 	Vector<Entity*> entities;
 
-	void UpdateLod(Entity * entity, float32 psLodOffsetSq, float32 psLodMultSq);
-	bool RecheckLod(Entity * entity, float32 psLodOffsetSq, float32 psLodMultSq);
+	static void UpdateLod(Entity * entity, LodComponent* lodComponent, float32 psLodOffsetSq, float32 psLodMultSq, Camera* camera);
+	static bool RecheckLod(Entity * entity, LodComponent* lodComponent, float32 psLodOffsetSq, float32 psLodMultSq, Camera* camera);
 
-	float32 CalculateDistanceToCamera(const Entity * entity, const LodComponent *lodComponent) const;
-	int32 FindProperLayer(float32 distance, const LodComponent *lodComponent, int32 requestedLayersCount);
+	static float32 CalculateDistanceToCamera(const Entity * entity, const LodComponent *lodComponent, Camera* camera);
+	static int32 FindProperLayer(float32 distance, const LodComponent *lodComponent, int32 requestedLayersCount);
+	
+	static inline void ProcessEntity(Entity * entity, float32 psLodOffsetSq, float32 psLodMultSq, Camera* camera);
+	static inline void PorcessEntityRecursive(Entity * entity, float32 psLodOffsetSq, float32 psLodMultSq, Camera* camera);
 
 	Camera * camera;
 };
-
+	
+	
+void LodSystem::ProcessEntity(Entity * entity, float32 psLodOffsetSq, float32 psLodMultSq, Camera* camera)
+{
+	LodComponent * lod = GetLodComponent(entity);
+	if(lod->flags & LodComponent::NEED_UPDATE_AFTER_LOAD)
+	{
+		UpdateEntityAfterLoad(entity);
+	}
+	
+	UpdateLod(entity, lod, psLodOffsetSq, psLodMultSq, camera);
+}
+	
+void LodSystem::SetForceUpdateAll()
+{
+	forceUpdateAll = true;
+}
+	
+Camera* LodSystem::GetCamera() const
+{
+	return camera;
+}
+	
 }
 
 #endif //__DAVAENGINE_SCENE3D_LODSYSTEM_H__

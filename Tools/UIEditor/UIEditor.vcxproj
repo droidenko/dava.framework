@@ -38,6 +38,7 @@
     <ClCompile Include="Classes\Grid\GridController.cpp" />
     <ClCompile Include="Classes\Grid\GridVisualizer.cpp" />
     <ClCompile Include="Classes\Helpers\BackgroundGridWidgetHelper.cpp" />
+    <ClCompile Include="Classes\Helpers\ColorHelper.cpp" />
     <ClCompile Include="Classes\Helpers\ListPropertyGridWidgetHelper.cpp" />
     <ClCompile Include="Classes\Helpers\LocalizationSystemHelper.cpp" />
     <ClCompile Include="Classes\Helpers\PropertiesHelper.cpp" />
@@ -119,7 +120,8 @@
     <ClCompile Include="Classes\UI\PropertyGridWidgets\statepropertygridwidget.cpp" />
     <ClCompile Include="Classes\UI\PropertyGridWidgets\textpropertygridwidget.cpp" />
     <ClCompile Include="Classes\UI\PropertyGridWidgets\uitextfieldpropertygridwidget.cpp" />
-    <ClCompile Include="Classes\UI\QColorButton.cpp" />
+    <ClCompile Include="Classes\UI\QColorWidget.cpp" />
+    <ClCompile Include="Classes\UI\QtColorLineEdit.cpp" />
     <ClCompile Include="Classes\UI\StateComboBoxItemDelegate.cpp" />
     <ClCompile Include="GeneratedFiles\Commands\BaseCommand_moc.cpp" />
     <ClCompile Include="GeneratedFiles\Commands\ChangePropertyCommand_moc.cpp" />
@@ -214,7 +216,8 @@
     <ClCompile Include="GeneratedFiles\UI\PropertyGridWidgets\statepropertygridwidget_moc.cpp" />
     <ClCompile Include="GeneratedFiles\UI\PropertyGridWidgets\textpropertygridwidget_moc.cpp" />
     <ClCompile Include="GeneratedFiles\UI\PropertyGridWidgets\uitextfieldpropertygridwidget_moc.cpp" />
-    <ClCompile Include="GeneratedFiles\UI\QColorButton_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\UI\QColorWidget_moc.cpp" />
+    <ClCompile Include="GeneratedFiles\UI\QtColorLineEdit_moc.cpp" />
     <ClCompile Include="GeneratedFiles\UI\StateComboBoxItemDelegate_moc.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +290,7 @@
     <ClInclude Include="Classes\Grid\GridController.h" />
     <ClInclude Include="Classes\Grid\GridVisualizer.h" />
     <ClInclude Include="Classes\Helpers\BackgroundGridWidgetHelper.h" />
+    <ClInclude Include="Classes\Helpers\ColorHelper.h" />
     <ClInclude Include="Classes\Helpers\ListPropertyGridWidgetHelper.h" />
     <ClInclude Include="Classes\Helpers\LocalizationSystemHelper.h" />
     <ClInclude Include="Classes\Helpers\PropertiesHelper.h" />
@@ -653,16 +657,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">"$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe"   -D_WINDOWS -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -DNDEBUG -D_CRT_SECURE_NO_DEPRECATE -DDAVA_QT -DDAVA_SAVE_TO_YAML  "-I." "-I.\..\..\Sources\Internal" "-I.\..\..\Sources\External" "-I.\..\..\Libs\glew\Include" "-I.\..\..\Libs\include" "-I.\Classes" "-I.\Classes\Commands" "-I.\Classes\Controllers" "-I.\Classes\Helpers" "-I.\Classes\Metadata" "-I.\Classes\Models" "-I.\Classes\UI" "-I.\Classes\UI\Dialogs" "-I.\Classes\UI\PropertyGridWidgets" "-I$(DXSDK_DIR)\include" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtCore" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtNetwork" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtGui" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtOpenGL" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\ActiveQt" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\mkspecs\default" "-Ic:\Program Files\OpenAL 1.1 SDK\include" "-Ic:\Program Files (x86)\OpenAL 1.1 SDK\include" "-I$(Configuration)\." "-I.\GeneratedFiles" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </ClInclude>
-    <ClInclude Include="Classes\UI\QColorButton.h">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">Moc%27ing QColorButton.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">"$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe"   -D_WINDOWS -DWIN32 -DQT_LARGEFILE_SUPPORT -DDAVA_DEBUG -DQT_DLL -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -D_DEBUG -D_CRT_SECURE_NO_DEPRECATE -DDAVA_QT -DDAVA_SAVE_TO_YAML -D_UNICODE -DUNICODE  "-I." "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtCore" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtNetwork" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtGui" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtOpenGL" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\ActiveQt" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\mkspecs\default" "-Ic:\Program Files\OpenAL 1.1 SDK\include" "-Ic:\Program Files (x86)\OpenAL 1.1 SDK\include" "-I$(DXSDK_DIR)\include" "-I.\..\..\Sources\Internal" "-I.\..\..\Sources\External" "-I.\..\..\Libs\include" "-I.\..\..\Libs\glew\include" "-I.\Classes" "-I.\Classes\Helpers" "-I.\Classes\Models" "-I.\Classes\Controllers" "-I.\Classes\Metadata" "-I.\Classes\Commands" "-I.\Classes\UI" "-I.\Classes\UI\Dialogs" "-I.\Classes\UI\PropertyGridWidgets" "-I$Configuration" "-I.\GeneratedFiles" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">Moc%27ing QColorButton.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseQt|Win32'">"$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe"   -D_WINDOWS -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -DNDEBUG -D_CRT_SECURE_NO_DEPRECATE -DDAVA_QT -DDAVA_SAVE_TO_YAML  "-I." "-I.\..\..\Sources\Internal" "-I.\..\..\Sources\External" "-I.\..\..\Libs\glew\Include" "-I.\..\..\Libs\include" "-I.\Classes" "-I.\Classes\Commands" "-I.\Classes\Controllers" "-I.\Classes\Helpers" "-I.\Classes\Metadata" "-I.\Classes\Models" "-I.\Classes\UI" "-I.\Classes\UI\Dialogs" "-I.\Classes\UI\PropertyGridWidgets" "-I$(DXSDK_DIR)\include" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtCore" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtNetwork" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtGui" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\QtOpenGL" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\include\ActiveQt" "-I$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\mkspecs\default" "-Ic:\Program Files\OpenAL 1.1 SDK\include" "-Ic:\Program Files (x86)\OpenAL 1.1 SDK\include" "-I$(Configuration)\." "-I.\GeneratedFiles" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
-    </ClInclude>
+    <ClInclude Include="Classes\UI\QColorWidget.h" />
+    <ClInclude Include="Classes\UI\QtColorLineEdit.h" />
     <ClInclude Include="Classes\UI\StateComboBoxItemDelegate.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">$(QT_HOME)\Desktop\Qt\4.8.1\msvc2010\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='DebugQt|Win32'">Moc%27ing StateComboBoxItemDelegate.h...</Message>
