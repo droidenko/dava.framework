@@ -1,6 +1,8 @@
 package com.dava.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.bda.controller.ControllerListener;
 import com.bda.controller.StateEvent;
@@ -115,6 +117,9 @@ public class JNIGLSurfaceView extends GLSurfaceView
 		setRenderMode(RENDERMODE_CONTINUOUSLY);
 	};
 
+	Map<Integer, Integer> tIdMap = new HashMap<Integer, Integer>();
+	int nexttId = 1;
+	
 	class InputRunnable implements Runnable
 	{
 		class InputEvent
@@ -200,23 +205,45 @@ public class JNIGLSurfaceView extends GLSurfaceView
 	        	events.add(new InputEvent(7, event.getAxisValue(com.bda.controller.MotionEvent.AXIS_RTRIGGER, i), 0, InputDevice.SOURCE_CLASS_JOYSTICK));
     		}
     	}
+    	
+    	int GetTId(int id) {
+    		if (tIdMap.containsKey(id))
+    			return tIdMap.get(id);
+    		
+    		int tId = nexttId++;
+    		tIdMap.put(id, tId);
+    		return tId;
+    	}
+    	
+    	void RemoveTId(int id) {
+    		tIdMap.remove(id);
+    	}
 
 		@Override
-		public void run()
-		{
-			for (int i = 0; i < events.size(); ++i)
-			{
+		public void run() {
+			for (int i = 0; i < events.size(); ++i) {
 				InputEvent event = events.get(i);
-				nativeOnInput(action, event.id + 1, event.x, event.y, time, event.source, event.tapCount);
+				
+				if (event.source == InputDevice.SOURCE_CLASS_JOYSTICK) {
+					nativeOnInput(action, event.id + 1, event.x, event.y, time, event.source, event.tapCount);
+				} else {
+					nativeOnInput(action, GetTId(event.id), event.x, event.y, time, event.source, event.tapCount);
+					
+					if (action == MotionEvent.ACTION_CANCEL ||
+						action == MotionEvent.ACTION_UP ||
+						action == MotionEvent.ACTION_POINTER_1_UP ||
+						action == MotionEvent.ACTION_POINTER_2_UP ||
+						action == MotionEvent.ACTION_POINTER_3_UP) {
+						RemoveTId(event.id);
+					}
+				}
 			}
 		}
     }
 
-    class KeyInputRunnable implements Runnable
-    {
+    class KeyInputRunnable implements Runnable {
     	int keyCode;
-    	public KeyInputRunnable(int keyCode)
-    	{
+    	public KeyInputRunnable(int keyCode) {
     		this.keyCode = keyCode;
     	}
     	
