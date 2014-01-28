@@ -42,10 +42,10 @@ public:
 
 	virtual const DAVA::MetaInfo * MetaInfo() const;
 
-protected:
 	void *object;
 	const DAVA::InspColl *collection;
 
+protected:
 	virtual QVariant GetValueInternal() const;
 };
 

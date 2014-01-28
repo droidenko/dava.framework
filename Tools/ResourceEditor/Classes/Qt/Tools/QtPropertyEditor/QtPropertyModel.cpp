@@ -199,11 +199,6 @@ QtPropertyData* QtPropertyModel::itemFromIndex(const QModelIndex & index) const
 		if(NULL != parent)
 		{
 			ret = parent->ChildGet(index.row());
-
-			if(NULL != ret)
-			{
-				ret = ret->GetProxyOriginal();
-			}
 		}
 	}
 
@@ -374,15 +369,6 @@ void QtPropertyModel::DataRemoved()
 	endRemoveRows();
 }
 
-void QtPropertyModel::ExpandStateChanged(QtPropertyData *data)
-{
-	if(NULL != data)
-	{
-		QModelIndex index = indexFromItem(data);
-		emit PropertyExpanded(index, data->IsExpanded());
-	}
-}
-
 void QtPropertyModel::SetEditTracking(bool enabled)
 {
 	trackEdit = enabled;
@@ -391,79 +377,4 @@ void QtPropertyModel::SetEditTracking(bool enabled)
 bool QtPropertyModel::GetEditTracking()
 {
 	return trackEdit;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// 
-// Filtering model
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-QtPropertyFilteringModel::QtPropertyFilteringModel(QtPropertyModel *_propModel, QObject *parent /* = NULL */)
-: QSortFilterProxyModel(parent)
-, propModel(_propModel)
-{
-	setSourceModel(propModel);
-}
-
-bool QtPropertyFilteringModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
-{
-	if(NULL != propModel)
-	{
-		// check self accept
-		if(selfAcceptRow(sourceRow, sourceParent))
-		{
-			return true;
-		}
-
-		//accept if any of the parents is accepted
-		QModelIndex parent = sourceParent;
-		while(parent.isValid())
-		{
-			if(selfAcceptRow(parent.row(), parent.parent()))
-			{
-				return true;
-			}
-
-			parent = parent.parent();
-		}
-
-		// accept if any child is accepted
-		if(childrenAcceptRow(sourceRow, sourceParent))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-QtPropertyData* QtPropertyFilteringModel::itemFromIndex(const QModelIndex &index) const
-{
-	return propModel->itemFromIndex(mapToSource(index));
-}
-
-bool QtPropertyFilteringModel::selfAcceptRow(int sourceRow, const QModelIndex &sourceParent) const
-{
-	return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
-}
-
-bool QtPropertyFilteringModel::childrenAcceptRow(int sourceRow, const QModelIndex &sourceParent) const
-{
-	bool ret = false;
-
-	QModelIndex index = propModel->index(sourceRow, 0, sourceParent);
-	if(propModel->rowCount(index) > 0)
-	{
-		for(int i = 0; i < propModel->rowCount(index); i++)
-		{
-			if(selfAcceptRow(i, index) || childrenAcceptRow(i, index))
-			{
-				ret = true;
-				break;
-			}
-		}
-	}
-
-	return ret;
 }

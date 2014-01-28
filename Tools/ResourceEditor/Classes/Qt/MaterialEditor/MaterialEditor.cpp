@@ -29,9 +29,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QAction>
+#include <QVariant>
 
 #include "MaterialEditor.h"
 #include "ui_materialeditor.h"
+
+#include "MaterialModel.h"
+#include "MaterialFilterModel.h"
 
 #include "Main/mainwindow.h"
 #include "Main/QtUtils.h"
@@ -39,6 +44,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Tools/QtPropertyEditor/QtPropertyData/QtPropertyDataInspMember.h"
 #include "Tools/QtPropertyEditor/QtPropertyData/QtPropertyDataInspDynamic.h"
 #include "Tools/QtWaitDialog/QtWaitDialog.h"
+
+#include "CommandLine/TextureDescriptor/TextureDescriptorUtils.h"
 
 MaterialEditor::MaterialEditor(QWidget *parent /* = 0 */)
 : QDialog(parent)
@@ -59,6 +66,7 @@ MaterialEditor::MaterialEditor(QWidget *parent /* = 0 */)
 	QObject::connect(SceneSignals::Instance(), SIGNAL(Activated(SceneEditor2 *)), this, SLOT(sceneActivated(SceneEditor2 *)));
 	QObject::connect(SceneSignals::Instance(), SIGNAL(Deactivated(SceneEditor2 *)), this, SLOT(sceneDeactivated(SceneEditor2 *)));
 	QObject::connect(SceneSignals::Instance(), SIGNAL(CommandExecuted(SceneEditor2 *, const Command2*, bool)), this, SLOT(commandExecuted(SceneEditor2 *, const Command2 *, bool)));
+	QObject::connect(SceneSignals::Instance(), SIGNAL(SelectionChanged(SceneEditor2 *, const EntityGroup *, const EntityGroup *)), this, SLOT( autoExpand() ));
 	
 	// material tree
 	QObject::connect(ui->materialTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(materialSelected(const QItemSelection &, const QItemSelection &)));
@@ -76,6 +84,12 @@ MaterialEditor::MaterialEditor(QWidget *parent /* = 0 */)
 	DAVA::VariantType v2 = posSaver.LoadValue("splitPosPreview");
 	if(v1.GetType() == DAVA::VariantType::TYPE_INT32) ui->materialProperty->header()->resizeSection(0, v1.AsInt32());
 	if(v2.GetType() == DAVA::VariantType::TYPE_INT32) ui->materialProperty->header()->resizeSection(1, v2.AsInt32());
+
+    expandMap[MaterialFilteringModel::SHOW_ALL] = false;
+    expandMap[MaterialFilteringModel::SHOW_ONLY_INSTANCES] = true;
+    expandMap[MaterialFilteringModel::SHOW_INSTANCES_AND_MATERIALS] = true;
+
+    initActions();
 }
 
 MaterialEditor::~MaterialEditor()
@@ -88,6 +102,46 @@ MaterialEditor::~MaterialEditor()
 	posSaver.SaveValue("splitPosPreview", v2);
 
 	posSaver.SaveState(ui->splitter);
+}
+
+void MaterialEditor::initActions()
+{
+    ui->actionShowAll->setData( MaterialFilteringModel::SHOW_ALL );
+    ui->actionInstances->setData( MaterialFilteringModel::SHOW_ONLY_INSTANCES );
+    ui->actionMaterialsInstances->setData( MaterialFilteringModel::SHOW_INSTANCES_AND_MATERIALS );
+
+    const int filterType =  MaterialFilteringModel::SHOW_ALL;
+    foreach( QAction *action, ui->filterType->actions() )
+    {
+        connect( action, SIGNAL( triggered() ), SLOT( onFilterChanged() ) );
+        if ( action->data().toInt() == filterType )
+            action->activate( QAction::Trigger );
+    }
+
+    connect( ui->actionAutoExpand, SIGNAL( triggered( bool ) ), SLOT( onCurrentExpandModeChange( bool ) ) );
+}
+
+void MaterialEditor::autoExpand()
+{
+    QAction *action = ui->filterType->checkedAction();
+    if ( action == NULL )
+        return ;
+    const int filterType = action->data().toInt();
+    
+    if ( expandMap[filterType] )
+        ui->materialTree->expandAll();
+}
+
+void MaterialEditor::onFilterChanged()
+{
+    QAction *action = ui->filterType->checkedAction();
+    if ( action == NULL )
+        return ;
+    const int filterType = action->data().toInt();
+    ui->materialTree->setFilterType( filterType );
+
+    ui->actionAutoExpand->setChecked( expandMap[filterType] );
+    onCurrentExpandModeChange( expandMap[filterType] );
 }
 
 void MaterialEditor::SelectMaterial(DAVA::NMaterial *material)
@@ -188,6 +242,24 @@ void MaterialEditor::commandExecuted(SceneEditor2 *scene, const Command2 *comman
 	{
 		SetCurMaterial(curMaterial);
 	}
+}
+
+void MaterialEditor::onCurrentExpandModeChange( bool mode )
+{
+    QAction *action = ui->filterType->checkedAction();
+    if ( action == NULL )
+        return ;
+    const int filterType = action->data().toInt();
+    expandMap[filterType] = mode;
+
+    if ( mode )
+    {
+        ui->materialTree->expandAll();
+    }
+    else
+    {
+        ui->materialTree->collapseAll();
+    }
 }
 
 void MaterialEditor::showEvent(QShowEvent * event)
@@ -503,6 +575,12 @@ void MaterialEditor::OnPropertyEdited(const QModelIndex &index)
 	{
 		QtPropertyData *propData = editor->GetProperty(index);
 
+        QVariant v = CheckForTextureDescriptor(propData->GetValue());
+        if (v.type() != QVariant::Invalid)
+        {
+            propData->SetValue(v);
+        }
+
 		if(NULL != propData)
 		{
 			Command2 *command = (Command2 *) propData->CreateLastCommand();
@@ -518,4 +596,23 @@ void MaterialEditor::OnPropertyEdited(const QModelIndex &index)
 	}
 
 	ui->materialTree->Update();
+}
+
+QVariant MaterialEditor::CheckForTextureDescriptor(const QVariant& value)
+{
+    if (value.type() == QVariant::String)
+    {
+        String s = value.toString().toStdString();
+        FilePath fp = FilePath(s);
+        if (!fp.IsEmpty() && fp.Exists())
+        {
+            if (fp.GetExtension() == ".png")
+            {
+                TextureDescriptorUtils::CreateDescriptorIfNeed(fp);
+                FilePath texFile = TextureDescriptor::GetDescriptorPathname(fp);
+                return QVariant(QString::fromStdString(texFile.GetAbsolutePathname()));
+            }
+        }
+    }
+    return QVariant();
 }

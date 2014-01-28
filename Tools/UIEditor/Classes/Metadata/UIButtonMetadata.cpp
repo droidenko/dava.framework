@@ -227,6 +227,7 @@ void UIButtonMetadata::SetFontColor(const QColor& value)
 	{
 		GetActiveUIButton()->SetStateFontColor(this->uiControlStates[i], ColorHelper::QTColorToDAVAColor(value));
 	}
+
     UpdatePropertyDirtyFlagForFontColor();
 }
 
@@ -390,8 +391,6 @@ void UIButtonMetadata::SetSprite(const QString& value)
 		else
 		{
 			GetActiveUIButton()->SetStateSprite(this->uiControlStates[i], value.toStdString());
-            Sprite* newSprite = GetActiveUIButton()->GetStateSprite(this->uiControlStates[i]);
-            ApplyPixelization(newSprite);
 		}
 	}
 
@@ -515,6 +514,7 @@ void UIButtonMetadata::SetColor(const QColor& value)
 	{
 		GetActiveUIButton()->SetStateColor(this->uiControlStates[i], ColorHelper::QTColorToDAVAColor(value));
 	}
+    
     UpdatePropertyDirtyFlagForColor();
 }
 
@@ -648,6 +648,7 @@ void UIButtonMetadata::SetAlign(int value)
 	{
 		GetActiveUIButton()->SetStateAlign(this->uiControlStates[i], value);
 	}
+
     UpdatePropertyDirtyFlagForAlign();
 }
 
@@ -697,7 +698,12 @@ void UIButtonMetadata::SetTextAlign(int align)
         return;
     }
 	
-	GetActiveUIButton()->GetStateTextControl(GetActiveStateIndex())->SetTextAlign(align);
+    UIStaticText* buttonText = GetActiveUIButton()->GetStateTextControl(GetActiveStateIndex());
+    if (buttonText)
+    {
+        buttonText->SetTextAlign(align);
+    }
+
 	UpdatePropertyDirtyFlagForTextAlign();
 }
 
@@ -712,6 +718,7 @@ void UIButtonMetadata::SetSpriteModification(int value)
 	{
 		GetActiveUIButton()->SetStateModification(this->uiControlStates[i],(UIControlBackground::eColorInheritType)value);
 	}
+
 	UpdatePropertyDirtyFlagForSpriteModification();
 }
 

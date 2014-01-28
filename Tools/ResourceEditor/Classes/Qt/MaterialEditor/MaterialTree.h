@@ -31,9 +31,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QWidget>
 #include <QTreeView>
+#include <QMap>
+
 #include "MaterialModel.h"
 
 class EntityGroup;
+class MaterialFilteringModel;
 
 class MaterialTree : public QTreeView
 {
@@ -51,16 +54,18 @@ public:
 
 	void Update();
 
-signals:
+    int getFilterType() const;
+    void setFilterType( int filterType );
 
+signals:
 
 public slots:
 	void ShowContextMenu(const QPoint &pos);
 	void OnCommandExecuted(SceneEditor2 *scene, const Command2 *command, bool redo);
 	void OnStructureChanged(SceneEditor2 *scene, DAVA::Entity *parent);
 	void OnSelectionChanged(SceneEditor2 *scene, const EntityGroup *selected, const EntityGroup *deselected);
-
 	void OnSelectEntities();
+    void OnAssignToSelection();
 
 protected:
 	MaterialFilteringModel *treeModel;

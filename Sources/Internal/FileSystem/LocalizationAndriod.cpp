@@ -26,34 +26,45 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
-#include "SimpleMaterialItem.h"
+#include "FileSystem/LocalizationAndroid.h"
+#include "FileSystem/LocalizationSystem.h"
+#include "ExternC/AndroidLayer.h"
 
-Q_DECLARE_METATYPE(DAVA::NMaterial *)
-
-
-SimpleMaterialItem::SimpleMaterialItem(DAVA::NMaterial * _material)
-    : QStandardItem()
-    , material(_material)
+namespace DAVA
 {
-	DVASSERT(material);
 
-	setEditable(false);
-	setText(material->GetName().c_str());
-    setData(QVariant::fromValue<DAVA::NMaterial *>(material));
+jclass JniLocalization::gJavaClass = NULL;
+const char* JniLocalization::gJavaClassName = NULL;
 
-    static QIcon icon(QString::fromUtf8(":/QtIcons/materialeditor.png"));
-    setIcon(icon);
+jclass JniLocalization::GetJavaClass() const
+{
+	return gJavaClass;
 }
 
-SimpleMaterialItem::~SimpleMaterialItem()
-{ }
-
-
-DAVA::NMaterial * SimpleMaterialItem::GetMaterial() const
+const char* JniLocalization::GetJavaClassName() const
 {
-	return material;
+	return gJavaClassName;
 }
 
+String JniLocalization::GetLocale()
+{
+	jmethodID mid = GetMethodID("GetLocale", "()Ljava/lang/String;");
+	if (mid)
+	{
+		jobject obj = GetEnvironment()->CallStaticObjectMethod(GetJavaClass(), mid);
+		char str[256] = {0};
+		CreateStringFromJni(env, jstring(obj), str);
+		String locale = str;
+		return locale;
+	}
 
+	return "en";
+}
 
+void LocalizationAndroid::SelecePreferedLocalization()
+{
+	JniLocalization jniLocalization;
+	LocalizationSystem::Instance()->SetCurrentLocale(jniLocalization.GetLocale());
+}
 
+};

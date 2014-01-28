@@ -45,8 +45,6 @@ TransformComponent::TransformComponent()
 	worldMatrix = Matrix4::IDENTITY;
 	parentMatrix = 0;
 	parent = 0;
-
-	GlobalEventSystem::Instance()->Event(0, EventSystem::LOCAL_TRANSFORM_CHANGED);
 }
     
 TransformComponent::~TransformComponent()

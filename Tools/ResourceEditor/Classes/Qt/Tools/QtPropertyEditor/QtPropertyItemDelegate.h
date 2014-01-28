@@ -35,7 +35,6 @@
 
 class QtPropertyData;
 class QtPropertyModel;
-class QtPropertyFilteringModel;
 
 class QtPropertyItemDelegate : public QStyledItemDelegate
 {
@@ -47,6 +46,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	bool editorEvent(QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index);
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
@@ -54,9 +54,12 @@ public:
 
 public slots:
 	bool helpEvent(QHelpEvent * event, QAbstractItemView * view, const QStyleOptionViewItem & option, const QModelIndex & index);
+	void showButtons(QtPropertyData *data);
+	void invalidateButtons();
 
 protected:
 	QtPropertyModel *model;
+	QtPropertyData *lastHoverData;
 
 	enum OptionalButtonsType
 	{
@@ -65,6 +68,7 @@ protected:
 	};
 
 	void drawOptionalButtons(QPainter *painter, QStyleOptionViewItem &option, const QModelIndex &index, OptionalButtonsType type) const;
+	void showOptionalButtons(QtPropertyData *data, bool show);
 };
 
 #endif // __QT_PROPERY_ITEM_DELEGATE_H__

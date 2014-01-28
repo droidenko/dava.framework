@@ -389,7 +389,7 @@ void RenderManager::SetRenderOrientation(int32 orientation)
     retScreenHeight = frameBufferHeight;
 	
     
-    SetDynamicParam(PARAM_PROJ, &renderer2d.projMatrix, (pointer_size)0);
+    SetDynamicParam(PARAM_PROJ, &renderer2d.projMatrix, UPDATE_SEMANTIC_ALWAYS);
 
 //	if (orientation != Core::SCREEN_ORIENTATION_TEXTURE) 
 //	{

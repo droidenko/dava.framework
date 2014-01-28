@@ -54,6 +54,8 @@ static int32 fboCounter = 0;
 Vector<Vector2> Sprite::clippedTexCoords;
 Vector<Vector2> Sprite::clippedVertices;
 
+Mutex Sprite::spriteMapMutex;
+
 Sprite::Sprite()
 {
 	textures = 0;
@@ -151,7 +153,9 @@ Sprite* Sprite::PureCreate(const FilePath & spriteName, Sprite* forPointer)
 	SafeRelease(fp);
 
 //	Logger::FrameworkDebug("Adding to map for key: %s", spr->relativePathname.c_str());
-	spriteMap[FILEPATH_MAP_KEY(spr->relativePathname)] = spr;	
+    spriteMapMutex.Lock();
+	spriteMap[FILEPATH_MAP_KEY(spr->relativePathname)] = spr;
+    spriteMapMutex.Unlock();
 //	Logger::FrameworkDebug("Resetting sprite");
 	spr->Reset();
 //	Logger::FrameworkDebug("Returning pointer");
@@ -161,15 +165,20 @@ Sprite* Sprite::PureCreate(const FilePath & spriteName, Sprite* forPointer)
 
 Sprite* Sprite::GetSpriteFromMap(const FilePath &pathname)
 {
+    Sprite * ret = NULL;
+
+    spriteMapMutex.Lock();
+
 	SpriteMap::iterator it = spriteMap.find(FILEPATH_MAP_KEY(pathname));
 	if (it != spriteMap.end())
 	{
 		Sprite *spr = it->second;
 		spr->Retain();
-		return spr;
+		ret = spr;
 	}
+    spriteMapMutex.Unlock();
 
-	return NULL;
+	return ret;
 }
 
 FilePath Sprite::GetScaledName(const FilePath &spriteName)
@@ -521,7 +530,10 @@ void Sprite::InitFromTexture(Texture *fromTexture, int32 xOffset, int32 yOffset,
 
 	// DF-1984 - Set available sprite relative path name here. Use FBO sprite name only if sprite name is empty.
 	this->relativePathname = spriteName.IsEmpty() ? Format("FBO sprite %d", fboCounter) : spriteName;
+
+    spriteMapMutex.Lock();
 	spriteMap[FILEPATH_MAP_KEY(this->relativePathname)] = this;
+    spriteMapMutex.Unlock();
 
 	fboCounter++;
 	this->Reset();
@@ -572,8 +584,11 @@ int32 Sprite::Release()
 {
 	if(GetRetainCount() == 1)
 	{
-        	SafeRelease(spriteRenderObject);
+		SafeRelease(spriteRenderObject);
+
+        spriteMapMutex.Lock();
 		spriteMap.erase(FILEPATH_MAP_KEY(relativePathname));
+        spriteMapMutex.Unlock();
 	}
 
 	return BaseObject::Release();
@@ -1453,14 +1468,14 @@ void Sprite::PrepareForNewSize()
 	int pos = (int)pathname.find(Core::Instance()->GetResourceFolder(Core::Instance()->GetBaseResourceIndex()));
 	String scaledName = pathname.substr(0, pos) + Core::Instance()->GetResourceFolder(Core::Instance()->GetDesirableResourceIndex()) + pathname.substr(pos + Core::Instance()->GetResourceFolder(Core::Instance()->GetBaseResourceIndex()).length());
 
-	Logger::Instance()->FrameworkDebug("Seraching for file: %s", scaledName.c_str());
+	Logger::FrameworkDebug("Seraching for file: %s", scaledName.c_str());
 
 
 	File *fp = File::Create(scaledName, File::READ|File::OPEN);
 
 	if (!fp)
 	{
-		Logger::Instance()->FrameworkDebug("Can't find file: %s", scaledName.c_str());
+		Logger::FrameworkDebug("Can't find file: %s", scaledName.c_str());
 		return;
 	}
 	SafeRelease(fp);
@@ -1468,9 +1483,11 @@ void Sprite::PrepareForNewSize()
 	Vector2 tempPivotPoint = defaultPivotPoint;
 
 	Clear();
-	Logger::FrameworkDebug("erasing from sprite from map");
-
+    
+    spriteMapMutex.Lock();
+//	Logger::FrameworkDebug("erasing from sprite from map");
 	spriteMap.erase(FILEPATH_MAP_KEY(relativePathname));
+    spriteMapMutex.Unlock();
 
 	textures = 0;
 	textureNames = 0;
@@ -1509,6 +1526,8 @@ void Sprite::ValidateForSize()
 {
 	Logger::FrameworkDebug("--------------- Sprites validation for new resolution ----------------");
 	List<Sprite*> spritesToReload;
+
+    spriteMapMutex.Lock();
 	for(SpriteMap::iterator it = spriteMap.begin(); it != spriteMap.end(); ++it)
 	{
 		Sprite *sp = it->second;
@@ -1517,6 +1536,8 @@ void Sprite::ValidateForSize()
 			spritesToReload.push_back(sp);
 		}
 	}
+    spriteMapMutex.Unlock();
+
 	for(List<Sprite*>::iterator it = spritesToReload.begin(); it != spritesToReload.end(); ++it)
 	{
 		(*it)->PrepareForNewSize();
@@ -1530,11 +1551,15 @@ void Sprite::DumpSprites()
 {
 	Logger::FrameworkDebug("============================================================");
 	Logger::FrameworkDebug("--------------- Currently allocated sprites ----------------");
+
+    spriteMapMutex.Lock();
 	for(SpriteMap::iterator it = spriteMap.begin(); it != spriteMap.end(); ++it)
 	{
 		Sprite *sp = it->second; //[spriteDict objectForKey:[txKeys objectAtIndex:i]];
 		Logger::FrameworkDebug("name:%s count:%d size(%.0f x %.0f)", sp->relativePathname.GetAbsolutePathname().c_str(), sp->GetRetainCount(), sp->size.dx, sp->size.dy);
 	}
+    spriteMapMutex.Unlock();
+
 	Logger::FrameworkDebug("============================================================");
 }
 

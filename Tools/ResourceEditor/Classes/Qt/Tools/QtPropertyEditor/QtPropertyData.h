@@ -100,8 +100,6 @@ public:
 
 	virtual const DAVA::MetaInfo* MetaInfo() const;
 
-	virtual QtPropertyData* GetProxyOriginal();
-
 	// reset background/foreground/font settings
 	void ResetStyle();
 
@@ -139,12 +137,6 @@ public:
 	void ChildRemove(int i);
 	void ChildRemoveAll();
 
-	// expand/collapse
-	void SetExpanded(bool expanded);
-	bool IsExpanded() const;
-	void SetExpandable(bool expandable);
-	bool IsExpandable() const;
-
 	// Optional widgets
 	int GetButtonsCount() const;
 	QtPropertyToolButton* GetButton(int index = 0);
@@ -169,9 +161,6 @@ protected:
 	QtPropertyModel *model;
 	QtPropertyData *parent;
 	UserData* userData;
-
-	bool expanded;
-	bool expandable;
 
 	QList<QString> childrenNames;
 	QList<QtPropertyData*> childrenData;
@@ -220,26 +209,8 @@ public:
 		return propertyData;
 	}
 
-	virtual bool event(QEvent * event)
-	{
-		if(eventsPassThrought)
-		{
-			int type = event->type();
+	virtual bool event(QEvent * event);
 
-			if( type != QEvent::Enter &&
-				type != QEvent::Leave &&
-				type != QEvent::MouseMove)
-			{
-				QToolButton::event(event);
-			}
-
-			return false;
-		}
-		
-		return QToolButton::event(event);
-	}
-
-	QModelIndex activeIndex;
 	bool eventsPassThrought;
 	bool overlayed;
 

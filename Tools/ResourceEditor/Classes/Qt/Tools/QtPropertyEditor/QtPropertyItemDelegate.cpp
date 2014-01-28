@@ -38,6 +38,7 @@
 QtPropertyItemDelegate::QtPropertyItemDelegate(QtPropertyModel *_model, QWidget *parent /* = 0 */)
 	: QStyledItemDelegate(parent)
 	, model(_model)
+	, lastHoverData(NULL)
 { }
 
 QtPropertyItemDelegate::~QtPropertyItemDelegate()
@@ -108,6 +109,20 @@ void QtPropertyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &i
 	{
 		QStyledItemDelegate::setEditorData(editor, index);
 	}
+}
+
+bool QtPropertyItemDelegate::editorEvent(QEvent * event, QAbstractItemModel * _model, const QStyleOptionViewItem & option, const QModelIndex & index)
+{
+	if(event->type() == QEvent::MouseMove)
+	{
+		QtPropertyData* data = model->itemFromIndex(index);
+		if(data != lastHoverData)
+		{
+			showButtons(data);
+		}
+	}
+
+	return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
 void QtPropertyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *_model, const QModelIndex &index) const
@@ -201,15 +216,14 @@ void QtPropertyItemDelegate::drawOptionalButtons(QPainter *painter, QStyleOption
 				owXPos -= btn->width();
 				owYPos = opt.rect.y() + (opt.rect.height() - btn->height()) / 2;
 
-				if(index != btn->activeIndex)
+				if(btn->isVisible())
 				{
-					QPixmap pix = QPixmap::grabWidget(btn);
-					//pix.save(QString().sprintf("D:/btn_pix_%p.png", btn));
-					painter->drawPixmap(owXPos, owYPos, pix);
+					btn->move(owXPos, owYPos);
 				}
 				else
 				{
-					btn->move(owXPos, owYPos);
+					QPixmap pix = QPixmap::grabWidget(btn);
+					painter->drawPixmap(owXPos, owYPos, pix);
 				}
 
 				owXPos -= owSpacing;
@@ -220,5 +234,40 @@ void QtPropertyItemDelegate::drawOptionalButtons(QPainter *painter, QStyleOption
 		{
 			opt.rect.setRight(owXPos);
 		}
+	}
+}
+
+void QtPropertyItemDelegate::showButtons(QtPropertyData *data)
+{
+	showOptionalButtons(lastHoverData, false);
+	showOptionalButtons(data, true);
+
+	lastHoverData = data;
+}
+
+void QtPropertyItemDelegate::showOptionalButtons(QtPropertyData *data, bool show)
+{
+	if(NULL != data)
+	{
+		for(int i = 0; i < data->GetButtonsCount(); ++i)
+		{
+			if(show)
+			{
+				data->GetButton(i)->show();
+			}
+			else
+			{
+				data->GetButton(i)->hide();
+			}
+		}
+	}
+}
+
+void QtPropertyItemDelegate::invalidateButtons()
+{
+	if(NULL != lastHoverData)
+	{
+		showOptionalButtons(lastHoverData, false);
+		lastHoverData = NULL;
 	}
 }

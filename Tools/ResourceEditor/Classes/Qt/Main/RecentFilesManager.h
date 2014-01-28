@@ -46,11 +46,7 @@ public:
 	DAVA::Vector<String> GetRecentFiles();
 
 	void SetFileToRecent(const DAVA::String&);
-
-protected:
-	
-	static const int RECENT_FILES_MAX_COUNT = 5;
-
+    
 };
 
 #endif // __RECENT_FILES_MANAGER_H__

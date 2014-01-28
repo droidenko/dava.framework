@@ -30,6 +30,7 @@
 
 #include "DAVAEngine.h"
 #include <QApplication>
+#include <QCryptographicHash>
 
 #include "version.h"
 #include "Main/mainwindow.h"
@@ -46,6 +47,8 @@
 #include "TextureBrowser/TextureCache.h"
 
 #include "Qt/Settings/SettingsManager.h"
+#include "Qt/Tools/RunGuard/RunGuard.h"
+
 #include "Deprecated/EditorConfig.h"
 #include "Deprecated/SceneValidator.h"
 #include "Deprecated/TextureSquarenessChecker.h"
@@ -71,6 +74,7 @@ void UnpackHelpDoc();
 int main(int argc, char *argv[])
 {
 	int ret = 0;
+
     QApplication a(argc, argv);
 
 #if defined (__DAVAENGINE_MACOS__)
@@ -86,12 +90,18 @@ int main(int argc, char *argv[])
 	DVASSERT(false && "Wrong platform")
 #endif
 
+// GUI instance is already started
+        
+
 #ifdef __DAVAENGINE_BEAST__
 	new BeastProxyImpl();
 #else 
 	new BeastProxy();
 #endif //__DAVAENGINE_BEAST__
 
+    const QString appUid = "{AA5497E4-6CE2-459A-B26F-79AAF05E0C6B}";
+    const QString appUidPath = QCryptographicHash::hash( (appUid + a.applicationDirPath() ).toUtf8(), QCryptographicHash::Sha1 ).toHex();
+    RunGuard runGuard( appUidPath );
 	CommandLineManager cmdLine;
 
 	if(cmdLine.IsEnabled())
@@ -122,7 +132,7 @@ int main(int argc, char *argv[])
 		SafeDelete(davaGL);
 		SceneValidator::Instance()->Release();
 	}
-	else
+	else if ( runGuard.tryToRun() )
 	{
 		new SettingsManager();
 		new EditorConfig();

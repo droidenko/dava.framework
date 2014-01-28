@@ -52,7 +52,7 @@ public:
 	DAVA::NMaterial * GetMaterial() const;
 
 	void SetFlag(MaterialFlag flag, bool set);
-	bool GetFlag(MaterialFlag flag);
+	bool GetFlag(MaterialFlag flag) const;
     
 private:
     DAVA::NMaterial * material;

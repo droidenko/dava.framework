@@ -987,9 +987,6 @@
     <ClInclude Include="..\..\Sources\Internal\Render\Material\NMaterialConsts.h">
       <Filter>Internal\Render\Material</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Sources\Internal\Render\ShaderUniformArray.h">
-      <Filter>Internal\Render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Sources\Internal\Entity\Component.h">
       <Filter>Internal\Entity</Filter>
     </ClInclude>

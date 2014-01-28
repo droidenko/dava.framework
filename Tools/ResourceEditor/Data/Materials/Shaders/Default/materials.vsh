@@ -142,9 +142,27 @@ void main()
 	vec4 vecPos = (modelViewProjectionMatrix * inPosition);
 	gl_Position = vec4(vecPos.xy, vecPos.w - 0.0001, vecPos.w);
 #elif defined(SPEED_TREE_LEAF)
+    //mat4 mvp = worldMatrix * viewMatrix * projectionMatrix;
+    //mat4 mvp = projectionMatrix * modelViewMatrix;
+    //gl_Position = mvp * inPosition;
+    
+//    vec3 position;
+//    vec3 tangentInCameraSpace = (worldScale * inTangent + worldTranslate);
+//    float distance = length(tangentInCameraSpace);
+//    if (distance > 40.0)
+//    {
+//        position = worldScale * ((inPosition.xyz - inTangent) * (40.0 / distance)) + worldTranslate;
+//    }
+//    else
+//    {
+//        position = worldScale * (inPosition.xyz - inTangent) + worldTranslate;
+//    }
+//    
+//    //    vec4 position = vec4(worldScale * (inPosition.xyz - inTangent) + worldTranslate, inPosition.w);
+//    gl_Position = projectionMatrix * vec4(position, inPosition.w) + modelViewProjectionMatrix * vec4(inTangent, 0.0);
+    
 	gl_Position = projectionMatrix * vec4(worldScale * (inPosition.xyz - inTangent) + worldTranslate, inPosition.w) + modelViewProjectionMatrix * vec4(inTangent, 0.0);
 #else
-    //mat4 mvp = projectionMatrix * viewMatrix * worldMatrix;
 	gl_Position = modelViewProjectionMatrix * inPosition;
 #endif
 
@@ -153,8 +171,8 @@ void main()
     vec3 normal = normalize(normalMatrix * inNormal); // normal in eye coordinates
     vec3 lightDir = lightPosition0 - eyeCoordsPosition;
     
-    float attenuation = lightIntensity0;
 #if defined(DISTANCE_ATTENUATION)
+    float attenuation = lightIntensity0;
     float distAttenuation = length(lightDir);
     attenuation /= (distAttenuation * distAttenuation); // use inverse distance for distance attenuation
 #endif
@@ -166,7 +184,7 @@ void main()
     reflectionDirectionInWorldSpace = reflect(viewDirectionInWorldSpace, normalDirectionInWorldSpace);
 #endif
     
-    varDiffuseColor = max(0.0, dot(normal, lightDir)) * attenuation;
+    varDiffuseColor = max(0.0, dot(normal, lightDir));
 
     // Blinn-phong reflection
     vec3 E = normalize(-eyeCoordsPosition);
@@ -181,7 +199,7 @@ void main()
         float nDotHV = max(0.0, dot(E, R));
     */
     
-    varSpecularColor = pow(nDotHV, materialSpecularShininess) * attenuation;
+    varSpecularColor = pow(nDotHV, materialSpecularShininess);
 #endif
 
 #if defined(PIXEL_LIT)

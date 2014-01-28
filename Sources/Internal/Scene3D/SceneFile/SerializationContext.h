@@ -129,6 +129,9 @@ namespace DAVA
 		
 		inline void SetDataBlock(uint64 blockId, DataNode* data)
 		{
+            Map<uint64, DataNode*>::iterator it = dataBlocks.find(blockId);
+            DVASSERT(it == dataBlocks.end());
+            
 			dataBlocks[blockId] = data;
 		}
 		

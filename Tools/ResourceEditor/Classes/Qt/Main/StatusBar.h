@@ -59,11 +59,11 @@ protected:
 	void UpdateDistanceToCamera();
 	void SetDistanceToCamera(DAVA::float32 distance);
 	void ResetDistanceToCamera();
-
-
+	void UpdateSelectionBoxSize(SceneEditor2 *scene);
 
     QLabel * distanceToCamera;
 	QLabel * sceneGeometry;
+    QLabel * selectionBoxSize;
 };
 
 #endif // __STATUS_BAR_H__

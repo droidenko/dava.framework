@@ -865,6 +865,17 @@ SceneFileV2::eError Scene::Save(const DAVA::FilePath & pathname, bool saveForGam
 	return file->SaveScene(pathname, this);
 }
     
+void Scene::OptimizeBeforeExport()
+{
+    Set<NMaterial*> materials;
+    materialSystem->BuildMaterialList(this, materials);
+
+    Set<NMaterial *>::const_iterator endIt = materials.end();
+    for(Set<NMaterial *>::const_iterator it = materials.begin(); it != endIt; ++it)
+        (*it)->ReleaseIlluminationParams();
+
+    Entity::OptimizeBeforeExport();
+}
     
 };
 

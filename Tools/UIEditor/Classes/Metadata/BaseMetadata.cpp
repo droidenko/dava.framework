@@ -39,8 +39,7 @@ const Vector2 BaseMetadata::INITIAL_CONTROL_SIZE = Vector2(100, 30);
 BaseMetadata::BaseMetadata(QObject *parent) :
     QObject(parent),
     activeParamID(BaseMetadataParams::BaseMetadataID_UNKNOWN),
-	activeStateIndex(STATE_INDEX_DEFAULT),
-    pixelizationNeeded(false)
+	activeStateIndex(STATE_INDEX_DEFAULT)
 {
 }
 
@@ -306,7 +305,3 @@ uint32 BaseMetadata::GetStatesCount() const
 	return uiControlStates.size();
 }
 
-void BaseMetadata::SetPixelizationNeeded(bool value)
-{
-    pixelizationNeeded = value;
-}

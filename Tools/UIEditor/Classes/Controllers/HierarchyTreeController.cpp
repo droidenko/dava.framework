@@ -41,8 +41,6 @@
 
 #include "AlignDistribute/AlignDistributeManager.h"
 
-#include "Helpers/SpritesHelper.h"
-
 HierarchyTreeController::HierarchyTreeController(QObject* parent) :
 	QObject(parent)
 {
@@ -403,6 +401,11 @@ bool HierarchyTreeController::NewProject(const QString& projectPath)
 HierarchyTreePlatformNode* HierarchyTreeController::AddPlatform(const QString& name, const Vector2& size)
 {
 	HierarchyTreePlatformNode* platformNode = hierarchyTree.AddPlatform(name, size);
+	if (platformNode)
+	{
+		UpdateSelection(platformNode, NULL);
+	}
+
 	EmitHierarchyTreeUpdated();
 	
 	return platformNode;
@@ -709,14 +712,9 @@ bool HierarchyTreeController::CanPerformDistribute(eDistributeControlsType /*dis
 	return activeControlNodes.size() >= 3;
 }
 
-void HierarchyTreeController::RepackAndReloadSprites(bool needRepack, bool pixelized)
+void HierarchyTreeController::RepackAndReloadSprites()
 {
-    ReloadSpritesCommand* cmd = new ReloadSpritesCommand(hierarchyTree.GetRootNode(), needRepack, pixelized);
+    ReloadSpritesCommand* cmd = new ReloadSpritesCommand(hierarchyTree.GetRootNode());
     CommandsController::Instance()->ExecuteCommand(cmd);
     SafeRelease(cmd);
-}
-
-void HierarchyTreeController::ApplyPixelizationForAllSprites()
-{
-    SpritesHelper::ApplyPixelizationForAllSprites(hierarchyTree.GetRootNode());
 }

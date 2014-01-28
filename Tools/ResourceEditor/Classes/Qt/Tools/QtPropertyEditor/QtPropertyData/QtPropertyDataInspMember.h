@@ -32,10 +32,10 @@ public:
 
 	virtual void* CreateLastCommand() const;
 
-protected:
 	void *object;
 	const DAVA::InspMember *member;
 
+protected:
 	InspMemberModifyCommand* lastCommand;
 
 	virtual void SetValueInternal(const QVariant &value);

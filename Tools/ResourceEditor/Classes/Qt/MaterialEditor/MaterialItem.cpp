@@ -36,10 +36,10 @@ MaterialItem::MaterialItem(DAVA::NMaterial * _material)
     : QStandardItem()
     , material(_material)
 {
-	static QIcon materialIcon(QString::fromUtf8(":/QtIcons/sphere.png"));
-	static QIcon instanceIcon(QString::fromUtf8(":/QtIcons/3d.png"));
-
 	DVASSERT(material);
+
+	static QImage materialIcon(QString::fromUtf8(":/QtIcons/sphere.png"));
+	static QImage instanceIcon(QString::fromUtf8(":/QtIcons/3d.png"));
 	
 	setEditable(false);
     setData(QVariant::fromValue<DAVA::NMaterial *>(material));
@@ -47,13 +47,13 @@ MaterialItem::MaterialItem(DAVA::NMaterial * _material)
 	switch(material->GetMaterialType())
 	{
 		case DAVA::NMaterial::MATERIALTYPE_MATERIAL:
-			setIcon(materialIcon);
+			setData( materialIcon, Qt::DecorationRole );
 			setDragEnabled(true);
 			setDropEnabled(true);
 			break;
 
 		case DAVA::NMaterial::MATERIALTYPE_INSTANCE:
-			setIcon(instanceIcon);
+			setData( instanceIcon, Qt::DecorationRole );
 			setDragEnabled(true);
 			setDropEnabled(false);
 			break;
@@ -70,6 +70,7 @@ MaterialItem::~MaterialItem()
 
 QVariant MaterialItem::data(int role) const
 {
+
 	QVariant ret;
 
 	switch(role)
@@ -134,7 +135,7 @@ void MaterialItem::SetFlag(MaterialFlag flag, bool set)
 	}
 }
 
-bool MaterialItem::GetFlag(MaterialFlag flag)
+bool MaterialItem::GetFlag(MaterialFlag flag) const
 {
 	return (bool) (curFlag & flag);
 }

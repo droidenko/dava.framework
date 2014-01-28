@@ -272,6 +272,8 @@ public:
 
 	PixelFormat GetFormat() const;
 
+    static void SetPixelization(bool value);
+
 protected:
     
     void ReleaseTextureData();
@@ -297,8 +299,6 @@ protected:
     static bool CheckImageSize(const Vector<Image *> &imageSet);
     static bool IsCompressedFormat(PixelFormat format);
     
-	static uint32 ConvertToPower2FBOValue(uint32 value);
-    
 	void GenerateMipmapsInternal(BaseObject * caller, void * param, void *callerData);
     
 	Texture();
@@ -314,7 +314,7 @@ protected:
 	void HWglCreateFBOBuffersInternal(BaseObject * caller, void * param, void *callerData);
 #endif //#if defined(__DAVAENGINE_OPENGL__)
     
-    bool IsLoadAvailable(const eGPUFamily gpuFamily, const TextureDescriptor *descriptor) const;
+    bool IsLoadAvailable(const eGPUFamily gpuFamily) const;
     
 	static eGPUFamily GetGPUForLoading(const eGPUFamily requestedGPU, const TextureDescriptor *descriptor);
     
@@ -360,6 +360,8 @@ public:							// properties for fast access
 
     static TexturesMap textureMap;
     static eGPUFamily defaultGPU;
+    
+    static bool pixelizationFlag;
 };
     
 // Implementation of inline functions

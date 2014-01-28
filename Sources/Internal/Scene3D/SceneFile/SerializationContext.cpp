@@ -402,7 +402,7 @@ namespace DAVA
 			{
 				float32 shininess = oldMaterial->GetShininess();
 				material->SetPropertyValue(NMaterial::PARAM_MATERIAL_SPECULAR_SHININESS, Shader::UT_FLOAT, 1, &shininess);
-				
+
 				Color ambientColor = oldMaterial->GetAmbientColor();
 				Color diffuseColor = oldMaterial->GetDiffuseColor();
 				Color specularColor = oldMaterial->GetSpecularColor();

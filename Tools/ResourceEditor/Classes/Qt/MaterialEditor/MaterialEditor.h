@@ -32,7 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDialog>
 #include "DAVAEngine.h"
 
-#include "MaterialModel.h"
 #include "Scene/SceneSignals.h"
 #include "Tools/QtPosSaver/QtPosSaver.h"
 #include "DockProperties/PropertyEditorStateHelper.h"
@@ -44,6 +43,9 @@ namespace Ui {
 class MaterialEditor : public QDialog, public DAVA::Singleton<MaterialEditor>
 {
 	Q_OBJECT
+
+private:
+    typedef QMap< int, bool > ExpandMap;
 
 public:
 	MaterialEditor(QWidget *parent = 0);
@@ -74,7 +76,17 @@ protected:
 	void FillMaterialTextures(DAVA::NMaterial *material);
 	void ScanTemplates();
 
+    QVariant CheckForTextureDescriptor(const QVariant& value);
+
+private slots:
+    void onFilterChanged();
+    void onCurrentExpandModeChange( bool mode );
+    void autoExpand();
+
 private:
+    void initActions();
+    //void autoExpand();
+
 	Ui::MaterialEditor *ui;
 	QtPosSaver posSaver;
 
@@ -84,6 +96,7 @@ private:
 	QVector<DAVA::FilePath> templates;
 
 	PropertyEditorStateHelper *treeStateHelper;
+    ExpandMap expandMap;
 };
 
 #endif

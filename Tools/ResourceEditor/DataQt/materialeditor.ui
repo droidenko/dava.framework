@@ -21,7 +21,16 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item>
@@ -35,6 +44,11 @@
      <addaction name="actionNewMaterial"/>
      <addaction name="actionCloneMaterial"/>
      <addaction name="separator"/>
+     <addaction name="actionShowAll"/>
+     <addaction name="actionMaterialsInstances"/>
+     <addaction name="actionInstances"/>
+     <addaction name="separator"/>
+     <addaction name="actionAutoExpand"/>
     </widget>
    </item>
    <item>
@@ -53,7 +67,16 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -64,10 +87,16 @@
          <property name="dragDropMode">
           <enum>QAbstractItemView::DragDrop</enum>
          </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
          <property name="uniformRowHeights">
+          <bool>false</bool>
+         </property>
+         <property name="sortingEnabled">
           <bool>true</bool>
          </property>
         </widget>
@@ -85,7 +114,16 @@
        <property name="spacing">
         <number>3</number>
        </property>
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -141,6 +179,9 @@
    </item>
   </layout>
   <action name="actionNewMaterial">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="QtIcons.qrc">
      <normaloff>:/QtIcons/sphere_add.png</normaloff>:/QtIcons/sphere_add.png</iconset>
@@ -150,6 +191,9 @@
    </property>
   </action>
   <action name="actionCloneMaterial">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="QtIcons.qrc">
      <normaloff>:/QtIcons/sphere-clone.png</normaloff>:/QtIcons/sphere-clone.png</iconset>
@@ -158,6 +202,68 @@
     <string>Clone Material</string>
    </property>
   </action>
+  <action name="actionAutoExpand">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QtIcons.qrc">
+     <normaloff>:/QtIcons/expand_all.png</normaloff>:/QtIcons/expand_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>autoExpand</string>
+   </property>
+   <property name="toolTip">
+    <string>Turn on/off automatin node expanding</string>
+   </property>
+  </action>
+  <actiongroup name="filterType">
+   <action name="actionShowAll">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="QtIcons.qrc">
+      <normaloff>:/QtIconsTextureDialog/opacity.png</normaloff>:/QtIconsTextureDialog/opacity.png</iconset>
+    </property>
+    <property name="text">
+     <string>Show all</string>
+    </property>
+    <property name="toolTip">
+     <string>Shows all materials and instances</string>
+    </property>
+   </action>
+   <action name="actionMaterialsInstances">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="QtIcons.qrc">
+      <normaloff>:/QtIconsTextureDialog/green.png</normaloff>:/QtIconsTextureDialog/green.png</iconset>
+    </property>
+    <property name="text">
+     <string>Show Materials and Instances</string>
+    </property>
+    <property name="toolTip">
+     <string>Show all Materials and only selected Instances</string>
+    </property>
+   </action>
+   <action name="actionInstances">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="QtIcons.qrc">
+      <normaloff>:/QtIconsTextureDialog/blue.png</normaloff>:/QtIconsTextureDialog/blue.png</iconset>
+    </property>
+    <property name="text">
+     <string>Show Instances</string>
+    </property>
+    <property name="toolTip">
+     <string>Show only selected Materials and Instances</string>
+    </property>
+   </action>
+  </actiongroup>
  </widget>
  <customwidgets>
   <customwidget>

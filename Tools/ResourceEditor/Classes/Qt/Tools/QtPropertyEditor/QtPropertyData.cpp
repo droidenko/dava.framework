@@ -38,8 +38,6 @@ QtPropertyData::QtPropertyData()
 	, model(NULL)
 	, userData(NULL)
 	, optionalButtonsViewport(NULL)
-	, expanded(false)
-	, expandable(true)
 { }
 
 QtPropertyData::QtPropertyData(const QVariant &value, Qt::ItemFlags flags)
@@ -50,8 +48,6 @@ QtPropertyData::QtPropertyData(const QVariant &value, Qt::ItemFlags flags)
 	, model(NULL)
 	, userData(NULL)
 	, optionalButtonsViewport(NULL)
-	, expanded(false)
-	, expandable(true)
 { }
 
 QtPropertyData::~QtPropertyData()
@@ -367,11 +363,6 @@ const DAVA::MetaInfo* QtPropertyData::MetaInfo() const
 	return NULL;
 }
 
-QtPropertyData* QtPropertyData::GetProxyOriginal()
-{
-	return this;
-}
-
 bool QtPropertyData::IsEnabled() const
 {
 	return (curFlags & Qt::ItemIsEnabled);
@@ -601,30 +592,6 @@ void QtPropertyData::ChildRemoveAll()
 	}
 }
 
-void QtPropertyData::SetExpanded(bool _expanded)
-{
-	if(expanded != _expanded)
-	{
-		expanded = _expanded;
-		model->ExpandStateChanged(this);
-	}
-}
-
-bool QtPropertyData::IsExpanded() const
-{
-	return expanded;
-}
-
-void QtPropertyData::SetExpandable(bool _expandable)
-{
-	expandable = _expandable;
-}
-
-bool QtPropertyData::IsExpandable() const
-{
-	return expandable;
-}
-
 int QtPropertyData::GetButtonsCount() const
 {
 	return optionalButtons.size();
@@ -752,4 +719,29 @@ bool QtPropertyData::SetEditorDataInternal(QWidget *editor)
 {
 	// should be re-implemented by sub-class
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// QtPropertyToolButton
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool QtPropertyToolButton::event(QEvent * event)
+{
+	int type = event->type();
+
+	if(eventsPassThrought)
+	{
+		if(type != QEvent::Enter &&
+			type != QEvent::Leave &&
+			type != QEvent::MouseMove)
+		{
+			QToolButton::event(event);
+		}
+
+		return false;
+	}
+
+	return QToolButton::event(event);
 }

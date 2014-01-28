@@ -71,9 +71,6 @@ protected slots:
 	virtual void CommandExecuted(SceneEditor2 *scene, const Command2* command, bool redo);
 	
 protected:
-
-	void TileModeChanged(int newValue);
-
 	virtual void FillPropertyEditorWithContent();
 
 	void FillWidgetsWithContent();
@@ -83,8 +80,6 @@ protected:
 	void SetLandscapeEntity(Entity* _landscapeEntity);
 	
 	void FillUIbyLandscapeEntity();
-
-	SelectPathWidgetBase* FindWidgetBySpecInfo(int value);
 	
 	Vector3 GetSizeOfCurrentLandscape();
 	

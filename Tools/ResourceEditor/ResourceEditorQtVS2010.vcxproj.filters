@@ -193,9 +193,6 @@
     <Filter Include="Classes\Qt\MaterialEditor">
       <UniqueIdentifier>{ea826a3c-9452-431d-b0a6-e817887c9e50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Classes\Qt\DockMaterials">
-      <UniqueIdentifier>{c641b595-d437-439e-b2e9-f81fffba5b6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Classes\Qt\DockLibrary">
       <UniqueIdentifier>{2ad1d47b-09e1-4a10-b69d-f80e67a1a4c7}</UniqueIdentifier>
     </Filter>
@@ -204,6 +201,9 @@
     </Filter>
     <Filter Include="Classes\Qt\PlaneLODDialog">
       <UniqueIdentifier>{768d8dcf-78c6-468b-8ce9-cb73d0566627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Qt\Tools\RunGuard">
+      <UniqueIdentifier>{0f62dce1-8be3-4bd5-817b-3589e4f17633}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1308,18 +1308,6 @@
     <ClCompile Include="Classes\Qt\MaterialEditor\MaterialEditor.cpp">
       <Filter>Classes\Qt\MaterialEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Qt\Tools\QtPropertyEditor\QtPropertyDataProxy.cpp">
-      <Filter>Classes\Qt\Tools\QtPropertyEditor</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\DockMaterials\MaterialsWidget.cpp">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\DockMaterials\SimpleMaterialItem.cpp">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Qt\DockMaterials\SimpleMaterialModel.cpp">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Qt\DockLibrary\LibraryFileSystemModel.cpp">
       <Filter>Classes\Qt\DockLibrary</Filter>
     </ClCompile>
@@ -1396,15 +1384,6 @@
       <Filter>QtGenerated</Filter>
     </ClCompile>
     <ClCompile Include="_GeneratedQt\DockLODEditor\LODEditor_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
-    <ClCompile Include="_GeneratedQt\DockMaterials\MaterialsWidget_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
-    <ClCompile Include="_GeneratedQt\DockMaterials\SimpleMaterialItem_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
-    <ClCompile Include="_GeneratedQt\DockMaterials\SimpleMaterialModel_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
     <ClCompile Include="_GeneratedQt\DockParticleEditor\BaseParticleEditorContentWidget_moc.cpp">
@@ -1749,9 +1728,6 @@
     <ClCompile Include="_GeneratedQt\Tools\QtPropertyEditor\QtPropertyData\QtPropertyDataMetaObject_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
-    <ClCompile Include="_GeneratedQt\Tools\QtPropertyEditor\QtPropertyDataProxy_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
     <ClCompile Include="_GeneratedQt\Tools\QtPropertyEditor\QtPropertyData_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
@@ -1824,12 +1800,6 @@
     <ClCompile Include="_GeneratedQt\MaterialEditor\MaterialTree_moc.cpp">
       <Filter>QtGenerated</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Qt\DockMaterials\MaterialDelegate.cpp">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClCompile>
-    <ClCompile Include="_GeneratedQt\DockMaterials\MaterialDelegate_moc.cpp">
-      <Filter>QtGenerated</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Qt\Tools\SettingsDialog\GeneralSettingsDialog.cpp">
       <Filter>Classes\Qt\Tools\SettingsDialog</Filter>
     </ClCompile>
@@ -1865,6 +1835,21 @@
     </ClCompile>
     <ClCompile Include="Classes\Commands2\InspDynamicModifyCommand.cpp">
       <Filter>Classes\Commands2</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\MaterialEditor\MaterialFilterModel.cpp">
+      <Filter>Classes\Qt\MaterialEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="_GeneratedQt\MaterialEditor\MaterialFilterModel_moc.cpp">
+      <Filter>QtGenerated</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\Tools\RunGuard\RunGuard.cpp">
+      <Filter>Classes\Qt\Tools\RunGuard</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Qt\Tools\QtPropertyEditor\QtPropertyModelFiltering.cpp">
+      <Filter>Classes\Qt\Tools\QtPropertyEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="_GeneratedQt\Tools\QtPropertyEditor\QtPropertyModelFiltering_moc.cpp">
+      <Filter>QtGenerated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3194,18 +3179,6 @@
     <ClInclude Include="Classes\Qt\MaterialEditor\MaterialEditor.h">
       <Filter>Classes\Qt\MaterialEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Qt\Tools\QtPropertyEditor\QtPropertyDataProxy.h">
-      <Filter>Classes\Qt\Tools\QtPropertyEditor</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\DockMaterials\MaterialsWidget.h">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\DockMaterials\SimpleMaterialItem.h">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Qt\DockMaterials\SimpleMaterialModel.h">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\Qt\DockLibrary\LibraryFileSystemModel.h">
       <Filter>Classes\Qt\DockLibrary</Filter>
     </ClInclude>
@@ -3257,9 +3230,6 @@
     <ClInclude Include="Classes\Qt\MaterialEditor\MaterialTree.h">
       <Filter>Classes\Qt\MaterialEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Qt\DockMaterials\MaterialDelegate.h">
-      <Filter>Classes\Qt\DockMaterials</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\Qt\Tools\SettingsDialog\GeneralSettingsDialog.h">
       <Filter>Classes\Qt\Tools\SettingsDialog</Filter>
     </ClInclude>
@@ -3284,11 +3254,20 @@
     <ClInclude Include="Classes\Qt\Scene\System\EditorMaterialSystem.h">
       <Filter>Classes\Qt\Scene\System</Filter>
     </ClInclude>
+    <ClInclude Include="Classes\Qt\MaterialEditor\MaterialFilterModel.h">
+      <Filter>Classes\Qt\MaterialEditor</Filter>
+    </ClInclude>
     <ClInclude Include="Classes\Qt\TextureBrowser\TextureInfo.h">
       <Filter>Classes\Qt\TextureBrowser</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Commands2\InspDynamicModifyCommand.h">
       <Filter>Classes\Commands2</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\Tools\RunGuard\RunGuard.h">
+      <Filter>Classes\Qt\Tools\RunGuard</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Qt\Tools\QtPropertyEditor\QtPropertyModelFiltering.h">
+      <Filter>Classes\Qt\Tools\QtPropertyEditor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

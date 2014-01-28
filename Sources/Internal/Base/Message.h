@@ -64,8 +64,7 @@ public:
 	
 	virtual void operator () (BaseObject * callerObject, void * userData, void * callerData) const
 	{
-        if(targetObject && targetFunction)
-		    (targetObject->*targetFunction)(callerObject, userData, callerData);
+        (targetObject->*targetFunction)(callerObject, userData, callerData);
 	}
 	
 	virtual MessageBase * Clone() const
@@ -97,8 +96,7 @@ public:
 	
 	virtual void operator () (BaseObject * callerObject, void * userData, void * callerData) const
 	{
-        if(targetFunction)
-		    (*targetFunction)(callerObject, userData, callerData);
+        (*targetFunction)(callerObject, userData, callerData);
 	}
 	
 	virtual MessageBase * Clone() const

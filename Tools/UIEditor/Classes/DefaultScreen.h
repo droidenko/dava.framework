@@ -60,7 +60,7 @@ public:
     Vector2 GetScale() const {return scale;};
 
 	void SetPos(const Vector2& pos);
-    Vector2 GetPos() const {return pos;};
+    const Vector2& GetPos() const {return pos;};
 
 	Vector2 LocalToInternal(const Vector2& localPoint) const;
 	

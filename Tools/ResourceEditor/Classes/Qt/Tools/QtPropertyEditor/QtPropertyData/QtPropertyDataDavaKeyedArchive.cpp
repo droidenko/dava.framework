@@ -43,14 +43,14 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 
-QtPropertyDataDavaKeyedArcive::QtPropertyDataDavaKeyedArcive(DAVA::KeyedArchive *archive)
-	: curArchive(archive)
+QtPropertyDataDavaKeyedArcive::QtPropertyDataDavaKeyedArcive(DAVA::KeyedArchive *_archive)
+	: archive(_archive)
 	, lastAddedType(DAVA::VariantType::TYPE_STRING)
 	, lastCommand(NULL)
 {
-	if(NULL != curArchive)
+	if(NULL != archive)
 	{
-		curArchive->Retain();
+		archive->Retain();
 	}
 
 	SetEnabled(false);
@@ -67,9 +67,9 @@ QtPropertyDataDavaKeyedArcive::QtPropertyDataDavaKeyedArcive(DAVA::KeyedArchive 
 
 QtPropertyDataDavaKeyedArcive::~QtPropertyDataDavaKeyedArcive()
 {
-	if(NULL != curArchive)
+	if(NULL != archive)
 	{
-		curArchive->Release();
+		archive->Release();
 	}
 
 	if(NULL != lastCommand)
@@ -87,7 +87,7 @@ QVariant QtPropertyDataDavaKeyedArcive::GetValueInternal() const
 {
 	QVariant v;
 
-	if(NULL != curArchive)
+	if(NULL != archive)
 	{
 		v = QString("KeyedArchive");
 	}
@@ -115,11 +115,11 @@ bool QtPropertyDataDavaKeyedArcive::UpdateValueInternal()
 			}
 		}
 
-		// as second step we go throught keyed archive and add new data items,
+		// as second step we go through keyed archive and add new data items,
 		// and remove deleting mark from items that are still in archive
-		if(NULL != curArchive)
+		if(NULL != archive)
 		{
-			DAVA::Map<DAVA::String, DAVA::VariantType*> data = curArchive->GetArchieveData();
+			DAVA::Map<DAVA::String, DAVA::VariantType*> data = archive->GetArchieveData();
 			DAVA::Map<DAVA::String, DAVA::VariantType*>::iterator i = data.begin();
 
 			for(; i != data.end(); ++i)
@@ -161,7 +161,7 @@ void QtPropertyDataDavaKeyedArcive::ChildCreate(const QString &key, DAVA::Varian
 	}
 	else
 	{
-		childData = new QtPropertyKeyedArchiveMember(curArchive, key.toStdString());
+		childData = new QtPropertyKeyedArchiveMember(archive, key.toStdString());
 
 		int presetValueType = EditorConfig::Instance()->GetPropertyValueType(key.toStdString());
 		if(presetValueType != DAVA::VariantType::TYPE_NONE)
@@ -169,9 +169,20 @@ void QtPropertyDataDavaKeyedArcive::ChildCreate(const QString &key, DAVA::Varian
 			if(value->type == presetValueType)
 			{
 				const DAVA::Vector<DAVA::String>& allowedValues = EditorConfig::Instance()->GetComboPropertyValues(key.toStdString());
-				for(size_t i = 0; i < allowedValues.size(); ++i)
+				if(allowedValues.size() > 0)
 				{
-					((QtPropertyKeyedArchiveMember *) childData)->AddAllowedValue(DAVA::VariantType((int) i), allowedValues[i].c_str());
+					for(size_t i = 0; i < allowedValues.size(); ++i)
+					{
+						((QtPropertyKeyedArchiveMember *) childData)->AddAllowedValue(DAVA::VariantType((int) i), allowedValues[i].c_str());
+					}
+				}
+				else
+				{
+					const DAVA::Vector<Color> & allowedColors = EditorConfig::Instance()->GetColorPropertyValues(key.toStdString());
+					for(size_t i = 0; i < allowedColors.size(); ++i)
+					{
+						((QtPropertyKeyedArchiveMember *) childData)->AddAllowedValue(DAVA::VariantType((int) i), ColorToQColor(allowedColors[i]));
+					}
 				}
 			}
 		}
@@ -191,9 +202,9 @@ void QtPropertyDataDavaKeyedArcive::ChildCreate(const QString &key, DAVA::Varian
 void QtPropertyDataDavaKeyedArcive::AddKeyedArchiveField()
 {
 	QToolButton* btn = dynamic_cast<QToolButton*>(QObject::sender());
-	if(NULL != curArchive && NULL != btn)
+	if(NULL != archive && NULL != btn)
 	{
-		KeyedArchiveItemWidget *w = new KeyedArchiveItemWidget(curArchive, lastAddedType, GetOWViewport());
+		KeyedArchiveItemWidget *w = new KeyedArchiveItemWidget(archive, lastAddedType, GetOWViewport());
 		QObject::connect(w, SIGNAL(ValueReady(const DAVA::String&, const DAVA::VariantType&)), this, SLOT(NewKeyedArchiveFieldReady(const DAVA::String&, const DAVA::VariantType&)));
 
 		w->show();
@@ -211,7 +222,7 @@ void QtPropertyDataDavaKeyedArcive::AddKeyedArchiveField()
 void QtPropertyDataDavaKeyedArcive::RemKeyedArchiveField()
 {
 	QToolButton* btn = dynamic_cast<QToolButton*>(QObject::sender());
-	if(NULL != btn && NULL != curArchive)
+	if(NULL != btn && NULL != archive)
 	{
 		// search for child data with such button
 		for(int i = 0; i < ChildCount(); ++i)
@@ -229,8 +240,8 @@ void QtPropertyDataDavaKeyedArcive::RemKeyedArchiveField()
 							delete lastCommand;
 						}
 
-						lastCommand = new KeyeadArchiveRemValueCommand(curArchive, childData->GetName().toStdString());
-						curArchive->DeleteKey(childData->GetName().toStdString());
+						lastCommand = new KeyeadArchiveRemValueCommand(archive, childData->GetName().toStdString());
+						archive->DeleteKey(childData->GetName().toStdString());
 
 						ChildRemove(childData);
 						EmitDataChanged(QtPropertyData::VALUE_EDITED);
@@ -246,9 +257,9 @@ void QtPropertyDataDavaKeyedArcive::RemKeyedArchiveField()
 void QtPropertyDataDavaKeyedArcive::NewKeyedArchiveFieldReady(const DAVA::String &key, const DAVA::VariantType &value)
 {
 	DVASSERT(value.type != DAVA::VariantType::TYPE_NONE && value.type < DAVA::VariantType::TYPES_COUNT);
-	if(NULL != curArchive)
+	if(NULL != archive)
 	{
-		curArchive->SetVariant(key, value);
+		archive->SetVariant(key, value);
 		lastAddedType = value.type;
 
 		if(NULL != lastCommand)
@@ -256,8 +267,8 @@ void QtPropertyDataDavaKeyedArcive::NewKeyedArchiveFieldReady(const DAVA::String
 			delete lastCommand;
 		}
 
-		lastCommand = new KeyedArchiveAddValueCommand(curArchive, key, value);
-		ChildCreate(key.c_str(), curArchive->GetVariant(key));
+		lastCommand = new KeyedArchiveAddValueCommand(archive, key, value);
+		ChildCreate(key.c_str(), archive->GetVariant(key));
 		EmitDataChanged(QtPropertyData::VALUE_EDITED);
 	}
 }

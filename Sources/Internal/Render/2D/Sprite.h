@@ -42,6 +42,7 @@
 #include "FileSystem/FilePath.h"
 
 #include "Render/UniqueStateSet.h"
+#include "Platform/Mutex.h"
 
 namespace DAVA
 {
@@ -305,6 +306,7 @@ protected:
 
 //private:
 
+    static Mutex spriteMapMutex;
 
 	enum eSpriteTransform
 	{

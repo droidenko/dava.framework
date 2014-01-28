@@ -44,23 +44,18 @@
 
 using namespace DAVA;
 
-UIWebView::UIWebView()
+UIWebView::UIWebView(const Rect &rect, bool rectInAbsoluteCoordinates) :
+    webViewControl(new WebViewControl()),
+    UIControl(rect, rectInAbsoluteCoordinates)
 {
-	webViewControl = new WebViewControl();
+    Rect newRect = GetRect(true);
+    this->webViewControl->Initialize(newRect);
 }
 
 UIWebView::~UIWebView()
 {
 	SafeDelete(webViewControl);
 };
-
-UIWebView::UIWebView(const Rect &rect, bool rectInAbsoluteCoordinates) :
-	webViewControl(new WebViewControl()),
-	UIControl(rect, rectInAbsoluteCoordinates)
-{
-	Rect newRect = GetRect(true);
-	this->webViewControl->Initialize(newRect);
-}
 
 void UIWebView::SetDelegate(IUIWebViewDelegate* delegate)
 {

@@ -73,11 +73,9 @@ namespace DAVA
 		
 		void CreateRenderData();
 		void BuildSkybox();
-		void UpdateMaterial();
 
 	private:
 		
-		FilePath texturePath;
 		float32 offsetZ;
 		float32 rotationZ;
 		float32 nonClippingDistance;

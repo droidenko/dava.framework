@@ -44,13 +44,11 @@ TextureProperties::TextureProperties( QWidget *parent /*= 0*/ )
 
 TextureProperties::~TextureProperties()
 {
-	Save();
 	curTextureDescriptor = NULL;
 }
 
 void TextureProperties::setTextureDescriptor(DAVA::TextureDescriptor *descriptor)
 {
-	Save();
 //	DAVA::SafeRelease(curTextureDescriptor);
 
 	curTextureDescriptor = descriptor;
@@ -339,6 +337,7 @@ void TextureProperties::OnItemEdited(const QModelIndex &index)
 			emit PropertyChanged(PROP_SIZE);
 		}
 	}
+    Save();
 }
 
 void TextureProperties::LoadCurSizeToProp()

@@ -161,6 +161,8 @@ TexturesMap Texture::textureMap;
 
 static int32 textureFboCounter = 0;
 
+bool Texture::pixelizationFlag = false;
+
 // Main constructors
 Texture * Texture::Get(const FilePath & pathName)
 {
@@ -532,7 +534,7 @@ Texture * Texture::CreateFromImage(TextureDescriptor *descriptor, eGPUFamily gpu
 
 bool Texture::LoadImages(eGPUFamily gpu, Vector<Image *> * images)
 {
-	if(!IsLoadAvailable(gpu, texDescriptor))
+	if(!IsLoadAvailable(gpu))
 		return false;
 	
 	if(texDescriptor->IsCubeMap() && (GPU_UNKNOWN == gpu))
@@ -650,8 +652,16 @@ void Texture::FlushDataToRendererInternal(BaseObject * caller, void * param, voi
 	RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_WRAP_S, TEXTURE_WRAP_MAP[texDescriptor->settings.wrapModeS]));
 	RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_WRAP_T, TEXTURE_WRAP_MAP[texDescriptor->settings.wrapModeT]));
 
-    RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MIN_FILTER, TEXTURE_FILTER_MAP[texDescriptor->settings.minFilter]));
-    RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MAG_FILTER, TEXTURE_FILTER_MAP[texDescriptor->settings.magFilter]));
+    if (pixelizationFlag)
+    {
+        RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MIN_FILTER, TEXTURE_FILTER_MAP[FILTER_NEAREST]));
+        RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MAG_FILTER, TEXTURE_FILTER_MAP[FILTER_NEAREST]));
+    }
+    else
+    {
+        RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MIN_FILTER, TEXTURE_FILTER_MAP[texDescriptor->settings.minFilter]));
+        RENDER_VERIFY(glTexParameteri(SELECT_GL_TEXTURE_TYPE(textureType), GL_TEXTURE_MAG_FILTER, TEXTURE_FILTER_MAP[texDescriptor->settings.magFilter]));
+    }
 
 	RenderManager::Instance()->HWglBindTexture(saveId, textureType);
 #elif defined(__DAVAENGINE_DIRECTX9__)
@@ -775,16 +785,16 @@ void Texture::ReloadAs(eGPUFamily gpuFamily)
 }
 
     
-bool Texture::IsLoadAvailable(const eGPUFamily gpuFamily, const TextureDescriptor *descriptor) const
+bool Texture::IsLoadAvailable(const eGPUFamily gpuFamily) const
 {
-    if(descriptor->IsCompressedFile())
+    if(texDescriptor->IsCompressedFile())
     {
         return true;
     }
     
     DVASSERT(gpuFamily < GPU_FAMILY_COUNT);
     
-    if(gpuFamily != GPU_UNKNOWN && descriptor->compression[gpuFamily].format == FORMAT_INVALID)
+    if(gpuFamily != GPU_UNKNOWN && texDescriptor->compression[gpuFamily].format == FORMAT_INVALID)
     {
         return false;
     }
@@ -804,8 +814,8 @@ int32 Texture::Release()
 	
 Texture * Texture::CreateFBO(uint32 w, uint32 h, PixelFormat format, DepthFormat _depthFormat)
 {
-	uint32 dx = ConvertToPower2FBOValue(w);
-	uint32 dy = ConvertToPower2FBOValue(h);
+	uint32 dx = ConvertToPower2Value(w, 8);
+	uint32 dy = ConvertToPower2Value(h, 8);
 
 #if defined(__DAVAENGINE_OPENGL__)
 
@@ -1315,23 +1325,6 @@ void Texture::GenerateCubeFaceNames(const FilePath & filePath, const Vector<Stri
 	}
 }
 
-uint32 Texture::ConvertToPower2FBOValue(uint32 value)
-{
-	if(value < 16)
-	{
-		return 16;
-	}
-
-	if(IsPowerOf2(value))
-		return value;
-
-	uint32 i = 16;
-	while(i < value)
-		i *= 2;
-
-	return i;
-}
-
 const FilePath & Texture::GetPathname() const
 {
     return texDescriptor->pathname;
@@ -1342,5 +1335,23 @@ PixelFormat Texture::GetFormat() const
 	return texDescriptor->format;
 }
 
+void Texture::SetPixelization(bool value)
+{
+    if (value == pixelizationFlag)
+    {
+        return;
+    }
+
+    pixelizationFlag = value;
+    const TexturesMap& texturesMap = GetTextureMap();
+
+    for (Map<FilePath, Texture *>::const_iterator iter = texturesMap.begin(); iter != texturesMap.end(); iter ++)
+    {
+        Texture* texture = iter->second;
+        TextureFilter minFilter = pixelizationFlag ? FILTER_NEAREST : (TextureFilter)texture->GetDescriptor()->settings.minFilter;
+        TextureFilter magFilter = pixelizationFlag ? FILTER_NEAREST : (TextureFilter)texture->GetDescriptor()->settings.magFilter;
+        texture->SetMinMagFilter(minFilter, magFilter);
+    }
+}
 
 };

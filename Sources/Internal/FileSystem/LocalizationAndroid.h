@@ -27,25 +27,39 @@
 =====================================================================================*/
 
 
+#ifndef __DAVAENGINE_LOCALIZATION_ANDROID_H__
+#define __DAVAENGINE_LOCALIZATION_ANDROID_H__
 
-#ifndef __SIMPLE_MATERIAL_ITEM_H__
-#define __SIMPLE_MATERIAL_ITEM_H__
+#include "Base/BaseTypes.h"
+#if defined(__DAVAENGINE_ANDROID__)
 
-#include "Render/Material/NMaterial.h"
+#include "Platform/TemplateAndroid/JniExtensions.h"
 
-#include <QStandardItem>
+namespace DAVA 
+{
 
-class SimpleMaterialItem: public QStandardItem
+class JniLocalization: public JniExtension
 {
 public:
-    SimpleMaterialItem(DAVA::NMaterial * material);
-    virtual ~SimpleMaterialItem();
-    
-	DAVA::NMaterial * GetMaterial() const;
-    
-private:
-    DAVA::NMaterial * material;
+	String GetLocale();
+
+protected:
+	virtual jclass GetJavaClass() const;
+	virtual const char* GetJavaClassName() const;
+
+public:
+	static jclass gJavaClass;
+	static const char* gJavaClassName;
 };
 
+class LocalizationAndroid
+{
+public:
+	static void SelecePreferedLocalization();
+};
+	
+};
 
-#endif // __SIMPLE_MATERIAL_ITEM_H__
+#endif //__DAVAENGINE_ANDROID__
+
+#endif //__DAVAENGINE_LOCALIZATION_ANDROID_H__

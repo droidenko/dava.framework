@@ -51,10 +51,11 @@ void GlobalEventSystem::Event(Entity * entity, uint32 event)
             scene->GetEventSystem()->NotifyAllSystems(entity, event);
             return;
         }
+        
+        List<uint32> & events = eventsCache[entity];
+        events.push_back(event);
     }
     
-	List<uint32> & events = eventsCache[entity];
-	events.push_back(event);
 }
 
 void GlobalEventSystem::PerformAllEventsFromCache(Entity * entity)
@@ -73,5 +74,13 @@ void GlobalEventSystem::PerformAllEventsFromCache(Entity * entity)
     }
 }
 
-
+void GlobalEventSystem::RemoveAllEvents(Entity * entity)
+{
+    Map<Entity*, List<uint32> >::iterator it = eventsCache.find(entity);
+    if (it != eventsCache.end())
+    {
+        eventsCache.erase(it);
+    }
+}
+    
 }

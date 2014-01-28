@@ -48,6 +48,7 @@ public:
     void GroupEvent(Scene * scene, Vector<Entity *> & entities, uint32 event);
     void PerformAllEventsFromCache(Entity * entity);
     void RemoveAllEvents(Component * component);
+    void RemoveAllEvents(Entity * entity);
     
 private:
     Map<Entity*, List<uint32> > eventsCache;

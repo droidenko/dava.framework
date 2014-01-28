@@ -1092,8 +1092,9 @@ void Shader::DeleteShadersInternal(BaseObject * caller, void * param, void *call
                     if (_updateSemantic != currentUniform->updateSemantic)
                     {
                         RENDERER_UPDATE_STATS(dynamicParamUniformBindCount++);
-                        GLfloat * modelViewProj = (GLfloat *)RenderManager::GetDynamicParam(PARAM_WORLD_VIEW_PROJ);
-                        RENDER_VERIFY(glUniformMatrix4fv(currentUniform->location, 1, GL_FALSE, modelViewProj));
+                        Matrix4 * modelViewProj = (Matrix4 *)RenderManager::GetDynamicParam(PARAM_WORLD_VIEW_PROJ);
+                        //RENDER_VERIFY(glUniformMatrix4fv(currentUniform->location, 1, GL_FALSE, modelViewProj));
+                        SetUniformValueByUniform(currentUniform, *modelViewProj);
                         currentUniform->updateSemantic = _updateSemantic;
                     }
 					break;
@@ -1159,8 +1160,17 @@ void Shader::DeleteShadersInternal(BaseObject * caller, void * param, void *call
                     {
                         RENDERER_UPDATE_STATS(dynamicParamUniformBindCount++);
 
-                        GLfloat * normalMatrix = (GLfloat*)RenderManager::GetDynamicParam(PARAM_NORMAL);
-                        RENDER_VERIFY(glUniformMatrix3fv(currentUniform->location, 1, GL_FALSE, normalMatrix));
+                        Matrix3 * normalMatrix = (Matrix3*)RenderManager::GetDynamicParam(PARAM_NORMAL);
+//                        Matrix3 matrixInside;
+//                        glGetUniformfv(program, currentUniform->location, (GLfloat*)&matrixInside);
+//                        
+//                        if (matrixInside == *normalMatrix)
+//                        {
+//                            int32 k = 0;
+//                        }
+//                        
+                        SetUniformValueByUniform(currentUniform, *normalMatrix);
+                        //RENDER_VERIFY(glUniformMatrix3fv(currentUniform->location, 1, GL_FALSE, (GLfloat*)normalMatrix));
                         currentUniform->updateSemantic = _updateSemantic;
                     }
                     break;

@@ -34,6 +34,8 @@
 
 #include <QPainter>
 
+#include <QDebug>
+
 TextureCache::TextureCache()
 {
     curThumbnailWeight = 0;
@@ -161,6 +163,7 @@ void TextureCache::setThumbnail(const DAVA::TextureDescriptor *descriptor, const
         cacheThumbnail[path] = CacheEntity(info, curThumbnailWeight++);
         ClearCacheTail(cacheThumbnail, curThumbnailWeight, maxThumbnailCount);
 
+        //qDebug() << "TextureCache::setThumbnail " << path.GetBasename().c_str();
         emit ThumbnailLoaded(descriptor, info);
     }
 }

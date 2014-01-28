@@ -748,6 +748,7 @@ void EntityModificationSystem::CloneBegin()
 		{
 			DAVA::Entity *origEntity = modifEntities[i].entity;
 			DAVA::Entity *newEntity = origEntity->Clone();
+            newEntity->SetLocalTransform(modifEntities[i].originalTransform);
 
 			origEntity->GetParent()->AddNode(newEntity);
 

@@ -249,9 +249,6 @@ protected:
     // Refresh the thumb size for UISlider.
     void UpdateThumbSizeForUIControlThumb();
 
-    // Apply the pixelization settings.
-    void ApplyPixelization(Sprite* sprite);
-
     // Verify whether UIControl exists and set its visible flag.
     void SetUIControlVisible(const bool isVisible, bool hierarchic);
 

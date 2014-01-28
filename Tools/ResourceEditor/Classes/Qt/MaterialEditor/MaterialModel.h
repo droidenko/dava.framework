@@ -43,6 +43,7 @@ class SceneEditor2;
 class MaterialItem;
 class Command2;
 class EntityGroup;
+struct TextureInfo;
 
 class MaterialModel: public QStandardItemModel
 {
@@ -54,6 +55,7 @@ public:
     
     void SetScene(SceneEditor2 * scene);
 	void SetSelection(const EntityGroup *group);
+    void AssignMaterialToSelection( DAVA::NMaterial *material );
     DAVA::NMaterial * GetMaterial(const QModelIndex & index) const;
 	QModelIndex GetIndex(DAVA::NMaterial *material, const QModelIndex &parent = QModelIndex()) const;
 
@@ -67,26 +69,18 @@ public:
 
 protected:
 	SceneEditor2 *curScene;
+
+private:
+    void setPreview( QStandardItem *item, const DAVA::NMaterial * material );
+    QImage GetPreview( const DAVA::NMaterial * material ) const;
+    QModelIndex FindItemIndex(const DAVA::TextureDescriptor *descriptor) const;
+    QModelIndex FindItemIndex(const QModelIndex &parent, const DAVA::TextureDescriptor *descriptor) const;
+    bool SetItemSelection( MaterialItem *item, const EntityGroup *group );
+
+private slots:
+    void ThumbnailLoaded(const DAVA::TextureDescriptor *descriptor, const TextureInfo & image);
 };
 
-class MaterialFilteringModel : public QSortFilterProxyModel
-{
-public:
-	MaterialFilteringModel(MaterialModel *treeModel, QObject *parent = NULL);
-
-	void Sync();
-
-	void SetScene(SceneEditor2 * scene);
-	void SetSelection(const EntityGroup *group);
-	DAVA::NMaterial * GetMaterial(const QModelIndex & index) const;
-	QModelIndex GetIndex(DAVA::NMaterial *material, const QModelIndex &parent = QModelIndex()) const ;
-	bool dropCanBeAccepted(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
-
-	bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-
-protected:
-	MaterialModel *materialModel;
-};
 
 Q_DECLARE_METATYPE(DAVA::NMaterial *)
 

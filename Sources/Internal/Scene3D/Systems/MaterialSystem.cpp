@@ -80,8 +80,8 @@ void MaterialSystem::AddEntity(Entity * entity)
             NMaterial * parent = instance->GetParent();
             if(parent)
             {
-                int32 fog = parent->GetFlagValue(NMaterial::FLAG_VERTEXFOG);
-                if((NMaterial::FlagOn == fog) || (NMaterial::FlagOnOverride == fog))
+                bool fogEnabled = parent->IsFlagEffective(NMaterial::FLAG_VERTEXFOG);
+                if(fogEnabled)
                 {
                     NMaterialProperty *property = parent->GetMaterialProperty(NMaterial::PARAM_FOG_COLOR);
                     if(!property)

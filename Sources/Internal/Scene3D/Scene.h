@@ -214,6 +214,8 @@ public:
     
 	virtual SceneFileV2::eError Save(const DAVA::FilePath & pathname, bool saveForGame = false);
 
+    virtual void OptimizeBeforeExport();
+
 protected:	
     
     void UpdateLights();

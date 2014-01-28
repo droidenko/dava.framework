@@ -91,9 +91,6 @@ void EditorMaterialSystem::BuildMaterialsTree(DAVA::Map<DAVA::NMaterial*, DAVA::
 	{
 		DAVA::NMaterial *parent = *i;
 
-		// add parent
-		in[parent];
-
 		// add childs
 		BuildInstancesList(parent, in[parent]);
 	}

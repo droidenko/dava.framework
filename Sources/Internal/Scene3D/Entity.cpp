@@ -101,6 +101,8 @@ namespace DAVA
 		//        scene->UnregisterNode(this);
 		//        scene = 0;
 		//    }
+        
+        GlobalEventSystem::Instance()->RemoveAllEvents(this);
 		
 		RemoveAllChildren();
 		

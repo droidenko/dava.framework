@@ -114,7 +114,7 @@ void main()
     // FETCH PHASE
 #if defined(MATERIAL_TEXTURE)
 	
-#if defined(GLOSS) || defined(ALPHATEST) || defined(ALPHABLEND) || defined(VERTEX_LIT)
+#if defined(PIXEL_LIT) || defined(ALPHATEST) || defined(ALPHABLEND) || defined(VERTEX_LIT)
     lowp vec4 textureColor0 = texture2D(albedo, varTexCoord0);
 #else
     lowp vec3 textureColor0 = texture2D(albedo, varTexCoord0).rgb;

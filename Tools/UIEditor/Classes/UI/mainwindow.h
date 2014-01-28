@@ -166,8 +166,9 @@ private:
     // Notify external systems that the scale is updated.
     void NotifyScaleUpdated(float32 newScale);
 
-    // Repack (if needed) and reload sprites.
-    void RepackAndReloadSprites(bool needRepack);
+    // Repack and reload sprites.
+    void RepackAndReloadSprites();
+
 private:
     Ui::MainWindow *ui;
 	QAction *recentPojectActions[EditorSettings::RECENT_FILES_COUNT];

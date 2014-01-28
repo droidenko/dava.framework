@@ -42,8 +42,7 @@ class UIWebView : public UIControl
 protected:
 	virtual ~UIWebView();
 public:
-	UIWebView();
-	UIWebView(const Rect &rect, bool rectInAbsoluteCoordinates = false);
+	UIWebView(const Rect &rect = Rect(), bool rectInAbsoluteCoordinates = false);
 		
 	// Open the URL.
 	void OpenURL(const String& urlToOpen);

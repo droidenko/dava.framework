@@ -50,12 +50,12 @@ public:
 		return dynamicInfo->MemberAliasGet(object, name); 
 	}
 
-protected:
-	int inspFlags;
 	void *object;
 	DAVA::FastName name;
 	DAVA::InspInfoDynamic *dynamicInfo;
 
+protected:
+	int inspFlags;
 	InspDynamicModifyCommand* lastCommand;
 
 	virtual QVariant GetValueAlias() const;

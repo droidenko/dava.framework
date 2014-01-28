@@ -72,11 +72,6 @@ const DAVA::MetaInfo * QtPropertyDataIntrospection::MetaInfo() const
 	return NULL;
 }
 
-void* QtPropertyDataIntrospection::GetObject() const
-{
-	return object;
-}
-
 QtPropertyData * QtPropertyDataIntrospection::CreateMemberData(void *_object, const DAVA::InspMember *member)
 {
 	void *memberObject = member->Data(_object);

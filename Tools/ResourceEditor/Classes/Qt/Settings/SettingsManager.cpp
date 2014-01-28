@@ -37,6 +37,35 @@
 #define SETTINGS_VERSION_NUMBER			1
 #define SETTINGS_VERSION_KEY			"settingsVersion"
 
+const SettingRow SETTINGS_GROUP_GENERAL_MAP[] =
+{
+	SettingRow("DesignerName", DAVA::VariantType(DAVA::String("nobody"))),
+	SettingRow("PreviewDialogEnabled", DAVA::VariantType(false)),
+};
+
+const SettingRow SETTINGS_GROUP_DEFAULT_MAP[] =
+{
+	SettingRow("GridStep", DAVA::VariantType(10.0f)),
+	SettingRow("CameraSpeedValue_0", DAVA::VariantType(35.0f)),
+	SettingRow("CameraSpeedValue_1", DAVA::VariantType(100.0f)),
+	SettingRow("CameraSpeedValue_2", DAVA::VariantType(250.0f)),
+	SettingRow("CameraSpeedValue_3", DAVA::VariantType(400.0f)),
+	SettingRow("DefaultCameraFOV", DAVA::VariantType(70.0f)),
+	
+};
+
+const SettingRow SETTINGS_GROUP_INTERNAL_MAP[] =
+{
+	SettingRow("3dDataSourcePath", DAVA::VariantType(DAVA::String("/"))),
+	SettingRow("ProjectPath", DAVA::VariantType(DAVA::String(""))),
+	SettingRow("TextureViewGPU", DAVA::VariantType(GPU_UNKNOWN)),
+	SettingRow("editor.version", DAVA::VariantType(DAVA::String("local build"))),
+	SettingRow("cubemap_last_face_dir", DAVA::VariantType(DAVA::String(""))),
+	SettingRow("cubemap_last_proj_dir", DAVA::VariantType(DAVA::String(""))),
+	SettingRow("recentFiles", DAVA::VariantType()),
+    SettingRow("recentFilesListCount", DAVA::VariantType(5)),
+};
+
 SettingsManager::SettingsManager()
 {
 	settings = new KeyedArchive();

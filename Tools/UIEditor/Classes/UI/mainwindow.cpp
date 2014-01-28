@@ -906,6 +906,9 @@ void MainWindow::OnImportPlatform()
 		return;
 	}
 
+	// Convert directory path into Unix-style path
+	selectedDir = ResourcesManageHelper::ConvertPathToUnixStyle(selectedDir);
+
 	if (!selectedDir.startsWith(platformsPath))
 	{
 		QMessageBox::critical(this, tr("Import error"),
@@ -1113,11 +1116,8 @@ void MainWindow::UpdateProjectSettings(const QString& projectPath)
 	// Update window title
 	this->setWindowTitle(ResourcesManageHelper::GetProjectTitle(projectPath));
     
-    // Apply the pixelization, if needed.
-    if (EditorSettings::Instance()->IsPixelized())
-    {
-        HierarchyTreeController::Instance()->ApplyPixelizationForAllSprites();
-    }
+    // Apply the pixelization value.
+    Texture::SetPixelization(EditorSettings::Instance()->IsPixelized());
 }
 
 void MainWindow::OnUndoRequested()
@@ -1292,8 +1292,7 @@ void MainWindow::OnDistributeEqualDistanceBetweenY()
 
 void MainWindow::OnRepackAndReloadSprites()
 {
-    // Force repack and reload here.
-    RepackAndReloadSprites(true);
+    RepackAndReloadSprites();
 }
 
 void MainWindow::NotifyScaleUpdated(float32 newScale)
@@ -1310,15 +1309,15 @@ void MainWindow::OnPixelizationStateChanged()
     bool isPixelized = ui->actionPixelized->isChecked();
     EditorSettings::Instance()->SetPixelized(isPixelized);
 
-    // No repack is needed here - reload only.
-    RepackAndReloadSprites(false);
+    ScreenWrapper::Instance()->SetApplicationCursor(Qt::WaitCursor);
+    Texture::SetPixelization(isPixelized);
+    ScreenWrapper::Instance()->RestoreApplicationCursor();
 }
 
-void MainWindow::RepackAndReloadSprites(bool needRepack)
+void MainWindow::RepackAndReloadSprites()
 {
     ScreenWrapper::Instance()->SetApplicationCursor(Qt::WaitCursor);
-
-    HierarchyTreeController::Instance()->RepackAndReloadSprites(needRepack, EditorSettings::Instance()->IsPixelized());
+    HierarchyTreeController::Instance()->RepackAndReloadSprites();
     ScreenWrapper::Instance()->RestoreApplicationCursor();
 }
 

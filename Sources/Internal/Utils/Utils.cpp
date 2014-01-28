@@ -151,4 +151,18 @@ int32 CompareCaseInsensitive(const String &str1, const String &str2)
     return 1;
 }
 
+uint32 ConvertToPower2Value( uint32 value, uint32 initialValaue /*= 2*/ )
+{
+	if(IsPowerOf2(value))
+		return value;
+
+	uint32 i = initialValaue;
+	while(i < value)
+	{
+		i *= 2;
+	}
+
+	return i;
+}
+
 }; // end of namespace DAVA

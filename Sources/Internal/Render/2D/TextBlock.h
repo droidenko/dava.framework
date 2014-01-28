@@ -98,7 +98,7 @@ protected:
 	void Prepare();
 	void PrepareInternal(BaseObject * caller, void * param, void *callerData);
 	
-	void DrawToBuffer(int16 *buf);
+	void DrawToBuffer(Font *font, int16 *buf);
 
 	void ProcessAlign();
 	

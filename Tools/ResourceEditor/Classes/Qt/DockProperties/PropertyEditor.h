@@ -40,11 +40,22 @@ class DAVA::Entity;
 
 struct PropEditorUserData : public QtPropertyData::UserData 
 {
-	PropEditorUserData() : isFavorite(false), isOriginalFavorite(false), favoriteProxy(NULL) {}
+	enum PropertyType
+	{
+		ORIGINAL,
+		COPY
+	};
 
+	PropEditorUserData(PropertyType _type, QtPropertyData *_associatedData = NULL, bool _isFavorite = false) : 
+		type(_type),
+		associatedData(_associatedData) ,
+		isFavorite(_isFavorite)
+	{}
+
+	PropertyType type;
+	QtPropertyData *associatedData;
+	QString realPath;
 	bool isFavorite;
-	bool isOriginalFavorite;
-	QtPropertyData *favoriteProxy;
 };
 
 class PropertyEditor : public QtPropertyEditor
@@ -102,13 +113,17 @@ protected:
 	QtPropertyData* CreateInsp(void *object, const DAVA::InspInfo *info);
 	QtPropertyData* CreateInspMember(void *object, const DAVA::InspMember *member);
 	QtPropertyData* CreateInspCollection(void *object, const DAVA::InspColl *collection);
+	QtPropertyData* CreateClone(QtPropertyData *original);
 
 	void ResetProperties();
 	void ApplyModeFilter(QtPropertyData *parent);
 	void ApplyFavorite(QtPropertyData *data);
 	void ApplyCustomButtons(QtPropertyData *data);
 
-	bool ExcludeMembers(const DAVA::InspInfo *info);
+	void AddFavoriteChilds(QtPropertyData *parent);
+	void RemFavoriteChilds(QtPropertyData *parent);
+
+	bool ExcludeMember(const DAVA::InspInfo *info, const DAVA::InspMember *member);
 
 	virtual void OnItemEdited(const QModelIndex &index);
 	virtual void drawRow(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;

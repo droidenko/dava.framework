@@ -63,7 +63,9 @@ public:
 	
 	void SystemDraw(const UIGeometricData &/*geometricData*/)
 	{
+        RenderManager::Instance()->SetDefault2DNoTextureState();
 		RenderHelper::Instance()->DrawRect(GetRect());
+        RenderManager::Instance()->SetDefault2DState();
 	}
 };
 
@@ -104,9 +106,12 @@ void DefaultScreen::Draw(const UIGeometricData &geometricData)
 void DefaultScreen::SystemDraw(const UIGeometricData &geometricData)
 {
     Color oldColor = RenderManager::Instance()->GetColor();
+
+    RenderManager::Instance()->SetDefault2DNoTextureState();
     RenderManager::Instance()->SetColor(ScreenWrapper::Instance()->GetBackgroundFrameColor());
     RenderHelper::Instance()->FillRect(ScreenWrapper::Instance()->GetBackgroundFrameRect());
     RenderManager::Instance()->SetColor(oldColor);
+    RenderManager::Instance()->SetDefault2DState();
 
 	UIScreen::SystemDraw(geometricData);
 	
@@ -610,7 +615,14 @@ ResizeType DefaultScreen::GetResizeType(const HierarchyTreeControlNode* selected
     {
         horLeft = true;
     }
-    
+
+    // If at least one coord is less than zero and more than SIZE_CURSOR_DELTA - we are outside the control.
+    if ((distancesToBounds.x < 0 || distancesToBounds.y < 0 || distancesToBounds.z < 0 || distancesToBounds.w < 0) &&
+        (verTop || verBottom || horLeft || horRight))
+    {
+        return ResizeTypeNoResize;
+    }
+
 	if (horLeft && verTop)
 		return ResizeTypeLeftTop;
 	if (horRight && verBottom)
@@ -697,9 +709,7 @@ void DefaultScreen::ApplySizeDelta(const Vector2& delta)
 	}
 
 	// The helper will calculate both resize (taking rotation into account) and clamp.
-    Rect rect = UIControlResizeHelper::ResizeControl(resizeType, lastSelectedControl->GetUIObject(), resizeRect,  delta);
-	
-	lastSelectedControl->GetUIObject()->SetRect(rect);
+    UIControlResizeHelper::ResizeControl(resizeType, lastSelectedControl->GetUIObject(), resizeRect,  delta);
 }
 
 void DefaultScreen::ResetSizeDelta()

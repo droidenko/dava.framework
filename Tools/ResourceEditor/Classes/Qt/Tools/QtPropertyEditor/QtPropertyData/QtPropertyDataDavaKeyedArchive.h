@@ -51,8 +51,9 @@ public:
 	virtual const DAVA::MetaInfo * MetaInfo() const;
 	virtual void* CreateLastCommand() const;
 
+	DAVA::KeyedArchive* archive;
+
 protected:
-	DAVA::KeyedArchive* curArchive;
 	mutable Command2 *lastCommand;
 	int lastAddedType;
 

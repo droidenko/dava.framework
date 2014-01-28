@@ -129,7 +129,7 @@ void EditorSettings::SetPixelized(bool value)
 
 bool EditorSettings::IsPixelized()
 {
-    return settings->GetBool("editor.pixelized");
+    return settings->GetBool("editor.pixelized", true);
 }
 
 Color EditorSettings::GetCurrentBackgroundFrameColor() const
