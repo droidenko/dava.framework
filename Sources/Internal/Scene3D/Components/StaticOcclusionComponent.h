@@ -52,13 +52,22 @@ public:
 	virtual void Deserialize(KeyedArchive *archive, SerializationContext *serializationContext);
   
     inline StaticOcclusionData & GetData();
+    inline uint32 GetUncompressDataSize();
+    inline uint32 GetCompressDataSize();
+    inline void doNothing(uint32);
     
     uint32 member;
 protected:
     StaticOcclusionData data;
 public:
 	INTROSPECTION_EXTEND(StaticOcclusionDataComponent, Component,
-                         MEMBER(member, "member", I_VIEW | I_EDIT));
+                         MEMBER(member, "member", I_VIEW | I_EDIT)
+                         /*MEMBER(uncompressedDataSize, "Uncompressed Data Size", I_VIEW )
+                         MEMBER(compressedDataSize, "Compressed Data Size", I_VIEW )*/
+                         PROPERTY("uncompressedDataSize", "uncompressedDataSize", GetUncompressDataSize, doNothing, I_VIEW )
+                         PROPERTY("compressedDataSize", "compressedDataSize", GetCompressDataSize, doNothing, I_VIEW )
+                         
+);
 };
 
 
@@ -150,6 +159,20 @@ inline StaticOcclusionData & StaticOcclusionDataComponent::GetData()
     return data;
 }
 
+inline uint32 StaticOcclusionDataComponent::GetUncompressDataSize()
+{
+    return data.uncompressedDataSize ;
+}
+
+inline uint32 StaticOcclusionDataComponent::GetCompressDataSize()
+{
+    return data.compressedDataSize;
+}
+
+inline void StaticOcclusionDataComponent::doNothing(uint32)
+{
+    
+}
 
 }
 #endif //__DAVAENGINE_SWITCH_COMPONENT_H__

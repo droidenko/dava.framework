@@ -67,6 +67,20 @@ public:
     uint32  blockCount;
     uint32  objectCount;
     uint32 * data;
+    
+    enum Zrle{
+        UNPACKED = 0,
+        PACKED
+    };
+    uint32 *packedData;
+    uint32 *offsetPackedBlock;
+    Zrle dataFormat;
+    void DecompessBlock(uint32 *src, uint32* dst,uint32 sizecompr);
+    Vector<uint8> CompressBlock(uint32 *src, int size);
+    void CompressData();
+    uint32 uncompressedDataSize;
+    uint32 compressedDataSize;
+
 };
 
 class StaticOcclusion

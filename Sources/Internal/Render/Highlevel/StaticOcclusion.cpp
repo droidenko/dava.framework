@@ -42,7 +42,7 @@ namespace DAVA
     
 static const uint32 RENDER_TARGET_WIDTH = 1024;
 static const uint32 RENDER_TARGET_HEIGHT = 512;
-    
+static DAVA::uint32 *decompressedBlockBuffer = NULL;  
     
 StaticOcclusion::StaticOcclusion()
     : manager(5000)
@@ -343,7 +343,7 @@ uint32 StaticOcclusion::RenderFrame()
             }
         }
     }
-    
+    currentData->CompressData();
     t1 = SystemTimer::Instance()->GetAbsoluteNano() - t1;
 
     Logger::FrameworkDebug(Format("Object count:%d Vis Count: %d Invisible Object Count:%d time: %0.9llf", renderObjectsArray.size(), visibleCount, invisibleObjectCount, (double)t1 / 1e+9).c_str());
@@ -375,7 +375,7 @@ void StaticOcclusion::RecordFrameQuery(RenderBatch * batch, OcclusionQueryManage
     recordedBatches.push_back(std::pair<RenderBatch*, OcclusionQueryManagerHandle>(batch, handle));
 }
 
-    
+  
 StaticOcclusionData::StaticOcclusionData()
     : data(0)
     , objectCount(0)
@@ -383,6 +383,7 @@ StaticOcclusionData::StaticOcclusionData()
     , sizeX(5)
     , sizeY(5)
     , sizeZ(2)
+    , dataFormat(UNPACKED)
 {
     
 }
@@ -421,6 +422,11 @@ void StaticOcclusionData::Init(uint32 _sizeX, uint32 _sizeY, uint32 _sizeZ, uint
     
     data = new uint32[(blockCount * objectCount / 32)];
     memset(data, 0, (blockCount * objectCount / 32));
+    if (decompressedBlockBuffer) {
+        delete [] decompressedBlockBuffer;
+    }
+    decompressedBlockBuffer = new uint32[(objectCount / 8)];
+    uncompressedDataSize = blockCount * objectCount;
 }
 
 void StaticOcclusionData::SetVisibilityForObject(uint32 blockIndex, uint32 objectIndex, uint32 visible)
@@ -430,7 +436,114 @@ void StaticOcclusionData::SetVisibilityForObject(uint32 blockIndex, uint32 objec
     
 uint32 * StaticOcclusionData::GetBlockVisibilityData(uint32 blockIndex)
 {
-    return &data[(blockIndex * objectCount / 32)];
+    if (dataFormat == UNPACKED) {
+        return &data[(blockIndex * objectCount / 32)];
+    } else {
+        memset(decompressedBlockBuffer, 0, objectCount / 8);
+        DecompessBlock(packedData +offsetPackedBlock[blockIndex],decompressedBlockBuffer,offsetPackedBlock[blockIndex+1]-offsetPackedBlock[blockIndex]);
+        return decompressedBlockBuffer;
+    }}
+
+
+Vector<uint8> StaticOcclusionData::CompressBlock(uint32 *src, int size)
+{
+    Vector<uint8> compressedData;
+    compressedData.reserve(1024);
+    uint8 *b_src= (uint8*)src;
+    uint8 bit = 0;
+    uint8 count = 0;
+    uint8 flag = 0;
+    for (int byte=0; byte<size; byte++){
+        for (uint8 bitPosition=0; bitPosition<8; bitPosition++)
+        {
+            bit = b_src[byte] & (b_src[byte] << bitPosition);
+            if (bit) bit = 1;
+            if ((flag!=bit)||(127==count))
+            {
+                uint8 compress = 0;
+                if (flag) compress = 128;
+                compress += count;
+                compressedData.push_back(compress);
+                count = 0;
+                flag = bit;
+                bitPosition--;
+            }else
+            {
+                count++;
+            }
+        }
+    }
+    if (count>0)
+    {
+        uint8 compress = 0;
+        if (flag) compress = 128;
+        compress += count;
+        compressedData.push_back(compress);
+    }
+    return compressedData;
 }
+
+void StaticOcclusionData::DecompessBlock(uint32 *src, uint32* dst,uint32 sizecompr)
+{
+    uint8 *b_src= (uint8*)src;
+    uint8 *b_dst= (uint8*)dst;
+    uint8 flag = 0;
+    uint32 position = 0;
+    for (int byte=0; byte<(sizecompr/8); byte++)
+    {
+        flag = (b_src[byte]>>7 );
+        uint8 count=0;
+        if (flag)
+        {
+            count = b_src[byte]&127;
+            for (int bit=position%8; bit<count; bit++)
+            {
+                b_dst[position/8] |= 1 << (bit & 7);
+                position++;
+            }
+        } else
+        {
+            count = b_src[byte];
+            position+=count;
+        }
+    }
+    
+}
+
+void StaticOcclusionData::CompressData()
+{
+    int size = 0;
+    int offset = 0;
+    Vector<uint32> offsetPackedBlockV;
+    packedData = new uint32();
+    for (int blockIndex=0; blockIndex<blockCount; blockIndex++)
+    {
+        Vector<uint8> compressedBlock = CompressBlock(&data[(blockIndex * objectCount / 32)],objectCount);
+        size = compressedBlock.size();
+        uint8 *b_dst = new uint8[size];
+        for (uint32 i=0;i<size;i++)
+        {
+            b_dst[i] = compressedBlock[i];
+        }
+        offsetPackedBlockV.push_back(offset);
+        uint8 * newPackedData = new uint8[offset+size];
+        memcpy(newPackedData, packedData, offset);
+        memcpy(newPackedData + offset, b_dst, size);
+        SafeDeleteArray(packedData);
+        SafeDeleteArray(b_dst);
+        packedData = (uint32 *)newPackedData;
+        offset += size;
+    }
+    offsetPackedBlockV.push_back(offset);
+    offsetPackedBlock = new uint32[offsetPackedBlockV.size()];
+    for (int i=0; i<offsetPackedBlockV.size(); ++i)
+    {
+        offsetPackedBlock[i]=offsetPackedBlockV[i];
+    }
+    dataFormat = PACKED;
+    compressedDataSize = offsetPackedBlockV[offsetPackedBlockV.size()-1];
+    //delete [] data;
+}
+
     
 };
