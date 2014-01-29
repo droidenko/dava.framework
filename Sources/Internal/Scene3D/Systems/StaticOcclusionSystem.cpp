@@ -40,6 +40,7 @@
 #include "Scene3D/Components/ComponentHelpers.h"
 #include "Scene3D/Components/LodComponent.h"
 #include "Scene3D/Systems/LodSystem.h"
+#include "Platform/SystemTimer.h"
 
 namespace DAVA
 {
@@ -111,7 +112,7 @@ void StaticOcclusionBuildSystem::Process(float32 timeElapsed)
                   occlusionComponent->GetSubdivisionsZ(),
                   size,
                   worldBox);
-        
+        componentInProgress->uncompressedDataSize = data.uncompressedDataSize;
         staticOcclusion->SetScene(GetScene());
         staticOcclusion->SetRenderSystem(GetScene()->GetRenderSystem());
         staticOcclusion->BuildOcclusionInParallel(renderObjectsArray,
@@ -179,6 +180,8 @@ void StaticOcclusionBuildSystem::Process(float32 timeElapsed)
             result = staticOcclusion->RenderFrame();
             if (result == 0)break;
         }
+        
+        componentInProgress->compressedDataSize = staticOcclusion->CompressData();
         //Logger::FrameworkDebug("end");
         if (result == 0)
         {
@@ -228,7 +231,18 @@ void StaticOcclusionSystem::UndoOcclusionVisibility()
 
 void StaticOcclusionSystem::ProcessStaticOcclusionForOneDataSet(uint32 blockIndex, StaticOcclusionData * data)
 {
+    //uint64 startTime = SystemTimer::Instance()->GetAbsoluteNano();
+    
     uint32 * bitdata = data->GetBlockVisibilityData(blockIndex);
+    
+   /* uint64 deltaTime = SystemTimer::Instance()->GetAbsoluteNano() - startTime;
+    Logger::FrameworkDebug("PACKED [GetBlockVisibilityData TIME] %d (%ld)", deltaTime, deltaTime);
+    startTime = SystemTimer::Instance()->GetAbsoluteNano();
+    data->dataFormat= StaticOcclusionData::UNPACKED;
+    uint32 * bitdataU = data->GetBlockVisibilityData(blockIndex);
+    data->dataFormat= StaticOcclusionData::PACKED;
+    deltaTime = SystemTimer::Instance()->GetAbsoluteNano() - startTime;
+    Logger::FrameworkDebug("UNPACKED [GetBlockVisibilityData TIME] %d (%ld)", deltaTime, deltaTime);*/
     uint32 size = (uint32)indexedRenderObjects.size();
     for (uint32 k = 0; k < size; ++k)
     {

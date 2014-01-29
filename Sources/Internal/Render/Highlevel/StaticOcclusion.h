@@ -72,10 +72,11 @@ public:
         UNPACKED = 0,
         PACKED
     };
-    uint32 *packedData;
+    /*uint32*/
+    uint8 *packedData;
     uint32 *offsetPackedBlock;
     Zrle dataFormat;
-    void DecompessBlock(uint32 *src, uint32* dst,uint32 sizecompr);
+    void DecompessBlock(uint8 *src, uint32* dst,uint32 sizecompr);
     Vector<uint8> CompressBlock(uint32 *src, int size);
     void CompressData();
     uint32 uncompressedDataSize;
@@ -105,6 +106,7 @@ public:
     void FillOcclusionDataObject(StaticOcclusionData * data);
     
     void RecordFrameQuery(RenderBatch * batch, OcclusionQueryManagerHandle handle);
+    uint32 CompressData(){currentData->CompressData(); return currentData->compressedDataSize;};
     
     //Vector<Vector3> renderPositions;
     //Vector<Vector3> renderDirections;

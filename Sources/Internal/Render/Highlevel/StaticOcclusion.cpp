@@ -343,7 +343,7 @@ uint32 StaticOcclusion::RenderFrame()
             }
         }
     }
-    currentData->CompressData();
+
     t1 = SystemTimer::Instance()->GetAbsoluteNano() - t1;
 
     Logger::FrameworkDebug(Format("Object count:%d Vis Count: %d Invisible Object Count:%d time: %0.9llf", renderObjectsArray.size(), visibleCount, invisibleObjectCount, (double)t1 / 1e+9).c_str());
@@ -425,7 +425,7 @@ void StaticOcclusionData::Init(uint32 _sizeX, uint32 _sizeY, uint32 _sizeZ, uint
     if (decompressedBlockBuffer) {
         delete [] decompressedBlockBuffer;
     }
-    decompressedBlockBuffer = new uint32[(objectCount / 8)];
+    decompressedBlockBuffer = new uint32[(objectCount/8)+1 ];
     uncompressedDataSize = blockCount * objectCount;
 }
 
@@ -439,10 +439,11 @@ uint32 * StaticOcclusionData::GetBlockVisibilityData(uint32 blockIndex)
     if (dataFormat == UNPACKED) {
         return &data[(blockIndex * objectCount / 32)];
     } else {
-        memset(decompressedBlockBuffer, 0, objectCount / 8);
-        DecompessBlock(packedData +offsetPackedBlock[blockIndex],decompressedBlockBuffer,offsetPackedBlock[blockIndex+1]-offsetPackedBlock[blockIndex]);
+        memset(decompressedBlockBuffer, 0, (objectCount/8+1));
+        DecompessBlock(packedData+offsetPackedBlock[blockIndex],decompressedBlockBuffer,offsetPackedBlock[blockIndex+1]-offsetPackedBlock[blockIndex]);
         return decompressedBlockBuffer;
-    }}
+    }
+}
 
 
 Vector<uint8> StaticOcclusionData::CompressBlock(uint32 *src, int size)
@@ -456,7 +457,7 @@ Vector<uint8> StaticOcclusionData::CompressBlock(uint32 *src, int size)
     for (int byte=0; byte<size; byte++){
         for (uint8 bitPosition=0; bitPosition<8; bitPosition++)
         {
-            bit = b_src[byte] & (b_src[byte] << bitPosition);
+            bit = (b_src[byte] >> bitPosition) & 1;
             if (bit) bit = 1;
             if ((flag!=bit)||(127==count))
             {
@@ -483,22 +484,23 @@ Vector<uint8> StaticOcclusionData::CompressBlock(uint32 *src, int size)
     return compressedData;
 }
 
-void StaticOcclusionData::DecompessBlock(uint32 *src, uint32* dst,uint32 sizecompr)
+void StaticOcclusionData::DecompessBlock(uint8 *b_src, uint32* dst,uint32 sizecompr)
 {
-    uint8 *b_src= (uint8*)src;
+//    uint8 *b_src= (uint8*)src;
     uint8 *b_dst= (uint8*)dst;
     uint8 flag = 0;
     uint32 position = 0;
-    for (int byte=0; byte<(sizecompr/8); byte++)
+    for (int byte=0; byte<sizecompr; byte++)
     {
         flag = (b_src[byte]>>7 );
         uint8 count=0;
         if (flag)
         {
             count = b_src[byte]&127;
-            for (int bit=position%8; bit<count; bit++)
+            uint8 offset = position%8;
+            for (int bit=0; bit<count; bit++)
             {
-                b_dst[position/8] |= 1 << (bit & 7);
+                b_dst[position/8] |= 1 << ((offset+bit) & 7);
                 position++;
             }
         } else
@@ -515,7 +517,7 @@ void StaticOcclusionData::CompressData()
     int size = 0;
     int offset = 0;
     Vector<uint32> offsetPackedBlockV;
-    packedData = new uint32();
+    packedData = new uint8();
     for (int blockIndex=0; blockIndex<blockCount; blockIndex++)
     {
         Vector<uint8> compressedBlock = CompressBlock(&data[(blockIndex * objectCount / 32)],objectCount);
@@ -531,8 +533,9 @@ void StaticOcclusionData::CompressData()
         memcpy(newPackedData + offset, b_dst, size);
         SafeDeleteArray(packedData);
         SafeDeleteArray(b_dst);
-        packedData = (uint32 *)newPackedData;
+        packedData = newPackedData;
         offset += size;
+        //printf("\noffset%d\n",offset);
     }
     offsetPackedBlockV.push_back(offset);
     offsetPackedBlock = new uint32[offsetPackedBlockV.size()];
